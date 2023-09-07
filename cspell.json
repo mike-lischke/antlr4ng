@@ -1,0 +1,22 @@
+{
+    "version": "0.2",
+    "ignorePaths": [
+        ".eslintrc.json"
+    ],
+    "dictionaryDefinitions": [],
+    "dictionaries": [],
+    "words": [
+        "ANTLR"
+    ],
+    "ignoreWords": [
+        "AMBIG",
+        "Harwell",
+        "interp",
+        "localctx",
+        "precpred",
+        "recog",
+        "sempred",
+        "ttype"
+    ],
+    "import": []
+}
