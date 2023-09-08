@@ -1,9 +1,11 @@
-/* Copyright (c) 2012-2022 The ANTLR Project Contributors. All rights reserved.
- * Use is of this file is governed by the BSD 3-clause license that
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-import PredicateTransition from "../transition/PredicateTransition.js";
-import RecognitionException from "./RecognitionException.js";
+
+import { PredicateTransition } from "../transition/PredicateTransition.js";
+import { RecognitionException } from "./RecognitionException.js";
 
 /**
  * A semantic predicate failed during validation. Validation of predicates
@@ -11,7 +13,7 @@ import RecognitionException from "./RecognitionException.js";
  * Disambiguating predicate evaluation occurs when we test a predicate during
  * prediction.
  */
-export default class FailedPredicateException extends RecognitionException {
+export class FailedPredicateException extends RecognitionException {
 
     constructor(recognizer, predicate, message) {
         super({
@@ -19,8 +21,8 @@ export default class FailedPredicateException extends RecognitionException {
             recognizer: recognizer,
             input: recognizer.getInputStream(), ctx: recognizer._ctx
         });
-        const s = recognizer._interp.atn.states[recognizer.state]
-        const trans = s.transitions[0]
+        const s = recognizer._interp.atn.states[recognizer.state];
+        const trans = s.transitions[0];
         if (trans instanceof PredicateTransition) {
             this.ruleIndex = trans.ruleIndex;
             this.predicateIndex = trans.predIndex;
@@ -35,7 +37,7 @@ export default class FailedPredicateException extends RecognitionException {
 
 
 function formatMessage(predicate, message) {
-    if (message !==null) {
+    if (message !== null) {
         return message;
     } else {
         return "failed predicate: {" + predicate + "}?";

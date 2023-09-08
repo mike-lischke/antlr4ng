@@ -1,13 +1,15 @@
-/* Copyright (c) 2012-2022 The ANTLR Project Contributors. All rights reserved.
- * Use is of this file is governed by the BSD 3-clause license that
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
+
 import { RuleContext } from "./RuleContext.js";
-import PredictionContext from "./PredictionContext.js";
-import ArrayPredictionContext from "./ArrayPredictionContext.js";
-import SingletonPredictionContext from "./SingletonPredictionContext.js";
-import EmptyPredictionContext from "./EmptyPredictionContext.js";
-import HashMap from "../misc/HashMap.js";
+import { PredictionContext } from "./PredictionContext.js";
+import { ArrayPredictionContext } from "./ArrayPredictionContext.js";
+import { SingletonPredictionContext } from "./SingletonPredictionContext.js";
+import { EmptyPredictionContext } from "./EmptyPredictionContext.js";
+import { HashMap } from "../misc/HashMap.js";
 
 /**
  * Convert a {@link RuleContext} tree to a {@link PredictionContext} graph.
@@ -28,7 +30,6 @@ export function predictionContextFromRuleContext(atn, outerContext) {
     const transition = state.transitions[0];
     return SingletonPredictionContext.create(parent, transition.followState.stateNumber);
 }
-
 
 export function getCachedPredictionContext(context, contextCache, visited) {
     if (context.isEmpty()) {
@@ -106,7 +107,6 @@ export function merge(a, b, rootIsWildcard, mergeCache) {
     }
     return mergeArrays(a, b, rootIsWildcard, mergeCache);
 }
-
 
 /**
  * Merge two {@link ArrayPredictionContext} instances.
@@ -238,7 +238,6 @@ function mergeArrays(a, b, rootIsWildcard, mergeCache) {
     return M;
 }
 
-
 /**
  * Make pass over all <em>M</em> {@code parents}; merge any {@code equals()}
  * ones.
@@ -256,7 +255,6 @@ function combineCommonParents(parents) {
         parents[q] = uniqueParents.get(parents[q]);
     }
 }
-
 
 /**
  * Merge two {@link SingletonPredictionContext} instances.
@@ -367,7 +365,6 @@ function mergeSingletons(a, b, rootIsWildcard, mergeCache) {
     }
 }
 
-
 /**
  * Handle case where at least one of {@code a} or {@code b} is
  * {@link //EMPTY}. In the following diagrams, the symbol {@code $} is used
@@ -430,7 +427,6 @@ function mergeRoot(a, b, rootIsWildcard) {
     }
     return null;
 }
-
 
 // ter's recursive version of Sam's getAllNodes()
 export function getAllContextNodes(context, nodes, visited) {

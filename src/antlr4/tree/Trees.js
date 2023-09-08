@@ -1,16 +1,17 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import Token from '../Token.js';
-import ErrorNode from './ErrorNode.js';
-import TerminalNode from './TerminalNode.js';
-import escapeWhitespace from "../utils/escapeWhitespace.js";
+import { Token } from '../Token.js';
+import { ErrorNode } from './ErrorNode.js';
+import { TerminalNode } from './TerminalNode.js';
+import { escapeWhitespace } from "../utils/escapeWhitespace.js";
 import { RuleContext } from "../context/RuleContext.js";
 
 /** A set of utility routines useful for all kinds of ANTLR trees. */
-const Trees = {
+export const Trees = {
     /**
      * Print out a whole tree in LISP form. {@link //getNodeText} is used on the
      *  node payloads to get the text for the nodes.  Detect
@@ -136,5 +137,3 @@ const Trees = {
         return nodes;
     }
 };
-
-export default Trees;

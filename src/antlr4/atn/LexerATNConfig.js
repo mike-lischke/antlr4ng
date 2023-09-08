@@ -1,18 +1,20 @@
-/* Copyright (c) 2012-2022 The ANTLR Project Contributors. All rights reserved.
- * Use is of this file is governed by the BSD 3-clause license that
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-import DecisionState from "../state/DecisionState.js";
-import ATNConfig from "./ATNConfig.js";
 
-export default class LexerATNConfig extends ATNConfig {
+import { DecisionState } from "../state/DecisionState.js";
+import { ATNConfig } from "./ATNConfig.js";
+
+export class LexerATNConfig extends ATNConfig {
     constructor(params, config) {
         super(params, config);
 
         // This is the backing field for {@link //getLexerActionExecutor}.
         const lexerActionExecutor = params.lexerActionExecutor || null;
-        this.lexerActionExecutor = lexerActionExecutor || (config!==null ? config.lexerActionExecutor : null);
-        this.passedThroughNonGreedyDecision = config!==null ? this.checkNonGreedyDecision(config, this.state) : false;
+        this.lexerActionExecutor = lexerActionExecutor || (config !== null ? config.lexerActionExecutor : null);
+        this.passedThroughNonGreedyDecision = config !== null ? this.checkNonGreedyDecision(config, this.state) : false;
         this.hashCodeForConfigSet = LexerATNConfig.prototype.hashCode;
         this.equalsForConfigSet = LexerATNConfig.prototype.equals;
         return this;
@@ -35,4 +37,3 @@ export default class LexerATNConfig extends ATNConfig {
             (target instanceof DecisionState) && target.nonGreedy;
     }
 }
-

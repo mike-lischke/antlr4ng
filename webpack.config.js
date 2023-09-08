@@ -1,12 +1,18 @@
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
 import path from 'path';
 import ESLintPlugin from 'eslint-webpack-plugin';
-import {fileURLToPath} from "url";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 
-const buildConfig = ( platform, extensions ) => ({
+const buildConfig = (platform, extensions) => ({
     mode: "production",
     entry: `./src/antlr4/index.${platform}.js`,
     output: {
@@ -22,8 +28,8 @@ const buildConfig = ( platform, extensions ) => ({
         module: {
             rules: [{
                 test: /\.js$/,
-                exclude: [ /node_modules/, path.resolve(__dirname, "src/FileStream.js") ],
-                use: [ 'babel-loader' ]
+                exclude: [/node_modules/, path.resolve(__dirname, "src/FileStream.js")],
+                use: ['babel-loader']
             }]
         },
         performance: {
@@ -31,7 +37,7 @@ const buildConfig = ( platform, extensions ) => ({
             maxEntrypointSize: 512000
         },
         resolve: {
-            extensions: [ '.js'],
+            extensions: ['.js'],
             fallback: {
                 fs: false
             }
@@ -43,20 +49,20 @@ const buildConfig = ( platform, extensions ) => ({
             rules: [{
                 test: /\.js$/,
                 exclude: /node_modules/,
-                use: [ 'babel-loader' ]
+                use: ['babel-loader']
             }]
         },
         resolve: {
-            extensions: [ '.js'],
+            extensions: ['.js'],
         },
     }),
     target: platform,
-    plugins: [ new ESLintPlugin() ],
+    plugins: [new ESLintPlugin()],
     devtool: "source-map",
     experiments: {
         outputModule: extensions === "mjs"
     },
-})
+});
 
 
 export default [

@@ -1,15 +1,15 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import LL1Analyzer from './LL1Analyzer.js';
-import IntervalSet from '../misc/IntervalSet.js';
-import Token from '../Token.js';
+import { LL1Analyzer } from './LL1Analyzer.js';
+import { IntervalSet } from '../misc/IntervalSet.js';
+import { Token } from '../Token.js';
 
-export default class ATN {
-
-    constructor(grammarType , maxTokenType) {
+export class ATN {
+    constructor(grammarType, maxTokenType) {
         /**
          * Used for runtime deserialization of ATNs from strings
          * The type of the ATN.
@@ -61,7 +61,7 @@ export default class ATN {
      * rule
      */
     nextTokensNoContext(s) {
-        if (s.nextTokenWithinRule !== null ) {
+        if (s.nextTokenWithinRule !== null) {
             return s.nextTokenWithinRule;
         }
         s.nextTokenWithinRule = this.nextTokensInContext(s, null);
@@ -70,7 +70,7 @@ export default class ATN {
     }
 
     nextTokens(s, ctx) {
-        if ( ctx===undefined ) {
+        if (ctx === undefined) {
             return this.nextTokensNoContext(s);
         } else {
             return this.nextTokensInContext(s, ctx);
@@ -78,7 +78,7 @@ export default class ATN {
     }
 
     addState(state) {
-        if ( state !== null ) {
+        if (state !== null) {
             state.atn = this;
             state.stateNumber = this.states.length;
         }
@@ -91,12 +91,12 @@ export default class ATN {
 
     defineDecisionState(s) {
         this.decisionToState.push(s);
-        s.decision = this.decisionToState.length-1;
+        s.decision = this.decisionToState.length - 1;
         return s.decision;
     }
 
     getDecisionState(decision) {
-        if (this.decisionToState.length===0) {
+        if (this.decisionToState.length === 0) {
             return null;
         } else {
             return this.decisionToState[decision];
@@ -124,9 +124,9 @@ export default class ATN {
      * @throws IllegalArgumentException if the ATN does not contain a state with
      * number {@code stateNumber}
      */
-    getExpectedTokens(stateNumber, ctx ) {
-        if ( stateNumber < 0 || stateNumber >= this.states.length ) {
-            throw("Invalid state number.");
+    getExpectedTokens(stateNumber, ctx) {
+        if (stateNumber < 0 || stateNumber >= this.states.length) {
+            throw ("Invalid state number.");
         }
         const s = this.states[stateNumber];
         let following = this.nextTokens(s);
@@ -152,4 +152,3 @@ export default class ATN {
 }
 
 ATN.INVALID_ALT_NUMBER = 0;
-

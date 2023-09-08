@@ -1,14 +1,15 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import Parser from "../Parser.js";
-import Token from "../Token.js";
-import RecognitionException from "../error/RecognitionException.js";
+import { Parser } from "../Parser.js";
+import { Token } from "../Token.js";
+import { RecognitionException } from "../error/RecognitionException.js";
 import { ErrorNode } from "../tree/ErrorNode.js";
-import TerminalNode from "../tree/TerminalNode.js";
-import RuleContext from "./RuleContext.js";
+import { TerminalNode } from "../tree/TerminalNode.js";
+import { RuleContext } from "./RuleContext.js";
 
 export declare class ParserRuleContext extends RuleContext {
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -38,5 +39,3 @@ export declare class ParserRuleContext extends RuleContext {
 
     public get ruleIndex(): number;
 }
-
-export default ParserRuleContext;

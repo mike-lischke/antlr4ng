@@ -1,9 +1,11 @@
-/* Copyright (c) 2012-2022 The ANTLR Project Contributors. All rights reserved.
- * Use is of this file is governed by the BSD 3-clause license that
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-import {default as LexerActionType } from "../atn/LexerActionType.js";
-import LexerAction from "./LexerAction.js";
+
+import { LexerActionType } from "../atn/LexerActionType.js";
+import { LexerAction } from "./LexerAction.js";
 
 /**
  * Implements the {@code channel} lexer action by calling
@@ -11,7 +13,7 @@ import LexerAction from "./LexerAction.js";
  * Constructs a new {@code channel} action with the specified channel value.
  * @param channel The channel value to pass to {@link Lexer//setChannel}
  */
-export default class LexerChannelAction extends LexerAction {
+export class LexerChannelAction extends LexerAction {
     constructor(channel) {
         super(LexerActionType.CHANNEL);
         this.channel = channel;
@@ -32,7 +34,7 @@ export default class LexerChannelAction extends LexerAction {
     equals(other) {
         if (this === other) {
             return true;
-        } else if (! (other instanceof LexerChannelAction)) {
+        } else if (!(other instanceof LexerChannelAction)) {
             return false;
         } else {
             return this.channel === other.channel;
@@ -43,4 +45,3 @@ export default class LexerChannelAction extends LexerAction {
         return "channel(" + this.channel + ")";
     }
 }
-

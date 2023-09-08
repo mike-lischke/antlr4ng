@@ -1,11 +1,12 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import Parser from "../Parser.js";
-import ParseTree from "../tree/ParseTree.js";
-import Interval from "../misc/Interval.js";
+import { Parser } from "../Parser.js";
+import { ParseTree } from "../tree/ParseTree.js";
+import { Interval } from "../misc/Interval.js";
 import { ParseTreeVisitor } from "../tree/ParseTreeVisitor.js";
 
 export declare class RuleContext implements ParseTree {
@@ -72,5 +73,3 @@ export declare class RuleContext implements ParseTree {
     public toStringTree(): string;
     public toStringTree(ruleNames: string[] | null, recog: Parser): string;
 }
-
-export default RuleContext;

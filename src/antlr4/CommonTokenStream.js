@@ -1,10 +1,11 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import Token from './Token.js';
-import BufferedTokenStream from './BufferedTokenStream.js';
+import { Token } from './Token.js';
+import { BufferedTokenStream } from './BufferedTokenStream.js';
 
 /**
  * This class extends {@link BufferedTokenStream} with functionality to filter
@@ -30,7 +31,7 @@ import BufferedTokenStream from './BufferedTokenStream.js';
  * such a rule will not be available as part of the token stream, regardless of
  * channel.</p>
  */
-export default class CommonTokenStream extends BufferedTokenStream {
+export class CommonTokenStream extends BufferedTokenStream {
     constructor(lexer, channel) {
         super(lexer);
         this.channel = channel === undefined ? Token.DEFAULT_CHANNEL : channel;

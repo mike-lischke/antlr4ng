@@ -4,11 +4,11 @@
  */
 
 /**
- * Provides an empty default implementation of {@link ANTLRErrorListener}. The
+ * Provides an empty default implementation of {@link BaseErrorListener}. The
  * default implementation of each method does nothing, but can be overridden as
  * necessary.
  */
-export default class ErrorListener {
+export class BaseErrorListener {
     syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
     }
 

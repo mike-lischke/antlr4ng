@@ -1,19 +1,20 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import Recognizer from "./Recognizer.js";
-import Token from "./Token.js";
-import TokenFactory from "./TokenFactory.js";
-import TokenStream from "./TokenStream.js";
-import ParserATNSimulator from "./atn/ParserATNSimulator.js";
-import ParserRuleContext from "./context/ParserRuleContext.js";
-import ErrorStrategy from "./error/ErrorStrategy.js";
-import RecognitionException from "./error/RecognitionException.js";
-import IntervalSet from "./misc/IntervalSet.js";
-import ParseTreeListener from "./tree/ParseTreeListener.js";
-import Printer from "./utils/Printer.js";
+import { Recognizer } from "./Recognizer.js";
+import { Token } from "./Token.js";
+import { TokenFactory } from "./TokenFactory.js";
+import { TokenStream } from "./TokenStream.js";
+import { ParserATNSimulator } from "./atn/ParserATNSimulator.js";
+import { ParserRuleContext } from "./context/ParserRuleContext.js";
+import { ErrorStrategy } from "./error/ErrorStrategy.js";
+import { RecognitionException } from "./error/RecognitionException.js";
+import { IntervalSet } from "./misc/IntervalSet.js";
+import { ParseTreeListener } from "./tree/ParseTreeListener.js";
+import { Printer } from "./utils/Printer.js";
 
 export declare abstract class Parser extends Recognizer<ParserATNSimulator> {
     public _input: TokenStream;
@@ -67,5 +68,3 @@ export declare abstract class Parser extends Recognizer<ParserATNSimulator> {
     public getSourceName(): string;
     public setTrace(trace: boolean): void;
 }
-
-export default Parser;

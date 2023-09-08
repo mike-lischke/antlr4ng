@@ -1,19 +1,18 @@
-/**
- * Copyright 2016 The ANTLR Project. All rights reserved.
- * Licensed under the BSD-3-Clause license. See LICENSE file in the project root for license information.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
-import Recognizer from "../../Recognizer.js";
-import Token from "../../Token.js";
-import LexerATNSimulator from "../../atn/LexerATNSimulator.js";
-import ErrorListener from "../../error/ErrorListener.js";
-import RecognitionException from "../../error/RecognitionException.js";
+import { Recognizer } from "../../Recognizer.js";
+import { Token } from "../../Token.js";
+import { LexerATNSimulator } from "../../atn/LexerATNSimulator.js";
+import { BaseErrorListener } from "../../error/BaseErrorListener.js";
+import { RecognitionException } from "../../error/RecognitionException.js";
 
-export class XPathLexerErrorListener extends ErrorListener<LexerATNSimulator> {
+export class XPathLexerErrorListener extends BaseErrorListener<LexerATNSimulator> {
     public syntaxError<T extends Token>(
         recognizer: Recognizer<LexerATNSimulator>, offendingSymbol: T | undefined,
         line: number, charPositionInLine: number, msg: string,
         e: RecognitionException | null): void;
 }
-
-export default XPathLexerErrorListener;

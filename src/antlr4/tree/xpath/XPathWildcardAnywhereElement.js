@@ -1,11 +1,12 @@
-/**
- * Copyright 2016 The ANTLR Project.All rights reserved.
- * Licensed under the BSD - 3 - Clause license.See LICENSE file in the project root for license information.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
-import Trees from "../Trees.js";
-import XPath from "./XPath.js";
-import XPathElement from "./XPathElement.js";
+import { Trees } from "../Trees.js";
+import { XPath } from "./XPath.js";
+import { XPathElement } from "./XPathElement.js";
 
 export class XPathWildcardAnywhereElement extends XPathElement {
     constructor() {
@@ -21,5 +22,3 @@ export class XPathWildcardAnywhereElement extends XPathElement {
         return Trees.descendants(t);
     }
 }
-
-export default XPathWildcardAnywhereElement;

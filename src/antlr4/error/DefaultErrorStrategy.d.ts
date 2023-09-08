@@ -1,14 +1,15 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import ErrorStrategy from "./ErrorStrategy.js";
-import RecognitionException from "./RecognitionException.js";
-import Parser from "../Parser.js";
-import Token from "../Token.js";
+import { ErrorStrategy } from "./ErrorStrategy.js";
+import { RecognitionException } from "./RecognitionException.js";
+import { Parser } from "../Parser.js";
+import { Token } from "../Token.js";
 
-export declare class DefaultErrorStrategy implements ErrorStrategy {
+export class DefaultErrorStrategy implements ErrorStrategy {
     public recover(recognizer: Parser, e: RecognitionException): void;
     public recoverInline(recognizer: Parser): Token;
     public reportError(recognizer: Parser, e: RecognitionException): void;
@@ -19,5 +20,3 @@ export declare class DefaultErrorStrategy implements ErrorStrategy {
     public beginErrorCondition(recognizer: Parser): void;
     public getMissingSymbol(recognizer: Parser): Token;
 }
-
-export default DefaultErrorStrategy;

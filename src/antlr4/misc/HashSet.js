@@ -1,14 +1,16 @@
-/* Copyright (c) 2012-2022 The ANTLR Project Contributors. All rights reserved.
- * Use is of this file is governed by the BSD 3-clause license that
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-import standardHashCodeFunction from "../utils/standardHashCodeFunction.js";
-import standardEqualsFunction from "../utils/standardEqualsFunction.js";
-import arrayToString from "../utils/arrayToString.js";
+
+import { standardHashCodeFunction } from "../utils/standardHashCodeFunction.js";
+import { standardEqualsFunction } from "../utils/standardEqualsFunction.js";
+import { arrayToString } from "../utils/arrayToString.js";
 
 const HASH_KEY_PREFIX = "h-";
 
-export default class HashSet {
+export class HashSet {
 
     constructor(hashFunction, equalsFunction) {
         this.data = {};

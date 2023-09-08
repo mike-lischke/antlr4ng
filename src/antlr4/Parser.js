@@ -1,18 +1,19 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import Token from './Token.js';
-import TerminalNode from './tree/TerminalNode.js';
-import ErrorNode from './tree/ErrorNode.js';
-import Recognizer from './Recognizer.js';
-import DefaultErrorStrategy from './error/DefaultErrorStrategy.js';
-import ATNDeserializer from './atn/ATNDeserializer.js';
-import ATNDeserializationOptions from './atn/ATNDeserializationOptions.js';
-import TraceListener from "./TraceListener.js";
+import { Token } from './Token.js';
+import { TerminalNode } from './tree/TerminalNode.js';
+import { ErrorNode } from './tree/ErrorNode.js';
+import { Recognizer } from './Recognizer.js';
+import { DefaultErrorStrategy } from './error/DefaultErrorStrategy.js';
+import { ATNDeserializer } from './atn/ATNDeserializer.js';
+import { ATNDeserializationOptions } from './atn/ATNDeserializationOptions.js';
+import { TraceListener } from "./TraceListener.js";
 
-export default class Parser extends Recognizer {
+export class Parser extends Recognizer {
     /**
      * this is all the parsing support code essentially; most of it is error
      * recovery stuff.

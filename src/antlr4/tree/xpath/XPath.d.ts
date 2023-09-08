@@ -1,12 +1,13 @@
-/**
- * Copyright 2016 The ANTLR Project. All rights reserved.
- * Licensed under the BSD-3-Clause license. See LICENSE file in the project root for license information.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
-import Parser from "../../Parser.js";
-import ParseTree from "../ParseTree.js";
-import Token from "../../Token.js";
-import XPathElement from "./XPathElement.js";
+import { Parser } from "../../Parser.js";
+import { ParseTree } from "../ParseTree.js";
+import { Token } from "../../Token.js";
+import { XPathElement } from "./XPathElement.js";
 
 /**
  * Represent a subset of XPath XML path syntax for use in identifying nodes in
@@ -79,5 +80,3 @@ export class XPath {
     protected getXPathElement(wordToken: Token, anywhere: boolean): XPathElement;
 
 }
-
-export default XPath;

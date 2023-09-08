@@ -1,16 +1,18 @@
-/* Copyright (c) 2012-2022 The ANTLR Project Contributors. All rights reserved.
- * Use is of this file is governed by the BSD 3-clause license that
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-import PredictionContext from './PredictionContext.js';
-import HashCode from "../misc/HashCode.js";
 
-export default class SingletonPredictionContext extends PredictionContext {
+import { PredictionContext } from './PredictionContext.js';
+import { HashCode } from "../misc/HashCode.js";
+
+export class SingletonPredictionContext extends PredictionContext {
 
     constructor(parent, returnState) {
         let hashCode = 0;
         const hash = new HashCode();
-        if(parent !== null) {
+        if (parent !== null) {
             hash.update(parent, returnState);
         } else {
             hash.update(1);
@@ -37,10 +39,10 @@ export default class SingletonPredictionContext extends PredictionContext {
         } else if (this.hashCode() !== other.hashCode()) {
             return false; // can't be same if hash is different
         } else {
-            if(this.returnState !== other.returnState)
+            if (this.returnState !== other.returnState)
                 return false;
-            else if(this.parentCtx==null)
-                return other.parentCtx==null
+            else if (this.parentCtx == null)
+                return other.parentCtx == null;
             else
                 return this.parentCtx.equals(other.parentCtx);
         }
@@ -59,7 +61,7 @@ export default class SingletonPredictionContext extends PredictionContext {
         }
     }
 
-    get length(){
+    get length() {
         return 1;
     }
 
@@ -72,4 +74,3 @@ export default class SingletonPredictionContext extends PredictionContext {
         }
     }
 }
-

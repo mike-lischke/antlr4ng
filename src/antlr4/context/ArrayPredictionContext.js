@@ -1,12 +1,14 @@
-/* Copyright (c) 2012-2022 The ANTLR Project Contributors. All rights reserved.
- * Use is of this file is governed by the BSD 3-clause license that
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-import PredictionContext from "./PredictionContext.js";
-import equalArrays from "../utils/equalArrays.js";
-import HashCode from "../misc/HashCode.js";
 
-export default class ArrayPredictionContext extends PredictionContext {
+import { PredictionContext } from "./PredictionContext.js";
+import { equalArrays } from "../utils/equalArrays.js";
+import { HashCode } from "../misc/HashCode.js";
+
+export class ArrayPredictionContext extends PredictionContext {
 
     constructor(parents, returnStates) {
         /**
@@ -75,8 +77,7 @@ export default class ArrayPredictionContext extends PredictionContext {
         }
     }
 
-    get length(){
+    get length() {
         return this.returnStates.length;
     }
 }
-

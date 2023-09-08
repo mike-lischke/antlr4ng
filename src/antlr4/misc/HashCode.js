@@ -1,10 +1,12 @@
-/* Copyright (c) 2012-2022 The ANTLR Project Contributors. All rights reserved.
- * Use is of this file is governed by the BSD 3-clause license that
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
+
 import { stringHashCode } from "../utils/stringHashCode.js";
 
-export default class HashCode {
+export class HashCode {
 
     constructor() {
         this.count = 0;
@@ -12,15 +14,15 @@ export default class HashCode {
     }
 
     update() {
-        for(let i=0;i<arguments.length;i++) {
+        for (let i = 0; i < arguments.length; i++) {
             const value = arguments[i];
             if (value == null)
                 continue;
-            if(Array.isArray(value))
+            if (Array.isArray(value))
                 this.update.apply(this, value);
             else {
                 let k = 0;
-                switch (typeof(value)) {
+                switch (typeof (value)) {
                     case 'undefined':
                     case 'function':
                         continue;
@@ -32,10 +34,10 @@ export default class HashCode {
                         k = stringHashCode(value);
                         break;
                     default:
-                        if(value.updateHashCode)
+                        if (value.updateHashCode)
                             value.updateHashCode(this);
                         else
-                            console.log("No updateHashCode for " + value.toString())
+                            console.log("No updateHashCode for " + value.toString());
                         continue;
                 }
                 k = k * 0xCC9E2D51;

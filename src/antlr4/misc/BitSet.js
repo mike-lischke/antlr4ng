@@ -1,11 +1,13 @@
-/* Copyright (c) 2012-2022 The ANTLR Project Contributors. All rights reserved.
- * Use is of this file is governed by the BSD 3-clause license that
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-import HashCode from "./HashCode.js";
-import equalArrays from "../utils/equalArrays.js";
 
-export default class BitSet {
+import { HashCode } from "./HashCode.js";
+import { equalArrays } from "../utils/equalArrays.js";
+
+export class BitSet {
 
     constructor() {
         this.data = [];
@@ -47,7 +49,7 @@ export default class BitSet {
         return "{" + this.values().join(", ") + "}";
     }
 
-    get length(){
+    get length() {
         return this.values().length;
     }
 }

@@ -1,35 +1,36 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import ATN from './ATN.js';
-import ATNState from '../state/ATNState.js';
-import RuleStopState from '../state/RuleStopState.js';
-import ATNConfig from './ATNConfig.js';
-import ATNConfigSet from './ATNConfigSet.js';
-import Token from '../Token.js';
-import DFAState from '../dfa/DFAState.js';
-import PredPrediction from '../dfa/PredPrediction.js';
-import ATNSimulator from './ATNSimulator.js';
-import PredictionMode from './PredictionMode.js';
+import { ATN } from './ATN.js';
+import { ATNState } from '../state/ATNState.js';
+import { RuleStopState } from '../state/RuleStopState.js';
+import { ATNConfig } from './ATNConfig.js';
+import { ATNConfigSet } from './ATNConfigSet.js';
+import { Token } from '../Token.js';
+import { DFAState } from '../dfa/DFAState.js';
+import { PredPrediction } from '../dfa/PredPrediction.js';
+import { ATNSimulator } from './ATNSimulator.js';
+import { PredictionMode } from './PredictionMode.js';
 import { RuleContext } from '../context/RuleContext.js';
-import SemanticContext from './SemanticContext.js';
-import PredictionContext from '../context/PredictionContext.js';
-import Interval from '../misc/Interval.js';
-import Transition from '../transition/Transition.js';
-import SetTransition from '../transition/SetTransition.js';
-import NotSetTransition from '../transition/NotSetTransition.js';
-import RuleTransition from '../transition/RuleTransition.js';
-import ActionTransition from '../transition/ActionTransition.js';
-import NoViableAltException from '../error/NoViableAltException.js';
-import SingletonPredictionContext from '../context/SingletonPredictionContext.js';
+import { SemanticContext } from './SemanticContext.js';
+import { PredictionContext } from '../context/PredictionContext.js';
+import { Interval } from '../misc/Interval.js';
+import { Transition } from '../transition/Transition.js';
+import { SetTransition } from '../transition/SetTransition.js';
+import { NotSetTransition } from '../transition/NotSetTransition.js';
+import { RuleTransition } from '../transition/RuleTransition.js';
+import { ActionTransition } from '../transition/ActionTransition.js';
+import { NoViableAltException } from '../error/NoViableAltException.js';
+import { SingletonPredictionContext } from '../context/SingletonPredictionContext.js';
 import { predictionContextFromRuleContext } from '../context/PredictionContextUtils.js';
-import AtomTransition from "../transition/AtomTransition.js";
-import arrayToString from "../utils/arrayToString.js";
-import BitSet from "../misc/BitSet.js";
-import DoubleDict from "../utils/DoubleDict.js";
-import HashSet from "../misc/HashSet.js";
+import { AtomTransition } from "../transition/AtomTransition.js";
+import { arrayToString } from "../utils/arrayToString.js";
+import { BitSet } from "../misc/BitSet.js";
+import { DoubleDict } from "../utils/DoubleDict.js";
+import { HashSet } from "../misc/HashSet.js";
 
 /**
  * The embodiment of the adaptive LL(*), ALL(*), parsing strategy.
@@ -258,7 +259,7 @@ import HashSet from "../misc/HashSet.js";
  * both SLL and LL parsing. Erroneous input will therefore require 2 passes over
  * the input.</p>
  */
-export default class ParserATNSimulator extends ATNSimulator {
+export class ParserATNSimulator extends ATNSimulator {
     constructor(parser, atn, decisionToDFA, sharedContextCache) {
         super(atn, sharedContextCache);
         this.parser = parser;

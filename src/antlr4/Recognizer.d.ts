@@ -1,15 +1,16 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import Token from "./Token.js";
-import Vocabulary from "./Vocabulary.js";
-import ATN from "./atn/ATN.js";
-import ATNSimulator from "./atn/ATNSimulator.js";
-import RuleContext from "./context/RuleContext.js";
-import ErrorListener from "./error/ErrorListener.js";
-import RecognitionException from "./error/RecognitionException.js";
+import { Token } from "./Token.js";
+import { Vocabulary } from "./Vocabulary.js";
+import { ATN } from "./atn/ATN.js";
+import { ATNSimulator } from "./atn/ATNSimulator.js";
+import { RuleContext } from "./context/RuleContext.js";
+import { BaseErrorListener } from "./error/BaseErrorListener.js";
+import { RecognitionException } from "./error/RecognitionException.js";
 
 export declare abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -17,7 +18,7 @@ export declare abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
 
     public _interp: ATNInterpreter;
 
-    public addErrorListener(listener: ErrorListener<ATNInterpreter>): void;
+    public addErrorListener(listener: BaseErrorListener<ATNInterpreter>): void;
     public removeErrorListeners(): void;
 
     public getLiteralNames(): string[];
@@ -45,5 +46,3 @@ export declare abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
     public abstract get ruleNames(): string[];
     public abstract getVocabulary(): Vocabulary;
 }
-
-export default Recognizer;

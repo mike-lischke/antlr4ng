@@ -13,8 +13,7 @@
     ],
     "ignorePatterns": [
         "src/**/*.js",
-        "spec/**/*.cjs",
-        "spec/**/*.mjs",
+        "spec/**/*.*js",
         "dist/**/*",
         "jest.config.ts"
     ],

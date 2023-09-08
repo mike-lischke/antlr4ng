@@ -1,21 +1,22 @@
-﻿/**
- * Copyright 2016 The ANTLR Project. All rights reserved.
- * Licensed under the BSD-3-Clause license. See LICENSE file in the project root for license information.
+﻿/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
-import CharStreams from "../../CharStreams.js";
-import CommonTokenStream from "../../CommonTokenStream.js";
-import Token from "../../Token.js";
-import XPathLexer from "./XPathLexer.js";
-import XPathLexerErrorListener from "./XPathLexerErrorListener.js";
-import XPathRuleAnywhereElement from "./XPathRuleAnywhereElement.js";
-import XPathRuleElement from "./XPathRuleElement.js";
-import XPathTokenAnywhereElement from "./XPathTokenAnywhereElement.js";
-import XPathTokenElement from "./XPathTokenElement.js";
-import XPathWildcardAnywhereElement from "./XPathWildcardAnywhereElement.js";
-import XPathWildcardElement from "./XPathWildcardElement.js";
-import ParserRuleContext from "../../context/ParserRuleContext.js";
-import LexerNoViableAltException from "../../error/LexerNoViableAltException.js";
+import { CharStreams } from "../../CharStreams.js";
+import { CommonTokenStream } from "../../CommonTokenStream.js";
+import { Token } from "../../Token.js";
+import { XPathLexer } from "./XPathLexer.js";
+import { XPathLexerErrorListener } from "./XPathLexerErrorListener.js";
+import { XPathRuleAnywhereElement } from "./XPathRuleAnywhereElement.js";
+import { XPathRuleElement } from "./XPathRuleElement.js";
+import { XPathTokenAnywhereElement } from "./XPathTokenAnywhereElement.js";
+import { XPathTokenElement } from "./XPathTokenElement.js";
+import { XPathWildcardAnywhereElement } from "./XPathWildcardAnywhereElement.js";
+import { XPathWildcardElement } from "./XPathWildcardElement.js";
+import { ParserRuleContext } from "../../context/ParserRuleContext.js";
+import { LexerNoViableAltException } from "../../error/LexerNoViableAltException.js";
 
 /**
  * Represent a subset of XPath XML path syntax for use in identifying nodes in
@@ -217,5 +218,3 @@ export class XPath {
         return work;
     }
 }
-
-export default XPath;

@@ -1,11 +1,13 @@
-/* Copyright (c) 2012-2022 The ANTLR Project Contributors. All rights reserved.
- * Use is of this file is governed by the BSD 3-clause license that
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-import IntervalSet from "../misc/IntervalSet.js";
-import Transition from "./Transition.js";
 
-export default class RangeTransition extends Transition {
+import { IntervalSet } from "../misc/IntervalSet.js";
+import { Transition } from "./Transition.js";
+
+export class RangeTransition extends Transition {
     constructor(target, start, stop) {
         super(target);
         this.serializationType = Transition.RANGE;

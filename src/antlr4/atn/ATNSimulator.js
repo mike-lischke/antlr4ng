@@ -1,14 +1,15 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import DFAState from '../dfa/DFAState.js';
-import ATNConfigSet from './ATNConfigSet.js';
+import { DFAState } from '../dfa/DFAState.js';
+import { ATNConfigSet } from './ATNConfigSet.js';
 import { getCachedPredictionContext } from '../context/PredictionContextUtils.js';
-import HashMap from "../misc/HashMap.js";
+import { HashMap } from "../misc/HashMap.js";
 
-export default class ATNSimulator {
+export class ATNSimulator {
     constructor(atn, sharedContextCache) {
         /**
          * The context cache maps all PredictionContext objects that are ==
@@ -37,7 +38,7 @@ export default class ATNSimulator {
     }
 
     getCachedContext(context) {
-        if (this.sharedContextCache ===null) {
+        if (this.sharedContextCache === null) {
             return context;
         }
         const visited = new HashMap();
@@ -47,4 +48,3 @@ export default class ATNSimulator {
 
 // Must distinguish between missing edge and edge we know leads nowhere///
 ATNSimulator.ERROR = new DFAState(0x7FFFFFFF, new ATNConfigSet());
-

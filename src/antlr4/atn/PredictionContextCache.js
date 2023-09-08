@@ -1,16 +1,18 @@
-/* Copyright (c) 2012-2022 The ANTLR Project Contributors. All rights reserved.
- * Use is of this file is governed by the BSD 3-clause license that
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-import PredictionContext from "../context/PredictionContext.js";
-import HashMap from "../misc/HashMap.js";
+
+import { PredictionContext } from "../context/PredictionContext.js";
+import { HashMap } from "../misc/HashMap.js";
 
 /**
  * Used to cache {@link PredictionContext} objects. Its used for the shared
  * context cash associated with contexts in DFA states. This cache
  * can be used for both lexers and parsers.
  */
-export default class PredictionContextCache {
+export class PredictionContextCache {
 
     constructor() {
         this.cache = new HashMap();
@@ -37,7 +39,7 @@ export default class PredictionContextCache {
         return this.cache.get(ctx) || null;
     }
 
-    get length(){
+    get length() {
         return this.cache.length;
     }
 }

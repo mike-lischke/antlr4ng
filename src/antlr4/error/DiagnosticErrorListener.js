@@ -1,11 +1,12 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import ErrorListener from './ErrorListener.js';
-import Interval from '../misc/Interval.js';
-import BitSet from "../misc/BitSet.js";
+import { BaseErrorListener } from './BaseErrorListener.js';
+import { Interval } from '../misc/Interval.js';
+import { BitSet } from "../misc/BitSet.js";
 
 /**
  * This implementation of {@link ANTLRErrorListener} can be used to identify
@@ -26,7 +27,7 @@ import BitSet from "../misc/BitSet.js";
  *  this situation occurs.</li>
  *  </ul>
  */
-export default class DiagnosticErrorListener extends ErrorListener {
+export class DiagnosticErrorListener extends BaseErrorListener {
     constructor(exactOnly) {
         super();
         exactOnly = exactOnly || true;

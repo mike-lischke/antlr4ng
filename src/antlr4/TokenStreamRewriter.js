@@ -1,5 +1,11 @@
-import Token from "./Token.js";
-import Interval from "./misc/Interval.js";
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
+ */
+
+import { Token } from "./Token.js";
+import { Interval } from "./misc/Interval.js";
 
 /**
  * @typedef {import("./CommonTokenStream").default} CommonTokenStream
@@ -7,7 +13,7 @@ import Interval from "./misc/Interval.js";
  * @typedef {unknown} Text
  */
 
-export default class TokenStreamRewriter {
+export class TokenStreamRewriter {
     // eslint-disable-next-line no-undef
     static DEFAULT_PROGRAM_NAME = "default";
 
@@ -387,7 +393,7 @@ class InsertBeforeOp extends RewriteOperation {
         if (this.text) {
             buf.push(this.text.toString());
         }
-        
+
         if (this.tokens.get(this.index).type !== Token.EOF) {
             buf.push(String(this.tokens.get(this.index).text));
         }

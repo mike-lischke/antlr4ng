@@ -1,10 +1,12 @@
-/* Copyright (c) 2012-2022 The ANTLR Project Contributors. All rights reserved.
- * Use is of this file is governed by the BSD 3-clause license that
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-import InputMismatchException from "./InputMismatchException.js";
-import ParseCancellationException from "./ParseCancellationException.js";
-import DefaultErrorStrategy from "./DefaultErrorStrategy.js";
+
+import { InputMismatchException } from "./InputMismatchException.js";
+import { ParseCancellationException } from "./ParseCancellationException.js";
+import { DefaultErrorStrategy } from "./DefaultErrorStrategy.js";
 
 /**
  * This implementation of {@link ANTLRErrorStrategy} responds to syntax errors
@@ -34,7 +36,7 @@ import DefaultErrorStrategy from "./DefaultErrorStrategy.js";
  *
  * @see Parser//setErrorHandler(ANTLRErrorStrategy)
  * */
-export default class BailErrorStrategy extends DefaultErrorStrategy {
+export class BailErrorStrategy extends DefaultErrorStrategy {
 
     constructor() {
         super();
@@ -47,7 +49,7 @@ export default class BailErrorStrategy extends DefaultErrorStrategy {
      * original {@link RecognitionException}.
      */
     recover(recognizer, e) {
-        let context = recognizer._ctx
+        let context = recognizer._ctx;
         while (context !== null) {
             context.exception = e;
             context = context.parentCtx;
@@ -63,7 +65,7 @@ export default class BailErrorStrategy extends DefaultErrorStrategy {
         this.recover(recognizer, new InputMismatchException(recognizer));
     }
 
-// Make sure we don't attempt to recover from problems in subrules.//
+    // Make sure we don't attempt to recover from problems in subrules.//
     sync(recognizer) {
         // pass
     }

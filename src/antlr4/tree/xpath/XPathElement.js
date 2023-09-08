@@ -1,6 +1,7 @@
 /*
- * Copyright 2016 The ANTLR Project. All rights reserved.
- * Licensed under the BSD-3-Clause license. See LICENSE file in the project root for license information.
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
+ * can be found in the LICENSE.txt file in the project root.
  */
 
 export class XPathElement {
@@ -25,5 +26,3 @@ export class XPathElement {
         return className + "[" + inv + this.nodeName + "]";
     }
 }
-
-export default XPathElement;

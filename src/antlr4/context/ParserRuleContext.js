@@ -1,13 +1,14 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
 import { RuleContext } from './RuleContext.js';
-import TerminalNode from '../tree/TerminalNode.js';
-import TerminalNodeImpl from '../tree/TerminalNodeImpl.js';
-import ErrorNodeImpl from '../tree/ErrorNodeImpl.js';
-import Interval from "../misc/Interval.js";
+import { TerminalNode } from '../tree/TerminalNode.js';
+import { TerminalNodeImpl } from '../tree/TerminalNodeImpl.js';
+import { ErrorNodeImpl } from '../tree/ErrorNodeImpl.js';
+import { Interval } from "../misc/Interval.js";
 
 /**
  * A rule invocation record for parsing.
@@ -33,7 +34,7 @@ import Interval from "../misc/Interval.js";
  *  group values such as this aggregate.  The getters/setters are there to
  *  satisfy the superclass interface.
  */
-export default class ParserRuleContext extends RuleContext {
+export class ParserRuleContext extends RuleContext {
 
     constructor(parent, invokingStateNumber) {
         super(parent, invokingStateNumber);

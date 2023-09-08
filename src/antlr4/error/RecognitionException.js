@@ -1,4 +1,5 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -10,9 +11,7 @@
  *  in the input, where it is in the ATN, the rule invocation stack,
  *  and what kind of problem occurred.
  */
-
-export default class RecognitionException extends Error {
-
+export class RecognitionException extends Error {
     constructor(params) {
         super(params.message);
         if (Error.captureStackTrace)
@@ -21,12 +20,14 @@ export default class RecognitionException extends Error {
         this.recognizer = params.recognizer;
         this.input = params.input;
         this.ctx = params.ctx;
+
         /**
          * The current {@link Token} when an error occurred. Since not all streams
          * support accessing symbols by index, we have to track the {@link Token}
          * instance itself
         */
         this.offendingToken = null;
+
         /**
          * Get the ATN state number the parser was in at the time the error
          * occurred. For {@link NoViableAltException} and
@@ -35,7 +36,7 @@ export default class RecognitionException extends Error {
          * edge we couldn't match.
          */
         this.offendingState = -1;
-        if (this.recognizer!==null) {
+        if (this.recognizer !== null) {
             this.offendingState = this.recognizer.state;
         }
     }
@@ -51,7 +52,7 @@ export default class RecognitionException extends Error {
      * state in the ATN, or {@code null} if the information is not available.
      */
     getExpectedTokens() {
-        if (this.recognizer!==null) {
+        if (this.recognizer !== null) {
             return this.recognizer.atn.getExpectedTokens(this.offendingState, this.ctx);
         } else {
             return null;
@@ -63,6 +64,3 @@ export default class RecognitionException extends Error {
         return this.message;
     }
 }
-
-
-

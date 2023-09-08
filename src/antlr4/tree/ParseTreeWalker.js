@@ -1,12 +1,13 @@
-/* Copyright (c) 2012-2022 The ANTLR Project Contributors. All rights reserved.
- * Use is of this file is governed by the BSD 3-clause license that
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-import TerminalNode from "./TerminalNode.js";
-import ErrorNode from "./ErrorNode.js";
 
-export default class ParseTreeWalker {
+import { TerminalNode } from "./TerminalNode.js";
+import { ErrorNode } from "./ErrorNode.js";
 
+export class ParseTreeWalker {
     /**
      * Performs a walk on the given parse tree starting at the root and going down recursively
      * with depth-first search. On each node, {@link ParseTreeWalker//enterRule} is called before

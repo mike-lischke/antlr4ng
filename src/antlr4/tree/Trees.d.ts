@@ -1,10 +1,11 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import ParseTree from "./ParseTree.js";
-import Parser from "../Parser.js";
+import { ParseTree } from "./ParseTree.js";
+import { Parser } from "../Parser.js";
 
 /** A set of utility routines useful for all kinds of ANTLR trees. */
 export declare class Trees {
@@ -36,5 +37,3 @@ export declare class Trees {
 
     public static descendants(t: ParseTree): ParseTree[];
 }
-
-export default Trees;

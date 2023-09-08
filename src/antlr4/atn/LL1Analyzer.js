@@ -1,23 +1,24 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import Token from '../Token.js';
-import ATNConfig from './ATNConfig.js';
-import IntervalSet from '../misc/IntervalSet.js';
-import RuleStopState from '../state/RuleStopState.js';
-import RuleTransition from '../transition/RuleTransition.js';
-import NotSetTransition from '../transition/NotSetTransition.js';
-import WildcardTransition from '../transition/WildcardTransition.js';
-import AbstractPredicateTransition from './AbstractPredicateTransition.js';
+import { Token } from '../Token.js';
+import { ATNConfig } from './ATNConfig.js';
+import { IntervalSet } from '../misc/IntervalSet.js';
+import { RuleStopState } from '../state/RuleStopState.js';
+import { RuleTransition } from '../transition/RuleTransition.js';
+import { NotSetTransition } from '../transition/NotSetTransition.js';
+import { WildcardTransition } from '../transition/WildcardTransition.js';
+import { AbstractPredicateTransition } from './AbstractPredicateTransition.js';
 import { predictionContextFromRuleContext } from '../context/PredictionContextUtils.js';
-import PredictionContext from '../context/PredictionContext.js';
-import SingletonPredictionContext from '../context/SingletonPredictionContext.js';
-import BitSet from "../misc/BitSet.js";
-import HashSet from "../misc/HashSet.js";
+import { PredictionContext } from '../context/PredictionContext.js';
+import { SingletonPredictionContext } from '../context/SingletonPredictionContext.js';
+import { BitSet } from "../misc/BitSet.js";
+import { HashSet } from "../misc/HashSet.js";
 
-export default class LL1Analyzer {
+export class LL1Analyzer {
     constructor(atn) {
         this.atn = atn;
     }
@@ -38,15 +39,15 @@ export default class LL1Analyzer {
         }
         const count = s.transitions.length;
         const look = [];
-        for(let alt=0; alt< count; alt++) {
+        for (let alt = 0; alt < count; alt++) {
             look[alt] = new IntervalSet();
             const lookBusy = new HashSet();
             const seeThruPreds = false; // fail to get lookahead upon pred
             this._LOOK(s.transition(alt).target, null, PredictionContext.EMPTY,
-                  look[alt], lookBusy, new BitSet(), seeThruPreds, false);
+                look[alt], lookBusy, new BitSet(), seeThruPreds, false);
             // Wipe out lookahead for this alternative if we found nothing
             // or we had a predicate when we !seeThruPreds
-            if (look[alt].length===0 || look[alt].contains(LL1Analyzer.HIT_PRED)) {
+            if (look[alt].length === 0 || look[alt].contains(LL1Analyzer.HIT_PRED)) {
                 look[alt] = null;
             }
         }
@@ -75,7 +76,7 @@ export default class LL1Analyzer {
         const r = new IntervalSet();
         const seeThruPreds = true; // ignore preds; get all lookahead
         ctx = ctx || null;
-        const lookContext = ctx!==null ? predictionContextFromRuleContext(s.atn, ctx) : null;
+        const lookContext = ctx !== null ? predictionContextFromRuleContext(s.atn, ctx) : null;
         this._LOOK(s, stopState, lookContext, r, new HashSet(), new BitSet(), seeThruPreds, true);
         return r;
     }
@@ -110,14 +111,14 @@ export default class LL1Analyzer {
      * outermost context is reached. This parameter has no effect if {@code ctx}
      * is {@code null}.
      */
-    _LOOK(s, stopState , ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF) {
-        const c = new ATNConfig({state:s, alt:0, context: ctx}, null);
+    _LOOK(s, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF) {
+        const c = new ATNConfig({ state: s, alt: 0, context: ctx }, null);
         if (lookBusy.has(c)) {
             return;
         }
         lookBusy.add(c);
         if (s === stopState) {
-            if (ctx ===null) {
+            if (ctx === null) {
                 look.addOne(Token.EPSILON);
                 return;
             } else if (ctx.isEmpty() && addEOF) {
@@ -125,8 +126,8 @@ export default class LL1Analyzer {
                 return;
             }
         }
-        if (s instanceof RuleStopState ) {
-            if (ctx ===null) {
+        if (s instanceof RuleStopState) {
+            if (ctx === null) {
                 look.addOne(Token.EPSILON);
                 return;
             } else if (ctx.isEmpty() && addEOF) {
@@ -142,7 +143,7 @@ export default class LL1Analyzer {
                         const returnState = this.atn.states[ctx.getReturnState(i)];
                         this._LOOK(returnState, stopState, ctx.getParent(i), look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
                     }
-                }finally {
+                } finally {
                     if (removed) {
                         calledRuleStack.add(s.ruleIndex);
                     }
@@ -150,7 +151,7 @@ export default class LL1Analyzer {
                 return;
             }
         }
-        for(let j=0; j<s.transitions.length; j++) {
+        for (let j = 0; j < s.transitions.length; j++) {
             const t = s.transitions[j];
             if (t.constructor === RuleTransition) {
                 if (calledRuleStack.has(t.target.ruleIndex)) {
@@ -163,16 +164,16 @@ export default class LL1Analyzer {
                 } finally {
                     calledRuleStack.remove(t.target.ruleIndex);
                 }
-            } else if (t instanceof AbstractPredicateTransition ) {
+            } else if (t instanceof AbstractPredicateTransition) {
                 if (seeThruPreds) {
                     this._LOOK(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
                 } else {
                     look.addOne(LL1Analyzer.HIT_PRED);
                 }
-            } else if( t.isEpsilon) {
+            } else if (t.isEpsilon) {
                 this._LOOK(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
             } else if (t.constructor === WildcardTransition) {
-                look.addRange( Token.MIN_USER_TOKEN_TYPE, this.atn.maxTokenType );
+                look.addRange(Token.MIN_USER_TOKEN_TYPE, this.atn.maxTokenType);
             } else {
                 let set = t.label;
                 if (set !== null) {

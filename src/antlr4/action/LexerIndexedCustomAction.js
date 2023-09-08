@@ -1,7 +1,9 @@
-/* Copyright (c) 2012-2022 The ANTLR Project Contributors. All rights reserved.
- * Use is of this file is governed by the BSD 3-clause license that
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
+
 /**
  * This implementation of {@link LexerAction} is used for tracking input offsets
  * for position-dependent actions within a {@link LexerActionExecutor}.
@@ -24,10 +26,10 @@
  * @param action The lexer action to execute at a particular offset in the
  * input {@link CharStream}.
  */
-import LexerAction from "./LexerAction.js";
 
+import { LexerAction } from "./LexerAction.js";
 
-export default class LexerIndexedCustomAction extends LexerAction {
+export class LexerIndexedCustomAction extends LexerAction {
     constructor(offset, action) {
         super(action.actionType);
         this.offset = offset;
@@ -51,7 +53,7 @@ export default class LexerIndexedCustomAction extends LexerAction {
     equals(other) {
         if (this === other) {
             return true;
-        } else if (! (other instanceof LexerIndexedCustomAction)) {
+        } else if (!(other instanceof LexerIndexedCustomAction)) {
             return false;
         } else {
             return this.offset === other.offset && this.action === other.action;

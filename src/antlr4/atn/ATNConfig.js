@@ -1,33 +1,34 @@
-/* Copyright (c) 2012-2022 The ANTLR Project. All rights reserved.
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import SemanticContext from './SemanticContext.js';
-import HashCode from "../misc/HashCode.js";
+import { SemanticContext } from './SemanticContext.js';
+import { HashCode } from "../misc/HashCode.js";
 
 function checkParams(params, isCfg) {
-	if(params===null) {
-		const result = { state:null, alt:null, context:null, semanticContext:null };
-		if(isCfg) {
-			result.reachesIntoOuterContext = 0;
-		}
-		return result;
-	} else {
-		const props = {};
-		props.state = params.state || null;
-		props.alt = (params.alt === undefined) ? null : params.alt;
-		props.context = params.context || null;
-		props.semanticContext = params.semanticContext || null;
-		if(isCfg) {
-			props.reachesIntoOuterContext = params.reachesIntoOuterContext || 0;
-			props.precedenceFilterSuppressed = params.precedenceFilterSuppressed || false;
-		}
-		return props;
-	}
+    if (params === null) {
+        const result = { state: null, alt: null, context: null, semanticContext: null };
+        if (isCfg) {
+            result.reachesIntoOuterContext = 0;
+        }
+        return result;
+    } else {
+        const props = {};
+        props.state = params.state || null;
+        props.alt = (params.alt === undefined) ? null : params.alt;
+        props.context = params.context || null;
+        props.semanticContext = params.semanticContext || null;
+        if (isCfg) {
+            props.reachesIntoOuterContext = params.reachesIntoOuterContext || 0;
+            props.precedenceFilterSuppressed = params.precedenceFilterSuppressed || false;
+        }
+        return props;
+    }
 }
 
-export default class ATNConfig {
+export class ATNConfig {
     /**
      * @param {Object} params A tuple: (ATN state, predicted alt, syntactic, semantic context).
      * The syntactic context is a graph-structured stack node whose
@@ -41,17 +42,17 @@ export default class ATNConfig {
         params = checkParams(params);
         config = checkParams(config, true);
         // The ATN state associated with this configuration///
-        this.state = params.state!==null ? params.state : config.state;
+        this.state = params.state !== null ? params.state : config.state;
         // What alt (or lexer rule) is predicted by this configuration///
-        this.alt = params.alt!==null ? params.alt : config.alt;
+        this.alt = params.alt !== null ? params.alt : config.alt;
         /**
          * The stack of invoking states leading to the rule/states associated
          * with this config.  We track only those contexts pushed during
          * execution of the ATN simulator
          */
-        this.context = params.context!==null ? params.context : config.context;
-        this.semanticContext = params.semanticContext!==null ? params.semanticContext :
-            (config.semanticContext!==null ? config.semanticContext : SemanticContext.NONE);
+        this.context = params.context !== null ? params.context : config.context;
+        this.semanticContext = params.semanticContext !== null ? params.semanticContext :
+            (config.semanticContext !== null ? config.semanticContext : SemanticContext.NONE);
         // TODO: make it a boolean then
         /**
          * We cannot execute predicates dependent upon local context unless
@@ -68,8 +69,8 @@ export default class ATNConfig {
     }
 
     checkContext(params, config) {
-        if((params.context===null || params.context===undefined) &&
-                (config===null || config.context===null || config.context===undefined)) {
+        if ((params.context === null || params.context === undefined) &&
+            (config === null || config.context === null || config.context === undefined)) {
             this.context = null;
         }
     }
@@ -92,14 +93,14 @@ export default class ATNConfig {
     equals(other) {
         if (this === other) {
             return true;
-        } else if (! (other instanceof ATNConfig)) {
+        } else if (!(other instanceof ATNConfig)) {
             return false;
         } else {
-            return this.state.stateNumber===other.state.stateNumber &&
-                this.alt===other.alt &&
-                (this.context===null ? other.context===null : this.context.equals(other.context)) &&
+            return this.state.stateNumber === other.state.stateNumber &&
+                this.alt === other.alt &&
+                (this.context === null ? other.context === null : this.context.equals(other.context)) &&
                 this.semanticContext.equals(other.semanticContext) &&
-                this.precedenceFilterSuppressed===other.precedenceFilterSuppressed;
+                this.precedenceFilterSuppressed === other.precedenceFilterSuppressed;
         }
     }
 
@@ -112,23 +113,23 @@ export default class ATNConfig {
     equalsForConfigSet(other) {
         if (this === other) {
             return true;
-        } else if (! (other instanceof ATNConfig)) {
+        } else if (!(other instanceof ATNConfig)) {
             return false;
         } else {
-            return this.state.stateNumber===other.state.stateNumber &&
-                this.alt===other.alt &&
+            return this.state.stateNumber === other.state.stateNumber &&
+                this.alt === other.alt &&
                 this.semanticContext.equals(other.semanticContext);
         }
     }
 
     toString() {
         return "(" + this.state + "," + this.alt +
-            (this.context!==null ? ",[" + this.context.toString() + "]" : "") +
+            (this.context !== null ? ",[" + this.context.toString() + "]" : "") +
             (this.semanticContext !== SemanticContext.NONE ?
-                    ("," + this.semanticContext.toString())
-                    : "") +
-            (this.reachesIntoOuterContext>0 ?
-                    (",up=" + this.reachesIntoOuterContext)
-                    : "") + ")";
+                ("," + this.semanticContext.toString())
+                : "") +
+            (this.reachesIntoOuterContext > 0 ?
+                (",up=" + this.reachesIntoOuterContext)
+                : "") + ")";
     }
 }

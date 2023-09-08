@@ -1,16 +1,18 @@
-/* Copyright (c) 2012-2022 The ANTLR Project Contributors. All rights reserved.
- * Use is of this file is governed by the BSD 3-clause license that
+/*
+ * Copyright (c) The ANTLR Project. All rights reserved.
+ * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
-import {default as LexerActionType } from "../atn/LexerActionType.js";
-import LexerAction from "./LexerAction.js";
+
+import { LexerActionType } from "../atn/LexerActionType.js";
+import { LexerAction } from "./LexerAction.js";
 
 /**
  * Implements the {@code type} lexer action by calling {@link Lexer//setType}
  * with the assigned type
  */
 
-export default class LexerTypeAction extends LexerAction {
+export class LexerTypeAction extends LexerAction {
     constructor(type) {
         super(LexerActionType.TYPE);
         this.type = type;
@@ -25,9 +27,9 @@ export default class LexerTypeAction extends LexerAction {
     }
 
     equals(other) {
-        if(this === other) {
+        if (this === other) {
             return true;
-        } else if (! (other instanceof LexerTypeAction)) {
+        } else if (!(other instanceof LexerTypeAction)) {
             return false;
         } else {
             return this.type === other.type;
@@ -38,4 +40,3 @@ export default class LexerTypeAction extends LexerAction {
         return "type(" + this.type + ")";
     }
 }
-

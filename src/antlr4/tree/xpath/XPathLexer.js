@@ -1,14 +1,14 @@
 // Generated from XPathLexer.g4 by ANTLR 4.13.0
 
-import Lexer from "../../Lexer.js";
-import Token from "../../Token.js";
-import Vocabulary from "../../Vocabulary.js";
-import ATNDeserializer from "../../atn/ATNDeserializer.js";
-import LexerATNSimulator from "../../atn/LexerATNSimulator.js";
-import PredictionContextCache from "../../atn/PredictionContextCache.js";
-import DFA from "../../dfa/DFA.js";
+import { Lexer } from "../../Lexer.js";
+import { Token } from "../../Token.js";
+import { Vocabulary } from "../../Vocabulary.js";
+import { ATNDeserializer } from "../../atn/ATNDeserializer.js";
+import { LexerATNSimulator } from "../../atn/LexerATNSimulator.js";
+import { PredictionContextCache } from "../../atn/PredictionContextCache.js";
+import { DFA } from "../../dfa/DFA.js";
 
-export default class XPathLexer extends Lexer {
+export class XPathLexer extends Lexer {
     static TOKEN_REF = 1;
     static RULE_REF = 2;
     static ANYWHERE = 3;
