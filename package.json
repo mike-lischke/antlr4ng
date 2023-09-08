@@ -1,6 +1,6 @@
 {
     "name": "antlr4ng",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "type": "module",
     "description": "Alternative JavaScript/TypeScript runtime for ANTLR4",
     "browser": "dist/antlr4.web.mjs",
