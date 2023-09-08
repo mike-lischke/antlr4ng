@@ -1,12 +1,12 @@
 {
     "name": "antlr4ng",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "type": "module",
     "description": "Alternative JavaScript/TypeScript runtime for ANTLR4",
     "browser": "dist/antlr4.web.mjs",
     "main": "dist/antlr4.node.mjs",
     "types": "src/antlr4/index.d.ts",
-    "repository": "antlr/antlr4.git",
+    "repository": "https://github.com/mike-lischke/antlr4ng",
     "keywords": [
         "lexer",
         "parser",

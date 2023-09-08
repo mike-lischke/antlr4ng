@@ -17,7 +17,6 @@ import { Parser } from './Parser.js';
 import { TokenStream } from './TokenStream.js';
 import { TokenStreamRewriter } from './TokenStreamRewriter.js';
 import { Vocabulary } from "./Vocabulary.js";
-
 import { RuleContext } from './context/RuleContext.js';
 import { ParserRuleContext } from './context/ParserRuleContext.js';
 import { ATN } from './atn/ATN.js';
@@ -47,6 +46,7 @@ import { ParseTreeWalker } from "./tree/ParseTreeWalker.js";
 import { BaseErrorListener } from "./error/BaseErrorListener.js";
 import { DiagnosticErrorListener } from "./error/DiagnosticErrorListener.js";
 import { TerminalNode } from "./tree/TerminalNode.js";
+import { ErrorNode } from "./tree/ErrorNode.js";
 
 import { XPath } from "./tree/xpath/XPath.js";
 
@@ -62,7 +62,7 @@ export default {
     PredictionContextCache, LexerATNSimulator, ParserATNSimulator, DFA, RecognitionException, NoViableAltException,
     FailedPredicateException, BaseErrorListener, DiagnosticErrorListener, BailErrorStrategy, DefaultErrorStrategy, LexerNoViableAltException,
     ParseCancellationException, arrayToString, Vocabulary, TokenStream, Transition, TokenFactory,
-    XPath, ATNSimulator, TokenStreamRewriter
+    XPath, ATNSimulator, TokenStreamRewriter, ErrorNode
 };
 
 export {
@@ -73,5 +73,5 @@ export {
     PredictionContextCache, LexerATNSimulator, ParserATNSimulator, DFA, RecognitionException, NoViableAltException,
     FailedPredicateException, BaseErrorListener, DiagnosticErrorListener, BailErrorStrategy, DefaultErrorStrategy, LexerNoViableAltException,
     ParseCancellationException, arrayToString, Vocabulary, TokenStream, Transition, TokenFactory,
-    XPath, ATNSimulator, TokenStreamRewriter
+    XPath, ATNSimulator, TokenStreamRewriter, ErrorNode
 };

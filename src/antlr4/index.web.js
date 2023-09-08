@@ -46,6 +46,8 @@ import { BaseErrorListener } from "./error/BaseErrorListener.js";
 import { DiagnosticErrorListener } from "./error/DiagnosticErrorListener.js";
 import { LexerNoViableAltException } from "./error/LexerNoViableAltException.js";
 import { TerminalNode } from "./tree/TerminalNode.js";
+import { ErrorNode } from "./tree/ErrorNode.js";
+
 import { arrayToString } from "./utils/arrayToString.js";
 
 import { Transition } from "./transition/Transition.js";
@@ -58,7 +60,7 @@ export default {
     PredictionContextCache, LexerATNSimulator, ParserATNSimulator, DFA, RecognitionException, NoViableAltException,
     FailedPredicateException, BaseErrorListener, DiagnosticErrorListener, BailErrorStrategy, DefaultErrorStrategy, LexerNoViableAltException,
     ParseCancellationException, arrayToString, TokenStream, TokenStreamRewriter, Vocabulary, Transition, TokenFactory,
-    ATNSimulator
+    ATNSimulator, ErrorNode
 };
 
 export {
@@ -69,5 +71,5 @@ export {
     PredictionContextCache, LexerATNSimulator, ParserATNSimulator, DFA, RecognitionException, NoViableAltException,
     FailedPredicateException, BaseErrorListener, DiagnosticErrorListener, BailErrorStrategy, DefaultErrorStrategy, LexerNoViableAltException,
     ParseCancellationException, arrayToString, TokenStream, TokenStreamRewriter, Vocabulary, Transition, TokenFactory,
-    ATNSimulator
+    ATNSimulator, ErrorNode
 };
