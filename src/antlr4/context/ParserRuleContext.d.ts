@@ -4,7 +4,6 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { Parser } from "../Parser.js";
 import { Token } from "../Token.js";
 import { RecognitionException } from "../error/RecognitionException.js";
 import { ErrorNode } from "../tree/ErrorNode.js";
@@ -18,9 +17,8 @@ export declare class ParserRuleContext extends RuleContext {
     public start: Token | null;
     public stop: Token | null;
     public exception?: RecognitionException;
-    public parser?: Parser;
 
-    public constructor(parent?: ParserRuleContext, invokingStateNumber?: number);
+    public constructor(parent: ParserRuleContext | null, invokingStateNumber: number);
 
     public copyFrom(ctx: ParserRuleContext): void;
     public addChild(child: RuleContext): void;
@@ -31,11 +29,10 @@ export declare class ParserRuleContext extends RuleContext {
     public getChild<RuleContext>(i: number): RuleContext | null;
     public getToken(ttype: number, i: number): TerminalNode;
     public getTokens(ttype: number): TerminalNode[];
-    public getTypedRuleContext<T extends ParserRuleContext, P extends Parser>(
-        ctxType: new (parser?: P, parent?: ParserRuleContext, invokingState?: number, ...args: unknown[]) => T,
-        i: number): T;
-    public getTypedRuleContexts<T extends ParserRuleContext, P extends Parser>(
-        ctxType: new (parser?: P, parent?: ParserRuleContext, invokingState?: number, ...args: unknown[]) => T): T[];
+    public getTypedRuleContext<T extends ParserRuleContext>(
+        ctxType: new (parent: ParserRuleContext | null, invokingState: number) => T, i: number): T;
+    public getTypedRuleContexts<T extends ParserRuleContext>(
+        ctxType: new (parent: ParserRuleContext | null, invokingState?: number) => T): T[];
 
     public get ruleIndex(): number;
 }

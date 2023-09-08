@@ -117,7 +117,7 @@ export class ParserRuleContext extends RuleContext {
     }
 
     getChild(i, type) {
-        type = type || null;
+        type = type ?? null;
         if (this.children === null || i < 0 || i >= this.children.length) {
             return null;
         }

@@ -45,6 +45,7 @@ import { ParseTreeWalker } from "./tree/ParseTreeWalker.js";
 import { BaseErrorListener } from "./error/BaseErrorListener.js";
 import { DiagnosticErrorListener } from "./error/DiagnosticErrorListener.js";
 import { LexerNoViableAltException } from "./error/LexerNoViableAltException.js";
+import { InputMismatchException } from "./error/InputMismatchException.js";
 import { TerminalNode } from "./tree/TerminalNode.js";
 import { ErrorNode } from "./tree/ErrorNode.js";
 
@@ -60,7 +61,7 @@ export default {
     PredictionContextCache, LexerATNSimulator, ParserATNSimulator, DFA, RecognitionException, NoViableAltException,
     FailedPredicateException, BaseErrorListener, DiagnosticErrorListener, BailErrorStrategy, DefaultErrorStrategy, LexerNoViableAltException,
     ParseCancellationException, arrayToString, TokenStream, TokenStreamRewriter, Vocabulary, Transition, TokenFactory,
-    ATNSimulator, ErrorNode
+    ATNSimulator, ErrorNode, InputMismatchException
 };
 
 export {
@@ -71,5 +72,5 @@ export {
     PredictionContextCache, LexerATNSimulator, ParserATNSimulator, DFA, RecognitionException, NoViableAltException,
     FailedPredicateException, BaseErrorListener, DiagnosticErrorListener, BailErrorStrategy, DefaultErrorStrategy, LexerNoViableAltException,
     ParseCancellationException, arrayToString, TokenStream, TokenStreamRewriter, Vocabulary, Transition, TokenFactory,
-    ATNSimulator, ErrorNode
+    ATNSimulator, ErrorNode, InputMismatchException
 };
