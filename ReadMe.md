@@ -1,9 +1,8 @@
 # JavaScript + TypeScript Target Runtime for ANTLR 4
 
-[![Build & Test](https://github.com/mike-lischke/antlr4ng/actions/workflows/nodejs.yml/badge.svg?branch=master)](https://github.com/mike-lischke/antlr4ng/actions/workflows/nodejs.yml)[![Downloads](https://img.shields.io/npm/dw/antlr4ng?color=blue)](https://www.npmjs.com/package/antlr4ng)
-
-[![npm version](https://img.shields.io/npm/v/antlr4ng)](https://www.npmjs.com/package/antlr4ng)
-[![Badge showing the supported LTS versions of Node.JS in the latest NPM release](https://img.shields.io/node/v-lts/antlr4ng)](https://www.npmjs.com/package/antlr4)
+[![Build & Test](https://github.com/mike-lischke/antlr4ng/actions/workflows/nodejs.yml/badge.svg?branch=master)](https://github.com/mike-lischke/antlr4ng/actions/workflows/nodejs.yml)
+[![Downloads](https://img.shields.io/npm/dw/antlr4ng?color=blue)](https://www.npmjs.com/package/antlr4ng)
+[![npm version](https://img.shields.io/npm/v/antlr4ng?color=yellow)](https://www.npmjs.com/package/antlr4ng)
 
 
 This package is a fork of the official ANTLR4 JavaScript runtime, with the following changes:
