@@ -49,6 +49,8 @@ import { InputMismatchException } from "./error/InputMismatchException.js";
 import { TerminalNode } from "./tree/TerminalNode.js";
 import { ErrorNode } from "./tree/ErrorNode.js";
 
+import { XPath } from "./tree/xpath/XPath.js";
+
 import { arrayToString } from "./utils/arrayToString.js";
 
 import { Transition } from "./transition/Transition.js";
@@ -61,7 +63,7 @@ export default {
     PredictionContextCache, LexerATNSimulator, ParserATNSimulator, DFA, RecognitionException, NoViableAltException,
     FailedPredicateException, BaseErrorListener, DiagnosticErrorListener, BailErrorStrategy, DefaultErrorStrategy, LexerNoViableAltException,
     ParseCancellationException, arrayToString, TokenStream, TokenStreamRewriter, Vocabulary, Transition, TokenFactory,
-    ATNSimulator, ErrorNode, InputMismatchException
+    XPath, ATNSimulator, ErrorNode, InputMismatchException
 };
 
 export {
@@ -72,5 +74,5 @@ export {
     PredictionContextCache, LexerATNSimulator, ParserATNSimulator, DFA, RecognitionException, NoViableAltException,
     FailedPredicateException, BaseErrorListener, DiagnosticErrorListener, BailErrorStrategy, DefaultErrorStrategy, LexerNoViableAltException,
     ParseCancellationException, arrayToString, TokenStream, TokenStreamRewriter, Vocabulary, Transition, TokenFactory,
-    ATNSimulator, ErrorNode, InputMismatchException
+    XPath, ATNSimulator, ErrorNode, InputMismatchException
 };

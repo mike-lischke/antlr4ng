@@ -32,7 +32,7 @@ export declare class ParserRuleContext extends RuleContext {
     public getTypedRuleContext<T extends ParserRuleContext>(
         ctxType: new (parent: ParserRuleContext | null, invokingState: number) => T, i: number): T;
     public getTypedRuleContexts<T extends ParserRuleContext>(
-        ctxType: new (parent: ParserRuleContext | null, invokingState?: number) => T): T[];
+        ctxType: new (parent: ParserRuleContext | null, invokingState: number) => T): T[];
 
     public get ruleIndex(): number;
 }
