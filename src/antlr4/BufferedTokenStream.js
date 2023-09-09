@@ -243,6 +243,10 @@ export class BufferedTokenStream extends TokenStream {
         this.fetchedEOF = false;
     }
 
+    getTokenSource() {
+        return this.tokenSource;
+    }
+
     /**
      * Given a starting index, return the index of the next token on channel.
      * Return i if tokens[i] is on channel. Return -1 if there are no tokens

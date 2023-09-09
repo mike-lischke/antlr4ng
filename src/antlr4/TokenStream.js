@@ -4,5 +4,5 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-// this is just to keep meaningful parameter types to Parser
+// Interface in Java.
 export class TokenStream { }

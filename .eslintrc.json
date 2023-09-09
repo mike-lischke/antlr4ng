@@ -603,9 +603,6 @@
                 "selector": "interface",
                 "format": [
                     "PascalCase"
-                ],
-                "prefix": [
-                    "I"
                 ]
             }
         ],

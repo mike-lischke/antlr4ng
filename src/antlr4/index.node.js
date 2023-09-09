@@ -10,7 +10,6 @@ import { CommonToken } from './CommonToken.js';
 import { InputStream } from './InputStream.js';
 import { CharStream } from './CharStream.js';
 import { CharStreams } from './CharStreams.js';
-import { FileStream } from './FileStream.js';
 import { CommonTokenStream } from './CommonTokenStream.js';
 import { Lexer } from './Lexer.js';
 import { Parser } from './Parser.js';
@@ -56,7 +55,7 @@ import { arrayToString } from "./utils/arrayToString.js";
 import { Transition } from "./transition/Transition.js";
 
 export default {
-    Token, CommonToken, CharStreams, CharStream, InputStream, FileStream, CommonTokenStream, Lexer, Parser,
+    Token, CommonToken, CharStreams, CharStream, InputStream, CommonTokenStream, Lexer, Parser,
     TerminalNode, ParseTreeWalker, RuleContext, ParserRuleContext, Interval, IntervalSet,
     PredictionMode, LL1Analyzer, ParseTreeListener, ParseTreeVisitor, ATN, ATNState, ATNConfig, ATNConfigSet,
     ATNDeserializer,
@@ -67,7 +66,7 @@ export default {
 };
 
 export {
-    Token, CommonToken, CharStreams, CharStream, InputStream, FileStream, CommonTokenStream, Lexer, Parser,
+    Token, CommonToken, CharStreams, CharStream, InputStream, CommonTokenStream, Lexer, Parser,
     TerminalNode, ParseTreeWalker, RuleContext, ParserRuleContext, Interval, IntervalSet,
     PredictionMode, LL1Analyzer, ParseTreeListener, ParseTreeVisitor, ATN, ATNState, ATNConfig, ATNConfigSet,
     ATNDeserializer,

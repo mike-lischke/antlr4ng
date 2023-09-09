@@ -4,8 +4,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// TS thinks this is an unused interface import, but instead we are importing the same named class here.
 import { CharStream } from "./CharStream.js";
-import { FileStream } from "./FileStream.js";
 
 /**
  * Utility functions to create InputStreams from various sources.
@@ -46,23 +46,4 @@ export const CharStreams = {
     fromBuffer: function (buffer, encoding) {
         return new CharStream(buffer.toString(encoding), true);
     },
-
-    /** Asynchronously creates an InputStream from a file on disk given
-     * the encoding of the bytes in that file (defaults to 'utf8' if
-     * encoding is null).
-     *
-     * Invokes callback(error, result) on completion.
-     */
-    fromPath: function (path, encoding, callback) {
-        FileStream.fromPath(path, encoding, callback);
-    },
-
-    /**
-     * Synchronously creates an InputStream given a path to a file
-     * on disk and the encoding of the bytes in that file (defaults to
-     * 'utf8' if encoding is null).
-     */
-    fromPathSync: function (path, encoding) {
-        return new FileStream(path, encoding);
-    }
 };

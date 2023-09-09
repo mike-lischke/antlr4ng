@@ -15,9 +15,9 @@ import { Token } from './Token.js';
  */
 export class CharStream {
     constructor(data, decodeToUnicodeCodePoints) {
-        this.name = "<empty>";
+        this.name = "";
         this.stringData = data;
-        this.decodeToUnicodeCodePoints = decodeToUnicodeCodePoints || false;
+        this.decodeToUnicodeCodePoints = decodeToUnicodeCodePoints ?? false;
         // _loadString - Vacuum all input from a string and then treat it like a buffer.
         this._index = 0;
         this.data = [];
@@ -67,10 +67,6 @@ export class CharStream {
         return this.data[pos];
     }
 
-    LT(offset) {
-        return this.LA(offset);
-    }
-
     // mark/release do nothing; we have entire buffer
     mark() {
         return -1;
@@ -91,6 +87,10 @@ export class CharStream {
         }
         // seek forward
         this._index = Math.min(_index, this._size);
+    }
+
+    getText(interval) {
+        return this.getText(interval.start, interval.stop);
     }
 
     getText(start, stop) {
@@ -122,5 +122,13 @@ export class CharStream {
 
     get size() {
         return this._size;
+    }
+
+    getSourceName() {
+        if (this.name) {
+            return this.name;
+        } else {
+            return IntStream.UNKNOWN_SOURCE_NAME;
+        }
     }
 }

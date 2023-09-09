@@ -19,16 +19,20 @@ It is a drop-in replacement of the `antlr4` package, and can be used as such. Fo
 
 ## Release Notes
 
-### 1.0.2
+### 1.0.2 - 1.0.4
+
 - Github build action
 - Updated package.json
-- Exported `ErrorNode`
+- Exported `ErrorNode`, `InputMismatchException`
+- Some smaller fixes
+- Introduced the `IntStream` interface as the base for `CharStream` and `TokenStream`. This avoids duplicate code in the stream classes.
+- Removed `FileStream` as a preparation to get rid of the separate package files for node and browser.
 
 ### 1.0.1
 
 - Added and/or replaced all copyrights to a common ANTLR version.
 - Removed all individual default exports. Only the final lib exports contain both, default and non-default exports. This avoids namespace access like `antlr4.atn`. Everything is available under a top level import.
-- Renamed ErrorListener to BaseListener, as that is what it is actually when comparing it to the Java runtime.
+- Renamed ErrorListener to BaseErrorListener, as that is what it is actually when comparing it to the Java runtime.
 
 ### 1.0.0
 

@@ -5,7 +5,6 @@
  */
 
 export * from "./InputStream.js";
-export * from "./FileStream.js";
 export * from "./CharStream.js";
 export * from "./CharStreams.js";
 export * from "./TokenStream.js";
@@ -20,6 +19,7 @@ export * from "./TokenFactory.js";
 export * from "./TokenStreamRewriter.js";
 export * from "./TokenSource.js";
 export * from "./Vocabulary.js";
+export * from "./IntStream.js";
 
 export * from "./atn/index.js";
 export * from "./dfa/index.js";
