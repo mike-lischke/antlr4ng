@@ -25,5 +25,19 @@
             "smartStep": true,
             "trace": false
         },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Parser Benchmarks",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "runtimeArgs": [
+                "--no-warnings=ExperimentalWarning",
+                "--loader",
+                "ts-node/esm",
+                "spec/benchmarks/run-benchmarks.ts",
+            ],
+        }
     ]
 }

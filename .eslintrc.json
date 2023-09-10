@@ -15,6 +15,7 @@
         "src/**/*.js",
         "spec/**/*.*js",
         "dist/**/*",
+        "**/generated/*",
         "jest.config.ts"
     ],
     "parser": "@typescript-eslint/parser",

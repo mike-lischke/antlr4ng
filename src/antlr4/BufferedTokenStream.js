@@ -46,7 +46,7 @@ export class BufferedTokenStream extends TokenStream {
          * see the documentation of {@link IntStream} for a description of
          * Initializing Methods.</p>
          */
-        this.index = -1;
+        this._index = -1;
 
         /**
          * Indicates whether the {@link Token//EOF} token has been fetched from
@@ -81,11 +81,15 @@ export class BufferedTokenStream extends TokenStream {
 
     seek(index) {
         this.lazyInit();
-        this.index = this.adjustSeekIndex(index);
+        this._index = this.adjustSeekIndex(index);
     }
 
     get size() {
         return this.tokens.length;
+    }
+
+    get index() {
+        return this._index;
     }
 
     get(index) {
@@ -95,14 +99,14 @@ export class BufferedTokenStream extends TokenStream {
 
     consume() {
         let skipEofCheck = false;
-        if (this.index >= 0) {
+        if (this._index >= 0) {
             if (this.fetchedEOF) {
                 // the last token in tokens is EOF. skip check if p indexes any
                 // fetched token except the last.
-                skipEofCheck = this.index < this.tokens.length - 1;
+                skipEofCheck = this._index < this.tokens.length - 1;
             } else {
                 // no EOF token in tokens. skip check if p indexes a fetched token.
-                skipEofCheck = this.index < this.tokens.length;
+                skipEofCheck = this._index < this.tokens.length;
             }
         } else {
             // not yet initialized
@@ -111,8 +115,8 @@ export class BufferedTokenStream extends TokenStream {
         if (!skipEofCheck && this.LA(1) === Token.EOF) {
             throw "cannot consume EOF";
         }
-        if (this.sync(this.index + 1)) {
-            this.index = this.adjustSeekIndex(this.index + 1);
+        if (this.sync(this._index + 1)) {
+            this._index = this.adjustSeekIndex(this._index + 1);
         }
     }
 
@@ -183,10 +187,10 @@ export class BufferedTokenStream extends TokenStream {
     }
 
     LB(k) {
-        if (this.index - k < 0) {
+        if (this._index - k < 0) {
             return null;
         }
-        return this.tokens[this.index - k];
+        return this.tokens[this._index - k];
     }
 
     LT(k) {
@@ -197,7 +201,7 @@ export class BufferedTokenStream extends TokenStream {
         if (k < 0) {
             return this.LB(-k);
         }
-        const i = this.index + k - 1;
+        const i = this._index + k - 1;
         this.sync(i);
         if (i >= this.tokens.length) { // return EOF token
             // EOF must be last token
@@ -225,21 +229,21 @@ export class BufferedTokenStream extends TokenStream {
     }
 
     lazyInit() {
-        if (this.index === -1) {
+        if (this._index === -1) {
             this.setup();
         }
     }
 
     setup() {
         this.sync(0);
-        this.index = this.adjustSeekIndex(0);
+        this._index = this.adjustSeekIndex(0);
     }
 
     // Reset this token stream by setting its token source.///
     setTokenSource(tokenSource) {
         this.tokenSource = tokenSource;
         this.tokens = [];
-        this.index = -1;
+        this._index = -1;
         this.fetchedEOF = false;
     }
 
@@ -387,9 +391,3 @@ export class BufferedTokenStream extends TokenStream {
         while (this.fetch(1000) === 1000);
     }
 }
-
-Object.defineProperty(BufferedTokenStream, "size", {
-    get: function () {
-        return this.tokens.length;
-    }
-});

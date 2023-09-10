@@ -32,6 +32,7 @@ export declare abstract class Lexer extends Recognizer<LexerATNSimulator> implem
     public text: string;
     public line: number;
     public column: number;
+
     public _channel: number;
     public _token: Token | null;
     public _tokenStartCharIndex: number;

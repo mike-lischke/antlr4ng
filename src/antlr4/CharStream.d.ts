@@ -30,6 +30,7 @@ export declare interface CharStream extends IntStream {
      * getting the text of the specified interval
      */
     getText(interval: Interval): string;
+    getText(start: number, stop: number): string;
 
     reset(): void;
     toString(): string;

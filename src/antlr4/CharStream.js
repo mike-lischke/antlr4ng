@@ -18,7 +18,7 @@ export class CharStream {
         this.name = "";
         this.stringData = data;
         this.decodeToUnicodeCodePoints = decodeToUnicodeCodePoints ?? false;
-        // _loadString - Vacuum all input from a string and then treat it like a buffer.
+
         this._index = 0;
         this.data = [];
         if (this.decodeToUnicodeCodePoints) {

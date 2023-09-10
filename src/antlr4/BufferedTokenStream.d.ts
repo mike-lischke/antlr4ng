@@ -23,8 +23,6 @@ import { Interval } from "./misc/Interval.js";
  * {@link CommonTokenStream}.</p>
  */
 export declare class BufferedTokenStream implements TokenStream {
-    public index: number;
-
     /**
      * The {@link TokenSource} from which tokens for this stream are fetched.
      */
@@ -61,7 +59,9 @@ export declare class BufferedTokenStream implements TokenStream {
 
     public reset(): void;
     public seek(index: number): void;
+
     public get size(): number;
+    public get index(): number;
 
     public consume(): void;
     public sync(i: number): number;

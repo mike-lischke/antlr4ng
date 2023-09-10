@@ -1,16 +1,22 @@
 {
     "version": "0.2",
     "ignorePaths": [
-        ".eslintrc.json"
+        ".eslintrc.json",
+        "generated/"
     ],
     "dictionaryDefinitions": [],
     "dictionaries": [],
     "words": [
-        "ANTLR"
+        "ANTLR",
+        "rdbms",
+        "runtimes",
+        "sakila",
+        "whitespaces"
     ],
     "ignoreWords": [
         "AMBIG",
         "Harwell",
+        "bitrix",
         "interp",
         "localctx",
         "precpred",
