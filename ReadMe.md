@@ -23,10 +23,10 @@ This runtime is constantly monitored for performance regressions. The following 
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
-| Query Collection| 8585 ms | 227 ms |
-| Example File | 1052 ms | 108 ms |
-| Large Inserts | 10417 ms | 10534 ms |
-| Total | 20114 ms | 10890 ms |
+| Query Collection| 8719 ms | 239 ms |
+| Example File | 1031 ms | 119 ms |
+| Large Inserts | 10748 ms | 10745 ms |
+| Total | 20568 ms | 11122 ms |
 
 The benchmarks consist of a set of query files, which are parsed by a MySQL parser.
 
