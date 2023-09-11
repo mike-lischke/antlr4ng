@@ -32,14 +32,18 @@ The benchmarks consist of a set of query files, which are parsed by a MySQL pars
 
 ## Release Notes
 
+### 1.0.5
+
+- Added benchmarks.
+- Introduced the `IntStream` interface as the base for `CharStream` and `TokenStream`. This avoids duplicate code in the stream type definitions.
+- Removed `FileStream` as a preparation to get rid of the separate package files for node and browser. If something needs to be loaded from a file, the particular environment should provide the code for that.
+
 ### 1.0.2 - 1.0.4
 
 - Github build action
 - Updated package.json
 - Exported `ErrorNode`, `InputMismatchException`
 - Some smaller fixes
-- Introduced the `IntStream` interface as the base for `CharStream` and `TokenStream`. This avoids duplicate code in the stream type definitions.
-- Removed `FileStream` as a preparation to get rid of the separate package files for node and browser. If something needs to be loaded from a file, the particular environment should provide the code for that.
 
 ### 1.0.1
 
