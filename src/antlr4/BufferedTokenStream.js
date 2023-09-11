@@ -159,23 +159,41 @@ export class BufferedTokenStream extends TokenStream {
 
     // Get all tokens from start..stop inclusively///
     getTokens(start, stop, types) {
-        if (types === undefined) {
-            types = null;
-        }
-        if (start < 0 || stop < 0) {
-            return null;
-        }
         this.lazyInit();
+
+        if (start === undefined && stop === undefined) {
+            return this.tokens;
+        }
+
+        if (stop === undefined) {
+            stop = this.tokens.length - 1;
+        }
+
+        if (start < 0 || stop >= this.tokens.length || stop < 0 || start >= this.tokens.length) {
+            throw new RangeError("start " + start + " or stop " + stop + " not in 0.." + (this.tokens.length - 1));
+        }
+
+        if (start > stop) {
+            return [];
+        }
+
+        if (types === undefined) {
+            return this.tokens.slice(start, stop + 1);
+        }
+
         const subset = [];
         if (stop >= this.tokens.length) {
             stop = this.tokens.length - 1;
         }
+
         for (let i = start; i < stop; i++) {
             const t = this.tokens[i];
             if (t.type === Token.EOF) {
+                subset.push(t); // Also include EOF.
                 break;
             }
-            if (types === null || types.contains(t.type)) {
+
+            if (types.contains(t.type)) {
                 subset.push(t);
             }
         }
