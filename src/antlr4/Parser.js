@@ -548,7 +548,7 @@ export class Parser extends Recognizer {
 
     // Get a rule's index (i.e., {@code RULE_ruleName} field) or -1 if not found.
     getRuleIndex(ruleName) {
-        const ruleIndex = this.getRuleIndexMap()[ruleName];
+        const ruleIndex = this.getRuleIndexMap().get(ruleName);
         if (ruleIndex !== null) {
             return ruleIndex;
         } else {

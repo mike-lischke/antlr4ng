@@ -25,8 +25,8 @@ export declare abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
     public getSymbolicNames(): string[];
     public getTokenNames(): string[];
 
-    public getTokenTypeMap(): Map<string, number>;
-    public getRuleIndexMap(): Map<string, number>;
+    public getTokenTypeMap(): Map<Vocabulary, Map<string, number>>;
+    public getRuleIndexMap(): Map<string[], Map<string, number>>;
 
     public getTokenType(tokenName: string): number;
     public getErrorHeader(e: RecognitionException): string;

@@ -10,6 +10,8 @@ import { ProxyErrorListener } from './error/ProxyErrorListener.js';
 
 export class Recognizer {
     static EOF = -1;
+    static tokenTypeMapCache = new Map();
+    static ruleIndexMapCache = new Map();
 
     constructor() {
         this._listeners = [ConsoleErrorListener.INSTANCE];
@@ -54,15 +56,26 @@ export class Recognizer {
     }
 
     getTokenTypeMap() {
-        const tokenNames = this.getTokenNames();
-        if (tokenNames === null) {
-            throw ("The current recognizer does not provide a list of token names.");
-        }
-        let result = this.tokenTypeMapCache[tokenNames];
-        if (result === undefined) {
-            result = tokenNames.reduce(function (o, k, i) { o[k] = i; });
-            result.EOF = Token.EOF;
-            this.tokenTypeMapCache[tokenNames] = result;
+        const vocabulary = this.getVocabulary();
+
+        let result = Recognizer.tokenTypeMapCache.get(vocabulary);
+        if (!result) {
+            result = new Map();
+            for (let i = 0; i <= this.atn.maxTokenType; i++) {
+                const literalName = vocabulary.getLiteralName(i);
+                if (literalName) {
+                    result.set(literalName, i);
+                }
+
+                const symbolicName = vocabulary.getSymbolicName(i);
+                if (symbolicName) {
+                    result.set(symbolicName, i);
+                }
+            }
+
+            result.set("EOF", Token.EOF);
+
+            Recognizer.tokenTypeMapCache.set(vocabulary, result);
         }
         return result;
     }
@@ -73,24 +86,24 @@ export class Recognizer {
      */
     getRuleIndexMap() {
         const ruleNames = this.ruleNames;
-        if (ruleNames === null) {
-            throw ("The current recognizer does not provide a list of rule names.");
+        let result = Recognizer.ruleIndexMapCache.get(ruleNames);
+        if (!result) {
+            result = new Map();
+            ruleNames.forEach((ruleName, idx) => result.set(ruleName, idx));
+
+            Recognizer.ruleIndexMapCache.set(ruleNames, result);
         }
-        let result = this.ruleIndexMapCache[ruleNames]; // todo: should it be Recognizer.ruleIndexMapCache ?
-        if (result === undefined) {
-            result = ruleNames.reduce(function (o, k, i) { o[k] = i; });
-            this.ruleIndexMapCache[ruleNames] = result;
-        }
+
         return result;
     }
 
     getTokenType(tokenName) {
-        const ttype = this.getTokenTypeMap()[tokenName];
-        if (ttype !== undefined) {
+        const ttype = this.getTokenTypeMap().get(tokenName);
+        if (ttype) {
             return ttype;
-        } else {
-            return Token.INVALID_TYPE;
         }
+
+        return Token.INVALID_TYPE;
     }
 
     // What is the error header, normally line/character position information?
@@ -157,6 +170,3 @@ export class Recognizer {
         this._stateNumber = state;
     }
 }
-
-Recognizer.tokenTypeMapCache = {};
-Recognizer.ruleIndexMapCache = {};
