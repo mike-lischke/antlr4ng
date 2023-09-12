@@ -22,7 +22,7 @@ In your `package.json` file, add a script to generate the parser and lexer files
 ```json
 {
   "scripts": {
-    "generate": "antlr4ng -o src/generated src/MyGrammar.g4"
+    "generate": "antlr4ng -Dlanguage=TypeScript -o src/generated src/MyGrammar.g4"
   }
 }
 ```
@@ -32,3 +32,5 @@ Then run the script:
 ```bash
 npm run generate
 ```
+
+The provided tool jar can generate parser and lexer files for all targets supported by ANTLR4. It's not limited to TypeScript. However, only this tool jar can generate the parser files compatible with the antlr4ng runtime.
