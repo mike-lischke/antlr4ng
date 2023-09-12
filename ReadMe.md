@@ -1,11 +1,11 @@
-# JavaScript + TypeScript Target Runtime for ANTLR 4
-
-[![Build & Test](https://github.com/mike-lischke/antlr4ng/actions/workflows/nodejs.yml/badge.svg?branch=master)](https://github.com/mike-lischke/antlr4ng/actions/workflows/nodejs.yml)
-[![Downloads](https://img.shields.io/npm/dw/antlr4ng?color=blue)](https://www.npmjs.com/package/antlr4ng)
-[![npm version](https://img.shields.io/npm/v/antlr4ng?color=yellow)](https://www.npmjs.com/package/antlr4ng)
+[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mike-lischke/antlr4ng/nodejs.yml?style=for-the-badge&color=green&logo=github)](https://github.com/mike-lischke/antlr4ng/actions/workflows/nodejs.yml)
+![Weekly Downloads](https://img.shields.io/npm/dw/antlr4ng?style=for-the-badge&color=blue)
+[![npm version](https://img.shields.io/npm/v/antlr4ng?style=for-the-badge&color=yellow)](https://www.npmjs.com/package/antlr4ng)
 
 
-This package is a fork of the official ANTLR4 JavaScript runtime, with the following changes:
+# TypeScript Target Runtime for ANTLR 4
+
+This package is a fork of the official ANTLR4 JavaScript runtime (with its TypeScript additions), with the following changes:
 
 - Much improved TypeScript type definitions.
 - XPath implementation.
@@ -14,6 +14,7 @@ This package is a fork of the official ANTLR4 JavaScript runtime, with the follo
 - Consistent formatting (indentation, semicolons, spaces, etc.).
 - Numerous smaller fixes (`null` instead of `undefined` and others).
 - Smaller node package (no test specs or other unnecessary files).
+- Bug fixes.
 
 It is (mostly) a drop-in replacement of the `antlr4` package, and can be used as such. For more information about ANTLR see www.antlr.org. Read more details about the [JavaScript](https://github.com/antlr/antlr4/blob/master/doc/javascript-target.md) and [TypeScript](https://github.com/antlr/antlr4/blob/master/doc/typescript-target.md) targets at the provided links, but keep in mind that this documentation applies to the original JS/TS target.
 
