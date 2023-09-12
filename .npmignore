@@ -1,13 +1,15 @@
 @@ -0,0 +1,10 @@
-spec
-webpack.config.js
-tsconfig.json
+.github
+.vscode
+cli/
+spec/
 src/**/*.js
 
-.vscode
 .babelrc
 .c8rc.json
 .eslintignore
 .eslintrc.json
 .project
+tsconfig.json
+webpack.config.js
 cspell.json

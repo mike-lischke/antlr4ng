@@ -15,7 +15,9 @@
     ],
     "ignoreWords": [
         "AMBIG",
+        "Dlanguage",
         "Harwell",
+        "Xexact",
         "bitrix",
         "interp",
         "localctx",

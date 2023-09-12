@@ -15,6 +15,7 @@
         "src/**/*.js",
         "spec/**/*.*js",
         "dist/**/*",
+        "cli/index.js",
         "**/generated/*",
         "jest.config.ts"
     ],

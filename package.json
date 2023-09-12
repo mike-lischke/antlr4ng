@@ -1,6 +1,6 @@
 {
     "name": "antlr4ng",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "type": "module",
     "description": "Alternative JavaScript/TypeScript runtime for ANTLR4",
     "browser": "dist/antlr4.web.mjs",
@@ -19,6 +19,9 @@
         "url": "https://github.com/mike-lischke/antlr4ng/issues"
     },
     "homepage": "https://github.com/mike-lischke/antlr4ng",
+    "peerDependencies": {
+        "antlr4ng-cli": "1.0.0"
+    },
     "devDependencies": {
         "@babel/core": "7.22.15",
         "@babel/eslint-parser": "7.22.15",
@@ -50,8 +53,8 @@
         "test": "jasmine",
         "coverage": "c8 jasmine",
         "lint": "eslint src/antlr4/",
-        "generate-test-parser": "java -jar antlr/antlr4-4.13.2-SNAPSHOT-complete.jar -Dlanguage=TypeScript -o spec/benchmarks/generated -visitor -listener -Xexact-output-dir spec/benchmarks/MySQLLexer.g4 spec/benchmarks/MySQLParser.g4",
-        "benchmarks": "npm run build && node --no-warnings=ExperimentalWarning --loader ts-node/esm spec/benchmarks/run-benchmarks.ts"
+        "generate-test-parser": "cli/index.js -Dlanguage=TypeScript -o spec/benchmarks/generated -visitor -listener -Xexact-output-dir spec/benchmarks/MySQLLexer.g4 spec/benchmarks/MySQLParser.g4",
+        "benchmarks": "npm run build && npm run generate-test-parser && node --no-warnings=ExperimentalWarning --loader ts-node/esm spec/benchmarks/run-benchmarks.ts"
     },
     "engines": {
         "node": ">=16"

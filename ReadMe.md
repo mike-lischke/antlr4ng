@@ -23,14 +23,20 @@ This runtime is constantly monitored for performance regressions. The following 
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
-| Query Collection| 8719 ms | 239 ms |
-| Example File | 1031 ms | 119 ms |
-| Large Inserts | 10748 ms | 10745 ms |
-| Total | 20568 ms | 11122 ms |
+| Query Collection| 8658 ms | 236 ms |
+| Example File | 1024 ms | 117 ms |
+| Large Inserts | 10612 ms | 10631 ms |
+| Total | 20354 ms | 11005 ms |
 
 The benchmarks consist of a set of query files, which are parsed by a MySQL parser.
 
 ## Release Notes
+
+### 1.0.6 - 1.0.7
+
+- Fixed recognizer token type and rule index maps.
+- Fixed `getTokens()` in `BufferedTokenStream`.
+- Added new peer dependency `antlr4ng-cli`, which is the tool to generate parser files compatible with this runtime.
 
 ### 1.0.5
 
