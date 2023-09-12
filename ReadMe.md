@@ -2,7 +2,6 @@
 ![Weekly Downloads](https://img.shields.io/npm/dw/antlr4ng?style=for-the-badge&color=blue)
 [![npm version](https://img.shields.io/npm/v/antlr4ng?style=for-the-badge&color=yellow)](https://www.npmjs.com/package/antlr4ng)
 
-
 # TypeScript Target Runtime for ANTLR 4
 
 This package is a fork of the official ANTLR4 JavaScript runtime (with its TypeScript additions), with the following changes:
@@ -31,7 +30,7 @@ This package has a peer dependency to `antlr4ng-cli`, which is the tool to gener
 ```bash
 npm install --save-dev antlr4ng-cli
 ```
-See it's readme for more information.
+See [it's readme](./cli/ReadMe.md) for more information.
 
 ## Benchmarks
 
