@@ -17,6 +17,21 @@ This package is a fork of the official ANTLR4 JavaScript runtime, with the follo
 
 It is (mostly) a drop-in replacement of the `antlr4` package, and can be used as such. For more information about ANTLR see www.antlr.org. Read more details about the [JavaScript](https://github.com/antlr/antlr4/blob/master/doc/javascript-target.md) and [TypeScript](https://github.com/antlr/antlr4/blob/master/doc/typescript-target.md) targets at the provided links, but keep in mind that this documentation applies to the original JS/TS target.
 
+## Installation
+
+To install the package, run the following command:
+
+```bash
+npm install antlr4ng
+```
+
+This package has a peer dependency to `antlr4ng-cli`, which is the tool to generate parser files compatible with this runtime, so it is strongly recommended to install this one too:
+
+```bash
+npm install --save-dev antlr4ng-cli
+```
+See it's readme for more information.
+
 ## Benchmarks
 
 This runtime is constantly monitored for performance regressions. The following table shows the results of the benchmarks run on last release:
