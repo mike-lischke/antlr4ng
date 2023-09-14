@@ -30,7 +30,7 @@ This package has a peer dependency to `antlr4ng-cli`, which is the tool to gener
 ```bash
 npm install --save-dev antlr4ng-cli
 ```
-See [it's readme](./cli/ReadMe.md) for more information.
+See [its readme](./cli/ReadMe.md) for more information.
 
 ## Benchmarks
 

@@ -174,11 +174,11 @@ export class ParserRuleContext extends RuleContext {
         }
     }
 
-    getTypedRuleContext(ctxType, i) {
+    getRuleContext(i, ctxType) {
         return this.getChild(i, ctxType);
     }
 
-    getTypedRuleContexts(ctxType) {
+    getRuleContexts(ctxType) {
         if (this.children === null) {
             return [];
         } else {

@@ -27,12 +27,12 @@ export declare class ParserRuleContext extends RuleContext {
     public addErrorNode(badToken: Token): ErrorNode;
     public getChildCount(): number;
     public getChild<RuleContext>(i: number): RuleContext | null;
-    public getToken(ttype: number, i: number): TerminalNode;
+    public getToken(ttype: number, i: number): TerminalNode | null;
     public getTokens(ttype: number): TerminalNode[];
-    public getTypedRuleContext<T extends ParserRuleContext>(
-        ctxType: new (parent: ParserRuleContext | null, invokingState: number) => T, i: number): T;
-    public getTypedRuleContexts<T extends ParserRuleContext>(
-        ctxType: new (parent: ParserRuleContext | null, invokingState: number) => T): T[];
+    public getRuleContext<T extends ParserRuleContext>(
+        index: number, ctxType: new (parent: ParserRuleContext | null, invokingStateNumber: number) => T): T | null;
+    public getRuleContexts<T extends ParserRuleContext>(
+        ctxType: new (parent: ParserRuleContext | null, invokingStateNumber: number) => T): T[];
 
     public get ruleIndex(): number;
 }
