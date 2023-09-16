@@ -6,10 +6,10 @@
 
 import { IntervalSet } from "../misc/IntervalSet.js";
 import { RuleContext } from "./RuleContext.js";
-import { ATNState } from "../state/ATNState.js";
-import { DecisionState } from "../state/DecisionState.js";
-import { RuleStartState } from "../state/RuleStartState.js";
-import { RuleStopState } from "../state/RuleStopState.js";
+import { ATNState } from "./ATNState.js";
+import { DecisionState } from "./DecisionState.js";
+import { RuleStartState } from "./RuleStartState.js";
+import { RuleStopState } from "./RuleStopState.js";
 import { LexerAction } from "./LexerAction.js";
 
 export declare class ATN {

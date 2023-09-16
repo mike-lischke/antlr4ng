@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { Transition } from "../transition/Transition.js";
+import { Transition } from "./Transition.js";
 
 export class AbstractPredicateTransition extends Transition {
     constructor(target) {

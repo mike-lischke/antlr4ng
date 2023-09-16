@@ -7,8 +7,8 @@
 import { Token } from './Token.js';
 import { Recognizer } from './Recognizer.js';
 import { CommonTokenFactory } from './CommonTokenFactory.js';
-import { RecognitionException } from './error/RecognitionException.js';
-import { LexerNoViableAltException } from './error/LexerNoViableAltException.js';
+import { RecognitionException } from './RecognitionException.js';
+import { LexerNoViableAltException } from './LexerNoViableAltException.js';
 
 /**
  * A lexer is recognizer that draws input symbols from a character stream.
@@ -30,7 +30,7 @@ export class Lexer extends Recognizer {
          * create a single token. nextToken will return this object after
          * matching lexer rule(s). If you subclass to allow multiple token
          * emissions, then set this to the last token to be matched or
-         * something nonnull so that the auto token emit mechanism will not
+         * something non-null so that the auto token emit mechanism will not
          * emit another token.
          */
         this._token = null;

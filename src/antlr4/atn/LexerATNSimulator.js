@@ -12,11 +12,11 @@ import { DFAState } from '../dfa/DFAState.js';
 import { OrderedATNConfigSet } from './OrderedATNConfigSet.js';
 import { PredictionContext } from './PredictionContext.js';
 import { SingletonPredictionContext } from './SingletonPredictionContext.js';
-import { RuleStopState } from '../state/RuleStopState.js';
+import { RuleStopState } from './RuleStopState.js';
 import { LexerATNConfig } from './LexerATNConfig.js';
-import { Transition } from '../transition/Transition.js';
+import { Transition } from './Transition.js';
 import { LexerActionExecutor } from './LexerActionExecutor.js';
-import { LexerNoViableAltException } from '../error/LexerNoViableAltException.js';
+import { LexerNoViableAltException } from '../LexerNoViableAltException.js';
 
 function resetSimState(sim) {
     sim.index = -1;

@@ -10,15 +10,15 @@ import { TokenFactory } from "./TokenFactory.js";
 import { TokenStream } from "./TokenStream.js";
 import { ParserATNSimulator } from "./atn/ParserATNSimulator.js";
 import { ParserRuleContext } from "./atn/ParserRuleContext.js";
-import { ErrorStrategy } from "./error/ErrorStrategy.js";
-import { RecognitionException } from "./error/RecognitionException.js";
+import { ANTLRErrorStrategy } from "./ANTLRErrorStrategy.js";
+import { RecognitionException } from "./RecognitionException.js";
 import { IntervalSet } from "./misc/IntervalSet.js";
 import { ParseTreeListener } from "./tree/ParseTreeListener.js";
 
 export declare abstract class Parser extends Recognizer<ParserATNSimulator> {
     public _ctx: ParserRuleContext;
 
-    public errorHandler: ErrorStrategy;
+    public errorHandler: ANTLRErrorStrategy;
     public matchedEOF: boolean;
     public buildParseTrees: boolean;
 

@@ -21,11 +21,20 @@ export * from "./TokenSource.js";
 export * from "./Vocabulary.js";
 export * from "./IntStream.js";
 
+export * from "./RecognitionException.js";
+export * from "./NoViableAltException.js";
+export * from "./FailedPredicateException.js";
+export * from "./InputMismatchException.js";
+export * from "./ANTLRErrorStrategy.js";
+export * from "./BailErrorStrategy.js";
+export * from "./DefaultErrorStrategy.js";
+export * from "./BaseErrorListener.js";
+export * from "./DiagnosticErrorListener.js";
+export * from "./ParseCancellationException.js";
+export * from "./LexerNoViableAltException.js";
+
 export * from "./atn/index.js";
 export * from "./dfa/index.js";
 export * from "./misc/index.js";
 export * from "./tree/index.js";
-export * from "./state/index.js";
-export * from "./error/index.js";
 export * from "./utils/index.js";
-export * from "./transition/index.js";

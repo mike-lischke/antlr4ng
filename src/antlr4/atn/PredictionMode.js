@@ -5,7 +5,7 @@
  */
 
 import { ATN } from './ATN.js';
-import { RuleStopState } from '../state/RuleStopState.js';
+import { RuleStopState } from './RuleStopState.js';
 import { ATNConfigSet } from './ATNConfigSet.js';
 import { ATNConfig } from './ATNConfig.js';
 import { SemanticContext } from './SemanticContext.js';

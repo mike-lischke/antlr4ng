@@ -5,7 +5,7 @@
  */
 
 import { DFAState } from './DFAState.js';
-import { StarLoopEntryState } from '../state/StarLoopEntryState.js';
+import { StarLoopEntryState } from '../atn/StarLoopEntryState.js';
 import { ATNConfigSet } from './../atn/ATNConfigSet.js';
 import { DFASerializer } from './DFASerializer.js';
 import { LexerDFASerializer } from './LexerDFASerializer.js';

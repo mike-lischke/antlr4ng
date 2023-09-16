@@ -5,8 +5,8 @@
  */
 
 import { ATN } from './ATN.js';
-import { ATNState } from '../state/ATNState.js';
-import { RuleStopState } from '../state/RuleStopState.js';
+import { ATNState } from './ATNState.js';
+import { RuleStopState } from './RuleStopState.js';
 import { ATNConfig } from './ATNConfig.js';
 import { ATNConfigSet } from './ATNConfigSet.js';
 import { Token } from '../Token.js';
@@ -18,15 +18,15 @@ import { RuleContext } from './RuleContext.js';
 import { SemanticContext } from './SemanticContext.js';
 import { PredictionContext } from './PredictionContext.js';
 import { Interval } from '../misc/Interval.js';
-import { Transition } from '../transition/Transition.js';
-import { SetTransition } from '../transition/SetTransition.js';
-import { NotSetTransition } from '../transition/NotSetTransition.js';
-import { RuleTransition } from '../transition/RuleTransition.js';
-import { ActionTransition } from '../transition/ActionTransition.js';
-import { NoViableAltException } from '../error/NoViableAltException.js';
+import { Transition } from './Transition.js';
+import { SetTransition } from './SetTransition.js';
+import { NotSetTransition } from './NotSetTransition.js';
+import { RuleTransition } from './RuleTransition.js';
+import { ActionTransition } from './ActionTransition.js';
+import { NoViableAltException } from '../NoViableAltException.js';
 import { SingletonPredictionContext } from './SingletonPredictionContext.js';
 import { predictionContextFromRuleContext } from './PredictionContextUtils.js';
-import { AtomTransition } from "../transition/AtomTransition.js";
+import { AtomTransition } from "./AtomTransition.js";
 import { arrayToString } from "../utils/arrayToString.js";
 import { BitSet } from "../misc/BitSet.js";
 import { DoubleDict } from "../utils/DoubleDict.js";

@@ -7,10 +7,10 @@
 import { Token } from '../Token.js';
 import { ATNConfig } from './ATNConfig.js';
 import { IntervalSet } from '../misc/IntervalSet.js';
-import { RuleStopState } from '../state/RuleStopState.js';
-import { RuleTransition } from '../transition/RuleTransition.js';
-import { NotSetTransition } from '../transition/NotSetTransition.js';
-import { WildcardTransition } from '../transition/WildcardTransition.js';
+import { RuleStopState } from './RuleStopState.js';
+import { RuleTransition } from './RuleTransition.js';
+import { NotSetTransition } from './NotSetTransition.js';
+import { WildcardTransition } from './WildcardTransition.js';
 import { AbstractPredicateTransition } from './AbstractPredicateTransition.js';
 import { predictionContextFromRuleContext } from './PredictionContextUtils.js';
 import { PredictionContext } from './PredictionContext.js';

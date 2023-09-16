@@ -5,8 +5,8 @@
  */
 
 import { Token } from './Token.js';
-import { ConsoleErrorListener } from './error/ConsoleErrorListener.js';
-import { ProxyErrorListener } from './error/ProxyErrorListener.js';
+import { ConsoleErrorListener } from './ConsoleErrorListener.js';
+import { ProxyErrorListener } from './ProxyErrorListener.js';
 
 export class Recognizer {
     static EOF = -1;

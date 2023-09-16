@@ -10,8 +10,8 @@ import { Vocabulary } from "./Vocabulary.js";
 import { ATN } from "./atn/ATN.js";
 import { ATNSimulator } from "./atn/ATNSimulator.js";
 import { RuleContext } from "./atn/RuleContext.js";
-import { BaseErrorListener } from "./error/BaseErrorListener.js";
-import { RecognitionException } from "./error/RecognitionException.js";
+import { BaseErrorListener } from "./BaseErrorListener.js";
+import { RecognitionException } from "./RecognitionException.js";
 
 export declare abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
     // eslint-disable-next-line @typescript-eslint/naming-convention

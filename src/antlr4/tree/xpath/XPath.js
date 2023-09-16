@@ -16,7 +16,7 @@ import { XPathTokenElement } from "./XPathTokenElement.js";
 import { XPathWildcardAnywhereElement } from "./XPathWildcardAnywhereElement.js";
 import { XPathWildcardElement } from "./XPathWildcardElement.js";
 import { ParserRuleContext } from "../../atn/ParserRuleContext.js";
-import { LexerNoViableAltException } from "../../error/LexerNoViableAltException.js";
+import { LexerNoViableAltException } from "../../LexerNoViableAltException.js";
 
 /**
  * Represent a subset of XPath XML path syntax for use in identifying nodes in

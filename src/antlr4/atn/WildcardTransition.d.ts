@@ -4,9 +4,12 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { ATNState } from "./ATNState.js";
+import { ATNState } from "../atn/ATNState.js";
 import { Transition } from "./Transition.js";
 
-export declare class AbstractPredicateTransition extends Transition {
+export declare class WildcardTransition extends Transition {
     public constructor(target: ATNState);
+
+    public matches(symbol: number, minVocabSymbol: number, maxVocabSymbol: number): boolean;
+    public toString(): string;
 }

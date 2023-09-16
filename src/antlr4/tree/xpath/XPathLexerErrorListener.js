@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { BaseErrorListener } from "../../error/BaseErrorListener.js";
+import { BaseErrorListener } from "../../BaseErrorListener.js";
 
 export class XPathLexerErrorListener extends BaseErrorListener {
     syntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg,

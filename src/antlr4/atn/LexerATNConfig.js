@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { DecisionState } from "../state/DecisionState.js";
+import { DecisionState } from "./DecisionState.js";
 import { ATNConfig } from "./ATNConfig.js";
 
 export class LexerATNConfig extends ATNConfig {

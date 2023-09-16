@@ -8,6 +8,7 @@
     "dictionaries": [],
     "words": [
         "ANTLR",
+        "Approximator",
         "rdbms",
         "runtimes",
         "sakila",
@@ -16,7 +17,9 @@
     "ignoreWords": [
         "AMBIG",
         "Dlanguage",
+        "Grosch",
         "Harwell",
+        "Wirth",
         "Xexact",
         "bitrix",
         "interp",

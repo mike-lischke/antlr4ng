@@ -7,8 +7,8 @@
 import { Recognizer } from "../../Recognizer.js";
 import { Token } from "../../Token.js";
 import { LexerATNSimulator } from "../../atn/LexerATNSimulator.js";
-import { BaseErrorListener } from "../../error/BaseErrorListener.js";
-import { RecognitionException } from "../../error/RecognitionException.js";
+import { BaseErrorListener } from "../../BaseErrorListener.js";
+import { RecognitionException } from "../../RecognitionException.js";
 
 export class XPathLexerErrorListener extends BaseErrorListener<LexerATNSimulator> {
     public syntaxError<T extends Token>(

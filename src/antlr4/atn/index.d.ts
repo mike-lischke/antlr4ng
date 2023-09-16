@@ -30,3 +30,19 @@ export * from "./ParserRuleContext.js";
 //export * from "./PredictionContext.js";
 export * from "./RuleContext.js";
 //export * from "./SingletonPredictionContext.js";
+
+export * from "./DecisionState.js";
+export * from "./RuleStartState.js";
+export * from "./RuleStopState.js";
+
+export * from "./ActionTransition.js";
+export * from "./AtomTransition.js";
+export * from "./EpsilonTransition.js";
+export * from "./NotSetTransition.js";
+export * from "./PrecedencePredicateTransition.js";
+export * from "./PredicateTransition.js";
+export * from "./RangeTransition.js";
+export * from "./RuleTransition.js";
+export * from "./SetTransition.js";
+export * from "./Transition.js";
+export * from "./WildcardTransition.js";

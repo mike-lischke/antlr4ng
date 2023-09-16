@@ -8,7 +8,7 @@ import { Token } from './Token.js';
 import { TerminalNode } from './tree/TerminalNode.js';
 import { ErrorNode } from './tree/ErrorNode.js';
 import { Recognizer } from './Recognizer.js';
-import { DefaultErrorStrategy } from './error/DefaultErrorStrategy.js';
+import { DefaultErrorStrategy } from './DefaultErrorStrategy.js';
 import { ATNDeserializer } from './atn/ATNDeserializer.js';
 import { ATNDeserializationOptions } from './atn/ATNDeserializationOptions.js';
 import { TraceListener } from "./TraceListener.js";

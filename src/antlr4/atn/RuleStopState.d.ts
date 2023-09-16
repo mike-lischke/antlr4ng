@@ -4,8 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { ATNState } from "./ATNState.js";
+import { ATNState } from "../atn/ATNState.js";
 
-export declare class ATNConfig {
-    public state: ATNState;
+export declare class RuleStopState extends ATNState {
 }

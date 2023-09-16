@@ -16,10 +16,11 @@ import { Parser } from './Parser.js';
 import { TokenStream } from './TokenStream.js';
 import { TokenStreamRewriter } from './TokenStreamRewriter.js';
 import { Vocabulary } from "./Vocabulary.js";
+
 import { RuleContext } from './atn/RuleContext.js';
 import { ParserRuleContext } from './atn/ParserRuleContext.js';
 import { ATN } from './atn/ATN.js';
-import { ATNState } from "./state/ATNState.js";
+import { ATNState } from "./atn/ATNState.js";
 import { ATNConfig } from "./atn/ATNConfig.js";
 import { ATNConfigSet } from "./atn/ATNConfigSet.js";
 import { PredictionMode } from './atn/PredictionMode.js';
@@ -30,21 +31,23 @@ import { LexerATNSimulator } from './atn/LexerATNSimulator.js';
 import { ParserATNSimulator } from './atn/ParserATNSimulator.js';
 import { PredictionContextCache } from './atn/PredictionContextCache.js';
 import { DFA } from "./dfa/DFA.js";
-import { RecognitionException } from "./error/RecognitionException.js";
-import { FailedPredicateException } from "./error/FailedPredicateException.js";
-import { NoViableAltException } from "./error/NoViableAltException.js";
-import { BailErrorStrategy } from "./error/BailErrorStrategy.js";
-import { ParseCancellationException } from "./error/ParseCancellationException.js";
-import { LexerNoViableAltException } from "./error/LexerNoViableAltException.js";
-import { DefaultErrorStrategy } from "./error/DefaultErrorStrategy.js";
+
+import { RecognitionException } from "./RecognitionException.js";
+import { FailedPredicateException } from "./FailedPredicateException.js";
+import { NoViableAltException } from "./NoViableAltException.js";
+import { BailErrorStrategy } from "./BailErrorStrategy.js";
+import { ParseCancellationException } from "./ParseCancellationException.js";
+import { LexerNoViableAltException } from "./LexerNoViableAltException.js";
+import { DefaultErrorStrategy } from "./DefaultErrorStrategy.js";
+import { BaseErrorListener } from "./BaseErrorListener.js";
+import { DiagnosticErrorListener } from "./DiagnosticErrorListener.js";
+import { InputMismatchException } from "./InputMismatchException.js";
+
 import { Interval } from './misc/Interval.js';
 import { IntervalSet } from './misc/IntervalSet.js';
 import { ParseTreeListener } from "./tree/ParseTreeListener.js";
 import { ParseTreeVisitor } from "./tree/ParseTreeVisitor.js";
 import { ParseTreeWalker } from "./tree/ParseTreeWalker.js";
-import { BaseErrorListener } from "./error/BaseErrorListener.js";
-import { DiagnosticErrorListener } from "./error/DiagnosticErrorListener.js";
-import { InputMismatchException } from "./error/InputMismatchException.js";
 import { TerminalNode } from "./tree/TerminalNode.js";
 import { ErrorNode } from "./tree/ErrorNode.js";
 
@@ -52,7 +55,7 @@ import { XPath } from "./tree/xpath/XPath.js";
 
 import { arrayToString } from "./utils/arrayToString.js";
 
-import { Transition } from "./transition/Transition.js";
+import { Transition } from "./atn/Transition.js";
 
 export default {
     Token, CommonToken, CharStreams, CharStream, InputStream, CommonTokenStream, Lexer, Parser,

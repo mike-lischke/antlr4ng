@@ -5,7 +5,7 @@
  */
 
 import { Token } from "../Token.js";
-import { RecognitionException } from "../error/RecognitionException.js";
+import { RecognitionException } from "../RecognitionException.js";
 import { ErrorNode } from "../tree/ErrorNode.js";
 import { TerminalNode } from "../tree/TerminalNode.js";
 import { RuleContext } from "./RuleContext.js";
