@@ -14,9 +14,9 @@ import { DFAState } from '../dfa/DFAState.js';
 import { PredPrediction } from '../dfa/PredPrediction.js';
 import { ATNSimulator } from './ATNSimulator.js';
 import { PredictionMode } from './PredictionMode.js';
-import { RuleContext } from '../context/RuleContext.js';
+import { RuleContext } from './RuleContext.js';
 import { SemanticContext } from './SemanticContext.js';
-import { PredictionContext } from '../context/PredictionContext.js';
+import { PredictionContext } from './PredictionContext.js';
 import { Interval } from '../misc/Interval.js';
 import { Transition } from '../transition/Transition.js';
 import { SetTransition } from '../transition/SetTransition.js';
@@ -24,8 +24,8 @@ import { NotSetTransition } from '../transition/NotSetTransition.js';
 import { RuleTransition } from '../transition/RuleTransition.js';
 import { ActionTransition } from '../transition/ActionTransition.js';
 import { NoViableAltException } from '../error/NoViableAltException.js';
-import { SingletonPredictionContext } from '../context/SingletonPredictionContext.js';
-import { predictionContextFromRuleContext } from '../context/PredictionContextUtils.js';
+import { SingletonPredictionContext } from './SingletonPredictionContext.js';
+import { predictionContextFromRuleContext } from './PredictionContextUtils.js';
 import { AtomTransition } from "../transition/AtomTransition.js";
 import { arrayToString } from "../utils/arrayToString.js";
 import { BitSet } from "../misc/BitSet.js";
@@ -1559,7 +1559,7 @@ export class ParserATNSimulator extends ATNSimulator {
         if (this.parser !== null && this.parser.literalNames !== null) {
             if (t >= this.parser.literalNames.length && t >= this.parser.symbolicNames.length) {
                 console.log("" + t + " ttype out of range: " + this.parser.literalNames);
-                console.log("" + this.parser.getInputStream().getTokens());
+                console.log("" + this.parser.tokenStream.getTokens());
             } else {
                 const name = this.parser.literalNames[t] || this.parser.symbolicNames[t];
                 return name + "<" + t + ">";

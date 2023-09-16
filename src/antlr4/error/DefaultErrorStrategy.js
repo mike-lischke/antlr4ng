@@ -678,7 +678,7 @@ export class DefaultErrorStrategy extends ErrorStrategy {
             const rt = invokingState.transitions[0];
             const follow = atn.nextTokens(rt.followState);
             recoverSet.addSet(follow);
-            ctx = ctx.parentCtx;
+            ctx = ctx.parent;
         }
         recoverSet.removeOne(Token.EPSILON);
         return recoverSet;

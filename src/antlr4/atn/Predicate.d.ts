@@ -5,7 +5,7 @@
  */
 
 import { Parser } from "../Parser.js";
-import { RuleContext } from "../context/RuleContext.js";
+import { RuleContext } from "./RuleContext.js";
 import { SemanticContext } from "./SemanticContext.js";
 
 export declare class Predicate extends SemanticContext {

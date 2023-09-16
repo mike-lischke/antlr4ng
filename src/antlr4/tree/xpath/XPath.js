@@ -15,7 +15,7 @@ import { XPathTokenAnywhereElement } from "./XPathTokenAnywhereElement.js";
 import { XPathTokenElement } from "./XPathTokenElement.js";
 import { XPathWildcardAnywhereElement } from "./XPathWildcardAnywhereElement.js";
 import { XPathWildcardElement } from "./XPathWildcardElement.js";
-import { ParserRuleContext } from "../../context/ParserRuleContext.js";
+import { ParserRuleContext } from "../../atn/ParserRuleContext.js";
 import { LexerNoViableAltException } from "../../error/LexerNoViableAltException.js";
 
 /**

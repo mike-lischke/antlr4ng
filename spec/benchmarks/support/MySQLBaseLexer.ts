@@ -311,13 +311,13 @@ export abstract class MySQLBaseLexer extends Lexer implements IMySQLRecognizerCo
     protected determineFunction(proposed: number): number {
         // Skip any whitespace character if the sql mode says they should be ignored,
         // before actually trying to match the open parenthesis.
-        let input = String.fromCharCode(this._input.LA(1));
+        let input = String.fromCharCode(this.inputStream.LA(1));
         if (this.isSqlModeActive(SqlMode.IgnoreSpace)) {
             while (input === " " || input === "\t" || input === "\r" || input === "\n") {
-                this._interp.consume(this._input);
+                this._interp.consume(this.inputStream);
                 this._channel = Lexer.HIDDEN;
                 this._type = MySQLLexer.WHITESPACE;
-                input = String.fromCharCode(this._input.LA(1));
+                input = String.fromCharCode(this.inputStream.LA(1));
             }
         }
 
@@ -432,7 +432,7 @@ export abstract class MySQLBaseLexer extends Lexer implements IMySQLRecognizerCo
      * Creates a DOT token in the token stream.
      */
     protected emitDot(): void {
-        this.pendingTokens.push(this._factory.create([this, this._input], MySQLLexer.DOT_SYMBOL,
+        this.pendingTokens.push(this._factory.create([this, this.inputStream], MySQLLexer.DOT_SYMBOL,
             null, this._channel, this._tokenStartCharIndex, this._tokenStartCharIndex, this._tokenStartLine,
             this._tokenStartColumn,
         ));

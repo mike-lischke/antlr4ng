@@ -21,11 +21,11 @@ export function predictionContextFromRuleContext(atn, outerContext) {
     }
     // if we are in RuleContext of start rule, s, then PredictionContext
     // is EMPTY. Nobody called us. (if we are empty, return empty)
-    if (outerContext.parentCtx === null || outerContext === RuleContext.EMPTY) {
+    if (outerContext.parent === null || outerContext === RuleContext.EMPTY) {
         return PredictionContext.EMPTY;
     }
     // If we have a parent, convert it to a PredictionContext graph
-    const parent = predictionContextFromRuleContext(atn, outerContext.parentCtx);
+    const parent = predictionContextFromRuleContext(atn, outerContext.parent);
     const state = atn.states[outerContext.invokingState];
     const transition = state.transitions[0];
     return SingletonPredictionContext.create(parent, transition.followState.stateNumber);
@@ -307,13 +307,13 @@ function mergeSingletons(a, b, rootIsWildcard, mergeCache) {
         return rootMerge;
     }
     if (a.returnState === b.returnState) {
-        const parent = merge(a.parentCtx, b.parentCtx, rootIsWildcard, mergeCache);
+        const parent = merge(a.parent, b.parent, rootIsWildcard, mergeCache);
         // if parent is same as existing a or b parent or reduced to a parent,
         // return it
-        if (parent === a.parentCtx) {
+        if (parent === a.parent) {
             return a; // ax + bx = ax, if a=b
         }
-        if (parent === b.parentCtx) {
+        if (parent === b.parent) {
             return b; // ax + bx = bx, if a=b
         }
         // else: ax + ay = a'[x,y]
@@ -328,10 +328,10 @@ function mergeSingletons(a, b, rootIsWildcard, mergeCache) {
     } else { // a != b payloads differ
         // see if we can collapse parents due to $+x parents if local ctx
         let singleParent = null;
-        if (a === b || (a.parentCtx !== null && a.parentCtx === b.parentCtx)) { // ax +
+        if (a === b || (a.parent !== null && a.parent === b.parent)) { // ax +
             // bx =
             // [a,b]x
-            singleParent = a.parentCtx;
+            singleParent = a.parent;
         }
         if (singleParent !== null) { // parents are same
             // sort payloads and use same parent
@@ -351,11 +351,11 @@ function mergeSingletons(a, b, rootIsWildcard, mergeCache) {
         // into array; can't merge.
         // ax + by = [ax,by]
         const payloads = [a.returnState, b.returnState];
-        let parents = [a.parentCtx, b.parentCtx];
+        let parents = [a.parent, b.parent];
         if (a.returnState > b.returnState) { // sort by payload
             payloads[0] = b.returnState;
             payloads[1] = a.returnState;
-            parents = [b.parentCtx, a.parentCtx];
+            parents = [b.parent, a.parent];
         }
         const a_ = new ArrayPredictionContext(parents, payloads);
         if (mergeCache !== null) {
@@ -417,11 +417,11 @@ function mergeRoot(a, b, rootIsWildcard) {
         } else if (a === PredictionContext.EMPTY) { // $ + x = [$,x]
             const payloads = [b.returnState,
             PredictionContext.EMPTY_RETURN_STATE];
-            const parents = [b.parentCtx, null];
+            const parents = [b.parent, null];
             return new ArrayPredictionContext(parents, payloads);
         } else if (b === PredictionContext.EMPTY) { // x + $ = [$,x] ($ is always first if present)
             const payloads = [a.returnState, PredictionContext.EMPTY_RETURN_STATE];
-            const parents = [a.parentCtx, null];
+            const parents = [a.parent, null];
             return new ArrayPredictionContext(parents, payloads);
         }
     }

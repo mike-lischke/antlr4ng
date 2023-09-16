@@ -24,6 +24,8 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable no-underscore-dangle */
 
+// cspell: disable
+
 import { MySQLParser } from "../generated/MySQLParser.js";
 //import { MySQLBaseLexer } from "./MySQLBaseLexer.js";
 import { MySQLLexer } from "../generated/MySQLLexer.js";
@@ -31,7 +33,7 @@ import { MySQLLexer } from "../generated/MySQLLexer.js";
 import { ErrorReportCallback } from "../support/helpers.js";
 import {
     BaseErrorListener, FailedPredicateException, IntervalSet, ATNSimulator,
-    NoViableAltException, ParserRuleContext, RecognitionException, Recognizer, Token,
+    NoViableAltException, RecognitionException, Recognizer, Token,
 } from "antlr4ng";
 
 class Vocabulary {
@@ -111,7 +113,7 @@ export class MySQLErrorListener extends BaseErrorListener<ATNSimulator> {
             // const lexer = parser._input.getTokenSource() as MySQLBaseLexer;
             const isEof = token.type === Token.EOF;
             if (isEof) {
-                token = parser._input.get(token.tokenIndex - 1);
+                token = parser.tokenStream.get(token.tokenIndex - 1);
             }
 
             const errorLength = token.stop - token.start + 1;
@@ -147,8 +149,8 @@ export class MySQLErrorListener extends BaseErrorListener<ATNSimulator> {
 
             // Walk up from generic rules to reach something that gives us more context, if needed.
             let context = parser._ctx;
-            while (MySQLErrorListener.simpleRules.has(context.ruleIndex) && context.parentCtx) {
-                context = context.parentCtx as ParserRuleContext;
+            while (MySQLErrorListener.simpleRules.has(context.ruleIndex) && context.parent) {
+                context = context.parent;
             }
 
             switch (context.ruleIndex) {
@@ -289,7 +291,7 @@ export class MySQLErrorListener extends BaseErrorListener<ATNSimulator> {
             // No offending symbol, which indicates this is a lexer error.
             if (e instanceof LexerNoViableAltException) {
                 const lexer = recognizer as MySQLLexer;
-                const input = lexer._input;
+                const input = lexer.inputStream;
                 let text = lexer.getErrorDisplay(input.getText(lexer._tokenStartCharIndex, input.index));
                 if (text === "") {
                     text = " ";  // Should never happen, but we must ensure we have text.

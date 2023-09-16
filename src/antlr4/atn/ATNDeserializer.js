@@ -40,14 +40,14 @@ import { IntervalSet } from '../misc/IntervalSet.js';
 import { ATNDeserializationOptions } from './ATNDeserializationOptions.js';
 
 import { LexerActionType } from './LexerActionType.js';
-import { LexerSkipAction } from '../action/LexerSkipAction.js';
-import { LexerChannelAction } from '../action/LexerChannelAction.js';
-import { LexerCustomAction } from '../action/LexerCustomAction.js';
-import { LexerMoreAction } from '../action/LexerMoreAction.js';
-import { LexerTypeAction } from '../action/LexerTypeAction.js';
-import { LexerPushModeAction } from '../action/LexerPushModeAction.js';
-import { LexerPopModeAction } from '../action/LexerPopModeAction.js';
-import { LexerModeAction } from '../action/LexerModeAction.js';
+import { LexerSkipAction } from './LexerSkipAction.js';
+import { LexerChannelAction } from './LexerChannelAction.js';
+import { LexerCustomAction } from './LexerCustomAction.js';
+import { LexerMoreAction } from './LexerMoreAction.js';
+import { LexerTypeAction } from './LexerTypeAction.js';
+import { LexerPushModeAction } from './LexerPushModeAction.js';
+import { LexerPopModeAction } from './LexerPopModeAction.js';
+import { LexerModeAction } from './LexerModeAction.js';
 
 const SERIALIZED_VERSION = 4;
 

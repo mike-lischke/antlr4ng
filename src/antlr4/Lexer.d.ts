@@ -24,7 +24,6 @@ export declare abstract class Lexer extends Recognizer<LexerATNSimulator> implem
 
     public static HIDDEN: number;
 
-    public _input: CharStream;
     public _factory: TokenFactory<Token>;
     public _tokenFactorySourcePair: [TokenSource | null, InputStream | null];
     /* eslint-enable @typescript-eslint/naming-convention */
@@ -41,7 +40,8 @@ export declare abstract class Lexer extends Recognizer<LexerATNSimulator> implem
     public _tokenStartColumn: number;
     public _type: number;
 
-    public inputStream: CharStream | undefined;
+    public get inputStream(): CharStream;
+    public set inputStream(value: CharStream);
 
     protected _modeStack: number[];
 

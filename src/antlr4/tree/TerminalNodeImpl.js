@@ -11,7 +11,7 @@ import { TerminalNode } from "./TerminalNode.js";
 export class TerminalNodeImpl extends TerminalNode {
     constructor(symbol) {
         super();
-        this.parentCtx = null;
+        this._parent = null;
         this.symbol = symbol;
     }
 
@@ -23,8 +23,8 @@ export class TerminalNodeImpl extends TerminalNode {
         return this.symbol;
     }
 
-    getParent() {
-        return this.parentCtx;
+    get parent() {
+        return this._parent;
     }
 
     getPayload() {

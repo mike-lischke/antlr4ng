@@ -23,7 +23,6 @@ export * from "./IntStream.js";
 
 export * from "./atn/index.js";
 export * from "./dfa/index.js";
-export * from "./context/index.js";
 export * from "./misc/index.js";
 export * from "./tree/index.js";
 export * from "./state/index.js";

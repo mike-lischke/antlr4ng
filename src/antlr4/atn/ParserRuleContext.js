@@ -58,7 +58,7 @@ export class ParserRuleContext extends RuleContext {
     // COPY a ctx (I'm deliberately not using copy constructor)
     copyFrom(ctx) {
         // from RuleContext
-        this.parentCtx = ctx.parentCtx;
+        this._parent = ctx._parent;
         this.invokingState = ctx.invokingState;
         this.children = null;
         this.start = ctx.start;
@@ -70,7 +70,7 @@ export class ParserRuleContext extends RuleContext {
             ctx.children.map(function (child) {
                 if (child instanceof ErrorNodeImpl) {
                     this.children.push(child);
-                    child.parentCtx = this;
+                    child.parent = this;
                 }
             }, this);
         }
@@ -105,14 +105,14 @@ export class ParserRuleContext extends RuleContext {
     addTokenNode(token) {
         const node = new TerminalNodeImpl(token);
         this.addChild(node);
-        node.parentCtx = this;
+        node.parent = this;
         return node;
     }
 
     addErrorNode(badToken) {
         const node = new ErrorNodeImpl(badToken);
         this.addChild(node);
-        node.parentCtx = this;
+        node.parent = this;
         return node;
     }
 

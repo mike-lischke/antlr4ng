@@ -19,12 +19,12 @@ export class SingletonPredictionContext extends PredictionContext {
         }
         hashCode = hash.finish();
         super(hashCode);
-        this.parentCtx = parent;
+        this.parent = parent;
         this.returnState = returnState;
     }
 
     getParent(index) {
-        return this.parentCtx;
+        return this.parent;
     }
 
     getReturnState(index) {
@@ -41,15 +41,15 @@ export class SingletonPredictionContext extends PredictionContext {
         } else {
             if (this.returnState !== other.returnState)
                 return false;
-            else if (this.parentCtx == null)
-                return other.parentCtx == null;
+            else if (this.parent == null)
+                return other.parent == null;
             else
-                return this.parentCtx.equals(other.parentCtx);
+                return this.parent.equals(other.parent);
         }
     }
 
     toString() {
-        const up = this.parentCtx === null ? "" : this.parentCtx.toString();
+        const up = this.parent === null ? "" : this.parent.toString();
         if (up.length === 0) {
             if (this.returnState === PredictionContext.EMPTY_RETURN_STATE) {
                 return "$";

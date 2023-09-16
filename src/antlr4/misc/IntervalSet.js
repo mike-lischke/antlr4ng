@@ -6,11 +6,27 @@
 
 import { Token } from '../Token.js';
 import { Interval } from "./Interval.js";
+import { Lexer } from "../Lexer.js";
 
 export class IntervalSet {
+    static COMPLETE_CHAR_SET = IntervalSet.of(Lexer.MIN_CHAR_VALUE, Lexer.MAX_CHAR_VALUE);
+    static EMPTY_SET = new IntervalSet();
+
+    static {
+        IntervalSet.COMPLETE_CHAR_SET.readonly = true;
+        IntervalSet.EMPTY_SET.readonly = true;
+    }
+
     constructor() {
         this.intervals = null;
         this.readOnly = false;
+    }
+
+    static of(a, b) {
+        const s = new IntervalSet();
+        s.addRange(a, b);
+
+        return s;
     }
 
     first(v) {
@@ -82,11 +98,21 @@ export class IntervalSet {
         }
     }
 
-    complement(start, stop) {
+    complement(minElement, maxElement) {
         const result = new IntervalSet();
-        result.addInterval(new Interval(start, stop + 1));
+        result.addInterval(new Interval(minElement, maxElement + 1));
         if (this.intervals !== null)
             this.intervals.forEach(toRemove => result.removeRange(toRemove));
+
+        return result;
+    }
+
+    complement(vocabulary) {
+        const result = new IntervalSet();
+        result.addInterval(vocabulary);
+        if (this.intervals !== null)
+            this.intervals.forEach(toRemove => result.removeRange(toRemove));
+
         return result;
     }
 
@@ -271,5 +297,17 @@ export class IntervalSet {
 
     get length() {
         return this.intervals.map(interval => interval.length).reduce((acc, val) => acc + val);
+    }
+
+    isReadonly() {
+        return readOnly;
+    }
+
+    setReadonly(readonly) {
+        if (this.readOnly && !readonly) {
+            throw new IllegalStateException("can't alter readonly IntervalSet");
+        }
+
+        this.readOnly = readonly;
     }
 }

@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { PredictionContext } from "../context/PredictionContext.js";
+import { PredictionContext } from "./PredictionContext.js";
 import { HashMap } from "../misc/HashMap.js";
 
 /**

@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { RuleContext } from "../context/RuleContext.js";
+import { RuleContext } from "../atn/RuleContext.js";
 import { Interval } from "../misc/Interval.js";
 import { Token } from "../Token.js";
 import { TokenStream } from "../TokenStream.js";
@@ -21,7 +21,7 @@ export declare interface ParseTree {
      * The parent of this node. If the return value is null, then this
      *  node is the root of the tree.
      */
-    getParent(): ParseTree | null;
+    get parent(): ParseTree | null;
 
     /**
      * This method returns whatever object represents the data at this node. For
@@ -40,6 +40,13 @@ export declare interface ParseTree {
      *  node represents a leaf node.
      */
     getChildCount(): number;
+
+    /**
+     * Return the combined text of all leaf nodes. Does not get any
+     *  off-channel tokens (if any) so won't return whitespace and
+     *  comments if they are sent to parser on hidden channel.
+     */
+    getText(): string;
 
     /**
      * Print out a whole tree, not just a node, in LISP format

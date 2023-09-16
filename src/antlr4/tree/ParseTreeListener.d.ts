@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { ParserRuleContext } from "../context/ParserRuleContext.js";
+import { ParserRuleContext } from "../atn/ParserRuleContext.js";
 import { ErrorNode } from "./ErrorNode.js";
 import { TerminalNode } from "./TerminalNode.js";
 

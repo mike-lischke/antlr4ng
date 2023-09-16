@@ -4,11 +4,12 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+import { IntStream } from "./IntStream.js";
 import { Token } from "./Token.js";
 import { Vocabulary } from "./Vocabulary.js";
 import { ATN } from "./atn/ATN.js";
 import { ATNSimulator } from "./atn/ATNSimulator.js";
-import { RuleContext } from "./context/RuleContext.js";
+import { RuleContext } from "./atn/RuleContext.js";
 import { BaseErrorListener } from "./error/BaseErrorListener.js";
 import { RecognitionException } from "./error/RecognitionException.js";
 
@@ -41,6 +42,9 @@ export declare abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
     public set state(newState: number);
 
     protected checkVersion(toolVersion: string): void;
+
+    public abstract get inputStream(): IntStream;
+    public abstract set inputStream(input: IntStream);
 
     public abstract get grammarFileName(): string;
     public abstract get ruleNames(): string[];

@@ -10,7 +10,7 @@ import { Interval } from "../misc/Interval.js";
 import { ParseTreeVisitor } from "../tree/ParseTreeVisitor.js";
 
 export declare class RuleContext implements ParseTree {
-    public parentCtx: RuleContext | null;
+    public get parent(): RuleContext | null;
     public children: ParseTree[] | null;
     public invokingState: number;
 

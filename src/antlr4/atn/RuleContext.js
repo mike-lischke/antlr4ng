@@ -30,9 +30,8 @@ export class RuleContext extends ParseTree {
      * @see ParserRuleContext
      */
     constructor(parent, invokingState) {
-        // What context invoked this rule?
         super();
-        this.parentCtx = parent ?? null;
+        this._parent = parent ?? null;
         this.children = null;
 
         /**
@@ -43,15 +42,15 @@ export class RuleContext extends ParseTree {
         this.invokingState = invokingState ?? -1;
     }
 
-    getParent() {
-        return this.parentCtx;
+    get parent() {
+        return this._parent;
     }
 
     depth() {
         let n = 0;
         let p = this;
         while (p !== null) {
-            p = p.parentCtx;
+            p = p.parent;
             n += 1;
         }
         return n;
@@ -124,7 +123,7 @@ export class RuleContext extends ParseTree {
     }
 
     setParent(parent) {
-        this.parentCtx = parent;
+        this.parent = parent;
     }
 
     getChild(i) {
@@ -163,10 +162,10 @@ export class RuleContext extends ParseTree {
                     : "" + ri;
                 s += ruleName;
             }
-            if (p.parentCtx !== null && (ruleNames !== null || !p.parentCtx.isEmpty())) {
+            if (p.parent !== null && (ruleNames !== null || !p.parent.isEmpty())) {
                 s += " ";
             }
-            p = p.parentCtx;
+            p = p.parent;
         }
         s += "]";
         return s;

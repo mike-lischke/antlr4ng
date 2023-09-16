@@ -26,7 +26,7 @@ export class Parser extends Recognizer {
          * The error handling strategy for the parser. The default value is a new
          * instance of {@link DefaultErrorStrategy}.
          */
-        this._errHandler = new DefaultErrorStrategy();
+        this.errorHandler = new DefaultErrorStrategy();
         this._precedenceStack = [];
         this._precedenceStack.push(0);
         /**
@@ -57,7 +57,7 @@ export class Parser extends Recognizer {
          * incremented each time {@link //notifyErrorListeners} is called.
          */
         this._syntaxErrors = 0;
-        this.setInputStream(input);
+        this.tokenStream = input;
     }
 
     // reset the parser's state
@@ -65,7 +65,7 @@ export class Parser extends Recognizer {
         if (this._input !== null) {
             this._input.seek(0);
         }
-        this._errHandler.reset(this);
+        this.errorHandler.reset(this);
         this._ctx = null;
         this._syntaxErrors = 0;
         this.setTrace(false);
@@ -97,10 +97,10 @@ export class Parser extends Recognizer {
     match(ttype) {
         let t = this.getCurrentToken();
         if (t.type === ttype) {
-            this._errHandler.reportMatch(this);
+            this.errorHandler.reportMatch(this);
             this.consume();
         } else {
-            t = this._errHandler.recoverInline(this);
+            t = this.errorHandler.recoverInline(this);
             if (this.buildParseTrees && t.tokenIndex === -1) {
                 // we must have conjured up a new token during single token
                 // insertion
@@ -131,10 +131,10 @@ export class Parser extends Recognizer {
     matchWildcard() {
         let t = this.getCurrentToken();
         if (t.type > 0) {
-            this._errHandler.reportMatch(this);
+            this.errorHandler.reportMatch(this);
             this.consume();
         } else {
-            t = this._errHandler.recoverInline(this);
+            t = this.errorHandler.recoverInline(this);
             if (this.buildParseTrees && t.tokenIndex === -1) {
                 // we must have conjured up a new token during single token
                 // insertion
@@ -270,23 +270,23 @@ export class Parser extends Recognizer {
         return result;
     }
 
-    getInputStream() {
-        return this.getTokenStream();
-    }
-
-    setInputStream(input) {
-        this.setTokenStream(input);
-    }
-
-    getTokenStream() {
+    get tokenStream() {
         return this._input;
     }
 
     // Set the token stream and reset the parser.
-    setTokenStream(input) {
+    set tokenStream(input) {
         this._input = null;
         this.reset();
         this._input = input;
+    }
+
+    get inputStream() {
+        return this._input;
+    }
+
+    set inputStream(input) {
+        this.tokenStream = input;
     }
 
     /**
@@ -320,7 +320,7 @@ export class Parser extends Recognizer {
     }
 
     /**
-     * Consume and return the {@linkplain //getCurrentToken current symbol}.
+     * Consume and return the {@link //getCurrentToken current symbol}.
      *
      * <p>E.g., given the following input with {@code A} being the current
      * lookahead symbol, this function moves the cursor to {@code B} and returns
@@ -343,12 +343,12 @@ export class Parser extends Recognizer {
     consume() {
         const o = this.getCurrentToken();
         if (o.type !== Token.EOF) {
-            this.getInputStream().consume();
+            this.tokenStream.consume();
         }
         const hasListener = this._parseListeners !== null && this._parseListeners.length > 0;
         if (this.buildParseTrees || hasListener) {
             let node;
-            if (this._errHandler.inErrorRecoveryMode(this)) {
+            if (this.errorHandler.inErrorRecoveryMode(this)) {
                 node = this._ctx.addErrorNode(o);
             } else {
                 node = this._ctx.addTokenNode(o);
@@ -369,8 +369,8 @@ export class Parser extends Recognizer {
 
     addContextToParseTree() {
         // add current context to parent if we have a parent
-        if (this._ctx.parentCtx !== null) {
-            this._ctx.parentCtx.addChild(this._ctx);
+        if (this._ctx.parent !== null) {
+            this._ctx.parent.addChild(this._ctx);
         }
     }
 
@@ -393,7 +393,7 @@ export class Parser extends Recognizer {
         // trigger event on _ctx, before it reverts to parent
         this.triggerExitRuleEvent();
         this.state = this._ctx.invokingState;
-        this._ctx = this._ctx.parentCtx;
+        this._ctx = this._ctx.parent;
     }
 
     enterOuterAlt(localctx, altNum) {
@@ -401,9 +401,9 @@ export class Parser extends Recognizer {
         // if we have new localctx, make sure we replace existing ctx
         // that is previous child of parse tree
         if (this.buildParseTrees && this._ctx !== localctx) {
-            if (this._ctx.parentCtx !== null) {
-                this._ctx.parentCtx.removeLastChild();
-                this._ctx.parentCtx.addChild(localctx);
+            if (this._ctx.parent !== null) {
+                this._ctx.parent.removeLastChild();
+                this._ctx.parent.addChild(localctx);
             }
         }
         this._ctx = localctx;
@@ -434,7 +434,7 @@ export class Parser extends Recognizer {
     // Like {@link //enterRule} but for recursive rules.
     pushNewRecursionContext(localctx, state, ruleIndex) {
         const previous = this._ctx;
-        previous.parentCtx = localctx;
+        previous._parent = localctx;
         previous.invokingState = state;
         previous.stop = this._input.LT(-1);
 
@@ -446,25 +446,25 @@ export class Parser extends Recognizer {
         this.triggerEnterRuleEvent(); // simulates rule entry for left-recursive rules
     }
 
-    unrollRecursionContexts(parentCtx) {
+    unrollRecursionContexts(parent) {
         this._precedenceStack.pop();
         this._ctx.stop = this._input.LT(-1);
         const retCtx = this._ctx; // save current ctx (return value)
         // unroll so _ctx is as it was before call to recursive method
         const parseListeners = this.getParseListeners();
         if (parseListeners !== null && parseListeners.length > 0) {
-            while (this._ctx !== parentCtx) {
+            while (this._ctx !== parent) {
                 this.triggerExitRuleEvent();
-                this._ctx = this._ctx.parentCtx;
+                this._ctx = this._ctx.parent;
             }
         } else {
-            this._ctx = parentCtx;
+            this._ctx = parent;
         }
         // hook into tree
-        retCtx.parentCtx = parentCtx;
-        if (this.buildParseTrees && parentCtx !== null) {
+        retCtx._parent = parent;
+        if (this.buildParseTrees && parent !== null) {
             // add return ctx into invoking rule's tree
-            parentCtx.addChild(retCtx);
+            parent.addChild(retCtx);
         }
     }
 
@@ -474,7 +474,7 @@ export class Parser extends Recognizer {
             if (ctx.ruleIndex === ruleIndex) {
                 return ctx;
             }
-            ctx = ctx.parentCtx;
+            ctx = ctx.parent;
         }
         return null;
     }
@@ -520,7 +520,7 @@ export class Parser extends Recognizer {
             if (following.contains(symbol)) {
                 return true;
             }
-            ctx = ctx.parentCtx;
+            ctx = ctx.parent;
         }
         if (following.contains(Token.EPSILON) && symbol === Token.EOF) {
             return true;
@@ -578,7 +578,7 @@ export class Parser extends Recognizer {
             } else {
                 stack.push(this.ruleNames[ruleIndex]);
             }
-            p = p.parentCtx;
+            p = p.parent;
         }
         return stack;
     }
@@ -597,19 +597,13 @@ export class Parser extends Recognizer {
                 if (seenOne) {
                     console.log();
                 }
-                this.printer.println("Decision " + dfa.decision + ":");
-                this.printer.print(dfa.toString(this.literalNames, this.symbolicNames));
+                console.log("Decision " + dfa.decision + ":");
+                console.log(dfa.toString(this.literalNames, this.symbolicNames));
                 seenOne = true;
             }
         }
     }
 
-    /*
-        "			printer = function() {\r\n" +
-        "				this.println = function(s) { document.getElementById('output') += s + '\\n'; }\r\n" +
-        "				this.print = function(s) { document.getElementById('output') += s; }\r\n" +
-        "			};\r\n" +
-        */
     getSourceName() {
         return this._input.sourceName;
     }

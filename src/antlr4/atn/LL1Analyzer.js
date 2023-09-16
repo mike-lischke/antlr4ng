@@ -12,9 +12,9 @@ import { RuleTransition } from '../transition/RuleTransition.js';
 import { NotSetTransition } from '../transition/NotSetTransition.js';
 import { WildcardTransition } from '../transition/WildcardTransition.js';
 import { AbstractPredicateTransition } from './AbstractPredicateTransition.js';
-import { predictionContextFromRuleContext } from '../context/PredictionContextUtils.js';
-import { PredictionContext } from '../context/PredictionContext.js';
-import { SingletonPredictionContext } from '../context/SingletonPredictionContext.js';
+import { predictionContextFromRuleContext } from './PredictionContextUtils.js';
+import { PredictionContext } from './PredictionContext.js';
+import { SingletonPredictionContext } from './SingletonPredictionContext.js';
 import { BitSet } from "../misc/BitSet.js";
 import { HashSet } from "../misc/HashSet.js";
 

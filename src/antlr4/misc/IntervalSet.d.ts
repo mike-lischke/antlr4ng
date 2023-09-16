@@ -7,6 +7,12 @@
 import { Interval } from "./Interval.js";
 
 export declare class IntervalSet {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    public static readonly COMPLETE_CHAR_SET: IntervalSet;
+
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    public static readonly EMPTY_SET: IntervalSet;
+
     public isNil: boolean;
     public minElement: number;
     public maxElement: number;
@@ -24,7 +30,10 @@ export declare class IntervalSet {
     public addInterval(other: Interval): void;
     public addSet(other: IntervalSet): void;
     public reduce(pos: number): void;
-    public complement(start: number, stop: number): IntervalSet;
+
+    public complement(minElement: number, maxElement: number): IntervalSet;
+    public complement(vocabulary: IntervalSet): IntervalSet;
+
     public contains(i: number): boolean;
     public removeRange(l: number, h: number): void;
     public removeOne(v: number): void;
@@ -34,4 +43,7 @@ export declare class IntervalSet {
     public toTokenString(literalNames?: Array<string | null>, symbolicNames?: string[]): string;
     public elementName(literalNames?: Array<string | null>, symbolicNames?: string[], index?: number): string;
     public toArray(): number[];
+
+    public isReadOnly(): boolean;
+    public setReadonly(readonly: boolean): void;
 }

@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { ParserRuleContext } from "../../context/ParserRuleContext.js";
+import { ParserRuleContext } from "../../atn/ParserRuleContext.js";
 import { Trees } from "../Trees.js";
 import { XPathElement } from "./XPathElement.js";
 

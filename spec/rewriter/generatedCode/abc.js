@@ -1,6 +1,6 @@
 // Generated from abc.g4 by ANTLR 4.12.0
 // jshint ignore: start
-import antlr4 from '../../../src/antlr4/index.node.js';
+import antlr4 from '../../../src/antlr4/index.js';
 
 
 const serializedATN = [4, 0, 3, 13, 6, -1, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 1, 0, 1, 0, 1, 1,

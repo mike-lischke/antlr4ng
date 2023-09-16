@@ -20,6 +20,8 @@ export declare class ParserRuleContext extends RuleContext {
 
     public constructor(parent: ParserRuleContext | null, invokingStateNumber: number);
 
+    public get parent(): ParserRuleContext | null;
+
     public copyFrom(ctx: ParserRuleContext): void;
     public addChild(child: RuleContext): void;
     public removeLastChild(): void;

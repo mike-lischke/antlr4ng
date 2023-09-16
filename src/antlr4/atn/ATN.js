@@ -142,7 +142,7 @@ export class ATN {
             following = this.nextTokens(rt.followState);
             expected.addSet(following);
             expected.removeOne(Token.EPSILON);
-            ctx = ctx.parentCtx;
+            ctx = ctx.parent;
         }
         if (following.contains(Token.EPSILON)) {
             expected.addOne(Token.EOF);

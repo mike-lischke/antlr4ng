@@ -106,12 +106,9 @@ export class ParseServiceJS {
         parser.serverVersion = serverVersion;
         parser.sqlModes = lexer.sqlModes;
 
-        // Keep the original error strategy to restore it if necessary.
-        //const defaultStrategy = parser._errHandler;
-
         // First parse with the bail error strategy to get quick feedback for correct queries.
         // Note: there's no need to delete the strategy instance. The error handler will take care.
-        parser._errHandler = new BailErrorStrategy();
+        parser.errorHandler = new BailErrorStrategy();
         parser._interp.predictionMode = PredictionMode.SLL;
 
         try {
@@ -131,7 +128,7 @@ export class ParseServiceJS {
                     /*this.tokenStream.seek(0);
                     this.parser.reset();
                     this.errors = [];
-                    this.parser._errHandler = defaultStrategy;
+                    this.parser.errorHandler = defaultStrategy;
                     this.parser._interp.predictionMode = PredictionMode.LL;
                     this.tree = this.parseUnit(unit);*/
                 }

@@ -405,7 +405,6 @@ export class BufferedTokenStream extends TokenStream {
     // Get all tokens from lexer until EOF///
     fill() {
         this.lazyInit();
-        // noinspection StatementWithEmptyBodyJS
         while (this.fetch(1000) === 1000);
     }
 }

@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { LexerIndexedCustomAction } from '../action/LexerIndexedCustomAction.js';
+import { LexerIndexedCustomAction } from './LexerIndexedCustomAction.js';
 import { HashCode } from "../misc/HashCode.js";
 
 export class LexerActionExecutor {

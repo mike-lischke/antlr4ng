@@ -9,20 +9,18 @@ import { Token } from "./Token.js";
 import { TokenFactory } from "./TokenFactory.js";
 import { TokenStream } from "./TokenStream.js";
 import { ParserATNSimulator } from "./atn/ParserATNSimulator.js";
-import { ParserRuleContext } from "./context/ParserRuleContext.js";
+import { ParserRuleContext } from "./atn/ParserRuleContext.js";
 import { ErrorStrategy } from "./error/ErrorStrategy.js";
 import { RecognitionException } from "./error/RecognitionException.js";
 import { IntervalSet } from "./misc/IntervalSet.js";
 import { ParseTreeListener } from "./tree/ParseTreeListener.js";
-import { Printer } from "./utils/Printer.js";
 
 export declare abstract class Parser extends Recognizer<ParserATNSimulator> {
-    public _input: TokenStream;
     public _ctx: ParserRuleContext;
-    public _errHandler: ErrorStrategy;
+
+    public errorHandler: ErrorStrategy;
     public matchedEOF: boolean;
     public buildParseTrees: boolean;
-    public printer?: Printer;
 
     protected _parseListeners: ParseTreeListener[] | null;
 
@@ -40,11 +38,15 @@ export declare abstract class Parser extends Recognizer<ParserATNSimulator> {
     public getTokenFactory(): TokenFactory<Token>;
     public setTokenFactory(factory: TokenFactory<Token>): void;
     public getATNWithBypassAlts(): string;
-    public getInputStream(): TokenStream;
-    public setInputStream(input: TokenStream): void;
-    public getTokenStream(): TokenStream;
-    public setTokenStream(input: TokenStream): void;
+
+    public get tokenStream(): TokenStream;
+    public set tokenStream(input: TokenStream);
+
+    public override get inputStream(): TokenStream;
+    public override set inputStream(input: TokenStream);
+
     public get syntaxErrorCount(): number;
+
     public getCurrentToken(): Token;
     public notifyErrorListeners(msg: string, offendingToken: Token | null, err: RecognitionException | null): void;
     public consume(): Token;
@@ -55,7 +57,7 @@ export declare abstract class Parser extends Recognizer<ParserATNSimulator> {
     public getPrecedence(): number;
     public enterRecursionRule(localctx: ParserRuleContext, state: number, ruleIndex: number, precedence: number): void;
     public pushNewRecursionContext(localctx: ParserRuleContext, state: number, ruleIndex: number): void;
-    public unrollRecursionContexts(parentCtx: ParserRuleContext): void;
+    public unrollRecursionContexts(parent: ParserRuleContext): void;
     public getInvokingContext(ruleIndex: number): ParserRuleContext;
     public precpred(localctx: ParserRuleContext, precedence: number): boolean;
     public isExpectedToken(symbol: number): boolean;

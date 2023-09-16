@@ -6,7 +6,7 @@
 
 import { ATN } from './ATN.js';
 import { SemanticContext } from './SemanticContext.js';
-import { merge } from '../context/PredictionContextUtils.js';
+import { merge } from './PredictionContextUtils.js';
 import { arrayToString } from "../utils/arrayToString.js";
 import { HashSet } from "../misc/HashSet.js";
 import { equalArrays } from "../utils/equalArrays.js";

@@ -52,7 +52,7 @@ export class BailErrorStrategy extends DefaultErrorStrategy {
         let context = recognizer._ctx;
         while (context !== null) {
             context.exception = e;
-            context = context.parentCtx;
+            context = context.parent;
         }
         throw new ParseCancellationException(e);
     }

@@ -16,9 +16,8 @@ import { Parser } from './Parser.js';
 import { TokenStream } from './TokenStream.js';
 import { TokenStreamRewriter } from './TokenStreamRewriter.js';
 import { Vocabulary } from "./Vocabulary.js";
-
-import { RuleContext } from './context/RuleContext.js';
-import { ParserRuleContext } from './context/ParserRuleContext.js';
+import { RuleContext } from './atn/RuleContext.js';
+import { ParserRuleContext } from './atn/ParserRuleContext.js';
 import { ATN } from './atn/ATN.js';
 import { ATNState } from "./state/ATNState.js";
 import { ATNConfig } from "./atn/ATNConfig.js";
@@ -36,6 +35,7 @@ import { FailedPredicateException } from "./error/FailedPredicateException.js";
 import { NoViableAltException } from "./error/NoViableAltException.js";
 import { BailErrorStrategy } from "./error/BailErrorStrategy.js";
 import { ParseCancellationException } from "./error/ParseCancellationException.js";
+import { LexerNoViableAltException } from "./error/LexerNoViableAltException.js";
 import { DefaultErrorStrategy } from "./error/DefaultErrorStrategy.js";
 import { Interval } from './misc/Interval.js';
 import { IntervalSet } from './misc/IntervalSet.js';
@@ -44,7 +44,6 @@ import { ParseTreeVisitor } from "./tree/ParseTreeVisitor.js";
 import { ParseTreeWalker } from "./tree/ParseTreeWalker.js";
 import { BaseErrorListener } from "./error/BaseErrorListener.js";
 import { DiagnosticErrorListener } from "./error/DiagnosticErrorListener.js";
-import { LexerNoViableAltException } from "./error/LexerNoViableAltException.js";
 import { InputMismatchException } from "./error/InputMismatchException.js";
 import { TerminalNode } from "./tree/TerminalNode.js";
 import { ErrorNode } from "./tree/ErrorNode.js";
@@ -62,8 +61,8 @@ export default {
     ATNDeserializer,
     PredictionContextCache, LexerATNSimulator, ParserATNSimulator, DFA, RecognitionException, NoViableAltException,
     FailedPredicateException, BaseErrorListener, DiagnosticErrorListener, BailErrorStrategy, DefaultErrorStrategy, LexerNoViableAltException,
-    ParseCancellationException, arrayToString, TokenStream, TokenStreamRewriter, Vocabulary, Transition, TokenFactory,
-    XPath, ATNSimulator, ErrorNode, InputMismatchException
+    ParseCancellationException, arrayToString, Vocabulary, TokenStream, Transition, TokenFactory,
+    XPath, ATNSimulator, TokenStreamRewriter, ErrorNode, InputMismatchException
 };
 
 export {
@@ -73,6 +72,6 @@ export {
     ATNDeserializer,
     PredictionContextCache, LexerATNSimulator, ParserATNSimulator, DFA, RecognitionException, NoViableAltException,
     FailedPredicateException, BaseErrorListener, DiagnosticErrorListener, BailErrorStrategy, DefaultErrorStrategy, LexerNoViableAltException,
-    ParseCancellationException, arrayToString, TokenStream, TokenStreamRewriter, Vocabulary, Transition, TokenFactory,
-    XPath, ATNSimulator, ErrorNode, InputMismatchException
+    ParseCancellationException, arrayToString, Vocabulary, TokenStream, Transition, TokenFactory,
+    XPath, ATNSimulator, TokenStreamRewriter, ErrorNode, InputMismatchException
 };
