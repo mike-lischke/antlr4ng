@@ -4,11 +4,11 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { Token } from "../Token.js";
-import { RecognitionException } from "../RecognitionException.js";
-import { ErrorNode } from "../tree/ErrorNode.js";
-import { TerminalNode } from "../tree/TerminalNode.js";
-import { RuleContext } from "./RuleContext.js";
+import { Token } from "./Token.js";
+import { RecognitionException } from "./RecognitionException.js";
+import { ErrorNode } from "./tree/ErrorNode.js";
+import { TerminalNode } from "./tree/TerminalNode.js";
+import { RuleContext } from "./atn/RuleContext.js";
 
 export declare class ParserRuleContext extends RuleContext {
     // eslint-disable-next-line @typescript-eslint/naming-convention

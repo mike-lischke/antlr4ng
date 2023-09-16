@@ -447,7 +447,7 @@ export class ParserATNSimulator extends ATNSimulator {
                         if (this.debug) {
                             console.log("Full LL avoided");
                         }
-                        return conflictingAlts.minValue();
+                        return conflictingAlts.nextSetBit(0);
                     }
                     if (conflictIndex !== startIndex) {
                         // restore the index so reporting the fallback to full
@@ -474,11 +474,11 @@ export class ParserATNSimulator extends ATNSimulator {
                 if (alts.length === 0) {
                     throw this.noViableAlt(input, outerContext, D.configs, startIndex);
                 } else if (alts.length === 1) {
-                    return alts.minValue();
+                    return alts.nextSetBit(0);
                 } else {
                     // report ambiguity after predicate evaluation to make sure the correct set of ambig alts is reported.
                     this.reportAmbiguity(dfa, D, startIndex, stopIndex, false, alts, D.configs);
-                    return alts.minValue();
+                    return alts.nextSetBit(0);
                 }
             }
             previousD = D;
@@ -554,7 +554,7 @@ export class ParserATNSimulator extends ATNSimulator {
             D.requiresFullContext = true;
             // in SLL-only mode, we will stop at this state and return the minimum alt
             D.isAcceptState = true;
-            D.prediction = D.configs.conflictingAlts.minValue();
+            D.prediction = D.configs.conflictingAlts.nextSetBit(0);
         }
         if (D.isAcceptState && D.configs.hasSemanticContext) {
             this.predicateDFAState(D, this.atn.getDecisionState(dfa.decision));
@@ -582,7 +582,7 @@ export class ParserATNSimulator extends ATNSimulator {
             // There are preds in configs but they might go away
             // when OR'd together like {p}? || NONE == NONE. If neither
             // alt has preds, resolve to min alt
-            dfaState.prediction = altsToCollectPredsFrom.minValue();
+            dfaState.prediction = altsToCollectPredsFrom.nextSetBit(0);
         }
     }
 
@@ -1011,7 +1011,7 @@ export class ParserATNSimulator extends ATNSimulator {
         let altToPred = [];
         for (let i = 0; i < configs.items.length; i++) {
             const c = configs.items[i];
-            if (ambigAlts.has(c.alt)) {
+            if (ambigAlts.get(c.alt)) {
                 altToPred[c.alt] = SemanticContext.orContext(altToPred[c.alt] || null, c.semanticContext);
             }
         }
@@ -1040,7 +1040,7 @@ export class ParserATNSimulator extends ATNSimulator {
         for (let i = 1; i < altToPred.length; i++) {
             const pred = altToPred[i];
             // unpredicated is indicated by SemanticContext.NONE
-            if (ambigAlts !== null && ambigAlts.has(i)) {
+            if (ambigAlts !== null && ambigAlts.get(i)) {
                 pairs.push(new PredPrediction(pred, i));
             }
             if (pred !== SemanticContext.NONE) {
@@ -1174,7 +1174,7 @@ export class ParserATNSimulator extends ATNSimulator {
         for (let i = 0; i < predPredictions.length; i++) {
             const pair = predPredictions[i];
             if (pair.pred === SemanticContext.NONE) {
-                predictions.add(pair.alt);
+                predictions.set(pair.alt);
                 if (!complete) {
                     break;
                 }
@@ -1188,7 +1188,7 @@ export class ParserATNSimulator extends ATNSimulator {
                 if (this.debug || this.dfa_debug) {
                     console.log("PREDICT " + pair.alt);
                 }
-                predictions.add(pair.alt);
+                predictions.set(pair.alt);
                 if (!complete) {
                     break;
                 }
@@ -1545,7 +1545,7 @@ export class ParserATNSimulator extends ATNSimulator {
         let conflictingAlts = null;
         if (configs.uniqueAlt !== ATN.INVALID_ALT_NUMBER) {
             conflictingAlts = new BitSet();
-            conflictingAlts.add(configs.uniqueAlt);
+            conflictingAlts.set(configs.uniqueAlt);
         } else {
             conflictingAlts = configs.conflictingAlts;
         }

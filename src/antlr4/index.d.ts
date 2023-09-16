@@ -20,6 +20,9 @@ export * from "./TokenStreamRewriter.js";
 export * from "./TokenSource.js";
 export * from "./Vocabulary.js";
 export * from "./IntStream.js";
+export * from "./LexerInterpreter.js";
+export * from "./ParserInterpreter.js";
+export * from "./InterpreterRuleContext.js";
 
 export * from "./RecognitionException.js";
 export * from "./NoViableAltException.js";

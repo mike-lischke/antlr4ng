@@ -16,9 +16,12 @@ import { Parser } from './Parser.js';
 import { TokenStream } from './TokenStream.js';
 import { TokenStreamRewriter } from './TokenStreamRewriter.js';
 import { Vocabulary } from "./Vocabulary.js";
+import { LexerInterpreter } from "./LexerInterpreter.js";
+import { ParserInterpreter } from "./ParserInterpreter.js";
+import { InterpreterRuleContext } from "./InterpreterRuleContext.js";
 
 import { RuleContext } from './atn/RuleContext.js';
-import { ParserRuleContext } from './atn/ParserRuleContext.js';
+import { ParserRuleContext } from './ParserRuleContext.js';
 import { ATN } from './atn/ATN.js';
 import { ATNState } from "./atn/ATNState.js";
 import { ATNConfig } from "./atn/ATNConfig.js";
@@ -61,7 +64,7 @@ export default {
     Token, CommonToken, CharStreams, CharStream, InputStream, CommonTokenStream, Lexer, Parser,
     TerminalNode, ParseTreeWalker, RuleContext, ParserRuleContext, Interval, IntervalSet,
     PredictionMode, LL1Analyzer, ParseTreeListener, ParseTreeVisitor, ATN, ATNState, ATNConfig, ATNConfigSet,
-    ATNDeserializer,
+    ATNDeserializer, LexerInterpreter, ParserInterpreter, InterpreterRuleContext,
     PredictionContextCache, LexerATNSimulator, ParserATNSimulator, DFA, RecognitionException, NoViableAltException,
     FailedPredicateException, BaseErrorListener, DiagnosticErrorListener, BailErrorStrategy, DefaultErrorStrategy, LexerNoViableAltException,
     ParseCancellationException, arrayToString, Vocabulary, TokenStream, Transition, TokenFactory,
@@ -72,7 +75,7 @@ export {
     Token, CommonToken, CharStreams, CharStream, InputStream, CommonTokenStream, Lexer, Parser,
     TerminalNode, ParseTreeWalker, RuleContext, ParserRuleContext, Interval, IntervalSet,
     PredictionMode, LL1Analyzer, ParseTreeListener, ParseTreeVisitor, ATN, ATNState, ATNConfig, ATNConfigSet,
-    ATNDeserializer,
+    ATNDeserializer, LexerInterpreter, ParserInterpreter, InterpreterRuleContext,
     PredictionContextCache, LexerATNSimulator, ParserATNSimulator, DFA, RecognitionException, NoViableAltException,
     FailedPredicateException, BaseErrorListener, DiagnosticErrorListener, BailErrorStrategy, DefaultErrorStrategy, LexerNoViableAltException,
     ParseCancellationException, arrayToString, Vocabulary, TokenStream, Transition, TokenFactory,

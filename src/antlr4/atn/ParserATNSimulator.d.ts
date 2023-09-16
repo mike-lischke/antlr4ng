@@ -6,7 +6,7 @@
 
 import { Parser } from "../Parser.js";
 import { TokenStream } from "../TokenStream.js";
-import { ParserRuleContext } from "./ParserRuleContext.js";
+import { ParserRuleContext } from "../ParserRuleContext.js";
 import { DFA } from "../dfa/DFA.js";
 import { ATN } from "./ATN.js";
 import { ATNSimulator } from "./ATNSimulator.js";

@@ -512,7 +512,7 @@ export const PredictionMode = {
                 alts = new BitSet();
                 configToAlts.set(cfg, alts);
             }
-            alts.add(cfg.alt);
+            alts.set(cfg.alt);
         });
         return configToAlts.getValues();
     },
@@ -533,7 +533,7 @@ export const PredictionMode = {
                 alts = new BitSet();
                 m.set(c.state, alts);
             }
-            alts.add(c.alt);
+            alts.set(c.alt);
         });
         return m;
     },

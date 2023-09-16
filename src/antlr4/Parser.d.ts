@@ -9,7 +9,7 @@ import { Token } from "./Token.js";
 import { TokenFactory } from "./TokenFactory.js";
 import { TokenStream } from "./TokenStream.js";
 import { ParserATNSimulator } from "./atn/ParserATNSimulator.js";
-import { ParserRuleContext } from "./atn/ParserRuleContext.js";
+import { ParserRuleContext } from "./ParserRuleContext.js";
 import { ANTLRErrorStrategy } from "./ANTLRErrorStrategy.js";
 import { RecognitionException } from "./RecognitionException.js";
 import { IntervalSet } from "./misc/IntervalSet.js";

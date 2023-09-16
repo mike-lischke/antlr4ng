@@ -4,11 +4,11 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { RuleContext } from './RuleContext.js';
-import { TerminalNode } from '../tree/TerminalNode.js';
-import { TerminalNodeImpl } from '../tree/TerminalNodeImpl.js';
-import { ErrorNodeImpl } from '../tree/ErrorNodeImpl.js';
-import { Interval } from "../misc/Interval.js";
+import { RuleContext } from './atn/RuleContext.js';
+import { TerminalNode } from './tree/TerminalNode.js';
+import { TerminalNodeImpl } from './tree/TerminalNodeImpl.js';
+import { ErrorNodeImpl } from './tree/ErrorNodeImpl.js';
+import { Interval } from "./misc/Interval.js";
 
 /**
  * A rule invocation record for parsing.

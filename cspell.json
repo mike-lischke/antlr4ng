@@ -24,6 +24,8 @@
         "bitrix",
         "interp",
         "localctx",
+        "nbits",
+        "parentctx",
         "precpred",
         "recog",
         "sempred",
