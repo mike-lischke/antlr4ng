@@ -47,6 +47,18 @@ The benchmarks consist of a set of query files, which are parsed by a MySQL pars
 
 ## Release Notes
 
+### 1.1.0
+
+This release includes a lot of cleanup.
+
+- Generated parser rules that can appear as either returning a single parse context or a list of that no longer use the `__list()` appendix in their name. Instead method overloading is used now to distinguish between the two cases.
+- The members `getTypedRuleContext` and `getTypedRuleContexts` have been renamed to `getRuleContext` and `getRuleContexts` respectively, just as in the Java runtime.
+- There are more renames (`_errHandler` -> 'errorHandler`, `_input` -> `inputStream` and more).
+- The package has been stripped down to just a single bundle file. This is an ESM module now, so it can be used in both, node and browser environments. No differentiation is made anymore between the two.
+- The internal folder structure has been changed to match the Java runtime.
+- Extended some classes, added new type definitions and exported some more classes.
+- Improved `BitSet` to use less memory.
+
 ### 1.0.6 - 1.0.7
 
 - Fixed recognizer token type and rule index maps.
