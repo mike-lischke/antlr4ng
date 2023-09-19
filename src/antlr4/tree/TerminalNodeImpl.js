@@ -27,6 +27,10 @@ export class TerminalNodeImpl extends TerminalNode {
         return this._parent;
     }
 
+    set parent(parent) {
+        this._parent = parent;
+    }
+
     getPayload() {
         return this.symbol;
     }

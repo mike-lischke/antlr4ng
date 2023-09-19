@@ -6,6 +6,7 @@
 
 import { IntervalSet } from "../misc/IntervalSet.js";
 import { Transition } from "./Transition.js";
+import { TransitionType } from "./TransitionType.js";
 
 export class AtomTransition extends Transition {
     constructor(target, label) {
@@ -13,7 +14,7 @@ export class AtomTransition extends Transition {
         // The token type or character value; or, signifies special label.
         this.label_ = label;
         this.label = this.makeLabel();
-        this.serializationType = Transition.ATOM;
+        this.serializationType = TransitionType.ATOM;
     }
 
     makeLabel() {

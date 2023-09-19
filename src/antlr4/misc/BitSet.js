@@ -45,10 +45,6 @@ export class BitSet {
         }
     }
 
-    remove(value) {
-        delete this.data[value];
-    }
-
     get(index) {
         return (this.data[index >>> 5] & (1 << index)) !== 0;
     }

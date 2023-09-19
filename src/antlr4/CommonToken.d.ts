@@ -5,8 +5,10 @@
  */
 
 import { InputStream } from "./InputStream.js";
+import { Recognizer } from "./Recognizer.js";
 import { Token } from "./Token.js";
 import { TokenSource } from "./TokenSource.js";
+import { ATNSimulator } from "./atn/ATNSimulator.js";
 
 export declare class CommonToken extends Token {
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -19,5 +21,6 @@ export declare class CommonToken extends Token {
 
     public clone(): CommonToken;
     public cloneWithType(type: number): CommonToken;
-    public toString(): string;
+
+    public toString(recognizer?: Recognizer<ATNSimulator>): string;
 }

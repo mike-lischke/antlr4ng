@@ -5,11 +5,6 @@
  */
 
 import { ATNState } from "./ATNState.js";
-import { ATNStateType } from "./ATNStateType.js";
 
-export class BasicState extends ATNState {
-    get stateType() {
-        return ATNStateType.BASIC;
-    }
-
+export declare class StarLoopbackState extends ATNState {
 }

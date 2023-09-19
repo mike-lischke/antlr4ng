@@ -4,33 +4,33 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { ATN } from './ATN.js';
-import { ATNState } from './ATNState.js';
-import { RuleStopState } from './RuleStopState.js';
-import { ATNConfig } from './ATNConfig.js';
-import { ATNConfigSet } from './ATNConfigSet.js';
+import { NoViableAltException } from '../NoViableAltException.js';
 import { Token } from '../Token.js';
 import { DFAState } from '../dfa/DFAState.js';
 import { PredPrediction } from '../dfa/PredPrediction.js';
+import { BitSet } from "../misc/BitSet.js";
+import { HashSet } from "../misc/HashSet.js";
+import { Interval } from '../misc/Interval.js';
+import { DoubleDict } from "../utils/DoubleDict.js";
+import { arrayToString } from "../utils/arrayToString.js";
+import { ATN } from './ATN.js';
+import { ATNConfig } from './ATNConfig.js';
+import { ATNConfigSet } from './ATNConfigSet.js';
 import { ATNSimulator } from './ATNSimulator.js';
+import { ATNStateType } from "./ATNStateType.js";
+import { ActionTransition } from './ActionTransition.js';
+import { AtomTransition } from "./AtomTransition.js";
+import { NotSetTransition } from './NotSetTransition.js';
+import { PredictionContext } from './PredictionContext.js';
+import { predictionContextFromRuleContext } from './PredictionContextUtils.js';
 import { PredictionMode } from './PredictionMode.js';
 import { RuleContext } from './RuleContext.js';
-import { SemanticContext } from './SemanticContext.js';
-import { PredictionContext } from './PredictionContext.js';
-import { Interval } from '../misc/Interval.js';
-import { Transition } from './Transition.js';
-import { SetTransition } from './SetTransition.js';
-import { NotSetTransition } from './NotSetTransition.js';
+import { RuleStopState } from './RuleStopState.js';
 import { RuleTransition } from './RuleTransition.js';
-import { ActionTransition } from './ActionTransition.js';
-import { NoViableAltException } from '../NoViableAltException.js';
+import { SemanticContext } from './SemanticContext.js';
+import { SetTransition } from './SetTransition.js';
 import { SingletonPredictionContext } from './SingletonPredictionContext.js';
-import { predictionContextFromRuleContext } from './PredictionContextUtils.js';
-import { AtomTransition } from "./AtomTransition.js";
-import { arrayToString } from "../utils/arrayToString.js";
-import { BitSet } from "../misc/BitSet.js";
-import { DoubleDict } from "../utils/DoubleDict.js";
-import { HashSet } from "../misc/HashSet.js";
+import { TransitionType } from './TransitionType.js';
 
 /**
  * The embodiment of the adaptive LL(*), ALL(*), parsing strategy.
@@ -1322,9 +1322,9 @@ export class ParserATNSimulator extends ATNSimulator {
         // the context has an empty stack case. If so, it would mean
         // global FOLLOW so we can't perform optimization
         // Are we the special loop entry/exit state? or SLL wildcard
-        if (p.stateType !== ATNState.STAR_LOOP_ENTRY)
+        if (p.stateType !== ATNStateType.STAR_LOOP_ENTRY)
             return false;
-        if (p.stateType !== ATNState.STAR_LOOP_ENTRY || !p.isPrecedenceDecision ||
+        if (p.stateType !== ATNStateType.STAR_LOOP_ENTRY || !p.precedenceRuleDecision ||
             config.context.isEmpty() || config.context.hasEmptyPath())
             return false;
 
@@ -1351,7 +1351,7 @@ export class ParserATNSimulator extends ATNSimulator {
 
             // Look for prefix op case like 'not expr', (' type ')' expr
             const returnStateTarget = returnState.transitions[0].target;
-            if (returnState.stateType === ATNState.BLOCK_END && returnStateTarget === p)
+            if (returnState.stateType === ATNStateType.BLOCK_END && returnStateTarget === p)
                 continue;
 
             // Look for 'expr op expr' or case where expr's return state is block end
@@ -1367,7 +1367,7 @@ export class ParserATNSimulator extends ATNSimulator {
 
             // Look for complex prefix 'between expr and expr' case where 2nd expr's
             // return state points at block end state of (...)* internal block
-            if (returnStateTarget.stateType === ATNState.BLOCK_END && returnStateTarget.transitions.length === 1
+            if (returnStateTarget.stateType === ATNStateType.BLOCK_END && returnStateTarget.transitions.length === 1
                 && returnStateTarget.transitions[0].isEpsilon && returnStateTarget.transitions[0].target === p)
                 continue;
 
@@ -1387,19 +1387,19 @@ export class ParserATNSimulator extends ATNSimulator {
 
     getEpsilonTarget(config, t, collectPredicates, inContext, fullCtx, treatEofAsEpsilon) {
         switch (t.serializationType) {
-            case Transition.RULE:
+            case TransitionType.RULE:
                 return this.ruleTransition(config, t);
-            case Transition.PRECEDENCE:
+            case TransitionType.PRECEDENCE:
                 return this.precedenceTransition(config, t, collectPredicates, inContext, fullCtx);
-            case Transition.PREDICATE:
+            case TransitionType.PREDICATE:
                 return this.predTransition(config, t, collectPredicates, inContext, fullCtx);
-            case Transition.ACTION:
+            case TransitionType.ACTION:
                 return this.actionTransition(config, t);
-            case Transition.EPSILON:
+            case TransitionType.EPSILON:
                 return new ATNConfig({ state: t.target }, config);
-            case Transition.ATOM:
-            case Transition.RANGE:
-            case Transition.SET:
+            case TransitionType.ATOM:
+            case TransitionType.RANGE:
+            case TransitionType.SET:
                 // EOF transitions act like epsilon transitions after the first EOF
                 // transition is traversed
                 if (treatEofAsEpsilon) {
@@ -1700,7 +1700,7 @@ export class ParserATNSimulator extends ATNSimulator {
         if (this.debug || this.retry_debug) {
             const interval = new Interval(startIndex, stopIndex + 1);
             console.log("reportAttemptingFullContext decision=" + dfa.decision + ":" + configs +
-                ", input=" + this.parser.getTokenStream().getText(interval));
+                ", input=" + this.parser.tokenStream.getText(interval));
         }
         if (this.parser !== null) {
             this.parser.getErrorListenerDispatch().reportAttemptingFullContext(this.parser, dfa, startIndex, stopIndex, conflictingAlts, configs);
@@ -1711,7 +1711,7 @@ export class ParserATNSimulator extends ATNSimulator {
         if (this.debug || this.retry_debug) {
             const interval = new Interval(startIndex, stopIndex + 1);
             console.log("reportContextSensitivity decision=" + dfa.decision + ":" + configs +
-                ", input=" + this.parser.getTokenStream().getText(interval));
+                ", input=" + this.parser.tokenStream.getText(interval));
         }
         if (this.parser !== null) {
             this.parser.getErrorListenerDispatch().reportContextSensitivity(this.parser, dfa, startIndex, stopIndex, prediction, configs);
@@ -1724,7 +1724,7 @@ export class ParserATNSimulator extends ATNSimulator {
         if (this.debug || this.retry_debug) {
             const interval = new Interval(startIndex, stopIndex + 1);
             console.log("reportAmbiguity " + ambigAlts + ":" + configs +
-                ", input=" + this.parser.getTokenStream().getText(interval));
+                ", input=" + this.parser.tokenStream.getText(interval));
         }
         if (this.parser !== null) {
             this.parser.getErrorListenerDispatch().reportAmbiguity(this.parser, dfa, startIndex, stopIndex, exact, ambigAlts, configs);

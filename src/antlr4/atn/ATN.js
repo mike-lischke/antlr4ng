@@ -27,7 +27,7 @@ export class ATN {
         // Maps from rule index to starting state number.
         this.ruleToStartState = [];
         // Maps from rule index to stop state number.
-        this.ruleToStopState = null;
+        this.ruleToStopState = [];
         this.modeNameToStartState = {};
         /**
          * For lexer ATNs, this maps the rule index to the resulting token type.
@@ -35,12 +35,12 @@ export class ATN {
          * type if the {@link ATNDeserializationOptions//isGenerateRuleBypassTransitions}
          * deserialization option was specified; otherwise, this is {@code null}
          */
-        this.ruleToTokenType = null;
+        this.ruleToTokenType = [];
         /**
          * For lexer ATNs, this is an array of {@link LexerAction} objects which may
          * be referenced by action transitions in the ATN
          */
-        this.lexerActions = null;
+        this.lexerActions = [];
         this.modeToStartState = [];
     }
 

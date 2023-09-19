@@ -8,11 +8,12 @@
 import { IntervalSet } from "../misc/IntervalSet.js";
 import { Token } from '../Token.js';
 import { Transition } from "./Transition.js";
+import { TransitionType } from "./TransitionType.js";
 
 export class SetTransition extends Transition {
     constructor(target, set) {
         super(target);
-        this.serializationType = Transition.SET;
+        this.serializationType = TransitionType.SET;
         if (set !== undefined && set !== null) {
             this.label = set;
         } else {

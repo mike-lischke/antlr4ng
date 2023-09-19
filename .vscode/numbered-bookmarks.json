@@ -1,3 +1,49 @@
 {
-	"files": []
+	"files": [
+		{
+			"path": "src/antlr4/index.js",
+			"bookmarks": [
+				{
+					"line": -1,
+					"column": 0
+				},
+				{
+					"line": -1,
+					"column": 0
+				},
+				{
+					"line": -1,
+					"column": 0
+				},
+				{
+					"line": -1,
+					"column": 0
+				},
+				{
+					"line": -1,
+					"column": 0
+				},
+				{
+					"line": -1,
+					"column": 0
+				},
+				{
+					"line": -1,
+					"column": 0
+				},
+				{
+					"line": 27,
+					"column": 7
+				},
+				{
+					"line": -1,
+					"column": 0
+				},
+				{
+					"line": -1,
+					"column": 0
+				}
+			]
+		}
+	]
 }

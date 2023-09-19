@@ -116,6 +116,78 @@ export class IntervalSet {
         return result;
     }
 
+    and(other) {
+        if (other.isNil) {
+            // nothing in common with null set
+            return new IntervalSet();
+        }
+
+        let myIntervals = this._intervals;
+        let theirIntervals = other._intervals;
+        let intersection;
+        let mySize = myIntervals.length;
+        let theirSize = theirIntervals.length;
+        let i = 0;
+        let j = 0;
+
+        // Iterate down both interval lists looking for non-disjoint intervals.
+        while (i < mySize && j < theirSize) {
+            let mine = myIntervals[i];
+            let theirs = theirIntervals[j];
+
+            if (mine.startsBeforeDisjoint(theirs)) {
+                // Move this iterator looking for interval that might overlap.
+                i++;
+            } else if (theirs.startsBeforeDisjoint(mine)) {
+                // Move other iterator looking for interval that might overlap.
+                j++;
+            } else if (mine.properlyContains(theirs)) {
+                // Overlap, add intersection, get next theirs.
+                if (!intersection) {
+                    intersection = new IntervalSet();
+                }
+
+                intersection.addRange(mine.intersection(theirs));
+                j++;
+            } else if (theirs.properlyContains(mine)) {
+                // Overlap, add intersection, get next mine.
+                if (!intersection) {
+                    intersection = new IntervalSet();
+                }
+
+                intersection.addRange(mine.intersection(theirs));
+                i++;
+            } else if (!mine.disjoint(theirs)) {
+                // Overlap, add intersection.
+                if (!intersection) {
+                    intersection = new IntervalSet();
+                }
+
+                intersection.addRange(mine.intersection(theirs));
+
+                // Move the iterator of lower range [a..b], but not
+                // the upper range as it may contain elements that will collide
+                // with the next iterator. So, if mine=[0..115] and
+                // theirs=[115..200], then intersection is 115 and move mine
+                // but not theirs as theirs may collide with the next range
+                // in thisIter.
+                // move both iterators to next ranges
+                if (mine.startsAfterNonDisjoint(theirs)) {
+                    j++;
+                }
+                else if (theirs.startsAfterNonDisjoint(mine)) {
+                    i++;
+                }
+            }
+        }
+
+        if (!intersection) {
+            return new IntervalSet();
+        }
+
+        return intersection;
+    }
+
     contains(item) {
         if (this.intervals === null) {
             return false;

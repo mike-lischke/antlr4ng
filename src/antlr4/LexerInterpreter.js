@@ -33,7 +33,7 @@ export class LexerInterpreter extends Lexer {
         this._channelNames = channelNames.slice(0);
         this._modeNames = modeNames.slice(0);
         this._vocabulary = vocabulary;
-        this._interp = new LexerATNSimulator(atn, this);
+        this.interpreter = new LexerATNSimulator(atn, this);
     }
 
     get atn() {

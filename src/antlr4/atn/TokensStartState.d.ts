@@ -5,14 +5,9 @@
  */
 
 import { DecisionState } from "./DecisionState.js";
-import { ATNStateType } from "./ATNStateType.js";
 
 /**
  * The Tokens rule start state linking to each lexer rule start state
  */
-export class TokensStartState extends DecisionState {
-    get stateType() {
-        return ATNStateType.TOKEN_START;
-    }
-
+export declare class TokensStartState extends DecisionState {
 }

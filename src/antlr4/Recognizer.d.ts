@@ -17,7 +17,7 @@ export declare abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     public static readonly EOF: number;
 
-    public _interp: ATNInterpreter;
+    public interpreter: ATNInterpreter;
 
     public addErrorListener(listener: BaseErrorListener<ATNInterpreter>): void;
     public removeErrorListeners(): void;

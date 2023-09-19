@@ -22,7 +22,7 @@ export class Lexer extends Recognizer {
         this._factory = CommonTokenFactory.DEFAULT;
         this._tokenFactorySourcePair = [this, input];
 
-        this._interp = null; // child classes must populate this
+        this.interpreter = null; // child classes must populate this
 
         /**
          * The goal of all lexer rules/methods is to create a token object.
@@ -85,7 +85,7 @@ export class Lexer extends Recognizer {
         this._mode = Lexer.DEFAULT_MODE;
         this._modeStack = [];
 
-        this._interp.reset();
+        this.interpreter.reset();
     }
 
     // Return a token from this source; i.e., match a token on the char stream.
@@ -108,15 +108,15 @@ export class Lexer extends Recognizer {
                 this._token = null;
                 this._channel = Token.DEFAULT_CHANNEL;
                 this._tokenStartCharIndex = this._input.index;
-                this._tokenStartColumn = this._interp.column;
-                this._tokenStartLine = this._interp.line;
+                this._tokenStartColumn = this.interpreter.column;
+                this._tokenStartLine = this.interpreter.line;
                 this._text = null;
                 let continueOuter = false;
                 for (; ;) {
                     this._type = Token.INVALID_TYPE;
                     let ttype = Lexer.SKIP;
                     try {
-                        ttype = this._interp.match(this._input, this._mode);
+                        ttype = this.interpreter.match(this._input, this._mode);
                     } catch (e) {
                         if (e instanceof RecognitionException) {
                             this.notifyListeners(e); // report error
@@ -175,7 +175,7 @@ export class Lexer extends Recognizer {
     }
 
     pushMode(m) {
-        if (this._interp.debug) {
+        if (this.interpreter.debug) {
             console.log("pushMode " + m);
         }
         this._modeStack.push(this._mode);
@@ -186,7 +186,7 @@ export class Lexer extends Recognizer {
         if (this._modeStack.length === 0) {
             throw "Empty Stack";
         }
-        if (this._interp.debug) {
+        if (this.interpreter.debug) {
             console.log("popMode back to " + this._modeStack.slice(0, -1));
         }
         this.mode(this._modeStack.pop());
@@ -294,7 +294,7 @@ export class Lexer extends Recognizer {
         if (this._input.LA(1) !== Token.EOF) {
             if (re instanceof LexerNoViableAltException) {
                 // skip a char and try again
-                this._interp.consume(this._input);
+                this.interpreter.consume(this._input);
             } else {
                 // TODO: Do we lose character or line position information?
                 this._input.consume();
@@ -327,26 +327,26 @@ export class Lexer extends Recognizer {
     }
 
     get line() {
-        return this._interp.line;
+        return this.interpreter.line;
     }
 
     set line(line) {
-        this._interp.line = line;
+        this.interpreter.line = line;
     }
 
     get column() {
-        return this._interp.column;
+        return this.interpreter.column;
     }
 
     set column(column) {
-        this._interp.column = column;
+        this.interpreter.column = column;
     }
 
     get text() {
         if (this._text !== null) {
             return this._text;
         } else {
-            return this._interp.getText(this._input);
+            return this.interpreter.getText(this._input);
         }
     }
 

@@ -12,7 +12,7 @@ import { RecognitionException } from "./RecognitionException.js";
  */
 export class InputMismatchException extends RecognitionException {
     constructor(recognizer) {
-        super({ message: "", recognizer: recognizer, input: recognizer.getInputStream(), ctx: recognizer._ctx });
+        super({ message: "", recognizer: recognizer, input: recognizer.inputStream, ctx: recognizer._ctx });
         this.offendingToken = recognizer.getCurrentToken();
     }
 }

@@ -11,6 +11,7 @@ import { ATNState } from "./atn/ATNState.js";
 import { Token } from './Token.js';
 import { Interval } from "./misc/Interval.js";
 import { IntervalSet } from "./misc/IntervalSet.js";
+import { ATNStateType } from "./atn/ATNStateType.js";
 
 /**
  * This is the default implementation of {@link ANTLRErrorStrategy} used for
@@ -130,7 +131,7 @@ export class DefaultErrorStrategy {
      *
      */
     recover(recognizer, e) {
-        if (this.lastErrorIndex === recognizer.getInputStream().index &&
+        if (this.lastErrorIndex === recognizer.inputStream.index &&
             this.lastErrorStates !== null && this.lastErrorStates.indexOf(recognizer.state) >= 0) {
             // uh oh, another error at same token index and previously-visited
             // state in ATN; must be a case where LT(1) is in the recovery
@@ -199,8 +200,8 @@ export class DefaultErrorStrategy {
         if (this.inErrorRecoveryMode(recognizer)) {
             return;
         }
-        const s = recognizer._interp.atn.states[recognizer.state];
-        const la = recognizer.getTokenStream().LA(1);
+        const s = recognizer.interpreter.atn.states[recognizer.state];
+        const la = recognizer.tokenStream.LA(1);
         // try cheaper subset first; might get lucky. seems to shave a wee bit off
         const nextTokens = recognizer.atn.nextTokens(s);
         if (nextTokens.contains(la)) {
@@ -217,18 +218,18 @@ export class DefaultErrorStrategy {
             return;
         }
         switch (s.stateType) {
-            case ATNState.BLOCK_START:
-            case ATNState.STAR_BLOCK_START:
-            case ATNState.PLUS_BLOCK_START:
-            case ATNState.STAR_LOOP_ENTRY:
+            case ATNStateType.BLOCK_START:
+            case ATNStateType.STAR_BLOCK_START:
+            case ATNStateType.PLUS_BLOCK_START:
+            case ATNStateType.STAR_LOOP_ENTRY:
                 // report error and recover if possible
                 if (this.singleTokenDeletion(recognizer) !== null) {
                     return;
                 } else {
                     throw new InputMismatchException(recognizer);
                 }
-            case ATNState.PLUS_LOOP_BACK:
-            case ATNState.STAR_LOOP_BACK:
+            case ATNStateType.PLUS_LOOP_BACK:
+            case ATNStateType.STAR_LOOP_BACK:
                 {
                     this.reportUnwantedToken(recognizer);
                     const expecting = new IntervalSet();
@@ -252,7 +253,7 @@ export class DefaultErrorStrategy {
      * @param e the recognition exception
      */
     reportNoViableAlternative(recognizer, e) {
-        const tokens = recognizer.getTokenStream();
+        const tokens = recognizer.tokenStream;
         let input;
         if (tokens !== null) {
             if (e.startToken.type === Token.EOF) {
@@ -443,11 +444,11 @@ export class DefaultErrorStrategy {
      * strategy for the current mismatched input, otherwise {@code false}
      */
     singleTokenInsertion(recognizer) {
-        const currentSymbolType = recognizer.getTokenStream().LA(1);
+        const currentSymbolType = recognizer.tokenStream.LA(1);
         // if current token is consistent with what could come after current
         // ATN state, then we know we're missing a token; error recovery
         // is free to conjure up and insert the missing token
-        const atn = recognizer._interp.atn;
+        const atn = recognizer.interpreter.atn;
         const currentState = atn.states[recognizer.state];
         const next = currentState.transitions[0].target;
         const expectingAtLL2 = atn.nextTokens(next, recognizer._ctx);
@@ -479,13 +480,13 @@ export class DefaultErrorStrategy {
      * {@code null}
      */
     singleTokenDeletion(recognizer) {
-        const nextTokenType = recognizer.getTokenStream().LA(2);
+        const nextTokenType = recognizer.tokenStream.LA(2);
         const expecting = this.getExpectedTokens(recognizer);
         if (expecting.contains(nextTokenType)) {
             this.reportUnwantedToken(recognizer);
             // print("recoverFromMismatchedToken deleting " \
-            // + str(recognizer.getTokenStream().LT(1)) \
-            // + " since " + str(recognizer.getTokenStream().LT(2)) \
+            // + str(recognizer.tokenStream.LT(1)) \
+            // + " since " + str(recognizer.tokenStream.LT(2)) \
             // + " is what we want", file=sys.stderr)
             recognizer.consume(); // simply delete extra token
             // we want to return the token we're actually matching
@@ -529,7 +530,7 @@ export class DefaultErrorStrategy {
             tokenText = "<missing " + recognizer.literalNames[expectedTokenType] + ">";
         }
         let current = currentSymbol;
-        const lookBack = recognizer.getTokenStream().LT(-1);
+        const lookBack = recognizer.tokenStream.LT(-1);
         if (current.type === Token.EOF && lookBack !== null) {
             current = lookBack;
         }
@@ -667,7 +668,7 @@ export class DefaultErrorStrategy {
      * at run-time upon error to avoid overhead during parsing.
      */
     getErrorRecoverySet(recognizer) {
-        const atn = recognizer._interp.atn;
+        const atn = recognizer.interpreter.atn;
         let ctx = recognizer._ctx;
         const recoverSet = new IntervalSet();
         while (ctx !== null && ctx.invokingState >= 0) {
@@ -684,10 +685,10 @@ export class DefaultErrorStrategy {
 
     // Consume tokens until one matches the given token set.//
     consumeUntil(recognizer, set) {
-        let ttype = recognizer.getTokenStream().LA(1);
+        let ttype = recognizer.tokenStream.LA(1);
         while (ttype !== Token.EOF && !set.contains(ttype)) {
             recognizer.consume();
-            ttype = recognizer.getTokenStream().LA(1);
+            ttype = recognizer.tokenStream.LA(1);
         }
     }
 }

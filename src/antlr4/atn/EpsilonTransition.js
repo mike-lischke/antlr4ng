@@ -5,11 +5,12 @@
  */
 
 import { Transition } from "./Transition.js";
+import { TransitionType } from "./TransitionType.js";
 
 export class EpsilonTransition extends Transition {
     constructor(target, outermostPrecedenceReturn) {
         super(target);
-        this.serializationType = Transition.EPSILON;
+        this.serializationType = TransitionType.EPSILON;
         this.isEpsilon = true;
         this.outermostPrecedenceReturn = outermostPrecedenceReturn;
     }

@@ -24,6 +24,18 @@ import { RuleContext } from './atn/RuleContext.js';
 import { ParserRuleContext } from './ParserRuleContext.js';
 import { ATN } from './atn/ATN.js';
 import { ATNState } from "./atn/ATNState.js";
+
+import { BlockStartState } from "./atn/BlockStartState.js";
+import { BasicState } from "./atn/BasicState.js";
+import { DecisionState } from "./atn/DecisionState.js";
+import { PlusBlockStartState } from "./atn/PlusBlockStartState.js";
+import { StarBlockStartState } from "./atn/StarBlockStartState.js";
+import { StarLoopEntryState } from "./atn/StarLoopEntryState.js";
+import { PlusLoopbackState } from "./atn/PlusLoopbackState.js";
+import { StarLoopbackState } from "./atn/StarLoopbackState.js";
+import { LoopEndState } from "./atn/LoopEndState.js";
+import { TokensStartState } from "./atn/TokensStartState.js";
+
 import { ATNConfig } from "./atn/ATNConfig.js";
 import { ATNConfigSet } from "./atn/ATNConfigSet.js";
 import { PredictionMode } from './atn/PredictionMode.js';
@@ -33,6 +45,8 @@ import { ATNSimulator } from "./atn/ATNSimulator.js";
 import { LexerATNSimulator } from './atn/LexerATNSimulator.js';
 import { ParserATNSimulator } from './atn/ParserATNSimulator.js';
 import { PredictionContextCache } from './atn/PredictionContextCache.js';
+import { ATNStateType } from "./atn/ATNStateType.js";
+
 import { DFA } from "./dfa/DFA.js";
 
 import { RecognitionException } from "./RecognitionException.js";
@@ -59,25 +73,30 @@ import { XPath } from "./tree/xpath/XPath.js";
 import { arrayToString } from "./utils/arrayToString.js";
 
 import { Transition } from "./atn/Transition.js";
+import { TransitionType } from "./atn/TransitionType.js";
 
 export default {
     Token, CommonToken, CharStreams, CharStream, InputStream, CommonTokenStream, Lexer, Parser,
     TerminalNode, ParseTreeWalker, RuleContext, ParserRuleContext, Interval, IntervalSet,
-    PredictionMode, LL1Analyzer, ParseTreeListener, ParseTreeVisitor, ATN, ATNState, ATNConfig, ATNConfigSet,
+    PredictionMode, LL1Analyzer, ParseTreeListener, ParseTreeVisitor, ATN, ATNState, ATNStateType, ATNConfig, ATNConfigSet,
     ATNDeserializer, LexerInterpreter, ParserInterpreter, InterpreterRuleContext,
     PredictionContextCache, LexerATNSimulator, ParserATNSimulator, DFA, RecognitionException, NoViableAltException,
     FailedPredicateException, BaseErrorListener, DiagnosticErrorListener, BailErrorStrategy, DefaultErrorStrategy, LexerNoViableAltException,
-    ParseCancellationException, arrayToString, Vocabulary, TokenStream, Transition, TokenFactory,
-    XPath, ATNSimulator, TokenStreamRewriter, ErrorNode, InputMismatchException
+    ParseCancellationException, arrayToString, Vocabulary, TokenStream, Transition, TransitionType, TokenFactory,
+    XPath, ATNSimulator, TokenStreamRewriter, ErrorNode, InputMismatchException,
+    BlockStartState, BasicState, DecisionState, PlusBlockStartState, StarBlockStartState, StarLoopEntryState,
+    PlusLoopbackState, StarLoopbackState, LoopEndState, TokensStartState
 };
 
 export {
     Token, CommonToken, CharStreams, CharStream, InputStream, CommonTokenStream, Lexer, Parser,
     TerminalNode, ParseTreeWalker, RuleContext, ParserRuleContext, Interval, IntervalSet,
-    PredictionMode, LL1Analyzer, ParseTreeListener, ParseTreeVisitor, ATN, ATNState, ATNConfig, ATNConfigSet,
+    PredictionMode, LL1Analyzer, ParseTreeListener, ParseTreeVisitor, ATN, ATNState, ATNStateType, ATNConfig, ATNConfigSet,
     ATNDeserializer, LexerInterpreter, ParserInterpreter, InterpreterRuleContext,
     PredictionContextCache, LexerATNSimulator, ParserATNSimulator, DFA, RecognitionException, NoViableAltException,
     FailedPredicateException, BaseErrorListener, DiagnosticErrorListener, BailErrorStrategy, DefaultErrorStrategy, LexerNoViableAltException,
-    ParseCancellationException, arrayToString, Vocabulary, TokenStream, Transition, TokenFactory,
-    XPath, ATNSimulator, TokenStreamRewriter, ErrorNode, InputMismatchException
+    ParseCancellationException, arrayToString, Vocabulary, TokenStream, Transition, TransitionType, TokenFactory,
+    XPath, ATNSimulator, TokenStreamRewriter, ErrorNode, InputMismatchException,
+    BlockStartState, BasicState, DecisionState, PlusBlockStartState, StarBlockStartState, StarLoopEntryState,
+    PlusLoopbackState, StarLoopbackState, LoopEndState, TokensStartState
 };

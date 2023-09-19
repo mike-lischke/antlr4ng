@@ -4,13 +4,12 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { ATNState } from "./ATNState.js";
+import { ATNStateType } from "./ATNStateType.js";
 import { BlockStartState } from "./BlockStartState.js";
 
 export class BasicBlockStartState extends BlockStartState {
-    constructor() {
-        super();
-        this.stateType = ATNState.BLOCK_START;
-        return this;
+    get stateType() {
+        return ATNStateType.BLOCK_START;
     }
+
 }

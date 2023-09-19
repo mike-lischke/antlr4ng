@@ -71,31 +71,13 @@ import type { BasicState } from "./BasicState.js";
  * <embed src="images/OptionalNonGreedy.svg" type="image/svg+xml"/>
  */
 export declare class ATNState {
-    /* eslint-disable @typescript-eslint/naming-convention */
-
-    public static readonly INVALID_TYPE: number;
-    public static readonly BASIC: number;
-    public static readonly RULE_START: number;
-    public static readonly BLOCK_START: number;
-    public static readonly PLUS_BLOCK_START: number;
-    public static readonly STAR_BLOCK_START: number;
-    public static readonly TOKEN_START: number;
-    public static readonly RULE_STOP: number;
-    public static readonly BLOCK_END: number;
-    public static readonly STAR_LOOP_BACK: number;
-    public static readonly STAR_LOOP_ENTRY: number;
-    public static readonly PLUS_LOOP_BACK: number;
-    public static readonly LOOP_END: number;
-
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     public static readonly INVALID_STATE_NUMBER: number;
 
-    /* eslint-enable @typescript-eslint/naming-convention */
-
-    public static readonly serializationNames: string[];
+    public get stateType(): number;
 
     public atn: ATN | null;
     public stateNumber: number;
-    public stateType: number | null;
     public ruleIndex: number;
     public epsilonOnlyTransitions: boolean;
     public transitions: Transition[];

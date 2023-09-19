@@ -13,6 +13,6 @@ export declare class SetTransition extends Transition {
 
     public constructor(target: ATNState, set: IntervalSet);
 
-    public matches(symbol: number, minVocabSymbol: number, maxVocabSymbol: number): boolean;
+    public override matches(symbol: number, minVocabSymbol: number, maxVocabSymbol: number): boolean;
     public toString(): string;
 }

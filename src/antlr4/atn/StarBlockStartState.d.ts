@@ -5,14 +5,9 @@
  */
 
 import { BlockStartState } from "./BlockStartState.js";
-import { ATNStateType } from "./ATNStateType.js";
 
 /**
  * The block that begins a closure loop
  */
 export class StarBlockStartState extends BlockStartState {
-    get stateType() {
-        return ATNStateType.STAR_BLOCK_START;
-    }
-
 }

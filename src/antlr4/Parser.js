@@ -60,6 +60,10 @@ export class Parser extends Recognizer {
         this.tokenStream = input;
     }
 
+    get context() {
+        return this._ctx;
+    }
+
     // reset the parser's state
     reset() {
         if (this._input !== null) {
@@ -71,8 +75,8 @@ export class Parser extends Recognizer {
         this.setTrace(false);
         this._precedenceStack = [];
         this._precedenceStack.push(0);
-        if (this._interp !== null) {
-            this._interp.reset();
+        if (this.interpreter !== null) {
+            this.interpreter.reset();
         }
     }
 
@@ -503,7 +507,7 @@ export class Parser extends Recognizer {
      * the ATN, otherwise {@code false}.
      */
     isExpectedToken(symbol) {
-        const atn = this._interp.atn;
+        const atn = this.interpreter.atn;
         let ctx = this._ctx;
         const s = atn.states[this.state];
         let following = atn.nextTokens(s);
@@ -537,11 +541,11 @@ export class Parser extends Recognizer {
      * @see ATN//getExpectedTokens(int, RuleContext)
      */
     getExpectedTokens() {
-        return this._interp.atn.getExpectedTokens(this.state, this._ctx);
+        return this.interpreter.atn.getExpectedTokens(this.state, this._ctx);
     }
 
     getExpectedTokensWithinCurrentRule() {
-        const atn = this._interp.atn;
+        const atn = this.interpreter.atn;
         const s = atn.states[this.state];
         return atn.nextTokens(s);
     }
@@ -585,14 +589,14 @@ export class Parser extends Recognizer {
 
     // For debugging and other purposes.
     getDFAStrings() {
-        return this._interp.decisionToDFA.toString();
+        return this.interpreter.decisionToDFA.toString();
     }
 
     // For debugging and other purposes.
     dumpDFA() {
         let seenOne = false;
-        for (let i = 0; i < this._interp.decisionToDFA.length; i++) {
-            const dfa = this._interp.decisionToDFA[i];
+        for (let i = 0; i < this.interpreter.decisionToDFA.length; i++) {
+            const dfa = this.interpreter.decisionToDFA[i];
             if (dfa.states.length > 0) {
                 if (seenOne) {
                     console.log();

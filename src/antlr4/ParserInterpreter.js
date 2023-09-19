@@ -15,6 +15,8 @@ import { ParserATNSimulator } from "./atn/ParserATNSimulator.js";
 import { RecognitionException } from "./RecognitionException.js";
 import { StarLoopEntryState } from "./atn/StarLoopEntryState.js";
 import { Token } from "./Token.js";
+import { ATNStateType } from "./atn/ATNStateType.js";
+import { TransitionType } from "./atn/TransitionType.js";
 
 export class ParserInterpreter extends Parser {
     _grammarFileName;
@@ -112,7 +114,7 @@ export class ParserInterpreter extends Parser {
         while (true) {
             let p = this.atnState;
             switch (p.stateType) {
-                case ATNState.RULE_STOP:
+                case ATNStateType.RULE_STOP:
                     // pop; return from rule
                     if (this._ctx.isEmpty) {
                         if (startRuleStartState.isPrecedenceRule) {
@@ -165,7 +167,7 @@ export class ParserInterpreter extends Parser {
             predictedAlt = this.visitDecisionState(p);
         }
 
-        let transition = p.transition(predictedAlt - 1);
+        let transition = p.transitions[predictedAlt - 1];
         switch (transition.serializationType) {
             case TransitionType.EPSILON:
                 if (this.pushRecursionContextStates.get(p.stateNumber) &&

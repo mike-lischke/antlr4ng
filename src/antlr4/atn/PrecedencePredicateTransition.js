@@ -5,13 +5,13 @@
  */
 
 import { PrecedencePredicate } from "../atn/PrecedencePredicate.js";
-import { Transition } from "./Transition.js";
 import { AbstractPredicateTransition } from "../atn/AbstractPredicateTransition.js";
+import { TransitionType } from "./TransitionType.js";
 
 export class PrecedencePredicateTransition extends AbstractPredicateTransition {
     constructor(target, precedence) {
         super(target);
-        this.serializationType = Transition.PRECEDENCE;
+        this.serializationType = TransitionType.PRECEDENCE;
         this.precedence = precedence;
         this.isEpsilon = true;
     }

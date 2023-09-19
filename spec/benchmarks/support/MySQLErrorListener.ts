@@ -148,7 +148,7 @@ export class MySQLErrorListener extends BaseErrorListener<ATNSimulator> {
             let expectedText = "";
 
             // Walk up from generic rules to reach something that gives us more context, if needed.
-            let context = parser._ctx;
+            let context = parser.context;
             while (MySQLErrorListener.simpleRules.has(context.ruleIndex) && context.parent) {
                 context = context.parent;
             }

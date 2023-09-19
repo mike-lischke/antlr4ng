@@ -11,8 +11,8 @@ import { Vocabulary } from "./Vocabulary.js";
 
 export declare class LexerInterpreter extends Lexer {
 
-    public constructor(grammarFileName: string, vocabulary: Vocabulary, modeNames: string[], ruleNames: string[],
-        atn: ATN, input: CharStream);
+    public constructor(grammarFileName: string, vocabulary: Vocabulary, ruleNames: string[], channelNames: string[],
+        modeNames: string[], atn: ATN, input: CharStream);
 
     public get atn(): ATN;
     public get grammarFileName(): string;

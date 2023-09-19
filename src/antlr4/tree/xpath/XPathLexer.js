@@ -43,7 +43,7 @@ export class XPathLexer extends Lexer {
 
     constructor(input) {
         super(input);
-        this._interp = new LexerATNSimulator(this, XPathLexer._ATN, XPathLexer.decisionsToDFA, new PredictionContextCache());
+        this.interpreter = new LexerATNSimulator(this, XPathLexer._ATN, XPathLexer.decisionsToDFA, new PredictionContextCache());
     }
 
     get grammarFileName() { return "XPathLexer.g4"; }

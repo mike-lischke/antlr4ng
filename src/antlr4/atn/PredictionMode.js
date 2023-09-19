@@ -473,7 +473,7 @@ export const PredictionMode = {
     getUniqueAlt: function (altsets) {
         const all = PredictionMode.getAlts(altsets);
         if (all.length === 1) {
-            return all.minValue();
+            return all.nextSetBit(0);
         } else {
             return ATN.INVALID_ALT_NUMBER;
         }
@@ -552,7 +552,7 @@ export const PredictionMode = {
         let result = null;
         for (let i = 0; i < altsets.length; i++) {
             const alts = altsets[i];
-            const minAlt = alts.minValue();
+            const minAlt = alts.nextSetBit(0);
             if (result === null) {
                 result = minAlt;
             } else if (result !== minAlt) { // more than 1 viable alt

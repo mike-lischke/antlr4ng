@@ -22,10 +22,10 @@ export declare class ATN {
     public readonly states: ATNState[];
     public readonly decisionToState: DecisionState[];
     public readonly ruleToStartState: RuleStartState[];
-    public readonly ruleToStopState: RuleStopState[] | null;
+    public readonly ruleToStopState: RuleStopState[];
     public readonly modeNameToStartState: { [name: string]: RuleStartState; };
-    public readonly ruleToTokenType: number[] | null;
-    public readonly lexerActions: LexerAction[] | null;
+    public readonly ruleToTokenType: number[];
+    public readonly lexerActions: LexerAction[];
     public readonly modeToStartState: RuleStartState[];
 
     public getExpectedTokens(stateNumber: number, ctx: RuleContext): IntervalSet;

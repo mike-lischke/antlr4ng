@@ -15,7 +15,7 @@ export class Recognizer {
 
     constructor() {
         this._listeners = [ConsoleErrorListener.INSTANCE];
-        this._interp = null;
+        this.interpreter = null;
         this._stateNumber = -1;
     }
 
@@ -159,7 +159,7 @@ export class Recognizer {
     }
 
     get atn() {
-        return this._interp.atn;
+        return this.interpreter.atn;
     }
 
     get state() {

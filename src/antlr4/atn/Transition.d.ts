@@ -6,48 +6,15 @@
 
 import { IntervalSet } from "../misc/IntervalSet.js";
 import { ATNState } from "../atn/ATNState.js";
+import { TransitionType } from "./TransitionType.js";
 
-export declare interface ITransitionSerializationTypes {
-    /* eslint-disable @typescript-eslint/naming-convention */
-
-    EpsilonTransition: number;
-    RangeTransition: number;
-    RuleTransition: number;
-    PredicateTransition: number;
-    AtomTransition: number;
-    ActionTransition: number;
-    SetTransition: number;
-    NotSetTransition: number;
-    WildcardTransition: number;
-    PrecedencePredicateTransition: number;
-
-    /* eslint-enable @typescript-eslint/naming-convention */
-}
-
-export declare class Transition {
-    /* eslint-disable @typescript-eslint/naming-convention */
-
-    public static EPSILON: number;
-    public static RANGE: number;
-    public static RULE: number;
-    public static PREDICATE: number;
-    public static ATOM: number;
-    public static ACTION: number;
-    public static SET: number;
-    public static NOT_SET: number;
-    public static WILDCARD: number;
-    public static PRECEDENCE: number;
-
-    /* eslint-enable @typescript-eslint/naming-convention */
-
-    public static serializationNames: string[];
-    public static serializationTypes: ITransitionSerializationTypes;
-    public static serializationType: number;
-
+export declare abstract class Transition {
     public isEpsilon: boolean;
     public target: ATNState;
     public label: IntervalSet | null;
-    public serializationType: number;
+    public serializationType: TransitionType;
 
     public constructor(target: ATNState);
+
+    public abstract matches(symbol: number, minVocabSymbol: number, maxVocabSymbol: number): boolean;
 }

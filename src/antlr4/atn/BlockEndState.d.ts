@@ -4,15 +4,10 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+import { ATNState } from "./ATNState.js";
 import { BlockStartState } from "./BlockStartState.js";
-import { ATNStateType } from "./ATNStateType.js";
 
-/**
- * The block that begins a closure loop
- */
-export class StarBlockStartState extends BlockStartState {
-    get stateType() {
-        return ATNStateType.STAR_BLOCK_START;
-    }
-
+/** Terminal node of a simple `(a|b|c)` block. */
+export class BlockEndState extends ATNState {
+    public startState: BlockStartState;
 }

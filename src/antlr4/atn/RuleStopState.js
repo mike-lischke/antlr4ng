@@ -5,6 +5,7 @@
  */
 
 import { ATNState } from "./ATNState.js";
+import { ATNStateType } from "./ATNStateType.js";
 
 /**
  * The last node in the ATN for a rule, unless that rule is the start symbol.
@@ -13,9 +14,8 @@ import { ATNState } from "./ATNState.js";
  * error handling
  */
 export class RuleStopState extends ATNState {
-    constructor() {
-        super();
-        this.stateType = ATNState.RULE_STOP;
-        return this;
+    get stateType() {
+        return ATNStateType.RULE_STOP;
     }
+
 }

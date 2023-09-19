@@ -5,13 +5,13 @@
  */
 
 import { Predicate } from "../atn/Predicate.js";
-import { Transition } from "./Transition.js";
 import { AbstractPredicateTransition } from "../atn/AbstractPredicateTransition.js";
+import { TransitionType } from "./TransitionType.js";
 
 export class PredicateTransition extends AbstractPredicateTransition {
     constructor(target, ruleIndex, predIndex, isCtxDependent) {
         super(target);
-        this.serializationType = Transition.PREDICATE;
+        this.serializationType = TransitionType.PREDICATE;
         this.ruleIndex = ruleIndex;
         this.predIndex = predIndex;
         this.isCtxDependent = isCtxDependent; // e.g., $i ref in pred

@@ -33,7 +33,7 @@ export class calc extends antlr4.Lexer {
 
     constructor(input) {
         super(input);
-        this._interp = new antlr4.LexerATNSimulator(this, atn, decisionsToDFA, new antlr4.PredictionContextCache());
+        this.interpreter = new antlr4.LexerATNSimulator(this, atn, decisionsToDFA, new antlr4.PredictionContextCache());
     }
 }
 

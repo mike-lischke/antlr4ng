@@ -5,15 +5,14 @@
  */
 
 import { ATNState } from "./ATNState.js";
+import { ATNStateType } from "./ATNStateType.js";
 
 /**
  * Terminal node of a simple {@code (a|b|c)} block
  */
 export class BlockEndState extends ATNState {
-    constructor() {
-        super();
-        this.stateType = ATNState.BLOCK_END;
-        this.startState = null;
-        return this;
+    get stateType() {
+        return ATNStateType.BLOCK_END;
     }
+
 }

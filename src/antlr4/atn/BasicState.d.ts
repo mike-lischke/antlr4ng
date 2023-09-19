@@ -6,5 +6,4 @@
 import { ATNState } from "./ATNState.js";
 
 export class BasicState extends ATNState {
-    public stateType: number;
 }

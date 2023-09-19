@@ -7,6 +7,6 @@
 import { ATNState } from "./ATNState.js";
 import { Transition } from "./Transition.js";
 
-export declare class AbstractPredicateTransition extends Transition {
+export declare abstract class AbstractPredicateTransition extends Transition {
     public constructor(target: ATNState);
 }

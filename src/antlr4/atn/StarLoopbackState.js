@@ -5,11 +5,11 @@
  */
 
 import { ATNState } from "./ATNState.js";
+import { ATNStateType } from "./ATNStateType.js";
 
 export class StarLoopbackState extends ATNState {
-    constructor() {
-        super();
-        this.stateType = ATNState.STAR_LOOP_BACK;
-        return this;
+    get stateType() {
+        return ATNStateType.STAR_LOOP_BACK;
     }
+
 }

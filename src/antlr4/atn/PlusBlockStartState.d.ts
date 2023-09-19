@@ -4,8 +4,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { ATNStateType } from "./ATNStateType.js";
 import { BlockStartState } from "./BlockStartState.js";
+import { PlusLoopbackState } from "./PlusLoopbackState.js";
 
 /**
  * Start of {@code (A|B|...)+} loop. Technically a decision state, but
@@ -14,8 +14,5 @@ import { BlockStartState } from "./BlockStartState.js";
  * real decision-making note for {@code A+}
  */
 export class PlusBlockStartState extends BlockStartState {
-    get stateType() {
-        return ATNStateType.PLUS_BLOCK_START;
-    }
-
+    public loopBackState: PlusLoopbackState;
 }

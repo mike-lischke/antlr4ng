@@ -8,7 +8,6 @@ import { Token } from '../Token.js';
 import { ATN } from './ATN.js';
 import { ATNType } from './ATNType.js';
 
-import { ATNState } from './ATNState.js';
 import { BasicState } from './BasicState.js';
 import { DecisionState } from './DecisionState.js';
 import { BlockStartState } from './BlockStartState.js';
@@ -24,7 +23,6 @@ import { PlusBlockStartState } from './PlusBlockStartState.js';
 import { StarBlockStartState } from './StarBlockStartState.js';
 import { BasicBlockStartState } from './BasicBlockStartState.js';
 
-import { Transition } from './Transition.js';
 import { AtomTransition } from './AtomTransition.js';
 import { SetTransition } from './SetTransition.js';
 import { NotSetTransition } from './NotSetTransition.js';
@@ -48,6 +46,8 @@ import { LexerTypeAction } from './LexerTypeAction.js';
 import { LexerPushModeAction } from './LexerPushModeAction.js';
 import { LexerPopModeAction } from './LexerPopModeAction.js';
 import { LexerModeAction } from './LexerModeAction.js';
+import { ATNStateType } from "./ATNStateType.js";
+import { TransitionType } from "./TransitionType.js";
 
 const SERIALIZED_VERSION = 4;
 
@@ -140,7 +140,7 @@ export class ATNDeserializer {
         for (let i = 0; i < nstates; i++) {
             const stype = this.readInt();
             // ignore bad type of states
-            if (stype === ATNState.INVALID_TYPE) {
+            if (stype === ATNStateType.INVALID_TYPE) {
                 atn.addState(null);
                 continue;
             }
@@ -149,7 +149,7 @@ export class ATNDeserializer {
                 ruleIndex = -1;
             }
             const s = this.stateFactory(stype, ruleIndex);
-            if (stype === ATNState.LOOP_END) { // special case
+            if (stype === ATNStateType.LOOP_END) { // special case
                 const loopBackStateNumber = this.readInt();
                 loopBackStateNumbers.push([s, loopBackStateNumber]);
             } else if (s instanceof BlockStartState) {
@@ -281,7 +281,7 @@ export class ATNDeserializer {
                 }
                 // block end states can only be associated to a single block start
                 // state
-                if (state.endState.startState !== null) {
+                if (state.endState.startState) {
                     throw ("IllegalState");
                 }
                 state.endState.startState = state;
@@ -434,8 +434,7 @@ export class ATNDeserializer {
 
     /**
      * Analyze the {@link StarLoopEntryState} states in the specified ATN to set
-     * the {@link StarLoopEntryState//isPrecedenceDecision} field to the
-     * correct value.
+     * the {@link StarLoopEntryState} field to the correct value.
      * @param atn The ATN.
      */
     markPrecedenceDecisions(atn) {
@@ -452,7 +451,7 @@ export class ATNDeserializer {
                 if (maybeLoopEndState instanceof LoopEndState) {
                     if (maybeLoopEndState.epsilonOnlyTransitions &&
                         (maybeLoopEndState.transitions[0].target instanceof RuleStopState)) {
-                        state.isPrecedenceDecision = true;
+                        state.precedenceRuleDecision = true;
                     }
                 }
             }
@@ -525,25 +524,25 @@ export class ATNDeserializer {
     edgeFactory(atn, type, src, trg, arg1, arg2, arg3, sets) {
         const target = atn.states[trg];
         switch (type) {
-            case Transition.EPSILON:
+            case TransitionType.EPSILON:
                 return new EpsilonTransition(target);
-            case Transition.RANGE:
+            case TransitionType.RANGE:
                 return arg3 !== 0 ? new RangeTransition(target, Token.EOF, arg2) : new RangeTransition(target, arg1, arg2);
-            case Transition.RULE:
+            case TransitionType.RULE:
                 return new RuleTransition(atn.states[arg1], arg2, arg3, target);
-            case Transition.PREDICATE:
+            case TransitionType.PREDICATE:
                 return new PredicateTransition(target, arg1, arg2, arg3 !== 0);
-            case Transition.PRECEDENCE:
+            case TransitionType.PRECEDENCE:
                 return new PrecedencePredicateTransition(target, arg1);
-            case Transition.ATOM:
+            case TransitionType.ATOM:
                 return arg3 !== 0 ? new AtomTransition(target, Token.EOF) : new AtomTransition(target, arg1);
-            case Transition.ACTION:
+            case TransitionType.ACTION:
                 return new ActionTransition(target, arg1, arg2, arg3 !== 0);
-            case Transition.SET:
+            case TransitionType.SET:
                 return new SetTransition(target, sets[arg1]);
-            case Transition.NOT_SET:
+            case TransitionType.NOT_SET:
                 return new NotSetTransition(target, sets[arg1]);
-            case Transition.WILDCARD:
+            case TransitionType.WILDCARD:
                 return new WildcardTransition(target);
             default:
                 throw "The specified transition type: " + type + " is not valid.";
@@ -553,21 +552,22 @@ export class ATNDeserializer {
     stateFactory(type, ruleIndex) {
         if (this.stateFactories === null) {
             const sf = [];
-            sf[ATNState.INVALID_TYPE] = null;
-            sf[ATNState.BASIC] = () => new BasicState();
-            sf[ATNState.RULE_START] = () => new RuleStartState();
-            sf[ATNState.BLOCK_START] = () => new BasicBlockStartState();
-            sf[ATNState.PLUS_BLOCK_START] = () => new PlusBlockStartState();
-            sf[ATNState.STAR_BLOCK_START] = () => new StarBlockStartState();
-            sf[ATNState.TOKEN_START] = () => new TokensStartState();
-            sf[ATNState.RULE_STOP] = () => new RuleStopState();
-            sf[ATNState.BLOCK_END] = () => new BlockEndState();
-            sf[ATNState.STAR_LOOP_BACK] = () => new StarLoopbackState();
-            sf[ATNState.STAR_LOOP_ENTRY] = () => new StarLoopEntryState();
-            sf[ATNState.PLUS_LOOP_BACK] = () => new PlusLoopbackState();
-            sf[ATNState.LOOP_END] = () => new LoopEndState();
+            sf[ATNStateType.INVALID_TYPE] = null;
+            sf[ATNStateType.BASIC] = () => new BasicState();
+            sf[ATNStateType.RULE_START] = () => new RuleStartState();
+            sf[ATNStateType.BLOCK_START] = () => new BasicBlockStartState();
+            sf[ATNStateType.PLUS_BLOCK_START] = () => new PlusBlockStartState();
+            sf[ATNStateType.STAR_BLOCK_START] = () => new StarBlockStartState();
+            sf[ATNStateType.TOKEN_START] = () => new TokensStartState();
+            sf[ATNStateType.RULE_STOP] = () => new RuleStopState();
+            sf[ATNStateType.BLOCK_END] = () => new BlockEndState();
+            sf[ATNStateType.STAR_LOOP_BACK] = () => new StarLoopbackState();
+            sf[ATNStateType.STAR_LOOP_ENTRY] = () => new StarLoopEntryState();
+            sf[ATNStateType.PLUS_LOOP_BACK] = () => new PlusLoopbackState();
+            sf[ATNStateType.LOOP_END] = () => new LoopEndState();
             this.stateFactories = sf;
         }
+
         if (type > this.stateFactories.length || this.stateFactories[type] === null) {
             throw ("The specified state type " + type + " is not valid.");
         } else {

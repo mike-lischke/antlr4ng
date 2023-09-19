@@ -5,13 +5,16 @@
  */
 
 import { ATNState } from "./ATNState.js";
+import { ATNStateType } from "./ATNStateType.js";
 
 export class RuleStartState extends ATNState {
     constructor() {
         super();
-        this.stateType = ATNState.RULE_START;
-        this.stopState = null;
         this.isPrecedenceRule = false;
-        return this;
     }
+
+    get stateType() {
+        return ATNStateType.RULE_START;
+    }
+
 }

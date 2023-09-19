@@ -5,15 +5,16 @@
  */
 
 import { DecisionState } from "./DecisionState.js";
-import { ATNState } from "./ATNState.js";
+import { ATNStateType } from "./ATNStateType.js";
 
 export class StarLoopEntryState extends DecisionState {
     constructor() {
         super();
-        this.stateType = ATNState.STAR_LOOP_ENTRY;
-        this.loopBackState = null;
-        // Indicates whether this state can benefit from a precedence DFA during SLL decision making.
-        this.isPrecedenceDecision = null;
-        return this;
+        this.precedenceRuleDecision = false;
     }
+
+    get stateType() {
+        return ATNStateType.STAR_LOOP_ENTRY;
+    }
+
 }

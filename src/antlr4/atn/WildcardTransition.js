@@ -5,11 +5,12 @@
  */
 
 import { Transition } from "./Transition.js";
+import { TransitionType } from "./TransitionType.js";
 
 export class WildcardTransition extends Transition {
     constructor(target) {
         super(target);
-        this.serializationType = Transition.WILDCARD;
+        this.serializationType = TransitionType.WILDCARD;
     }
 
     matches(symbol, minVocabSymbol, maxVocabSymbol) {

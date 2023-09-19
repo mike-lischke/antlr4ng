@@ -14,9 +14,9 @@ import { PredictionContext } from './PredictionContext.js';
 import { SingletonPredictionContext } from './SingletonPredictionContext.js';
 import { RuleStopState } from './RuleStopState.js';
 import { LexerATNConfig } from './LexerATNConfig.js';
-import { Transition } from './Transition.js';
 import { LexerActionExecutor } from './LexerActionExecutor.js';
 import { LexerNoViableAltException } from '../LexerNoViableAltException.js';
+import { TransitionType } from "./TransitionType.js";
 
 function resetSimState(sim) {
     sim.index = -1;
@@ -410,12 +410,12 @@ export class LexerATNSimulator extends ATNSimulator {
     getEpsilonTarget(input, config, trans,
         configs, speculative, treatEofAsEpsilon) {
         let cfg = null;
-        if (trans.serializationType === Transition.RULE) {
+        if (trans.serializationType === TransitionType.RULE) {
             const newContext = SingletonPredictionContext.create(config.context, trans.followState.stateNumber);
             cfg = new LexerATNConfig({ state: trans.target, context: newContext }, config);
-        } else if (trans.serializationType === Transition.PRECEDENCE) {
+        } else if (trans.serializationType === TransitionType.PRECEDENCE) {
             throw "Precedence predicates are not supported in lexers.";
-        } else if (trans.serializationType === Transition.PREDICATE) {
+        } else if (trans.serializationType === TransitionType.PREDICATE) {
             // Track traversing semantic predicates. If we traverse,
             // we cannot add a DFA state for this "reach" computation
             // because the DFA would not test the predicate again in the
@@ -441,7 +441,7 @@ export class LexerATNSimulator extends ATNSimulator {
             if (this.evaluatePredicate(input, trans.ruleIndex, trans.predIndex, speculative)) {
                 cfg = new LexerATNConfig({ state: trans.target }, config);
             }
-        } else if (trans.serializationType === Transition.ACTION) {
+        } else if (trans.serializationType === TransitionType.ACTION) {
             if (config.context === null || config.context.hasEmptyPath()) {
                 // execute actions anywhere in the start rule for a token.
                 //
@@ -462,11 +462,11 @@ export class LexerATNSimulator extends ATNSimulator {
                 // ignore actions in referenced rules
                 cfg = new LexerATNConfig({ state: trans.target }, config);
             }
-        } else if (trans.serializationType === Transition.EPSILON) {
+        } else if (trans.serializationType === TransitionType.EPSILON) {
             cfg = new LexerATNConfig({ state: trans.target }, config);
-        } else if (trans.serializationType === Transition.ATOM ||
-            trans.serializationType === Transition.RANGE ||
-            trans.serializationType === Transition.SET) {
+        } else if (trans.serializationType === TransitionType.ATOM ||
+            trans.serializationType === TransitionType.RANGE ||
+            trans.serializationType === TransitionType.SET) {
             if (treatEofAsEpsilon) {
                 if (trans.matches(Token.EOF, 0, Lexer.MAX_CHAR_VALUE)) {
                     cfg = new LexerATNConfig({ state: trans.target }, config);

@@ -44,7 +44,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
             ": ambigAlts=" +
             this.getConflictingAlts(ambigAlts, configs) +
             ", input='" +
-            recognizer.getTokenStream().getText(new Interval(startIndex, stopIndex)) + "'";
+            recognizer.tokenStream.getText(new Interval(startIndex, stopIndex)) + "'";
         recognizer.notifyErrorListeners(msg);
     }
 
@@ -52,7 +52,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
         const msg = "reportAttemptingFullContext d=" +
             this.getDecisionDescription(recognizer, dfa) +
             ", input='" +
-            recognizer.getTokenStream().getText(new Interval(startIndex, stopIndex)) + "'";
+            recognizer.tokenStream.getText(new Interval(startIndex, stopIndex)) + "'";
         recognizer.notifyErrorListeners(msg);
     }
 
@@ -60,7 +60,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
         const msg = "reportContextSensitivity d=" +
             this.getDecisionDescription(recognizer, dfa) +
             ", input='" +
-            recognizer.getTokenStream().getText(new Interval(startIndex, stopIndex)) + "'";
+            recognizer.tokenStream.getText(new Interval(startIndex, stopIndex)) + "'";
         recognizer.notifyErrorListeners(msg);
     }
 

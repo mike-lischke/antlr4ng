@@ -46,6 +46,10 @@ export class RuleContext extends ParseTree {
         return this._parent;
     }
 
+    set parent(value) {
+        this._parent = value;
+    }
+
     depth() {
         let n = 0;
         let p = this;

@@ -4,13 +4,13 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { Transition } from "./Transition.js";
 import { SetTransition } from "./SetTransition.js";
+import { TransitionType } from "./TransitionType.js";
 
 export class NotSetTransition extends SetTransition {
     constructor(target, set) {
         super(target, set);
-        this.serializationType = Transition.NOT_SET;
+        this.serializationType = TransitionType.NOT_SET;
     }
 
     matches(symbol, minVocabSymbol, maxVocabSymbol) {

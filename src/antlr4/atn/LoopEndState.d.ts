@@ -5,11 +5,9 @@
  */
 
 import { ATNState } from "./ATNState.js";
-import { ATNStateType } from "./ATNStateType.js";
 
-export class BasicState extends ATNState {
-    get stateType() {
-        return ATNStateType.BASIC;
-    }
-
+/**
+ * Mark the end of a * or + loop
+ */
+export class LoopEndState extends ATNState {
 }

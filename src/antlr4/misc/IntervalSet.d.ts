@@ -34,6 +34,7 @@ export declare class IntervalSet {
     public complement(minElement: number, maxElement: number): IntervalSet;
     public complement(vocabulary: IntervalSet): IntervalSet;
 
+    public and(other: IntervalSet): IntervalSet;
     public contains(i: number): boolean;
     public removeRange(l: number, h: number): void;
     public removeOne(v: number): void;

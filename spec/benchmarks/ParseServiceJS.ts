@@ -109,7 +109,7 @@ export class ParseServiceJS {
         // First parse with the bail error strategy to get quick feedback for correct queries.
         // Note: there's no need to delete the strategy instance. The error handler will take care.
         parser.errorHandler = new BailErrorStrategy();
-        parser._interp.predictionMode = PredictionMode.SLL;
+        parser.interpreter.predictionMode = PredictionMode.SLL;
 
         try {
             this.tree = parser.query();
@@ -129,7 +129,7 @@ export class ParseServiceJS {
                     this.parser.reset();
                     this.errors = [];
                     this.parser.errorHandler = defaultStrategy;
-                    this.parser._interp.predictionMode = PredictionMode.LL;
+                    this.parser.interpreter.predictionMode = PredictionMode.LL;
                     this.tree = this.parseUnit(unit);*/
                 }
             } else {

@@ -5,6 +5,7 @@
  */
 
 import { Transition } from "./Transition.js";
+import { TransitionType } from "./TransitionType.js";
 
 export class RuleTransition extends Transition {
     constructor(ruleStart, ruleIndex, precedence, followState) {
@@ -14,7 +15,7 @@ export class RuleTransition extends Transition {
         this.precedence = precedence;
         // what node to begin computations following ref to rule
         this.followState = followState;
-        this.serializationType = Transition.RULE;
+        this.serializationType = TransitionType.RULE;
         this.isEpsilon = true;
     }
 

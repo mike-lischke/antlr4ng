@@ -55,17 +55,28 @@ export class CommonToken extends Token {
         return t;
     }
 
-    toString() {
-        let txt = this.text;
-        if (txt !== null) {
-            txt = txt.replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t");
-        } else {
-            txt = "<no text>";
+    toString(recognizer) {
+        let channelStr = "";
+        if (this._channel > 0) {
+            channelStr = ",channel=" + this.channel;
         }
-        return "[@" + this.tokenIndex + "," + this.start + ":" + this.stop + "='" +
-            txt + "',<" + this.type + ">" +
-            (this.channel > 0 ? ",channel=" + this.channel : "") + "," +
-            this.line + ":" + this.column + "]";
+
+        let text = this.text;
+        if (text) {
+            text = text.replace(/\n/g, "\\n");
+            text = text.replace(/\r/g, "\\r");
+            text = text.replace(/\t/g, "\\t");
+        } else {
+            text = "<no text>";
+        }
+
+        let typeString = String(this.type);
+        if (recognizer) {
+            typeString = recognizer.vocabulary.getDisplayName(this.type);
+        }
+
+        return "[@" + this.tokenIndex + "," + this.start + ":" + this.stop + "='" + text + "',<" + typeString + ">" +
+            channelStr + "," + this.line + ":" + this.column + "]";
     }
 
     get text() {

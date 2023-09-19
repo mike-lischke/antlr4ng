@@ -5,14 +5,10 @@
  */
 
 import { DecisionState } from "./DecisionState.js";
-import { ATNStateType } from "./ATNStateType.js";
 
 /**
- * The Tokens rule start state linking to each lexer rule start state
+ * Decision state for {@code A+} and {@code (A|B)+}.  It has two transitions:
+ * one to the loop back to start of the block and one to exit.
  */
-export class TokensStartState extends DecisionState {
-    get stateType() {
-        return ATNStateType.TOKEN_START;
-    }
-
+export class PlusLoopbackState extends DecisionState {
 }

@@ -16,15 +16,16 @@ import { IntervalSet } from "./misc/IntervalSet.js";
 import { ParseTreeListener } from "./tree/ParseTreeListener.js";
 
 export declare abstract class Parser extends Recognizer<ParserATNSimulator> {
-    public _ctx: ParserRuleContext;
-
     public errorHandler: ANTLRErrorStrategy;
     public matchedEOF: boolean;
     public buildParseTrees: boolean;
 
+    protected _ctx: ParserRuleContext;
     protected _parseListeners: ParseTreeListener[] | null;
 
     public constructor(input: TokenStream);
+
+    public get context(): ParserRuleContext;
 
     public reset(): void;
     public match(ttype: number): Token;

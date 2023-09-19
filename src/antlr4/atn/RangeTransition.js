@@ -6,11 +6,12 @@
 
 import { IntervalSet } from "../misc/IntervalSet.js";
 import { Transition } from "./Transition.js";
+import { TransitionType } from './TransitionType.js';
 
 export class RangeTransition extends Transition {
     constructor(target, start, stop) {
         super(target);
-        this.serializationType = Transition.RANGE;
+        this.serializationType = TransitionType.RANGE;
         this.start = start;
         this.stop = stop;
         this.label = this.makeLabel();
