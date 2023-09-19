@@ -48,13 +48,12 @@
         "webpack-cli": "5.1.4"
     },
     "scripts": {
-        "build": "webpack",
-        "test": "jasmine",
+        "build": "webpack && npm run generate-test-parser",
+        "test": "jasmine && npm run run-benchmarks",
         "coverage": "c8 jasmine",
         "lint": "eslint src/antlr4/",
         "generate-test-parser": "cli/index.js -Dlanguage=TypeScript -o spec/benchmarks/generated -visitor -listener -Xexact-output-dir spec/benchmarks/MySQLLexer.g4 spec/benchmarks/MySQLParser.g4",
-        "run-benchmarks": "node --no-warnings=ExperimentalWarning --loader ts-node/esm spec/benchmarks/run-benchmarks.ts",
-        "build-benchmarks": "npm run build && npm run generate-test-parser"
+        "run-benchmarks": "node --no-warnings=ExperimentalWarning --loader ts-node/esm spec/benchmarks/run-benchmarks.ts"
     },
     "engines": {
         "node": ">=16"
