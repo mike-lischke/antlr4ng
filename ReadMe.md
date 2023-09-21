@@ -47,6 +47,10 @@ The benchmarks consist of a set of query files, which are parsed by a MySQL pars
 
 ## Release Notes
 
+### 1.1.1 - 1.1.2
+
+Bug fix releases. They contain many bugs found while integrating the runtime into a large project.
+
 ### 1.1.0
 
 This release includes a lot of cleanup.
