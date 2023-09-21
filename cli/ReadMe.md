@@ -31,6 +31,10 @@ in the root of your project, where you installed the package.
 
 ## Release Notes
 
+### 1.0.2
+
+Updated the ANTLR4 jar.
+
 ### 1.0.1
 
 - Some changes for renamed class members in the runtime (e.g. `_interp` -> `interpreter`).
