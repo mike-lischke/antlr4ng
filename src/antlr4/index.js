@@ -46,6 +46,7 @@ import { LexerATNSimulator } from './atn/LexerATNSimulator.js';
 import { ParserATNSimulator } from './atn/ParserATNSimulator.js';
 import { PredictionContextCache } from './atn/PredictionContextCache.js';
 import { ATNStateType } from "./atn/ATNStateType.js";
+import { NotSetTransition } from "./atn/NotSetTransition.js";
 
 import { DFA } from "./dfa/DFA.js";
 
@@ -85,7 +86,7 @@ export default {
     ParseCancellationException, arrayToString, Vocabulary, TokenStream, Transition, TransitionType, TokenFactory,
     XPath, ATNSimulator, TokenStreamRewriter, ErrorNode, InputMismatchException,
     BlockStartState, BasicState, DecisionState, PlusBlockStartState, StarBlockStartState, StarLoopEntryState,
-    PlusLoopbackState, StarLoopbackState, LoopEndState, TokensStartState
+    PlusLoopbackState, StarLoopbackState, LoopEndState, TokensStartState, NotSetTransition
 };
 
 export {
@@ -98,5 +99,5 @@ export {
     ParseCancellationException, arrayToString, Vocabulary, TokenStream, Transition, TransitionType, TokenFactory,
     XPath, ATNSimulator, TokenStreamRewriter, ErrorNode, InputMismatchException,
     BlockStartState, BasicState, DecisionState, PlusBlockStartState, StarBlockStartState, StarLoopEntryState,
-    PlusLoopbackState, StarLoopbackState, LoopEndState, TokensStartState
+    PlusLoopbackState, StarLoopbackState, LoopEndState, TokensStartState, NotSetTransition
 };

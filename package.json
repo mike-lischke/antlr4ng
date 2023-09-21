@@ -48,6 +48,7 @@
         "webpack-cli": "5.1.4"
     },
     "scripts": {
+        "prepublishOnly": "npm run build && npm run test",
         "build": "webpack && npm run generate-test-parser",
         "test": "jasmine && npm run run-benchmarks",
         "coverage": "c8 jasmine",

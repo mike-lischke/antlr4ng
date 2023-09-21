@@ -34,27 +34,6 @@ export class Recognizer {
         this._listeners = [];
     }
 
-    getLiteralNames() {
-        return Object.getPrototypeOf(this).constructor.literalNames || [];
-    }
-
-    getSymbolicNames() {
-        return Object.getPrototypeOf(this).constructor.symbolicNames || [];
-    }
-
-    getTokenNames() {
-        if (!this.tokenNames) {
-            const literalNames = this.getLiteralNames();
-            const symbolicNames = this.getSymbolicNames();
-            const length = literalNames.length > symbolicNames.length ? literalNames.length : symbolicNames.length;
-            this.tokenNames = [];
-            for (let i = 0; i < length; i++) {
-                this.tokenNames[i] = literalNames[i] || symbolicNames[i] || "<INVALID";
-            }
-        }
-        return this.tokenNames;
-    }
-
     getTokenTypeMap() {
         const vocabulary = this.getVocabulary();
 
@@ -108,8 +87,8 @@ export class Recognizer {
 
     // What is the error header, normally line/character position information?
     getErrorHeader(e) {
-        const line = e.getOffendingToken().line;
-        const column = e.getOffendingToken().column;
+        const line = e.offendingToken.line;
+        const column = e.offendingToken.column;
         return "line " + line + ":" + column;
     }
 

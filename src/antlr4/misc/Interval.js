@@ -16,27 +16,19 @@ export class Interval {
             return new Interval(a, b);
         }
 
-        if (Interval.cache[a] == null) {
+        if (Interval.cache[a] === null) {
             Interval.cache[a] = new Interval(a, a);
         }
 
         return Interval.cache[a];
     }
 
-    clone() {
-        return new Interval(this.start, this.stop);
-    }
-
-    contains(item) {
-        return item >= this.start && item < this.stop;
-    }
-
     equals(o) {
-        if (o == null || !(o instanceof Interval)) {
+        if (!(o instanceof Interval)) {
             return false;
         }
 
-        return this.start == o.a && this.stop == o.b;
+        return this.start === o.start && this.stop === o.stop;
     }
 
     hashCode() {
@@ -70,7 +62,7 @@ export class Interval {
     }
 
     adjacent(other) {
-        return this.start == other.stop + 1 || this.stop == other.start - 1;
+        return this.start === other.stop + 1 || this.stop === other.start - 1;
     }
 
     properlyContains(other) {
@@ -103,15 +95,19 @@ export class Interval {
     }
 
     toString() {
-        if (this.start === this.stop - 1) {
+        if (this.start === this.stop) {
             return this.start.toString();
         } else {
-            return this.start.toString() + ".." + (this.stop - 1).toString();
+            return this.start.toString() + ".." + this.stop.toString();
         }
     }
 
     get length() {
-        return this.stop - this.start;
+        if (this.stop < this.start) {
+            return 0;
+        }
+
+        return this.stop - this.start + 1;
     }
 }
 

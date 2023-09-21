@@ -31,6 +31,7 @@ import { SemanticContext } from './SemanticContext.js';
 import { SetTransition } from './SetTransition.js';
 import { SingletonPredictionContext } from './SingletonPredictionContext.js';
 import { TransitionType } from './TransitionType.js';
+import { Vocabulary } from '../Vocabulary.js';
 
 /**
  * The embodiment of the adaptive LL(*), ALL(*), parsing strategy.
@@ -350,7 +351,7 @@ export class ParserATNSimulator extends ATNSimulator {
             }
             const alt = this.execATN(dfa, s0, input, index, outerContext);
             if (this.debug) {
-                console.log("DFA after predictATN: " + dfa.toString(this.parser.literalNames, this.parser.symbolicNames));
+                console.log("DFA after predictATN: " + dfa.toString(this.parser.vocabulary));
             }
             return alt;
         } finally {
@@ -1556,16 +1557,14 @@ export class ParserATNSimulator extends ATNSimulator {
         if (t === Token.EOF) {
             return "EOF";
         }
-        if (this.parser !== null && this.parser.literalNames !== null) {
-            if (t >= this.parser.literalNames.length && t >= this.parser.symbolicNames.length) {
-                console.log("" + t + " ttype out of range: " + this.parser.literalNames);
-                console.log("" + this.parser.tokenStream.getTokens());
-            } else {
-                const name = this.parser.literalNames[t] || this.parser.symbolicNames[t];
-                return name + "<" + t + ">";
-            }
+
+        const vocabulary = this.parser != null ? this.parser.vocabulary : Vocabulary.EMPTY_VOCABULARY;
+        const displayName = vocabulary.getDisplayName(t);
+        if (displayName.equals(t.toString())) {
+            return displayName;
         }
-        return "" + t;
+
+        return displayName + "<" + t + ">";
     }
 
     getLookaheadName(input) {
@@ -1650,10 +1649,9 @@ export class ParserATNSimulator extends ATNSimulator {
         from_.edges[t + 1] = to; // connect
 
         if (this.debug) {
-            const literalNames = this.parser === null ? null : this.parser.literalNames;
-            const symbolicNames = this.parser === null ? null : this.parser.symbolicNames;
-            console.log("DFA=\n" + dfa.toString(literalNames, symbolicNames));
+            console.log("DFA=\n" + dfa.toString(this.parser != null ? parser.vocabulary : Vocabulary.EMPTY_VOCABULARY));
         }
+
         return to;
     }
 

@@ -5,6 +5,7 @@
  */
 
 import { Token } from './Token.js';
+import { Interval } from "./misc/Interval.js";
 
 /**
  * If decodeToUnicodeCodePoints is true, the input is treated
@@ -89,11 +90,15 @@ export class CharStream {
         this._index = Math.min(_index, this._size);
     }
 
-    getText(interval) {
-        return this.getText(interval.start, interval.stop);
-    }
+    getText(intervalOrStart, stop) {
+        let start;
+        if (intervalOrStart instanceof Interval) {
+            start = intervalOrStart.start;
+            stop = intervalOrStart.stop;
+        } else {
+            start = intervalOrStart;
+        }
 
-    getText(start, stop) {
         if (stop >= this._size) {
             stop = this._size - 1;
         }

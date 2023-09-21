@@ -138,7 +138,7 @@ export class MySQLErrorListener extends BaseErrorListener<ATNSimulator> {
 
             if (invalidForVersion) {
                 // The expected tokens set is read-only, so make a copy.
-                expected = new IntervalSet(expected.intervals);
+                expected = new IntervalSet(expected);
                 expected.removeOne(tokenType);
             }
 

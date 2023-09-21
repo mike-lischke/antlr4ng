@@ -17,7 +17,7 @@ export class NoViableAltException extends RecognitionException {
         ctx = ctx ?? recognizer._ctx;
         offendingToken = offendingToken ?? recognizer.getCurrentToken();
         startToken = startToken ?? recognizer.getCurrentToken();
-        input = input ?? recognizer.getInputStream();
+        input = input ?? recognizer.inputStream;
 
         super({ message: "", recognizer: recognizer, input: input, ctx: ctx });
 

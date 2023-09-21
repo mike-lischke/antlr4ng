@@ -20,8 +20,6 @@ export declare class Interval {
      */
     public static of(a: number, b: number): Interval;
 
-    public clone(): Interval;
-    public contains(item: number): boolean;
     public equals(o: unknown): boolean;
     public hashCode(): number;
 

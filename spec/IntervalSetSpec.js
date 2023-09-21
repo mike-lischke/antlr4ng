@@ -5,7 +5,9 @@
  */
 
 import * as antlr4 from "../src/antlr4/index.js";
+
 const IntervalSet = antlr4.IntervalSet;
+const Interval = antlr4.Interval;
 
 describe('IntervalSet', () => {
     it("computes interval set length", () => {
@@ -35,11 +37,11 @@ describe('IntervalSet', () => {
         s3 = new IntervalSet();
         s3.addOne(11);
         merged.addSet(s3);
-        expect(merged.toString()).toEqual("10..12");
+        expect(merged.toString()).toEqual("{10..12}");
         s3 = new IntervalSet();
         s3.addOne(12);
         merged.addSet(s3);
-        expect(merged.toString()).toEqual("10..12");
+        expect(merged.toString()).toEqual("{10..12}");
 
     });
 
@@ -63,5 +65,40 @@ describe('IntervalSet', () => {
         expect(s2.toString()).toEqual("{9..14, 53, 55..63, 65..72, 74..117, 119..152, 154..164}");
         s1.addSet(s2);
         expect(s1.toString()).toEqual("{9..14, 20, 53, 55..63, 65..72, 74..117, 119..152, 154..164, 169..171, 173}");
+    });
+
+    it("Unicode Interval Set", () => {
+        const fullUnicodeSet = IntervalSet.of(0, 0x10FFFF);
+        expect(fullUnicodeSet.length).toEqual(0x10FFFF + 1);
+
+        // Remove some of the non-printable characters.
+        const intervalsToExclude = new IntervalSet();
+        intervalsToExclude.addInterval(new Interval(0, 10));
+        intervalsToExclude.addInterval(new Interval(14, 31));
+        intervalsToExclude.addInterval(new Interval(127, 133));
+        intervalsToExclude.addInterval(new Interval(134, 159));
+        intervalsToExclude.addInterval(new Interval(173, 173));
+        intervalsToExclude.addInterval(new Interval(888, 889));
+        intervalsToExclude.addInterval(new Interval(896, 899));
+        intervalsToExclude.addInterval(new Interval(907, 907));
+        intervalsToExclude.addInterval(new Interval(909, 909));
+        intervalsToExclude.addInterval(new Interval(930, 930));
+        intervalsToExclude.addInterval(new Interval(1328, 1328));
+        intervalsToExclude.addInterval(new Interval(1367, 1368));
+        intervalsToExclude.addInterval(new Interval(1419, 1420));
+        intervalsToExclude.addInterval(new Interval(1424, 1424));
+        intervalsToExclude.addInterval(new Interval(1470, 1470));
+        intervalsToExclude.addInterval(new Interval(1472, 1472));
+        intervalsToExclude.addInterval(new Interval(1475, 1475));
+        intervalsToExclude.addInterval(new Interval(1478, 1478));
+        intervalsToExclude.addInterval(new Interval(1480, 1541));
+        intervalsToExclude.addInterval(new Interval(1564, 1565));
+        intervalsToExclude.addInterval(new Interval(1757, 1757));
+        intervalsToExclude.addInterval(new Interval(1806, 1807));
+
+        const final = intervalsToExclude.complement(fullUnicodeSet);
+        expect(final.toString()).toEqual("{11..13, 32..126, 160..172, 174..887, 890..895, 900..906, 908, 910..929, " +
+            "931..1327, 1329..1366, 1369..1418, 1421..1423, 1425..1469, 1471, 1473..1474, 1476..1477, 1479, " +
+            "1542..1563, 1566..1756, 1758..1805, 1808..1114111}");
     });
 });

@@ -156,7 +156,7 @@ export const sourceTextForRange = (start: Token | ParseTree, stop: Token | Parse
         stopToken = (stop instanceof TerminalNode) ? stop.symbol : (stop as ParserRuleContext).start;
     }
 
-    const stream = startToken?.tokenSource?.inputStream;
+    const stream = startToken?.getTokenSource()?.inputStream;
     const stopIndex = stop && stopToken ? stopToken.stop : 1e100;
     let result = stream?.getText(startToken!.start, stopIndex) ?? "";
     if (keepQuotes || result.length < 2) {

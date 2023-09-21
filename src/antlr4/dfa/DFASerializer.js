@@ -12,6 +12,8 @@ import { arrayToString } from "../utils/arrayToString.js";
 export class DFASerializer {
     constructor(dfa, literalNames, symbolicNames) {
         this.dfa = dfa;
+
+        // XXX: switch to vocabulary.
         this.literalNames = literalNames || [];
         this.symbolicNames = symbolicNames || [];
     }

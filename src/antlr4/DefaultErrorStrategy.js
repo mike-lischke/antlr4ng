@@ -117,7 +117,7 @@ export class DefaultErrorStrategy {
         } else {
             console.log("unknown recognition error type: " + e.constructor.name);
             console.log(e.stack);
-            recognizer.notifyErrorListeners(e.getOffendingToken(), e.getMessage(), e);
+            recognizer.notifyErrorListeners(e.offendingToken, e.getMessage(), e);
         }
     }
 
@@ -279,7 +279,7 @@ export class DefaultErrorStrategy {
      */
     reportInputMismatch(recognizer, e) {
         const msg = "mismatched input " + this.getTokenErrorDisplay(e.offendingToken) +
-            " expecting " + e.getExpectedTokens().toString(recognizer.literalNames, recognizer.symbolicNames);
+            " expecting " + e.getExpectedTokens().toString(recognizer.vocabulary);
         recognizer.notifyErrorListeners(msg, e.offendingToken, e);
     }
 
@@ -325,8 +325,7 @@ export class DefaultErrorStrategy {
         const t = recognizer.getCurrentToken();
         const tokenName = this.getTokenErrorDisplay(t);
         const expecting = this.getExpectedTokens(recognizer);
-        const msg = "extraneous input " + tokenName + " expecting " +
-            expecting.toString(recognizer.literalNames, recognizer.symbolicNames);
+        const msg = "extraneous input " + tokenName + " expecting " + expecting.toString(recognizer.vocabulary);
         recognizer.notifyErrorListeners(msg, t, null);
     }
 
@@ -352,9 +351,10 @@ export class DefaultErrorStrategy {
             return;
         }
         this.beginErrorCondition(recognizer);
+
         const t = recognizer.getCurrentToken();
         const expecting = this.getExpectedTokens(recognizer);
-        const msg = "missing " + expecting.toString(recognizer.literalNames, recognizer.symbolicNames) +
+        const msg = "missing " + expecting.toString(recognizer.vocabulary) +
             " at " + this.getTokenErrorDisplay(t);
         recognizer.notifyErrorListeners(msg, t, null);
     }
@@ -522,18 +522,24 @@ export class DefaultErrorStrategy {
     getMissingSymbol(recognizer) {
         const currentSymbol = recognizer.getCurrentToken();
         const expecting = this.getExpectedTokens(recognizer);
-        const expectedTokenType = expecting.first(); // get any element
+        let expectedTokenType = Token.INVALID_TYPE;
+        if (!expecting.isNil) {
+            expectedTokenType = expecting.minElement; // get any element
+        }
+
         let tokenText;
         if (expectedTokenType === Token.EOF) {
             tokenText = "<missing EOF>";
         } else {
-            tokenText = "<missing " + recognizer.literalNames[expectedTokenType] + ">";
+            tokenText = "<missing " + recognizer.vocabulary.getDisplayName(expectedTokenType) + ">";
         }
+
         let current = currentSymbol;
         const lookBack = recognizer.tokenStream.LT(-1);
         if (current.type === Token.EOF && lookBack !== null) {
             current = lookBack;
         }
+
         return recognizer.getTokenFactory().create(current.source,
             expectedTokenType, tokenText, Token.DEFAULT_CHANNEL,
             -1, -1, current.line, current.column);

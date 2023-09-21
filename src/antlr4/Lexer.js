@@ -308,10 +308,10 @@ export class Lexer extends Recognizer {
 
     set inputStream(input) {
         this._input = null;
-        this._tokenFactorySourcePair = [this, this._input];
+        this._tokenFactorySourcePair = [this, null];
         this.reset();
         this._input = input;
-        this._tokenFactorySourcePair = [this, this._input];
+        this._tokenFactorySourcePair = [this, input];
     }
 
     get sourceName() {

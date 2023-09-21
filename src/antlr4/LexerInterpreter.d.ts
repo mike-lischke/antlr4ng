@@ -9,7 +9,7 @@ import { CharStream } from "./CharStream.js";
 import { Lexer } from "./Lexer.js";
 import { Vocabulary } from "./Vocabulary.js";
 
-export declare class LexerInterpreter extends Lexer {
+export declare abstract class LexerInterpreter extends Lexer {
 
     public constructor(grammarFileName: string, vocabulary: Vocabulary, ruleNames: string[], channelNames: string[],
         modeNames: string[], atn: ATN, input: CharStream);
@@ -18,6 +18,5 @@ export declare class LexerInterpreter extends Lexer {
     public get grammarFileName(): string;
     public get ruleNames(): string[];
     public get modeNames(): string[];
-
-    public getVocabulary(): Vocabulary;
+    public get vocabulary(): Vocabulary;
 }

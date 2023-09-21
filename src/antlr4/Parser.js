@@ -602,7 +602,7 @@ export class Parser extends Recognizer {
                     console.log();
                 }
                 console.log("Decision " + dfa.decision + ":");
-                console.log(dfa.toString(this.literalNames, this.symbolicNames));
+                console.log(dfa.toString(this.vocabulary));
                 seenOne = true;
             }
         }

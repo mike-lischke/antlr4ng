@@ -89,11 +89,11 @@ export class ParseServiceJS {
         const stream = CharStreams.fromString(text);
         const lexer = new MySQLLexer(stream);
         const tokenStream = new CommonTokenStream(lexer);
-        const parser = new MySQLParser(tokenStream);
         lexer.removeErrorListeners();
         lexer.addErrorListener(this.errorListener);
 
-        //this.parser.removeParseListeners();
+        const parser = new MySQLParser(tokenStream);
+        parser.removeParseListeners();
         parser.removeErrorListeners();
         parser.addErrorListener(this.errorListener);
 
@@ -113,7 +113,6 @@ export class ParseServiceJS {
 
         try {
             this.tree = parser.query();
-            //console.log((this.tree as ParserRuleContext).toStringTree(parser.ruleNames, parser));
         } catch (e) {
             if (e instanceof ParseCancellationException) {
                 // Even in fast mode we have to do a second run if we got no error yet (BailErrorStrategy

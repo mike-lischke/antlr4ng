@@ -7,16 +7,21 @@
 import { ATNType } from "./atn/ATNType.js";
 import { Lexer } from "./Lexer.js";
 import { LexerATNSimulator } from "./atn/LexerATNSimulator.js";
+import { PredictionContextCache } from "./atn/PredictionContextCache.js";
+import { DFA } from "./dfa/DFA.js";
 
 export class LexerInterpreter extends Lexer {
-    _grammarFileName;
-    _atn;
+    #grammarFileName;
+    #atn;
 
-    _ruleNames;
-    _channelNames;
-    _modeNames;
+    #ruleNames;
+    #channelNames;
+    #modeNames;
 
-    _vocabulary;
+    #vocabulary;
+    #decisionToDFA;
+
+    #sharedContextCache = new PredictionContextCache();
 
     constructor(grammarFileName, vocabulary, ruleNames, channelNames, modeNames, atn,
         input) {
@@ -26,37 +31,42 @@ export class LexerInterpreter extends Lexer {
             throw new Error("IllegalArgumentException: The ATN must be a lexer ATN.");
         }
 
-        this._grammarFileName = grammarFileName;
-        this._atn = atn;
+        this.#grammarFileName = grammarFileName;
+        this.#atn = atn;
 
-        this._ruleNames = ruleNames.slice(0);
-        this._channelNames = channelNames.slice(0);
-        this._modeNames = modeNames.slice(0);
-        this._vocabulary = vocabulary;
-        this.interpreter = new LexerATNSimulator(atn, this);
+        this.#ruleNames = ruleNames.slice(0);
+        this.#channelNames = channelNames.slice(0);
+        this.#modeNames = modeNames.slice(0);
+        this.#vocabulary = vocabulary;
+
+        this.#decisionToDFA = atn.decisionToState.map(function (ds, i) {
+            return new DFA(ds, i);
+        });
+
+        this.interpreter = new LexerATNSimulator(this, atn, this.#decisionToDFA, this.#sharedContextCache);
     }
 
     get atn() {
-        return this._atn;
+        return this.#atn;
     }
 
     get grammarFileName() {
-        return this._grammarFileName;
+        return this.#grammarFileName;
     }
 
     get ruleNames() {
-        return this._ruleNames;
+        return this.#ruleNames;
     }
 
     get channelNames() {
-        return this._channelNames;
+        return this.#channelNames;
     }
 
     get modeNames() {
-        return this._modeNames;
+        return this.#modeNames;
     }
 
     get vocabulary() {
-        return this._vocabulary;
+        return this.#vocabulary;
     }
 }

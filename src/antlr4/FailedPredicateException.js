@@ -19,7 +19,7 @@ export class FailedPredicateException extends RecognitionException {
         super({
             message: formatMessage(predicate, message || null),
             recognizer: recognizer,
-            input: recognizer.getInputStream(), ctx: recognizer._ctx
+            input: recognizer.inputStream, ctx: recognizer._ctx
         });
         const s = recognizer.interpreter.atn.states[recognizer.state];
         const trans = s.transitions[0];

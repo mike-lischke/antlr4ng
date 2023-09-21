@@ -60,7 +60,9 @@ export declare abstract class Parser extends Recognizer<ParserATNSimulator> {
     public pushNewRecursionContext(localctx: ParserRuleContext, state: number, ruleIndex: number): void;
     public unrollRecursionContexts(parent: ParserRuleContext): void;
     public getInvokingContext(ruleIndex: number): ParserRuleContext;
+
     public precpred(localctx: ParserRuleContext, precedence: number): boolean;
+
     public isExpectedToken(symbol: number): boolean;
     public getExpectedTokens(): IntervalSet;
     public getExpectedTokensWithinCurrentRule(): IntervalSet;

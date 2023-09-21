@@ -46,9 +46,9 @@ export declare class Token {
     public start: number;
     public stop: number;
 
-    public readonly tokenSource: TokenSource | undefined;
-
     public clone(): Token;
     public cloneWithType(type: number): Token;
+
+    public getTokenSource(): TokenSource | null;
     public getInputStream(): CharStream;
 }

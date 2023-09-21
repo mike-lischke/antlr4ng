@@ -43,6 +43,8 @@ export declare abstract class Lexer extends Recognizer<LexerATNSimulator> implem
     public get inputStream(): CharStream;
     public set inputStream(value: CharStream);
 
+    public get sourceName(): string;
+
     protected _modeStack: number[];
 
     public constructor(input: CharStream);

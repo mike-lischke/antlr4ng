@@ -367,7 +367,7 @@ export class BufferedTokenStream extends TokenStream {
     }
 
     getSourceName() {
-        return this.tokenSource.getSourceName();
+        return this.tokenSource.sourceName;
     }
 
     // Get the text of all tokens in this buffer.///

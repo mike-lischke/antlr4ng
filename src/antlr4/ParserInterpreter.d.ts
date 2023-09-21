@@ -15,6 +15,7 @@ import { Token } from "./Token.js";
 import { TokenStream } from "./TokenStream.js";
 import { Vocabulary } from "./Vocabulary.js";
 import { ParserRuleContext } from "./ParserRuleContext.js";
+import { RuleContext } from "./atn/RuleContext.js";
 
 /**
  * A parser simulator that mimics what ANTLR's generated
@@ -30,17 +31,12 @@ import { ParserRuleContext } from "./ParserRuleContext.js";
  *
  *  See TestParserInterpreter for examples.
  */
-export class ParserInterpreter extends Parser {
-    protected _grammarFileName: string;
-    protected _atn: ATN;
-
+export abstract class ParserInterpreter extends Parser {
     /**
      * This identifies StarLoopEntryState's that begin the (...)*
      *  precedence loops of left recursive rules.
      */
     protected pushRecursionContextStates: BitSet;
-
-    protected _ruleNames: string[];
 
     /**
      * This stack corresponds to the _parentctx, _parentState pair of locals
@@ -76,8 +72,6 @@ export class ParserInterpreter extends Parser {
 
     protected _rootContext: InterpreterRuleContext;
 
-    private _vocabulary: Vocabulary;
-
     /**
      * A copy constructor that creates a new parser interpreter by reusing
      *  the fields of a previous interpreter.
@@ -92,13 +86,10 @@ export class ParserInterpreter extends Parser {
 
     public reset(resetInput?: boolean): void;
 
-    public get atn(): ATN;
-
-    public override getVocabulary(): Vocabulary;
-
-    public get ruleNames(): string[];
-
-    public get grammarFileName(): string;
+    public override get atn(): ATN;
+    public override get vocabulary(): Vocabulary;
+    public override get ruleNames(): string[];
+    public override get grammarFileName(): string;
 
     /**
      * Begin parsing at startRuleIndex
@@ -204,4 +195,6 @@ export class ParserInterpreter extends Parser {
      * @since 4.5.1
      */
     public get rootContext(): InterpreterRuleContext;
+
+    public abstract action(localctx: RuleContext | null, ruleIndex: number, actionIndex: number): void;
 }

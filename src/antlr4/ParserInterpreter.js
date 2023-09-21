@@ -17,16 +17,20 @@ import { StarLoopEntryState } from "./atn/StarLoopEntryState.js";
 import { Token } from "./Token.js";
 import { ATNStateType } from "./atn/ATNStateType.js";
 import { TransitionType } from "./atn/TransitionType.js";
+import { DFA } from "./dfa/DFA.js";
+import { PredictionContextCache } from "./atn/PredictionContextCache.js";
 
 export class ParserInterpreter extends Parser {
-    _grammarFileName;
-    _atn;
+    #grammarFileName;
+    #atn;
+    #ruleNames;
+    #vocabulary;
+    #decisionToDFA;
+    #sharedContextCache = new PredictionContextCache();
 
-    pushRecursionContextStates;
+    #pushRecursionContextStates;
 
-    _ruleNames;
-
-    _vocabulary;
+    _rootContext;
 
     _parentContextStack = [];
 
@@ -37,40 +41,28 @@ export class ParserInterpreter extends Parser {
 
     _overrideDecisionRoot = undefined;
 
-    _rootContext;
 
     constructor(grammarFileName, vocabulary, ruleNames, atn, input) {
-        super(grammarFileName instanceof ParserInterpreter ? grammarFileName.inputStream : input);
-        if (grammarFileName instanceof ParserInterpreter) {
-            let old = grammarFileName;
-            this._grammarFileName = old._grammarFileName;
-            this._atn = old._atn;
-            this.pushRecursionContextStates = old.pushRecursionContextStates;
-            this._ruleNames = old._ruleNames;
-            this._vocabulary = old._vocabulary;
-            this.interpreter = new ParserATNSimulator(this._atn, this);
-        } else {
-            // The second constructor requires non-null arguments
-            this._grammarFileName = grammarFileName;
-            this._atn = atn;
-            this._ruleNames = ruleNames.slice(0);
-            this._vocabulary = vocabulary;
+        super(input);
+        this.#grammarFileName = grammarFileName;
+        this.#atn = atn;
+        this.#ruleNames = ruleNames.slice(0);
+        this.#vocabulary = vocabulary;
 
-            // identify the ATN states where pushNewRecursionContext() must be called
-            this.pushRecursionContextStates = new BitSet(atn.states.length);
-            for (let state of atn.states) {
-                if (!(state instanceof StarLoopEntryState)) {
-                    continue;
-                }
-
-                if (state.precedenceRuleDecision) {
-                    this.pushRecursionContextStates.set(state.stateNumber);
-                }
+        // Cache the ATN states where pushNewRecursionContext() must be called in `visitState()`.
+        this.#pushRecursionContextStates = new BitSet();
+        for (let state of atn.states) {
+            if (state instanceof StarLoopEntryState && state.precedenceRuleDecision) {
+                this.#pushRecursionContextStates.set(state.stateNumber);
             }
-
-            // get atn simulator that knows how to do predictions
-            this.interpreter = new ParserATNSimulator(atn, this);
         }
+
+        this.#decisionToDFA = atn.decisionToState.map(function (ds, i) {
+            return new DFA(ds, i);
+        });
+
+        // get atn simulator that knows how to do predictions
+        this.interpreter = new ParserATNSimulator(this, atn, this.#decisionToDFA, this.#sharedContextCache);
     }
 
     reset(resetInput) {
@@ -85,23 +77,27 @@ export class ParserInterpreter extends Parser {
     }
 
     get atn() {
-        return this._atn;
+        return this.#atn;
     }
 
     get vocabulary() {
-        return this._vocabulary;
+        return this.#vocabulary;
     }
 
     get ruleNames() {
-        return this._ruleNames;
+        return this.#ruleNames;
     }
 
     get grammarFileName() {
-        return this._grammarFileName;
+        return this.#grammarFileName;
+    }
+
+    get atnState() {
+        return this.#atn.states[this.state];
     }
 
     parse(startRuleIndex) {
-        let startRuleStartState = this._atn.ruleToStartState[startRuleIndex];
+        let startRuleStartState = this.#atn.ruleToStartState[startRuleIndex];
 
         this._rootContext = this.createInterpreterRuleContext(undefined, ATNState.INVALID_STATE_NUMBER, startRuleIndex);
         if (startRuleStartState.isPrecedenceRule) {
@@ -138,7 +134,7 @@ export class ParserInterpreter extends Parser {
                     }
                     catch (e) {
                         if (e instanceof RecognitionException) {
-                            this.state = this._atn.ruleToStopState[p.ruleIndex].stateNumber;
+                            this.state = this.#atn.ruleToStopState[p.ruleIndex].stateNumber;
                             this.context.exception = e;
                             this.errorHandler.reportError(this, e);
                             this.recover(e);
@@ -157,10 +153,6 @@ export class ParserInterpreter extends Parser {
         super.enterRecursionRule(localctx, state, ruleIndex, precedence);
     }
 
-    get atnState() {
-        return this._atn.states[this.state];
-    }
-
     visitState(p) {
         let predictedAlt = 1;
         if (p.numberOfTransitions > 1) {
@@ -170,7 +162,7 @@ export class ParserInterpreter extends Parser {
         let transition = p.transitions[predictedAlt - 1];
         switch (transition.serializationType) {
             case TransitionType.EPSILON:
-                if (this.pushRecursionContextStates.get(p.stateNumber) &&
+                if (this.#pushRecursionContextStates.get(p.stateNumber) &&
                     !(transition.target instanceof LoopEndState)) {
                     // We are at the start of a left recursive rule's (...)* loop
                     // and we're not taking the exit branch of loop.
@@ -178,7 +170,7 @@ export class ParserInterpreter extends Parser {
                     let localctx =
                         this.createInterpreterRuleContext(parentContext[0], parentContext[1], this._ctx.ruleIndex);
                     this.pushNewRecursionContext(localctx,
-                        this._atn.ruleToStartState[p.ruleIndex].stateNumber,
+                        this.#atn.ruleToStartState[p.ruleIndex].stateNumber,
                         this._ctx.ruleIndex);
                 }
                 break;
@@ -243,7 +235,8 @@ export class ParserInterpreter extends Parser {
         let predictedAlt;
         this.errorHandler.sync(this);
         let decision = p.decision;
-        if (decision === this.overrideDecision && this._input.index === this.overrideDecisionInputIndex && !this.overrideDecisionReached) {
+        if (decision === this.overrideDecision && this._input.index === this.overrideDecisionInputIndex &&
+            !this.overrideDecisionReached) {
             predictedAlt = this.overrideDecisionAlt;
             this.overrideDecisionReached = true;
         }
@@ -258,17 +251,16 @@ export class ParserInterpreter extends Parser {
     }
 
     visitRuleStopState(p) {
-        let ruleStartState = this._atn.ruleToStartState[p.ruleIndex];
+        let ruleStartState = this.#atn.ruleToStartState[p.ruleIndex];
         if (ruleStartState.isPrecedenceRule) {
             let parentContext = this._parentContextStack.pop();
             this.unrollRecursionContexts(parentContext[0]);
             this.state = parentContext[1];
-        }
-        else {
+        } else {
             this.exitRule();
         }
 
-        let ruleTransition = this._atn.states[this.state].transition(0);
+        let ruleTransition = this.#atn.states[this.state].transitions[0];
         this.state = ruleTransition.followState.stateNumber;
     }
 
@@ -287,18 +279,18 @@ export class ParserInterpreter extends Parser {
         this.errorHandler.recover(this, e);
         if (this._input.index === i) {
             // no input consumed, better add an error node
-            let tok = e.getOffendingToken();
+            let tok = e.offendingToken;
             if (!tok) {
                 throw new Error("Expected exception to have an offending token");
             }
 
             let source = tok.tokenSource;
-            let stream = source !== undefined ? source.inputStream : undefined;
+            let stream = source?.inputStream ?? null;
             let sourcePair = { source, stream };
 
             if (e instanceof InputMismatchException) {
                 let expectedTokens = e.expectedTokens;
-                if (expectedTokens === undefined) {
+                if (!expectedTokens) {
                     throw new Error("Expected the exception to provide expected tokens");
                 }
 
@@ -330,7 +322,7 @@ export class ParserInterpreter extends Parser {
     }
 
     recoverInline() {
-        return this._errHandler.recoverInline(this);
+        return this.errorHandler.recoverInline(this);
     }
 
     get rootContext() {

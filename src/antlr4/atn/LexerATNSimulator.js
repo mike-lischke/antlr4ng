@@ -483,7 +483,7 @@ export class LexerATNSimulator extends ATNSimulator {
      * {@link //consume} for the matched character. This method should call
      * {@link //consume} before evaluating the predicate to ensure position
      * sensitive values, including {@link Lexer//getText}, {@link Lexer//getLine},
-     * and {@link Lexer//getcolumn}, properly reflect the current
+     * and {@link Lexer}, properly reflect the current
      * lexer state. This method should restore {@code input} and the simulator
      * to the original state before returning (i.e. undo the actions made by the
      * call to {@link //consume}.</p>
@@ -506,7 +506,7 @@ export class LexerATNSimulator extends ATNSimulator {
         if (!speculative) {
             return this.recog.sempred(null, ruleIndex, predIndex);
         }
-        const savedcolumn = this.column;
+        const savedColumn = this.column;
         const savedLine = this.line;
         const index = input.index;
         const marker = input.mark();
@@ -514,7 +514,7 @@ export class LexerATNSimulator extends ATNSimulator {
             this.consume(input);
             return this.recog.sempred(null, ruleIndex, predIndex);
         } finally {
-            this.column = savedcolumn;
+            this.column = savedColumn;
             this.line = savedLine;
             input.seek(index);
             input.release(marker);
@@ -528,14 +528,16 @@ export class LexerATNSimulator extends ATNSimulator {
         settings.dfaState = dfaState;
     }
 
-    addDFAEdge(from_, tk, to, cfgs) {
+    addDFAEdge(from_, tk, to, configs) {
         if (to === undefined) {
             to = null;
         }
-        if (cfgs === undefined) {
-            cfgs = null;
+
+        if (configs === undefined) {
+            configs = null;
         }
-        if (to === null && cfgs !== null) {
+
+        if (to === null && configs !== null) {
             // leading to this call, ATNConfigSet.hasSemanticContext is used as a
             // marker indicating dynamic predicate evaluation makes this edge
             // dependent on the specific input sequence, so the static edge in the
@@ -547,10 +549,10 @@ export class LexerATNSimulator extends ATNSimulator {
             // If that gets us to a previously created (but dangling) DFA
             // state, we can continue in pure DFA mode from there.
             // /
-            const suppressEdge = cfgs.hasSemanticContext;
-            cfgs.hasSemanticContext = false;
+            const suppressEdge = configs.hasSemanticContext;
+            configs.hasSemanticContext = false;
 
-            to = this.addDFAState(cfgs);
+            to = this.addDFAState(configs);
 
             if (suppressEdge) {
                 return to;

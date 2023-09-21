@@ -22,10 +22,6 @@ export declare abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
     public addErrorListener(listener: BaseErrorListener<ATNInterpreter>): void;
     public removeErrorListeners(): void;
 
-    public getLiteralNames(): string[];
-    public getSymbolicNames(): string[];
-    public getTokenNames(): string[];
-
     public getTokenTypeMap(): Map<Vocabulary, Map<string, number>>;
     public getRuleIndexMap(): Map<string[], Map<string, number>>;
 
@@ -46,7 +42,9 @@ export declare abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
     public abstract get inputStream(): IntStream;
     public abstract set inputStream(input: IntStream);
 
+    // TODO: remove need for this: public abstract get literalNames(): Array<string | null>;
+    // TODO: remove need for this: public abstract get symbolicNames(): Array<string | null>;
     public abstract get grammarFileName(): string;
     public abstract get ruleNames(): string[];
-    public abstract getVocabulary(): Vocabulary;
+    public abstract get vocabulary(): Vocabulary;
 }
