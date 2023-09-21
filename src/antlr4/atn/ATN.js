@@ -128,11 +128,13 @@ export class ATN {
         if (stateNumber < 0 || stateNumber >= this.states.length) {
             throw ("Invalid state number.");
         }
+
         const s = this.states[stateNumber];
         let following = this.nextTokens(s);
         if (!following.contains(Token.EPSILON)) {
             return following;
         }
+
         const expected = new IntervalSet();
         expected.addSet(following);
         expected.removeOne(Token.EPSILON);
@@ -144,9 +146,11 @@ export class ATN {
             expected.removeOne(Token.EPSILON);
             ctx = ctx.parent;
         }
+
         if (following.contains(Token.EPSILON)) {
             expected.addOne(Token.EOF);
         }
+
         return expected;
     }
 }

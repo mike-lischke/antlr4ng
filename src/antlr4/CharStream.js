@@ -6,6 +6,7 @@
 
 import { Token } from './Token.js';
 import { Interval } from "./misc/Interval.js";
+import { IntStream } from "./IntStream.js";
 
 /**
  * If decodeToUnicodeCodePoints is true, the input is treated

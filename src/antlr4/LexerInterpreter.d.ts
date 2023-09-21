@@ -5,6 +5,7 @@
  */
 
 import { ATN } from "./atn/ATN.js";
+import { RuleContext } from "./atn/RuleContext.js";
 import { CharStream } from "./CharStream.js";
 import { Lexer } from "./Lexer.js";
 import { Vocabulary } from "./Vocabulary.js";
@@ -19,4 +20,6 @@ export declare abstract class LexerInterpreter extends Lexer {
     public get ruleNames(): string[];
     public get modeNames(): string[];
     public get vocabulary(): Vocabulary;
+
+    public abstract action(localctx: RuleContext | null, ruleIndex: number, actionIndex: number): void;
 }

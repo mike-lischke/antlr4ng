@@ -284,12 +284,12 @@ export class ParserInterpreter extends Parser {
                 throw new Error("Expected exception to have an offending token");
             }
 
-            let source = tok.tokenSource;
-            let stream = source?.inputStream ?? null;
-            let sourcePair = { source, stream };
+            const source = tok.getTokenSource();
+            const stream = source?.inputStream ?? null;
+            const sourcePair = [source, stream];
 
             if (e instanceof InputMismatchException) {
-                let expectedTokens = e.expectedTokens;
+                let expectedTokens = e.getExpectedTokens();
                 if (!expectedTokens) {
                     throw new Error("Expected the exception to provide expected tokens");
                 }
@@ -301,7 +301,7 @@ export class ParserInterpreter extends Parser {
                 }
 
                 let errToken =
-                    this.tokenFactory.create(sourcePair,
+                    this.getTokenFactory().create(sourcePair,
                         expectedTokenType, tok.text,
                         Token.DEFAULT_CHANNEL,
                         -1, -1, // invalid start/stop
@@ -309,9 +309,8 @@ export class ParserInterpreter extends Parser {
                 this._ctx.addErrorNode(this.createErrorNode(this._ctx, errToken));
             }
             else { // NoViableAlt
-                let source = tok.tokenSource;
                 let errToken =
-                    this.tokenFactory.create(sourcePair,
+                    this.getTokenFactory().create(sourcePair,
                         Token.INVALID_TYPE, tok.text,
                         Token.DEFAULT_CHANNEL,
                         -1, -1, // invalid start/stop

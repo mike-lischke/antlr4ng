@@ -7,11 +7,13 @@
 import { Token } from './Token.js';
 import { TerminalNode } from './tree/TerminalNode.js';
 import { ErrorNode } from './tree/ErrorNode.js';
+import { ErrorNodeImpl } from './tree/ErrorNodeImpl.js';
 import { Recognizer } from './Recognizer.js';
 import { DefaultErrorStrategy } from './DefaultErrorStrategy.js';
 import { ATNDeserializer } from './atn/ATNDeserializer.js';
 import { ATNDeserializationOptions } from './atn/ATNDeserializationOptions.js';
 import { TraceListener } from "./TraceListener.js";
+import { TerminalNodeImpl } from "./tree/TerminalNodeImpl.js";
 
 export class Parser extends Recognizer {
     /**
@@ -627,6 +629,14 @@ export class Parser extends Recognizer {
             this._tracer = new TraceListener(this);
             this.addParseListener(this._tracer);
         }
+    }
+
+    createTerminalNode(parent, t) {
+        return new TerminalNodeImpl(t);
+    }
+
+    createErrorNode(parent, t) {
+        return new ErrorNodeImpl(t);
     }
 }
 

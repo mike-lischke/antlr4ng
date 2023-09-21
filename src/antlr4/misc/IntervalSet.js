@@ -53,6 +53,7 @@ export class IntervalSet {
     get isNil() {
         return this.intervals.length === 0;
     }
+
     clear() {
         if (this.readOnly) {
             throw new IllegalStateException("can't alter readonly IntervalSet");
@@ -146,14 +147,22 @@ export class IntervalSet {
         return result.subtract(this);
     }
 
+    or(sets) {
+        const result = new IntervalSet();
+        result.addSet(this);
+        sets.forEach(set => result.addSet(set), this);
+
+        return result;
+    }
+
     and(other) {
         if (other.isNil) {
             // nothing in common with null set
             return new IntervalSet();
         }
 
-        let myIntervals = this._intervals;
-        let theirIntervals = other._intervals;
+        let myIntervals = this.intervals;
+        let theirIntervals = other.intervals;
         let intersection;
         let mySize = myIntervals.length;
         let theirSize = theirIntervals.length;
@@ -177,7 +186,7 @@ export class IntervalSet {
                     intersection = new IntervalSet();
                 }
 
-                intersection.addRange(mine.intersection(theirs));
+                intersection.addInterval(mine.intersection(theirs));
                 j++;
             } else if (theirs.properlyContains(mine)) {
                 // Overlap, add intersection, get next mine.
@@ -185,7 +194,7 @@ export class IntervalSet {
                     intersection = new IntervalSet();
                 }
 
-                intersection.addRange(mine.intersection(theirs));
+                intersection.addInterval(mine.intersection(theirs));
                 i++;
             } else if (!mine.disjoint(theirs)) {
                 // Overlap, add intersection.
@@ -193,7 +202,7 @@ export class IntervalSet {
                     intersection = new IntervalSet();
                 }
 
-                intersection.addRange(mine.intersection(theirs));
+                intersection.addInterval(mine.intersection(theirs));
 
                 // Move the iterator of lower range [a..b], but not
                 // the upper range as it may contain elements that will collide
@@ -423,7 +432,7 @@ export class IntervalSet {
                     result += "<EOF>";
                 } else if (elementsAreChar) {
                     result += "'" + String.fromCodePoint(start) + "'";
-                } if (vocabulary) {
+                } else if (vocabulary) {
                     result += this.elementName(vocabulary, start);
                 } else {
                     result += start;
@@ -432,8 +441,8 @@ export class IntervalSet {
                 if (elementsAreChar) {
                     result += "'" + String.fromCodePoint(start) + "'..'" + String.fromCodePoint(stop) + "'";
                 } else if (vocabulary) {
-                    for (let i = a; i <= b; ++i) {
-                        if (i > a) {
+                    for (let i = start; i <= stop; ++i) {
+                        if (i > start) {
                             result += ", ";
                         }
 

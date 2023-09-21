@@ -14,6 +14,8 @@ import { ANTLRErrorStrategy } from "./ANTLRErrorStrategy.js";
 import { RecognitionException } from "./RecognitionException.js";
 import { IntervalSet } from "./misc/IntervalSet.js";
 import { ParseTreeListener } from "./tree/ParseTreeListener.js";
+import { TerminalNode } from "./tree/TerminalNode.js";
+import { ErrorNode } from "./tree/ErrorNode.js";
 
 export declare abstract class Parser extends Recognizer<ParserATNSimulator> {
     public errorHandler: ANTLRErrorStrategy;
@@ -36,8 +38,10 @@ export declare abstract class Parser extends Recognizer<ParserATNSimulator> {
     public removeParseListeners(): void;
     public triggerEnterRuleEvent(): void;
     public triggerExitRuleEvent(): void;
+
     public getTokenFactory(): TokenFactory<Token>;
     public setTokenFactory(factory: TokenFactory<Token>): void;
+
     public getATNWithBypassAlts(): string;
 
     public get tokenStream(): TokenStream;
@@ -72,4 +76,7 @@ export declare abstract class Parser extends Recognizer<ParserATNSimulator> {
     public dumpDFA(): void;
     public getSourceName(): string;
     public setTrace(trace: boolean): void;
+
+    public createTerminalNode(parent: ParserRuleContext, token: Token,): TerminalNode;
+    public createErrorNode(parent: ParserRuleContext, token: Token,): ErrorNode;
 }
