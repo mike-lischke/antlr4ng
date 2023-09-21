@@ -41,7 +41,6 @@ export class ParserInterpreter extends Parser {
 
     _overrideDecisionRoot = undefined;
 
-
     constructor(grammarFileName, vocabulary, ruleNames, atn, input) {
         super(input);
         this.#grammarFileName = grammarFileName;
@@ -66,11 +65,7 @@ export class ParserInterpreter extends Parser {
     }
 
     reset(resetInput) {
-        if (resetInput === undefined) {
-            super.reset();
-        } else {
-            super.reset(resetInput);
-        }
+        super.reset(resetInput);
 
         this.overrideDecisionReached = false;
         this._overrideDecisionRoot = undefined;
@@ -155,7 +150,7 @@ export class ParserInterpreter extends Parser {
 
     visitState(p) {
         let predictedAlt = 1;
-        if (p.numberOfTransitions > 1) {
+        if (p.transitions.length > 1) {
             predictedAlt = this.visitDecisionState(p);
         }
 
@@ -176,7 +171,7 @@ export class ParserInterpreter extends Parser {
                 break;
 
             case TransitionType.ATOM:
-                this.match((transition)._label);
+                this.match(transition.label.minElement);
                 break;
 
             case TransitionType.RANGE:
@@ -232,17 +227,20 @@ export class ParserInterpreter extends Parser {
     }
 
     visitDecisionState(p) {
-        let predictedAlt;
-        this.errorHandler.sync(this);
-        let decision = p.decision;
-        if (decision === this.overrideDecision && this._input.index === this.overrideDecisionInputIndex &&
-            !this.overrideDecisionReached) {
-            predictedAlt = this.overrideDecisionAlt;
-            this.overrideDecisionReached = true;
+        let predictedAlt = 1;
+
+        if (p.transitions.length > 1) {
+            this.errorHandler.sync(this);
+            let decision = p.decision;
+            if (decision === this.overrideDecision && this._input.index === this.overrideDecisionInputIndex &&
+                !this.overrideDecisionReached) {
+                predictedAlt = this.overrideDecisionAlt;
+                this.overrideDecisionReached = true;
+            } else {
+                predictedAlt = this.interpreter.adaptivePredict(this._input, decision, this._ctx);
+            }
         }
-        else {
-            predictedAlt = this.interpreter.adaptivePredict(this._input, decision, this._ctx);
-        }
+
         return predictedAlt;
     }
 
@@ -307,8 +305,7 @@ export class ParserInterpreter extends Parser {
                         -1, -1, // invalid start/stop
                         tok.line, tok.charPositionInLine);
                 this._ctx.addErrorNode(this.createErrorNode(this._ctx, errToken));
-            }
-            else { // NoViableAlt
+            } else { // NoViableAlt
                 let errToken =
                     this.getTokenFactory().create(sourcePair,
                         Token.INVALID_TYPE, tok.text,
