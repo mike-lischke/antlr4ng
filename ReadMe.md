@@ -10,10 +10,13 @@ This package is a fork of the official ANTLR4 JavaScript runtime (with its TypeS
 - XPath implementation.
 - Vocabulary implementation.
 - Complete Interval implementation.
+- Parser and lexer interpreters.
 - Consistent formatting (indentation, semicolons, spaces, etc.).
+- Project folder structure is now similar to the Java runtime.
 - Numerous smaller fixes (`null` instead of `undefined` and others).
 - Smaller node package (no test specs or other unnecessary files).
-- Bug fixes.
+- No CommonJS support anymore (ESM only). No differentiation between node and browser environments.
+- Includes the `antlr4ng-cli` tool to generate parser files compatible with this runtime. This tool uses a custom build of the ANTLR4 tool.
 
 It is (mostly) a drop-in replacement of the `antlr4` package, and can be used as such. For more information about ANTLR see www.antlr.org. Read more details about the [JavaScript](https://github.com/antlr/antlr4/blob/master/doc/javascript-target.md) and [TypeScript](https://github.com/antlr/antlr4/blob/master/doc/typescript-target.md) targets at the provided links, but keep in mind that this documentation applies to the original JS/TS target.
 
