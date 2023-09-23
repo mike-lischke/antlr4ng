@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import * as antlr4 from "../src/antlr4/index.js";
+import * as antlr4 from "../src/index.js";
 
 const IntervalSet = antlr4.IntervalSet;
 const Interval = antlr4.Interval;

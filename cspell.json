@@ -25,6 +25,7 @@
         "interp",
         "localctx",
         "nbits",
+        "outfile",
         "parentctx",
         "precpred",
         "recog",

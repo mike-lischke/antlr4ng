@@ -6,7 +6,7 @@
 
 // cspell: disable
 
-import antlr4 from "../../src/antlr4/index.js";
+import antlr4 from "../../src/index.js";
 import { abc } from "./generatedCode/abc.js";
 import { calc } from "./generatedCode/calc.js";
 

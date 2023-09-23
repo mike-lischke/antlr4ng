@@ -4,6 +4,7 @@
 cli/
 spec/
 src/**/*.js
+dist/*.map
 
 .babelrc
 .c8rc.json
@@ -11,5 +12,4 @@ src/**/*.js
 .eslintrc.json
 .project
 tsconfig.json
-webpack.config.js
 cspell.json
