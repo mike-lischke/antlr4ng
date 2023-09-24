@@ -26,7 +26,7 @@ export declare class TokenStreamRewriter {
     public replaceSingle(token: Token, text: Text, programName?: string): void;
     public replaceSingle(index: number, text: Text, programName?: string): void;
     public replace(from: Token | number, to: Token | number, text: Text, programName?: string): void;
-    public delete(from: number | Token, to: number | Token, programName?: string): void;
+    public delete(from: number | Token, to?: number | Token, programName?: string): void;
     public getProgram(name: string): Rewrites;
     public initializeProgram(name: string): Rewrites;
     public getText(): string;

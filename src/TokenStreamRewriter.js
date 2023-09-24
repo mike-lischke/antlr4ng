@@ -113,7 +113,7 @@ export class TokenStreamRewriter {
      * @param {string} [programName]
      */
     delete(from, to, programName = TokenStreamRewriter.DEFAULT_PROGRAM_NAME) {
-        if (typeof to === "undefined") {
+        if (to == null) {
             to = from;
         }
         this.replace(from, to, null, programName);

@@ -34,11 +34,12 @@ export declare class IntervalSet {
 
     public or(sets: IntervalSet[]): IntervalSet;
     public and(other: IntervalSet): IntervalSet;
+    public subtract(other: IntervalSet): IntervalSet;
     public contains(i: number): boolean;
     public removeRange(l: number, h: number): void;
     public removeOne(v: number): void;
 
-    public toString(elementsAreChar: boolean): string;
+    public toString(elementsAreChar?: boolean): string;
     public toString(vocabulary: Vocabulary): string;
 
     public elementName(literalNames?: Array<string | null>, symbolicNames?: string[], index?: number): string;

@@ -6,9 +6,10 @@
 
 // cspell: disable
 
-import antlr4 from "../../src/index.js";
-import { abc } from "./generatedCode/abc.js";
-import { calc } from "./generatedCode/calc.js";
+import * as antlr4 from "../../src/index.js";
+
+import { ABC } from "./generatedCode/abc.js";
+import { Calc } from "./generatedCode/calc.js";
 
 /**
  *
@@ -17,9 +18,11 @@ import { calc } from "./generatedCode/calc.js";
  *
  * @returns A new TokenStreamRewriter instance.
  */
-const getRewriter = (lexerClass, input) => {
+const getRewriter = (lexerClass: typeof antlr4.Lexer, input: string) => {
     const chars = new antlr4.InputStream(input);
-    const lexer = new lexerClass(chars);
+
+    // @ts-ignore
+    const lexer: antlr4.Lexer = new lexerClass(chars);
     const tokens = new antlr4.CommonTokenStream(lexer);
     tokens.fill();
 
@@ -29,7 +32,7 @@ const getRewriter = (lexerClass, input) => {
 describe("TokenStreamRewriter", () => {
     it("inserts '0' before index 0", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.insertBefore(0, "0");
@@ -40,7 +43,7 @@ describe("TokenStreamRewriter", () => {
 
     it("inserts 'x' after last index", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.insertAfter(2, "x");
@@ -51,8 +54,8 @@ describe("TokenStreamRewriter", () => {
 
     it("inserts 'x' after the 'b' token", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
-        const bToken = rewriter.tokens.get(1);
+        const rewriter = getRewriter(ABC, "abc");
+        const bToken = rewriter.getTokenStream().get(1);
 
         // Act
         rewriter.insertAfter(bToken, "x");
@@ -63,7 +66,7 @@ describe("TokenStreamRewriter", () => {
 
     it("inserts 'x' at the end if the index is out of bounds", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.insertAfter(100, "x");
@@ -74,8 +77,8 @@ describe("TokenStreamRewriter", () => {
 
     it("inserts 'x' before the 'b' token", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
-        const bToken = rewriter.tokens.get(1);
+        const rewriter = getRewriter(ABC, "abc");
+        const bToken = rewriter.getTokenStream().get(1);
 
         // Act
         rewriter.insertBefore(bToken, "x");
@@ -86,7 +89,7 @@ describe("TokenStreamRewriter", () => {
 
     it("inserts 'x' before and after middle index", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.insertBefore(1, "x");
@@ -98,7 +101,7 @@ describe("TokenStreamRewriter", () => {
 
     it("replaces the first token with an 'x'", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.replaceSingle(0, "x");
@@ -109,7 +112,7 @@ describe("TokenStreamRewriter", () => {
 
     it("replaces the last token with an 'x'", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.replaceSingle(2, "x");
@@ -120,7 +123,7 @@ describe("TokenStreamRewriter", () => {
 
     it("replaces the middle token with an 'x'", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.replaceSingle(1, "x");
@@ -131,7 +134,7 @@ describe("TokenStreamRewriter", () => {
 
     it("calls getText() with different start/stop arguments (1 of 2)", () => {
         // Arrange
-        const rewriter = getRewriter(calc, "x = 3 * 0;");
+        const rewriter = getRewriter(Calc, "x = 3 * 0;");
 
         // Act
         rewriter.replace(4, 8, "0"); // replace 3 * 0 with 0
@@ -145,7 +148,7 @@ describe("TokenStreamRewriter", () => {
 
     it("calls getText() with different start/stop arguments (2 of 2)", () => {
         // Arrange
-        const rewriter = getRewriter(calc, "x = 3 * 0 + 2 * 0;");
+        const rewriter = getRewriter(Calc, "x = 3 * 0 + 2 * 0;");
 
         // Act/Assert
         expect(rewriter.getTokenStream().getText()).toEqual("x = 3 * 0 + 2 * 0;");
@@ -166,7 +169,7 @@ describe("TokenStreamRewriter", () => {
 
     it("replaces the middle index, twice", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.replaceSingle(1, "x");
@@ -178,7 +181,7 @@ describe("TokenStreamRewriter", () => {
 
     it("inserts '_' at the beginning and then replaces the middle token, twice", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.insertBefore(0, "_");
@@ -191,7 +194,7 @@ describe("TokenStreamRewriter", () => {
 
     it("replaces, then deletes the middle index", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.replaceSingle(1, "x");
@@ -203,7 +206,7 @@ describe("TokenStreamRewriter", () => {
 
     it("throws an error when inserting into a replaced segment", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.replace(0, 2, "x");
@@ -211,13 +214,14 @@ describe("TokenStreamRewriter", () => {
 
         // Assert
         expect(() => { return rewriter.getText(); }).toThrowError(
-            "insert op <InsertBeforeOp@[@1,1:1='b',<2>,1:1]:\"0\"> within boundaries of previous <ReplaceOp@[@0,0:0='a',<1>,1:0]..[@2,2:2='c',<3>,1:2]:\"x\">",
+            "insert op <InsertBeforeOp@[@1,1:1='b',<2>,1:1]:\"0\"> within boundaries of previous " +
+            "<ReplaceOp@[@0,0:0='a',<1>,1:0]..[@2,2:2='c',<3>,1:2]:\"x\">",
         );
     });
 
     it("throws an error when inserting into a deleted segment", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.delete(0, 2);
@@ -225,13 +229,14 @@ describe("TokenStreamRewriter", () => {
 
         // Assert
         expect(() => { return rewriter.getText(); }).toThrowError(
-            "insert op <InsertBeforeOp@[@1,1:1='b',<2>,1:1]:\"0\"> within boundaries of previous <DeleteOp@[@0,0:0='a',<1>,1:0]..[@2,2:2='c',<3>,1:2]>",
+            "insert op <InsertBeforeOp@[@1,1:1='b',<2>,1:1]:\"0\"> within boundaries of previous " +
+            "<DeleteOp@[@0,0:0='a',<1>,1:0]..[@2,2:2='c',<3>,1:2]>",
         );
     });
 
     it("inserts '0' before the first token and then replaces it with an 'x'", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.insertBefore(0, "0");
@@ -243,7 +248,7 @@ describe("TokenStreamRewriter", () => {
 
     it("inserts texts in reverse order when multiple inserts occur at the same index", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.insertBefore(1, "x");
@@ -255,7 +260,7 @@ describe("TokenStreamRewriter", () => {
 
     it("inserts 'y' and 'x' before the first index and then replaces it with 'z'", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.insertBefore(0, "x");
@@ -268,7 +273,7 @@ describe("TokenStreamRewriter", () => {
 
     it("replaces the last index with an 'x' and then inserts 'y' before it", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.replaceSingle(2, "x");
@@ -280,7 +285,7 @@ describe("TokenStreamRewriter", () => {
 
     it("replaces thte last index with an 'x' and then inserts 'y' after it", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.replaceSingle(2, "x");
@@ -292,7 +297,7 @@ describe("TokenStreamRewriter", () => {
 
     it("replaces a range with an 'x' and then inserts 'y' before the left edge of the range", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcccba");
+        const rewriter = getRewriter(ABC, "abcccba");
 
         // Act
         rewriter.replace(2, 4, "x");
@@ -304,7 +309,7 @@ describe("TokenStreamRewriter", () => {
 
     it("throws an error if an attempt is made to insert a token before the right edge of a replaced range", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcccba");
+        const rewriter = getRewriter(ABC, "abcccba");
 
         // Act
         rewriter.replace(2, 4, "x");
@@ -312,13 +317,14 @@ describe("TokenStreamRewriter", () => {
 
         // Assert
         expect(() => { return rewriter.getText(); }).toThrowError(
-            "insert op <InsertBeforeOp@[@4,4:4='c',<3>,1:4]:\"y\"> within boundaries of previous <ReplaceOp@[@2,2:2='c',<3>,1:2]..[@4,4:4='c',<3>,1:4]:\"x\">",
+            "insert op <InsertBeforeOp@[@4,4:4='c',<3>,1:4]:\"y\"> within boundaries of previous " +
+            "<ReplaceOp@[@2,2:2='c',<3>,1:2]..[@4,4:4='c',<3>,1:4]:\"x\">",
         );
     });
 
     it("replaces a range with an 'x' then inserts 'y' after the right edge of the range", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcccba");
+        const rewriter = getRewriter(ABC, "abcccba");
 
         // Act
         rewriter.replace(2, 4, "x");
@@ -330,9 +336,9 @@ describe("TokenStreamRewriter", () => {
 
     it("replaces a token range", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcba");
-        const bToken = rewriter.tokens.get(1);
-        const dToken = rewriter.tokens.get(3);
+        const rewriter = getRewriter(ABC, "abcba");
+        const bToken = rewriter.getTokenStream().get(1);
+        const dToken = rewriter.getTokenStream().get(3);
 
         // Act
         rewriter.replace(bToken, dToken, "x");
@@ -343,7 +349,7 @@ describe("TokenStreamRewriter", () => {
 
     it("throws an error when replace is given an invalid range", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
         const badRanges = [
             [1, 0],   // from > to
             [-1, 1],  // from is negative
@@ -360,7 +366,7 @@ describe("TokenStreamRewriter", () => {
 
     it("replaces all tokens with an 'x'", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcccba");
+        const rewriter = getRewriter(ABC, "abcccba");
 
         // Act
         rewriter.replace(0, 6, "x");
@@ -371,7 +377,7 @@ describe("TokenStreamRewriter", () => {
 
     it("replaces the middle 'ccc' with 'xyz'", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcccba");
+        const rewriter = getRewriter(ABC, "abcccba");
 
         // Act
         rewriter.replace(2, 4, "xyz");
@@ -382,7 +388,7 @@ describe("TokenStreamRewriter", () => {
 
     it("throws an error if second replace operation overlaps the first one on the right", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcccba");
+        const rewriter = getRewriter(ABC, "abcccba");
 
         // Act
         rewriter.replace(2, 4, "xyz");
@@ -390,14 +396,15 @@ describe("TokenStreamRewriter", () => {
 
         // Assert
         expect(() => { return rewriter.getText(); }).toThrowError(
-            "replace op boundaries of <ReplaceOp@[@3,3:3='c',<3>,1:3]..[@5,5:5='b',<2>,1:5]:\"foo\"> overlap with previous <ReplaceOp@[@2,2:2='c',<3>,1:2]..[@4,4:4='c',<3>,1:4]:\"xyz\">",
+            "replace op boundaries of <ReplaceOp@[@3,3:3='c',<3>,1:3]..[@5,5:5='b',<2>,1:5]:\"foo\"> " +
+            "overlap with previous <ReplaceOp@[@2,2:2='c',<3>,1:2]..[@4,4:4='c',<3>,1:4]:\"xyz\">",
         );
     });
 
     it("throws an error if second replace operation overlaps the first one on the left", () => {
         // Arrange
         const chars = new antlr4.InputStream("abcccba");
-        const lexer = new abc(chars);
+        const lexer = new ABC(chars);
         const tokens = new antlr4.CommonTokenStream(lexer);
         tokens.fill();
         const rewriter = new antlr4.TokenStreamRewriter(tokens);
@@ -408,13 +415,14 @@ describe("TokenStreamRewriter", () => {
 
         // Assert
         expect(() => { return rewriter.getText(); }).toThrowError(
-            "replace op boundaries of <ReplaceOp@[@1,1:1='b',<2>,1:1]..[@3,3:3='c',<3>,1:3]:\"foo\"> overlap with previous <ReplaceOp@[@2,2:2='c',<3>,1:2]..[@4,4:4='c',<3>,1:4]:\"xyz\">",
+            "replace op boundaries of <ReplaceOp@[@1,1:1='b',<2>,1:1]..[@3,3:3='c',<3>,1:3]:\"foo\"> " +
+            "overlap with previous <ReplaceOp@[@2,2:2='c',<3>,1:2]..[@4,4:4='c',<3>,1:4]:\"xyz\">",
         );
     });
 
     it("ignores first replace operation when the second one overlaps it on both sides (superset)", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcba");
+        const rewriter = getRewriter(ABC, "abcba");
 
         // Act
         rewriter.replace(2, 2, "xyz");
@@ -426,7 +434,7 @@ describe("TokenStreamRewriter", () => {
 
     it("inserts 'x' and 'y' before the first token", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.insertBefore(0, "x");
@@ -438,7 +446,7 @@ describe("TokenStreamRewriter", () => {
 
     it("performs 3 inserts at 2 locations", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.insertBefore(1, "x");
@@ -451,7 +459,7 @@ describe("TokenStreamRewriter", () => {
 
     it("replaces 'abc' with 'foo' and then inserts 'z' before it", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.replace(0, 2, "foo");
@@ -463,7 +471,7 @@ describe("TokenStreamRewriter", () => {
 
     it("deletes 'abc' and then inserts 'z' before it", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.delete(0, 2);
@@ -475,7 +483,7 @@ describe("TokenStreamRewriter", () => {
 
     it("makes 3 inserts at 3 locations", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.insertBefore(1, "x");
@@ -488,7 +496,7 @@ describe("TokenStreamRewriter", () => {
 
     it("throws an error if second replace operation affects a subset of a previous one", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcc");
+        const rewriter = getRewriter(ABC, "abcc");
 
         // Act
         rewriter.replace(0, 3, "bar");
@@ -496,13 +504,14 @@ describe("TokenStreamRewriter", () => {
 
         // Assert
         expect(() => { return rewriter.getText(); }).toThrowError(
-            "replace op boundaries of <ReplaceOp@[@1,1:1='b',<2>,1:1]..[@2,2:2='c',<3>,1:2]:\"foo\"> overlap with previous <ReplaceOp@[@0,0:0='a',<1>,1:0]..[@3,3:3='c',<3>,1:3]:\"bar\">",
+            "replace op boundaries of <ReplaceOp@[@1,1:1='b',<2>,1:1]..[@2,2:2='c',<3>,1:2]:\"foo\"> overlap with " +
+            "previous <ReplaceOp@[@0,0:0='a',<1>,1:0]..[@3,3:3='c',<3>,1:3]:\"bar\">",
         );
     });
 
     it("ignores the first replace operation when the secone one extends it to the left", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcc");
+        const rewriter = getRewriter(ABC, "abcc");
 
         // Act
         rewriter.replace(1, 2, "foo");
@@ -514,7 +523,7 @@ describe("TokenStreamRewriter", () => {
 
     it("ignores the first replace operation when the secone one extends it to the right", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcc");
+        const rewriter = getRewriter(ABC, "abcc");
 
         // Act
         rewriter.replace(1, 2, "foo");
@@ -526,7 +535,7 @@ describe("TokenStreamRewriter", () => {
 
     it("only applies one replace operation when identical ones are given", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcc");
+        const rewriter = getRewriter(ABC, "abcc");
 
         // Act
         rewriter.replace(1, 2, "foo");
@@ -538,7 +547,7 @@ describe("TokenStreamRewriter", () => {
 
     it("drops the insert operation when it is covered by a subsequent replace operation", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.insertBefore(2, "foo");
@@ -550,7 +559,7 @@ describe("TokenStreamRewriter", () => {
 
     it("performs the insert operation when disjoint from the replace operation (1 of 2)", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcc");
+        const rewriter = getRewriter(ABC, "abcc");
 
         // Act
         rewriter.insertBefore(1, "x");
@@ -562,7 +571,7 @@ describe("TokenStreamRewriter", () => {
 
     it("performs the insert operation when disjoint from the replace operation (2 of 2)", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcc");
+        const rewriter = getRewriter(ABC, "abcc");
 
         // Act
         rewriter.replace(2, 3, "foo");
@@ -574,7 +583,7 @@ describe("TokenStreamRewriter", () => {
 
     it("inserts 'y' before the last token, then deletes it", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.insertBefore(2, "y");
@@ -586,8 +595,8 @@ describe("TokenStreamRewriter", () => {
 
     it("deletes the 'a' token", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
-        const aToken = rewriter.tokens.get(0);
+        const rewriter = getRewriter(ABC, "abc");
+        const aToken = rewriter.getTokenStream().get(0);
 
         // Act
         rewriter.delete(aToken);
@@ -599,7 +608,7 @@ describe("TokenStreamRewriter", () => {
     // Test for https://github.com/antlr/antlr4/issues/550
     it("distinguishes between insertAfter and insertBefore to preserve order (1 of 2)", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "aa");
+        const rewriter = getRewriter(ABC, "aa");
 
         // Act
         rewriter.insertBefore(0, "<b>");
@@ -613,7 +622,7 @@ describe("TokenStreamRewriter", () => {
 
     it("distinguishes between insertAfter and insertBefore to preserve order (2 of 2)", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "aa");
+        const rewriter = getRewriter(ABC, "aa");
 
         // Act
         rewriter.insertBefore(0, "<p>");
@@ -629,7 +638,7 @@ describe("TokenStreamRewriter", () => {
 
     it("preserves the order of contiguous inserts", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "ab");
+        const rewriter = getRewriter(ABC, "ab");
 
         // Act
         rewriter.insertBefore(0, "<p>");
@@ -646,7 +655,7 @@ describe("TokenStreamRewriter", () => {
 
     it("accepts different types as text", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.insertBefore(0, false);
@@ -662,7 +671,7 @@ describe("TokenStreamRewriter", () => {
 
     it("returns the original input if no rewrites have occurred", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         const result = rewriter.getText();
@@ -673,7 +682,7 @@ describe("TokenStreamRewriter", () => {
 
     it("segments operations by program name", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         rewriter.insertBefore(0, "b", "P1");
@@ -687,7 +696,7 @@ describe("TokenStreamRewriter", () => {
 
     it("doesn't make a fuss if getText is supplied with an interval that exceeds the token range", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abc");
+        const rewriter = getRewriter(ABC, "abc");
 
         // Act
         const unmodified = rewriter.getText(new antlr4.Interval(-1, 3));
@@ -701,7 +710,7 @@ describe("TokenStreamRewriter", () => {
 
     it("ignores inserts that occur within a removed range", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcba");
+        const rewriter = getRewriter(ABC, "abcba");
 
         // Act
         rewriter.insertAfter(2, "c");
@@ -713,7 +722,7 @@ describe("TokenStreamRewriter", () => {
 
     it("handles overlapping delete ranges", () => {
         // Arrange
-        const rewriter = getRewriter(abc, "abcba");
+        const rewriter = getRewriter(ABC, "abcba");
 
         // Act
         rewriter.delete(1, 3);

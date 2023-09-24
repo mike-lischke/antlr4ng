@@ -3,6 +3,7 @@
 .vscode
 cli/
 spec/
+coverage/
 src/**/*.js
 dist/*.map
 

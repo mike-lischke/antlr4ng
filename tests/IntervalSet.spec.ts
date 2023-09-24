@@ -6,10 +6,12 @@
 
 import * as antlr4 from "../src/index.js";
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const IntervalSet = antlr4.IntervalSet;
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const Interval = antlr4.Interval;
 
-describe('IntervalSet', () => {
+describe("IntervalSet", () => {
     it("computes interval set length", () => {
         const s1 = new IntervalSet();
         s1.addOne(20);

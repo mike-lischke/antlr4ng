@@ -1,5 +1,6 @@
-import antlr4 from '../../../src/index.js';
+/* eslint-disable @typescript-eslint/naming-convention */
 
+import * as antlr4 from "../../../src/index.js";
 
 const serializedATN = [4, 0, 7, 38, 6, -1, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4,
     7, 4, 2, 5, 7, 5, 2, 6, 7, 6, 1, 0, 4, 0, 17, 8, 0, 11, 0, 12, 0, 18, 1, 1, 4, 1, 22, 8, 1, 11, 1, 12, 1,
@@ -14,32 +15,35 @@ const serializedATN = [4, 0, 7, 38, 6, -1, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2
     0, 0, 34, 33, 1, 0, 0, 0, 35, 36, 1, 0, 0, 0, 36, 34, 1, 0, 0, 0, 36, 37, 1, 0, 0, 0, 37, 14, 1, 0, 0,
     0, 4, 0, 18, 23, 36, 0];
 
-
 const atn = new antlr4.ATNDeserializer().deserialize(serializedATN);
 
-const decisionsToDFA = atn.decisionToState.map((ds, index) => new antlr4.DFA(ds, index));
+const decisionsToDFA = atn.decisionToState.map((ds, index) => { return new antlr4.DFA(ds, index); });
 
-export class calc extends antlr4.Lexer {
+export class Calc extends antlr4.Lexer {
+    public static readonly EOF = antlr4.Token.EOF;
+    public static readonly ID = 1;
+    public static readonly INT = 2;
+    public static readonly SEMI = 3;
+    public static readonly PLUS = 4;
+    public static readonly MUL = 5;
+    public static readonly ASSIGN = 6;
+    public static readonly WS = 7;
 
-    static grammarFileName = "calc.g4";
-    static channelNames = ["DEFAULT_TOKEN_CHANNEL", "HIDDEN"];
-    static modeNames = ["DEFAULT_MODE"];
-    static literalNames = [null, null, null, "';'", "'+'", "'*'", "'='"];
-    static symbolicNames = [null, "ID", "INT", "SEMI", "PLUS", "MUL", "ASSIGN",
-        "WS"];
-    static ruleNames = ["ID", "INT", "SEMI", "PLUS", "MUL", "ASSIGN", "WS"];
+    public override get grammarFileName(): string { return "calc.g4"; }
+    public get channelNames(): Array<null | string> { return ["DEFAULT_TOKEN_CHANNEL", "HIDDEN"]; }
+    public get modeNames(): Array<null | string> { return ["DEFAULT_MODE"]; }
+    public get literalNames(): Array<null | string> { return [null, null, null, "';'", "'+'", "'*'", "'='"]; }
+    public get symbolicNames(): Array<null | string> {
+        return [null, "ID", "INT", "SEMI", "PLUS", "MUL", "ASSIGN", "WS"];
+    }
+    public get ruleNames(): string[] { return ["ID", "INT", "SEMI", "PLUS", "MUL", "ASSIGN", "WS"]; }
 
-    constructor(input) {
+    public constructor(input: antlr4.CharStream) {
         super(input);
         this.interpreter = new antlr4.LexerATNSimulator(this, atn, decisionsToDFA, new antlr4.PredictionContextCache());
     }
-}
 
-calc.EOF = antlr4.Token.EOF;
-calc.ID = 1;
-calc.INT = 2;
-calc.SEMI = 3;
-calc.PLUS = 4;
-calc.MUL = 5;
-calc.ASSIGN = 6;
-calc.WS = 7;
+    public override get vocabulary(): antlr4.Vocabulary {
+        return antlr4.Vocabulary.EMPTY_VOCABULARY;
+    }
+}
