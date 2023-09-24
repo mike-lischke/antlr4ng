@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-returns-description, jsdoc/tag-lines, jsdoc/require-param-description, jsdoc/require-returns */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that

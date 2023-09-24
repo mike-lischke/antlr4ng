@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-jsdoc, jsdoc/require-param, jsdoc/require-returns, jsdoc/check-tag-names, jsdoc/check-types, jsdoc/valid-types */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that

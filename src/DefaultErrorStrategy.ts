@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/no-undefined-types, jsdoc/require-param, jsdoc/tag-lines, jsdoc/require-param-description, jsdoc/require-returns, jsdoc/check-alignment, jsdoc/check-tag-names, jsdoc/valid-types */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that

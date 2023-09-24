@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-returns, jsdoc/multiline-blocks, jsdoc/require-param, jsdoc/no-multi-asterisks, jsdoc/no-undefined-types */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
