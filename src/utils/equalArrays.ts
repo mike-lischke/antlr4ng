@@ -4,18 +4,27 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-export function equalArrays(a, b) {
-    if (!Array.isArray(a) || !Array.isArray(b))
+import { isComparable } from "./standardEqualsFunction.js";
+
+export const equalArrays = (a: unknown, b: unknown): boolean => {
+    if (!Array.isArray(a) || !Array.isArray(b)) {
         return false;
-    if (a === b)
-        return true;
-    if (a.length !== b.length)
-        return false;
-    for (let i = 0; i < a.length; i++) {
-        if (a[i] === b[i])
-            continue;
-        if (!a[i].equals || !a[i].equals(b[i]))
-            return false;
     }
+    if (a === b) {
+        return true;
+    }
+    if (a.length !== b.length) {
+        return false;
+    }
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] === b[i]) {
+            continue;
+        }
+
+        if(!isComparable(a) || !a.equals(b[i])){
+            return false;
+        }
+    }
+
     return true;
-}
+};

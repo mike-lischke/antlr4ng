@@ -4,22 +4,22 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-export const StringSeedHashCode = Math.round(Math.random() * Math.pow(2, 32));
+export const stringSeedHashCode = Math.round(Math.random() * Math.pow(2, 32));
 
-export function stringHashCode(value) {
+export const stringHashCode = (value: string): number =>  {
     if (!value) {
         return 0;
     }
     const type = typeof value;
-    const key = type === 'string' ? value : type === 'object' && value.toString ? value.toString() : false;
+    const key = type === "string" ? value : type === "object" && value.toString ? value.toString() : false;
     if (!key) {
         return 0;
     }
-    let h1b, k1;
+    let h1b; let k1;
 
     const remainder = key.length & 3; // key.length % 4
     const bytes = key.length - remainder;
-    let h1 = StringSeedHashCode;
+    let h1 = stringSeedHashCode;
     const c1 = 0xcc9e2d51;
     const c2 = 0x1b873593;
     let i = 0;
@@ -44,6 +44,7 @@ export function stringHashCode(value) {
 
     k1 = 0;
 
+    /*  eslint-disable no-fallthrough */
     switch (remainder) {
         case 3:
             k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
@@ -57,6 +58,7 @@ export function stringHashCode(value) {
             k1 = (k1 << 15) | (k1 >>> 17);
             k1 = (((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16)) & 0xffffffff;
             h1 ^= k1;
+        default:
     }
 
     h1 ^= key.length;
@@ -68,4 +70,4 @@ export function stringHashCode(value) {
     h1 ^= h1 >>> 16;
 
     return h1 >>> 0;
-}
+};

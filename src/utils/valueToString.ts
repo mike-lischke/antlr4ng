@@ -4,6 +4,6 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-export function valueToString(v) {
+export const valueToString = (v: null | string): string => {
     return v === null ? "null" : v;
-}
+};
