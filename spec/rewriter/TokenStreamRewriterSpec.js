@@ -6,7 +6,7 @@
 
 // cspell: disable
 
-import antlr4 from "../../src/index.js";
+import antlr4 from "../../dist/antlr4.mjs";
 import { abc } from "./generatedCode/abc.js";
 import { calc } from "./generatedCode/calc.js";
 
@@ -211,7 +211,7 @@ describe("TokenStreamRewriter", () => {
 
         // Assert
         expect(() => { return rewriter.getText(); }).toThrowError(
-            "insert op <InsertBeforeOp@[@1,1:1='b',<2>,1:1]:\"0\"> within boundaries of previous <ReplaceOp@[@0,0:0='a',<1>,1:0]..[@2,2:2='c',<3>,1:2]:\"x\">",
+            `insert op <It@[@1,1:1='b',<2>,1:1]:"0"> within boundaries of previous <ReplaceOp@[@0,0:0='a',<1>,1:0]..[@2,2:2='c',<3>,1:2]:"x">`,
         );
     });
 
@@ -225,7 +225,7 @@ describe("TokenStreamRewriter", () => {
 
         // Assert
         expect(() => { return rewriter.getText(); }).toThrowError(
-            "insert op <InsertBeforeOp@[@1,1:1='b',<2>,1:1]:\"0\"> within boundaries of previous <DeleteOp@[@0,0:0='a',<1>,1:0]..[@2,2:2='c',<3>,1:2]>",
+            `insert op <It@[@1,1:1='b',<2>,1:1]:"0"> within boundaries of previous <DeleteOp@[@0,0:0='a',<1>,1:0]..[@2,2:2='c',<3>,1:2]>`
         );
     });
 
@@ -312,7 +312,7 @@ describe("TokenStreamRewriter", () => {
 
         // Assert
         expect(() => { return rewriter.getText(); }).toThrowError(
-            "insert op <InsertBeforeOp@[@4,4:4='c',<3>,1:4]:\"y\"> within boundaries of previous <ReplaceOp@[@2,2:2='c',<3>,1:2]..[@4,4:4='c',<3>,1:4]:\"x\">",
+            `insert op <It@[@4,4:4='c',<3>,1:4]:"y"> within boundaries of previous <ReplaceOp@[@2,2:2='c',<3>,1:2]..[@4,4:4='c',<3>,1:4]:"x">`,
         );
     });
 

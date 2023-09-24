@@ -1,4 +1,4 @@
-import antlr4 from '../../../src/index.js';
+import antlr4 from '../../../dist/antlr4.mjs';
 
 
 const serializedATN = [4, 0, 3, 13, 6, -1, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 1, 0, 1, 0, 1, 1,
