@@ -12,7 +12,12 @@ import { LexerDFASerializer } from './LexerDFASerializer.js';
 import { HashSet } from "../misc/HashSet.js";
 
 export class DFA {
-    constructor(atnStartState, decision) {
+    _states: any;
+    atnStartState: any;
+    decision: any;
+    precedenceDfa: any;
+    s0: any;
+    constructor(atnStartState: any, decision: any) {
         if (decision === undefined) {
             decision = 0;
         }
@@ -25,6 +30,7 @@ export class DFA {
          * A set of all DFA states. Use {@link Map} so we can get old state back
          * ({@link Set} only allows you to see if it's there).
          */
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
         this._states = new HashSet();
         this.s0 = null;
         /**
@@ -36,6 +42,7 @@ export class DFA {
         if (atnStartState instanceof StarLoopEntryState) {
             if (atnStartState.precedenceRuleDecision) {
                 this.precedenceDfa = true;
+                // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
                 const precedenceState = new DFAState(null, new ATNConfigSet());
                 precedenceState.edges = [];
                 precedenceState.isAcceptState = false;
@@ -55,7 +62,7 @@ export class DFA {
      * @throws IllegalStateException if this is not a precedence DFA.
      * @see //isPrecedenceDfa()
      */
-    getPrecedenceStartState(precedence) {
+    getPrecedenceStartState(precedence: any) {
         if (!(this.precedenceDfa)) {
             throw ("Only precedence DFAs may contain a precedence start state.");
         }
@@ -76,7 +83,7 @@ export class DFA {
      * @throws IllegalStateException if this is not a precedence DFA.
      * @see //isPrecedenceDfa()
      */
-    setPrecedenceStartState(precedence, startState) {
+    setPrecedenceStartState(precedence: any, startState: any) {
         if (!(this.precedenceDfa)) {
             throw ("Only precedence DFAs may contain a precedence start state.");
         }
@@ -109,10 +116,12 @@ export class DFA {
      * @param precedenceDfa {@code true} if this is a precedence DFA; otherwise,
      * {@code false}
      */
-    setPrecedenceDfa(precedenceDfa) {
+    setPrecedenceDfa(precedenceDfa: any) {
         if (this.precedenceDfa !== precedenceDfa) {
+            // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
             this._states = new HashSet();
             if (precedenceDfa) {
+                // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
                 const precedenceState = new DFAState(null, new ATNConfigSet());
                 precedenceState.edges = [];
                 precedenceState.isAcceptState = false;
@@ -130,12 +139,12 @@ export class DFA {
      */
     sortedStates() {
         const list = this._states.values();
-        return list.sort(function (a, b) {
+        return list.sort(function (a: any, b: any) {
             return a.stateNumber - b.stateNumber;
         });
     }
 
-    toString(literalNames, symbolicNames) {
+    toString(literalNames: any, symbolicNames: any) {
         literalNames = literalNames || null;
         symbolicNames = symbolicNames || null;
         if (this.s0 === null) {

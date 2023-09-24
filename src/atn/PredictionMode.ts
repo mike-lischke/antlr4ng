@@ -176,7 +176,7 @@ export const PredictionMode = {
      * the configurations to strip out all of the predicates so that a standard
      * {@link ATNConfigSet} will merge everything ignoring predicates.</p>
      */
-    hasSLLConflictTerminatingPrediction: function (mode, configs) {
+    hasSLLConflictTerminatingPrediction: function (mode: any, configs: any) {
         // Configs in rule stop states indicate reaching the end of the decision
         // rule (local context) or end of start rule (full context). If all
         // configs meet this condition, then none of the configurations is able
@@ -192,10 +192,13 @@ export const PredictionMode = {
             // since we'll often fail over anyway.
             if (configs.hasSemanticContext) {
                 // dup configs, tossing out semantic predicates
+                // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
                 const dup = new ATNConfigSet();
                 for (let i = 0; i < configs.items.length; i++) {
                     let c = configs.items[i];
+                    // @ts-expect-error TS(2339): Property 'NONE' does not exist on type 'typeof Sem... Remove this comment to see the full error message
                     c = new ATNConfig({ semanticContext: SemanticContext.NONE }, c);
+                    // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                     dup.add(c);
                 }
                 configs = dup;
@@ -217,7 +220,7 @@ export const PredictionMode = {
      * @return {@code true} if any configuration in {@code configs} is in a
      * {@link RuleStopState}, otherwise {@code false}
      */
-    hasConfigInRuleStopState: function (configs) {
+    hasConfigInRuleStopState: function (configs: any) {
         for (let i = 0; i < configs.items.length; i++) {
             const c = configs.items[i];
             if (c.state instanceof RuleStopState) {
@@ -237,7 +240,7 @@ export const PredictionMode = {
      * @return {@code true} if all configurations in {@code configs} are in a
      * {@link RuleStopState}, otherwise {@code false}
      */
-    allConfigsInRuleStopStates: function (configs) {
+    allConfigsInRuleStopStates: function (configs: any) {
         for (let i = 0; i < configs.items.length; i++) {
             const c = configs.items[i];
             if (!(c.state instanceof RuleStopState)) {
@@ -389,7 +392,7 @@ export const PredictionMode = {
      * we need exact ambiguity detection when the sets look like
      * {@code A={{1,2}}} or {@code {{1,2},{1,2}}}, etc...</p>
      */
-    resolvesToJustOneViableAlt: function (altsets) {
+    resolvesToJustOneViableAlt: function (altsets: any) {
         return PredictionMode.getSingleViableAlt(altsets);
     },
 
@@ -401,7 +404,7 @@ export const PredictionMode = {
      * @return {@code true} if every {@link BitSet} in {@code altsets} has
      * {@link BitSet//cardinality cardinality} &gt; 1, otherwise {@code false}
      */
-    allSubsetsConflict: function (altsets) {
+    allSubsetsConflict: function (altsets: any) {
         return !PredictionMode.hasNonConflictingAltSet(altsets);
     },
     /**
@@ -412,7 +415,7 @@ export const PredictionMode = {
      * @return {@code true} if {@code altsets} contains a {@link BitSet} with
      * {@link BitSet//cardinality cardinality} 1, otherwise {@code false}
      */
-    hasNonConflictingAltSet: function (altsets) {
+    hasNonConflictingAltSet: function (altsets: any) {
         for (let i = 0; i < altsets.length; i++) {
             const alts = altsets[i];
             if (alts.length === 1) {
@@ -431,7 +434,7 @@ export const PredictionMode = {
      * @return {@code true} if {@code altsets} contains a {@link BitSet} with
      * {@link BitSet//cardinality cardinality} &gt; 1, otherwise {@code false}
      */
-    hasConflictingAltSet: function (altsets) {
+    hasConflictingAltSet: function (altsets: any) {
         for (let i = 0; i < altsets.length; i++) {
             const alts = altsets[i];
             if (alts.length > 1) {
@@ -449,7 +452,7 @@ export const PredictionMode = {
      * @return {@code true} if every member of {@code altsets} is equal to the
      * others, otherwise {@code false}
      */
-    allSubsetsEqual: function (altsets) {
+    allSubsetsEqual: function (altsets: any) {
         let first = null;
         for (let i = 0; i < altsets.length; i++) {
             const alts = altsets[i];
@@ -470,11 +473,12 @@ export const PredictionMode = {
      *
      * @param altsets a collection of alternative subsets
      */
-    getUniqueAlt: function (altsets) {
+    getUniqueAlt: function (altsets: any) {
         const all = PredictionMode.getAlts(altsets);
         if (all.length === 1) {
             return all.nextSetBit(0);
         } else {
+            // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
             return ATN.INVALID_ALT_NUMBER;
         }
     },
@@ -487,9 +491,9 @@ export const PredictionMode = {
      * @param altsets a collection of alternative subsets
      * @return the set of represented alternatives in {@code altsets}
      */
-    getAlts: function (altsets) {
+    getAlts: function (altsets: any) {
         const all = new BitSet();
-        altsets.map(function (alts) { all.or(alts); });
+        altsets.map(function (alts: any) { all.or(alts); });
         return all;
     },
 
@@ -502,11 +506,13 @@ export const PredictionMode = {
      * alt and not pred
      * </pre>
      */
-    getConflictingAltSubsets: function (configs) {
+    getConflictingAltSubsets: function (configs: any) {
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
         const configToAlts = new HashMap();
-        configToAlts.hashFunction = function (cfg) { HashCode.hashStuff(cfg.state.stateNumber, cfg.context); };
-        configToAlts.equalsFunction = function (c1, c2) { return c1.state.stateNumber === c2.state.stateNumber && c1.context.equals(c2.context); };
-        configs.items.map(function (cfg) {
+        // @ts-expect-error TS(2554): Expected 0 arguments, but got 2.
+        configToAlts.hashFunction = function (cfg: any) { HashCode.hashStuff(cfg.state.stateNumber, cfg.context); };
+        configToAlts.equalsFunction = function (c1: any, c2: any) { return c1.state.stateNumber === c2.state.stateNumber && c1.context.equals(c2.context); };
+        configs.items.map(function (cfg: any) {
             let alts = configToAlts.get(cfg);
             if (alts === null) {
                 alts = new BitSet();
@@ -525,9 +531,9 @@ export const PredictionMode = {
      * map[c.{@link ATNConfig//state state}] U= c.{@link ATNConfig//alt alt}
      * </pre>
      */
-    getStateToAltMap: function (configs) {
+    getStateToAltMap: function (configs: any) {
         const m = new AltDict();
-        configs.items.map(function (c) {
+        configs.items.map(function (c: any) {
             let alts = m.get(c.state);
             if (alts === null) {
                 alts = new BitSet();
@@ -538,7 +544,7 @@ export const PredictionMode = {
         return m;
     },
 
-    hasStateAssociatedWithOneAlt: function (configs) {
+    hasStateAssociatedWithOneAlt: function (configs: any) {
         const values = PredictionMode.getStateToAltMap(configs).values();
         for (let i = 0; i < values.length; i++) {
             if (values[i].length === 1) {
@@ -548,7 +554,7 @@ export const PredictionMode = {
         return false;
     },
 
-    getSingleViableAlt: function (altsets) {
+    getSingleViableAlt: function (altsets: any) {
         let result = null;
         for (let i = 0; i < altsets.length; i++) {
             const alts = altsets[i];
@@ -556,6 +562,7 @@ export const PredictionMode = {
             if (result === null) {
                 result = minAlt;
             } else if (result !== minAlt) { // more than 1 viable alt
+                // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
                 return ATN.INVALID_ALT_NUMBER;
             }
         }

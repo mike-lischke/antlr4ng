@@ -13,20 +13,21 @@ import { LexerAction } from "./LexerAction.js";
  */
 
 export class LexerTypeAction extends LexerAction {
-    constructor(type) {
+    type: any;
+    constructor(type: any) {
         super(LexerActionType.TYPE);
         this.type = type;
     }
 
-    execute(lexer) {
+    execute(lexer: any) {
         lexer.type = this.type;
     }
 
-    updateHashCode(hash) {
+    updateHashCode(hash: any) {
         hash.update(this.actionType, this.type);
     }
 
-    equals(other) {
+    equals(other: any) {
         if (this === other) {
             return true;
         } else if (!(other instanceof LexerTypeAction)) {

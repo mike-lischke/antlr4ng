@@ -16,11 +16,24 @@ import { TraceListener } from "./TraceListener.js";
 import { TerminalNodeImpl } from "./tree/TerminalNodeImpl.js";
 
 export class Parser extends Recognizer {
+    _ctx: any;
+    _input: any;
+    _parseListeners: any;
+    _precedenceStack: any;
+    _syntaxErrors: any;
+    _tracer: any;
+    buildParseTrees: any;
+    bypassAltsAtnCache: any;
+    errorHandler: any;
+    getSerializedATN: any;
+    interpreter: any;
+    ruleNames: any;
+    vocabulary: any;
     /**
      * this is all the parsing support code essentially; most of it is error
      * recovery stuff.
      */
-    constructor(input) {
+    constructor(input: any) {
         super();
         // The input stream.
         this._input = null;
@@ -100,7 +113,7 @@ export class Parser extends Recognizer {
      * {@code ttype} and the error strategy could not recover from the
      * mismatched symbol
      */
-    match(ttype) {
+    match(ttype: any) {
         let t = this.getCurrentToken();
         if (t.type === ttype) {
             this.errorHandler.reportMatch(this);
@@ -184,7 +197,7 @@ export class Parser extends Recognizer {
      *
      * @throws NullPointerException if {@code} listener is {@code null}
      */
-    addParseListener(listener) {
+    addParseListener(listener: any) {
         if (listener === null) {
             throw "listener";
         }
@@ -201,7 +214,7 @@ export class Parser extends Recognizer {
      * listener, this method does nothing.</p>
      * @param listener the listener to remove
      */
-    removeParseListener(listener) {
+    removeParseListener(listener: any) {
         if (this._parseListeners !== null) {
             const idx = this._parseListeners.indexOf(listener);
             if (idx >= 0) {
@@ -222,7 +235,7 @@ export class Parser extends Recognizer {
     triggerEnterRuleEvent() {
         if (this._parseListeners !== null) {
             const ctx = this._ctx;
-            this._parseListeners.forEach(function (listener) {
+            this._parseListeners.forEach(function (listener: any) {
                 listener.enterEveryRule(ctx);
                 ctx.enterRule(listener);
             });
@@ -237,7 +250,7 @@ export class Parser extends Recognizer {
         if (this._parseListeners !== null) {
             // reverse order walk of listeners
             const ctx = this._ctx;
-            this._parseListeners.slice(0).reverse().forEach(function (listener) {
+            this._parseListeners.slice(0).reverse().forEach(function (listener: any) {
                 ctx.exitRule(listener);
                 listener.exitEveryRule(ctx);
             });
@@ -249,7 +262,7 @@ export class Parser extends Recognizer {
     }
 
     // Tell our token source and error strategy about a new way to create tokens.
-    setTokenFactory(factory) {
+    setTokenFactory(factory: any) {
         this._input.tokenSource._factory = factory;
     }
 
@@ -267,6 +280,7 @@ export class Parser extends Recognizer {
         }
         let result = this.bypassAltsAtnCache[serializedAtn];
         if (result === null) {
+            // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
             const deserializationOptions = new ATNDeserializationOptions();
             deserializationOptions.generateRuleBypassTransitions = true;
             result = new ATNDeserializer(deserializationOptions)
@@ -312,7 +326,7 @@ export class Parser extends Recognizer {
         return this._input.LT(1);
     }
 
-    notifyErrorListeners(msg, offendingToken, err) {
+    notifyErrorListeners(msg: any, offendingToken: any, err: any) {
         offendingToken = offendingToken || null;
         err = err || null;
         if (offendingToken === null) {
@@ -348,12 +362,13 @@ export class Parser extends Recognizer {
      */
     consume() {
         const o = this.getCurrentToken();
+        // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         if (o.type !== Token.EOF) {
             this.tokenStream.consume();
         }
         const hasListener = this._parseListeners !== null && this._parseListeners.length > 0;
         if (this.buildParseTrees || hasListener) {
-            let node;
+            let node: any;
             if (this.errorHandler.inErrorRecoveryMode(this)) {
                 node = this._ctx.addErrorNode(o);
             } else {
@@ -361,7 +376,7 @@ export class Parser extends Recognizer {
             }
             node.invokingState = this.state;
             if (hasListener) {
-                this._parseListeners.forEach(function (listener) {
+                this._parseListeners.forEach(function (listener: any) {
                     if (node instanceof ErrorNode || (node.isErrorNode !== undefined && node.isErrorNode())) {
                         listener.visitErrorNode(node);
                     } else if (node instanceof TerminalNode) {
@@ -384,7 +399,7 @@ export class Parser extends Recognizer {
      * Always called by generated parsers upon entry to a rule. Access field
      * {@link //_ctx} get the current context.
      */
-    enterRule(localctx, state, ruleIndex) {
+    enterRule(localctx: any, state: any, ruleIndex: any) {
         this.state = state;
         this._ctx = localctx;
         this._ctx.start = this._input.LT(1);
@@ -402,7 +417,7 @@ export class Parser extends Recognizer {
         this._ctx = this._ctx.parent;
     }
 
-    enterOuterAlt(localctx, altNum) {
+    enterOuterAlt(localctx: any, altNum: any) {
         localctx.setAltNumber(altNum);
         // if we have new localctx, make sure we replace existing ctx
         // that is previous child of parse tree
@@ -429,7 +444,7 @@ export class Parser extends Recognizer {
         }
     }
 
-    enterRecursionRule(localctx, state, ruleIndex, precedence) {
+    enterRecursionRule(localctx: any, state: any, ruleIndex: any, precedence: any) {
         this.state = state;
         this._precedenceStack.push(precedence);
         this._ctx = localctx;
@@ -438,7 +453,7 @@ export class Parser extends Recognizer {
     }
 
     // Like {@link //enterRule} but for recursive rules.
-    pushNewRecursionContext(localctx, state, ruleIndex) {
+    pushNewRecursionContext(localctx: any, state: any, ruleIndex: any) {
         const previous = this._ctx;
         previous._parent = localctx;
         previous.invokingState = state;
@@ -452,7 +467,7 @@ export class Parser extends Recognizer {
         this.triggerEnterRuleEvent(); // simulates rule entry for left-recursive rules
     }
 
-    unrollRecursionContexts(parent) {
+    unrollRecursionContexts(parent: any) {
         this._precedenceStack.pop();
         this._ctx.stop = this._input.LT(-1);
         const retCtx = this._ctx; // save current ctx (return value)
@@ -474,7 +489,7 @@ export class Parser extends Recognizer {
         }
     }
 
-    getInvokingContext(ruleIndex) {
+    getInvokingContext(ruleIndex: any) {
         let ctx = this._ctx;
         while (ctx !== null) {
             if (ctx.ruleIndex === ruleIndex) {
@@ -485,11 +500,11 @@ export class Parser extends Recognizer {
         return null;
     }
 
-    precpred(localctx, precedence) {
+    precpred(localctx: any, precedence: any) {
         return precedence >= this._precedenceStack[this._precedenceStack.length - 1];
     }
 
-    inContext(context) {
+    inContext(context: any) {
         // TODO: useful in parser?
         return false;
     }
@@ -508,7 +523,7 @@ export class Parser extends Recognizer {
      * @return {@code true} if {@code symbol} can follow the current state in
      * the ATN, otherwise {@code false}.
      */
-    isExpectedToken(symbol) {
+    isExpectedToken(symbol: any) {
         const atn = this.interpreter.atn;
         let ctx = this._ctx;
         const s = atn.states[this.state];
@@ -516,9 +531,11 @@ export class Parser extends Recognizer {
         if (following.contains(symbol)) {
             return true;
         }
+        // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
         if (!following.contains(Token.EPSILON)) {
             return false;
         }
+        // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
         while (ctx !== null && ctx.invokingState >= 0 && following.contains(Token.EPSILON)) {
             const invokingState = atn.states[ctx.invokingState];
             const rt = invokingState.transitions[0];
@@ -528,6 +545,7 @@ export class Parser extends Recognizer {
             }
             ctx = ctx.parent;
         }
+        // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
         if (following.contains(Token.EPSILON) && symbol === Token.EOF) {
             return true;
         } else {
@@ -553,7 +571,7 @@ export class Parser extends Recognizer {
     }
 
     // Get a rule's index (i.e., {@code RULE_ruleName} field) or -1 if not found.
-    getRuleIndex(ruleName) {
+    getRuleIndex(ruleName: any) {
         const ruleIndex = this.getRuleIndexMap().get(ruleName);
         if (ruleIndex !== null) {
             return ruleIndex;
@@ -570,7 +588,7 @@ export class Parser extends Recognizer {
      *
      * this is very useful for error messages.
      */
-    getRuleInvocationStack(p) {
+    getRuleInvocationStack(p: any) {
         p = p || null;
         if (p === null) {
             p = this._ctx;
@@ -618,7 +636,7 @@ export class Parser extends Recognizer {
      * During a parse is sometimes useful to listen in on the rule entry and exit
      * events as well as token matches. this is for quick and dirty debugging.
      */
-    setTrace(trace) {
+    setTrace(trace: any) {
         if (!trace) {
             this.removeParseListener(this._tracer);
             this._tracer = null;
@@ -631,11 +649,11 @@ export class Parser extends Recognizer {
         }
     }
 
-    createTerminalNode(parent, t) {
+    createTerminalNode(parent: any, t: any) {
         return new TerminalNodeImpl(t);
     }
 
-    createErrorNode(parent, t) {
+    createErrorNode(parent: any, t: any) {
         return new ErrorNodeImpl(t);
     }
 }
@@ -646,4 +664,5 @@ export class Parser extends Recognizer {
  *
  * @see ATNDeserializationOptions//isGenerateRuleBypassTransitions()
  */
+// @ts-expect-error TS(2339): Property 'bypassAltsAtnCache' does not exist on ty... Remove this comment to see the full error message
 Parser.bypassAltsAtnCache = {};

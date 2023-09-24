@@ -14,7 +14,9 @@ import { LexerAction } from "./LexerAction.js";
  * @param channel The channel value to pass to {@link Lexer//setChannel}
  */
 export class LexerChannelAction extends LexerAction {
-    constructor(channel) {
+    actionType: any;
+    channel: any;
+    constructor(channel: any) {
         super(LexerActionType.CHANNEL);
         this.channel = channel;
     }
@@ -23,15 +25,15 @@ export class LexerChannelAction extends LexerAction {
      * <p>This action is implemented by calling {@link Lexer//setChannel} with the
      * value provided by {@link //getChannel}.</p>
      */
-    execute(lexer) {
+    execute(lexer: any) {
         lexer._channel = this.channel;
     }
 
-    updateHashCode(hash) {
+    updateHashCode(hash: any) {
         hash.update(this.actionType, this.channel);
     }
 
-    equals(other) {
+    equals(other: any) {
         if (this === other) {
             return true;
         } else if (!(other instanceof LexerChannelAction)) {

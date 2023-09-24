@@ -9,13 +9,15 @@ import { Token } from '../Token.js';
 import { TerminalNode } from "./TerminalNode.js";
 
 export class TerminalNodeImpl extends TerminalNode {
-    constructor(symbol) {
+    _parent: any;
+    symbol: any;
+    constructor(symbol: any) {
         super();
         this._parent = null;
         this.symbol = symbol;
     }
 
-    getChild(i) {
+    getChild(i: any) {
         return null;
     }
 
@@ -37,6 +39,7 @@ export class TerminalNodeImpl extends TerminalNode {
 
     getSourceInterval() {
         if (this.symbol === null) {
+            // @ts-expect-error TS(2339): Property 'INVALID_INTERVAL' does not exist on type... Remove this comment to see the full error message
             return Interval.INVALID_INTERVAL;
         }
         const tokenIndex = this.symbol.tokenIndex;
@@ -47,7 +50,7 @@ export class TerminalNodeImpl extends TerminalNode {
         return 0;
     }
 
-    accept(visitor) {
+    accept(visitor: any) {
         return visitor.visitTerminal(this);
     }
 
@@ -56,6 +59,7 @@ export class TerminalNodeImpl extends TerminalNode {
     }
 
     toString() {
+        // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         if (this.symbol.type === Token.EOF) {
             return "<EOF>";
         } else {

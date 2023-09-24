@@ -32,16 +32,17 @@ import { BufferedTokenStream } from './BufferedTokenStream.js';
  * channel.</p>
  */
 export class CommonTokenStream extends BufferedTokenStream {
-    constructor(lexer, channel) {
+    constructor(lexer: any, channel: any) {
         super(lexer);
+        // @ts-expect-error TS(2339): Property 'DEFAULT_CHANNEL' does not exist on type ... Remove this comment to see the full error message
         this.channel = channel === undefined ? Token.DEFAULT_CHANNEL : channel;
     }
 
-    adjustSeekIndex(i) {
+    adjustSeekIndex(i: any) {
         return this.nextTokenOnChannel(i, this.channel);
     }
 
-    LB(k) {
+    LB(k: any) {
         if (k === 0 || this.index - k < 0) {
             return null;
         }
@@ -59,7 +60,7 @@ export class CommonTokenStream extends BufferedTokenStream {
         return this.tokens[i];
     }
 
-    LT(k) {
+    LT(k: any) {
         this.lazyInit();
         if (k === 0) {
             return null;
@@ -89,6 +90,7 @@ export class CommonTokenStream extends BufferedTokenStream {
             if (t.channel === this.channel) {
                 n += 1;
             }
+            // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
             if (t.type === Token.EOF) {
                 break;
             }

@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-export function equalArrays(a, b) {
+export function equalArrays(a: any, b: any) {
     if (!Array.isArray(a) || !Array.isArray(b))
         return false;
     if (a === b)

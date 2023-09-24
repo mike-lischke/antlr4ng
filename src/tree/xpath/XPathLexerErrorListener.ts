@@ -7,8 +7,8 @@
 import { BaseErrorListener } from "../../BaseErrorListener.js";
 
 export class XPathLexerErrorListener extends BaseErrorListener {
-    syntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg,
-        e) {
+    syntaxError(recognizer: any, offendingSymbol: any, line: any, charPositionInLine: any, msg: any,
+        e: any) {
         // intentionally empty
     }
 }

@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-export function escapeWhitespace(s, escapeSpaces) {
+export function escapeWhitespace(s: any, escapeSpaces: any) {
     s = s.replace(/\t/g, "\\t")
         .replace(/\n/g, "\\n")
         .replace(/\r/g, "\\r");

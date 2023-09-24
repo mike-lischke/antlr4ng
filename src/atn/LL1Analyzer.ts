@@ -19,7 +19,8 @@ import { BitSet } from "../misc/BitSet.js";
 import { HashSet } from "../misc/HashSet.js";
 
 export class LL1Analyzer {
-    constructor(atn) {
+    atn: any;
+    constructor(atn: any) {
         this.atn = atn;
     }
 
@@ -33,20 +34,24 @@ export class LL1Analyzer {
      * @param s the ATN state
      * @return the expected symbols for each outgoing transition of {@code s}.
      */
-    getDecisionLookahead(s) {
+    getDecisionLookahead(s: any) {
         if (s === null) {
             return null;
         }
         const count = s.transitions.length;
         const look = [];
         for (let alt = 0; alt < count; alt++) {
+            // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
             look[alt] = new IntervalSet();
+            // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
             const lookBusy = new HashSet();
             const seeThruPreds = false; // fail to get lookahead upon pred
+            // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
             this._LOOK(s.transition(alt).target, null, PredictionContext.EMPTY,
                 look[alt], lookBusy, new BitSet(), seeThruPreds, false);
             // Wipe out lookahead for this alternative if we found nothing
             // or we had a predicate when we !seeThruPreds
+            // @ts-expect-error TS(2531): Object is possibly 'null'.
             if (look[alt].length === 0 || look[alt].contains(LL1Analyzer.HIT_PRED)) {
                 look[alt] = null;
             }
@@ -72,11 +77,13 @@ export class LL1Analyzer {
      * @return The set of tokens that can follow {@code s} in the ATN in the
      * specified {@code ctx}.
      */
-    LOOK(s, stopState, ctx) {
+    LOOK(s: any, stopState: any, ctx: any) {
+        // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         const r = new IntervalSet();
         const seeThruPreds = true; // ignore preds; get all lookahead
         ctx = ctx || null;
         const lookContext = ctx !== null ? predictionContextFromRuleContext(s.atn, ctx) : null;
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
         this._LOOK(s, stopState, lookContext, r, new HashSet(), new BitSet(), seeThruPreds, true);
         return r;
     }
@@ -111,7 +118,7 @@ export class LL1Analyzer {
      * outermost context is reached. This parameter has no effect if {@code ctx}
      * is {@code null}.
      */
-    _LOOK(s, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF) {
+    _LOOK(s: any, stopState: any, ctx: any, look: any, lookBusy: any, calledRuleStack: any, seeThruPreds: any, addEOF: any) {
         const c = new ATNConfig({ state: s, alt: 0, context: ctx }, null);
         if (lookBusy.has(c)) {
             return;
@@ -119,21 +126,26 @@ export class LL1Analyzer {
         lookBusy.add(c);
         if (s === stopState) {
             if (ctx === null) {
+                // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
                 look.addOne(Token.EPSILON);
                 return;
             } else if (ctx.isEmpty() && addEOF) {
+                // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
                 look.addOne(Token.EOF);
                 return;
             }
         }
         if (s instanceof RuleStopState) {
             if (ctx === null) {
+                // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
                 look.addOne(Token.EPSILON);
                 return;
             } else if (ctx.isEmpty() && addEOF) {
+                // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
                 look.addOne(Token.EOF);
                 return;
             }
+            // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
             if (ctx !== PredictionContext.EMPTY) {
                 const removed = calledRuleStack.get(s.ruleIndex);
                 try {
@@ -168,16 +180,19 @@ export class LL1Analyzer {
                 if (seeThruPreds) {
                     this._LOOK(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
                 } else {
+                    // @ts-expect-error TS(2339): Property 'HIT_PRED' does not exist on type 'typeof... Remove this comment to see the full error message
                     look.addOne(LL1Analyzer.HIT_PRED);
                 }
             } else if (t.isEpsilon) {
                 this._LOOK(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
             } else if (t.constructor === WildcardTransition) {
+                // @ts-expect-error TS(2339): Property 'MIN_USER_TOKEN_TYPE' does not exist on t... Remove this comment to see the full error message
                 look.addRange(Token.MIN_USER_TOKEN_TYPE, this.atn.maxTokenType);
             } else {
                 let set = t.label;
                 if (set !== null) {
                     if (t instanceof NotSetTransition) {
+                        // @ts-expect-error TS(2339): Property 'MIN_USER_TOKEN_TYPE' does not exist on t... Remove this comment to see the full error message
                         set = set.complement(Token.MIN_USER_TOKEN_TYPE, this.atn.maxTokenType);
                     }
                     look.addSet(set);
@@ -191,4 +206,5 @@ export class LL1Analyzer {
  * Special value added to the lookahead sets to indicate that we hit
  * a predicate during analysis if {@code seeThruPreds==false}.
  */
+// @ts-expect-error TS(2339): Property 'HIT_PRED' does not exist on type 'typeof... Remove this comment to see the full error message
 LL1Analyzer.HIT_PRED = Token.INVALID_TYPE;

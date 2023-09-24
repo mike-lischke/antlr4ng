@@ -7,11 +7,12 @@
 import { DFASerializer } from "./DFASerializer.js";
 
 export class LexerDFASerializer extends DFASerializer {
-    constructor(dfa) {
+    constructor(dfa: any) {
+        // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
         super(dfa, null);
     }
 
-    getEdgeLabel(i) {
+    getEdgeLabel(i: any) {
         return "'" + String.fromCharCode(i) + "'";
     }
 }

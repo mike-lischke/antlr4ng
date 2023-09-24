@@ -10,7 +10,9 @@ import { getCachedPredictionContext } from './PredictionContextUtils.js';
 import { HashMap } from "../misc/HashMap.js";
 
 export class ATNSimulator {
-    constructor(atn, sharedContextCache) {
+    atn: any;
+    sharedContextCache: any;
+    constructor(atn: any, sharedContextCache: any) {
         /**
          * The context cache maps all PredictionContext objects that are ==
          * to a single cached copy. This cache is shared across all contexts
@@ -37,14 +39,16 @@ export class ATNSimulator {
         return this;
     }
 
-    getCachedContext(context) {
+    getCachedContext(context: any) {
         if (this.sharedContextCache === null) {
             return context;
         }
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
         const visited = new HashMap();
         return getCachedPredictionContext(context, this.sharedContextCache, visited);
     }
 }
 
 // Must distinguish between missing edge and edge we know leads nowhere///
+// @ts-expect-error TS(2339): Property 'ERROR' does not exist on type 'typeof AT... Remove this comment to see the full error message
 ATNSimulator.ERROR = new DFAState(0x7FFFFFFF, new ATNConfigSet());

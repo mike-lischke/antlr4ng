@@ -7,7 +7,8 @@
 import { BaseErrorListener } from "./BaseErrorListener.js";
 
 export class ProxyErrorListener extends BaseErrorListener {
-    constructor(delegates) {
+    delegates: any;
+    constructor(delegates: any) {
         super();
         if (delegates === null) {
             throw "delegates";
@@ -16,19 +17,19 @@ export class ProxyErrorListener extends BaseErrorListener {
         return this;
     }
 
-    syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
-        this.delegates.map(d => d.syntaxError(recognizer, offendingSymbol, line, column, msg, e));
+    syntaxError(recognizer: any, offendingSymbol: any, line: any, column: any, msg: any, e: any) {
+        this.delegates.map((d: any) => d.syntaxError(recognizer, offendingSymbol, line, column, msg, e));
     }
 
-    reportAmbiguity(recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs) {
-        this.delegates.map(d => d.reportAmbiguity(recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs));
+    reportAmbiguity(recognizer: any, dfa: any, startIndex: any, stopIndex: any, exact: any, ambigAlts: any, configs: any) {
+        this.delegates.map((d: any) => d.reportAmbiguity(recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs));
     }
 
-    reportAttemptingFullContext(recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs) {
-        this.delegates.map(d => d.reportAttemptingFullContext(recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs));
+    reportAttemptingFullContext(recognizer: any, dfa: any, startIndex: any, stopIndex: any, conflictingAlts: any, configs: any) {
+        this.delegates.map((d: any) => d.reportAttemptingFullContext(recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs));
     }
 
-    reportContextSensitivity(recognizer, dfa, startIndex, stopIndex, prediction, configs) {
-        this.delegates.map(d => d.reportContextSensitivity(recognizer, dfa, startIndex, stopIndex, prediction, configs));
+    reportContextSensitivity(recognizer: any, dfa: any, startIndex: any, stopIndex: any, prediction: any, configs: any) {
+        this.delegates.map((d: any) => d.reportContextSensitivity(recognizer, dfa, startIndex, stopIndex, prediction, configs));
     }
 }

@@ -5,5 +5,5 @@
  */
 
 export class TokenFactory {
-    create(source, type, text, channel, start, stop, line, column) { }
+    create(source: any, type: any, text: any, channel: any, start: any, stop: any, line: any, column: any) { }
 }

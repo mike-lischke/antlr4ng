@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-export function stringToCharArray(str) {
+export function stringToCharArray(str: any) {
     let result = new Uint16Array(str.length);
     for (let i = 0; i < str.length; i++) {
         result[i] = str.charCodeAt(i);

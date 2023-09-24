@@ -5,7 +5,10 @@
  */
 
 export class PredictionContext {
-    constructor(cachedHashCode) {
+    cachedHashCode: any;
+    getReturnState: any;
+    length: any;
+    constructor(cachedHashCode: any) {
         this.cachedHashCode = cachedHashCode;
     }
 
@@ -36,10 +39,12 @@ export class PredictionContext {
      * This means only the {@link //EMPTY} context is in set.
      */
     isEmpty() {
+        // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         return this === PredictionContext.EMPTY;
     }
 
     hasEmptyPath() {
+        // @ts-expect-error TS(2339): Property 'EMPTY_RETURN_STATE' does not exist on ty... Remove this comment to see the full error message
         return this.getReturnState(this.length - 1) === PredictionContext.EMPTY_RETURN_STATE;
     }
 
@@ -47,7 +52,7 @@ export class PredictionContext {
         return this.cachedHashCode;
     }
 
-    updateHashCode(hash) {
+    updateHashCode(hash: any) {
         hash.update(this.cachedHashCode);
     }
 }
@@ -56,6 +61,7 @@ export class PredictionContext {
  * Represents {@code $} in local context prediction, which means wildcard.
  * {@code//+x =//}.
  */
+// @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
 PredictionContext.EMPTY = null;
 
 /**
@@ -63,8 +69,12 @@ PredictionContext.EMPTY = null;
  * doesn't mean wildcard: {@code $ + x = [$,x]}. Here,
  * {@code $} = {@link //EMPTY_RETURN_STATE}.
  */
+// @ts-expect-error TS(2339): Property 'EMPTY_RETURN_STATE' does not exist on ty... Remove this comment to see the full error message
 PredictionContext.EMPTY_RETURN_STATE = 0x7FFFFFFF;
 
+// @ts-expect-error TS(2339): Property 'globalNodeCount' does not exist on type ... Remove this comment to see the full error message
 PredictionContext.globalNodeCount = 1;
+// @ts-expect-error TS(2339): Property 'id' does not exist on type 'typeof Predi... Remove this comment to see the full error message
 PredictionContext.id = PredictionContext.globalNodeCount;
+// @ts-expect-error TS(2339): Property 'trace_atn_sim' does not exist on type 't... Remove this comment to see the full error message
 PredictionContext.trace_atn_sim = false;

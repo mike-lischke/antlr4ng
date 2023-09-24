@@ -8,7 +8,10 @@ import { Interval } from "./misc/Interval.js";
 import { RecognitionException } from "./RecognitionException.js";
 
 export class LexerNoViableAltException extends RecognitionException {
-    constructor(lexer, input, startIndex, deadEndConfigs) {
+    deadEndConfigs: any;
+    input: any;
+    startIndex: any;
+    constructor(lexer: any, input: any, startIndex: any, deadEndConfigs: any) {
         super({ message: "", recognizer: lexer, input: input, ctx: null });
         this.startIndex = startIndex;
         this.deadEndConfigs = deadEndConfigs;

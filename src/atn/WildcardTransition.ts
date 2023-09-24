@@ -8,12 +8,13 @@ import { Transition } from "./Transition.js";
 import { TransitionType } from "./TransitionType.js";
 
 export class WildcardTransition extends Transition {
-    constructor(target) {
+    serializationType: any;
+    constructor(target: any) {
         super(target);
         this.serializationType = TransitionType.WILDCARD;
     }
 
-    matches(symbol, minVocabSymbol, maxVocabSymbol) {
+    matches(symbol: any, minVocabSymbol: any, maxVocabSymbol: any) {
         return symbol >= minVocabSymbol && symbol <= maxVocabSymbol;
     }
 

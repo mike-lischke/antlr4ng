@@ -7,10 +7,22 @@
 import { Token } from "./Token.js";
 
 export class CommonToken extends Token {
-    constructor(source, type, channel, start, stop) {
+    _channel: any;
+    _text: any;
+    channel: any;
+    column: any;
+    line: any;
+    source: any;
+    start: any;
+    stop: any;
+    tokenIndex: any;
+    type: any;
+    constructor(source: any, type: any, channel: any, start: any, stop: any) {
         super();
+        // @ts-expect-error TS(2339): Property 'EMPTY_SOURCE' does not exist on type 'ty... Remove this comment to see the full error message
         this.source = source !== undefined ? source : CommonToken.EMPTY_SOURCE;
         this.type = type !== undefined ? type : null;
+        // @ts-expect-error TS(2339): Property 'DEFAULT_CHANNEL' does not exist on type ... Remove this comment to see the full error message
         this.channel = channel !== undefined ? channel : Token.DEFAULT_CHANNEL;
         this.start = start !== undefined ? start : -1;
         this.stop = stop !== undefined ? stop : -1;
@@ -45,17 +57,18 @@ export class CommonToken extends Token {
         return t;
     }
 
-    cloneWithType(type) {
+    cloneWithType(type: any) {
         const t = new CommonToken(this.source, type, this.channel, this.start, this.stop);
         t.tokenIndex = this.tokenIndex;
         t.line = this.line;
         t.column = this.column;
+        // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         if (type === Token.EOF)
             t.text = "";
         return t;
     }
 
-    toString(recognizer) {
+    toString(recognizer: any) {
         let channelStr = "";
         if (this._channel > 0) {
             channelStr = ",channel=" + this.channel;
@@ -104,4 +117,5 @@ export class CommonToken extends Token {
  * An empty {@link Pair} which is used as the default value of
  * {@link //source} for tokens that do not have a source.
  */
+// @ts-expect-error TS(2339): Property 'EMPTY_SOURCE' does not exist on type 'ty... Remove this comment to see the full error message
 CommonToken.EMPTY_SOURCE = [null, null];

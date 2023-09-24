@@ -23,8 +23,8 @@ export class LexerInterpreter extends Lexer {
 
     #sharedContextCache = new PredictionContextCache();
 
-    constructor(grammarFileName, vocabulary, ruleNames, channelNames, modeNames, atn,
-        input) {
+    constructor(grammarFileName: any, vocabulary: any, ruleNames: any, channelNames: any, modeNames: any, atn: any,
+        input: any) {
         super(input);
 
         if (atn.grammarType !== ATNType.LEXER) {
@@ -39,7 +39,7 @@ export class LexerInterpreter extends Lexer {
         this.#modeNames = modeNames.slice(0);
         this.#vocabulary = vocabulary;
 
-        this.#decisionToDFA = atn.decisionToState.map(function (ds, i) {
+        this.#decisionToDFA = atn.decisionToState.map(function (ds: any, i: any) {
             return new DFA(ds, i);
         });
 
@@ -54,6 +54,7 @@ export class LexerInterpreter extends Lexer {
         return this.#grammarFileName;
     }
 
+    // @ts-expect-error TS(2611): 'ruleNames' is defined as a property in class 'Lex... Remove this comment to see the full error message
     get ruleNames() {
         return this.#ruleNames;
     }

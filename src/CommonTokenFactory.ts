@@ -12,7 +12,8 @@ import { TokenFactory } from './TokenFactory.js';
  * {@link CommonToken} objects.
  */
 export class CommonTokenFactory extends TokenFactory {
-    constructor(copyText) {
+    copyText: any;
+    constructor(copyText: any) {
         super();
         /**
          * Indicates whether {@link CommonToken//setText} should be called after
@@ -32,7 +33,7 @@ export class CommonTokenFactory extends TokenFactory {
         this.copyText = copyText === undefined ? false : copyText;
     }
 
-    create(source, type, text, channel, start, stop, line, column) {
+    create(source: any, type: any, text: any, channel: any, start: any, stop: any, line: any, column: any) {
         const t = new CommonToken(source, type, channel, start, stop);
         t.line = line;
         t.column = column;
@@ -44,7 +45,8 @@ export class CommonTokenFactory extends TokenFactory {
         return t;
     }
 
-    createThin(type, text) {
+    createThin(type: any, text: any) {
+        // @ts-expect-error TS(2554): Expected 5 arguments, but got 2.
         const t = new CommonToken(null, type);
         t.text = text;
         return t;
@@ -58,4 +60,5 @@ export class CommonTokenFactory extends TokenFactory {
  * This token factory does not explicitly copy token text when constructing
  * tokens.</p>
  */
+// @ts-expect-error TS(2339): Property 'DEFAULT' does not exist on type 'typeof ... Remove this comment to see the full error message
 CommonTokenFactory.DEFAULT = new CommonTokenFactory();

@@ -9,7 +9,17 @@ import { IntervalSet } from '../misc/IntervalSet.js';
 import { Token } from '../Token.js';
 
 export class ATN {
-    constructor(grammarType, maxTokenType) {
+    decisionToState: any;
+    grammarType: any;
+    lexerActions: any;
+    maxTokenType: any;
+    modeNameToStartState: any;
+    modeToStartState: any;
+    ruleToStartState: any;
+    ruleToStopState: any;
+    ruleToTokenType: any;
+    states: any;
+    constructor(grammarType: any, maxTokenType: any) {
         /**
          * Used for runtime deserialization of ATNs from strings
          * The type of the ATN.
@@ -50,7 +60,7 @@ export class ATN {
      * the rule surrounding {@code s}. In other words, the set will be
      * restricted to tokens reachable staying within {@code s}'s rule
      */
-    nextTokensInContext(s, ctx) {
+    nextTokensInContext(s: any, ctx: any) {
         const anal = new LL1Analyzer(this);
         return anal.LOOK(s, null, ctx);
     }
@@ -60,7 +70,7 @@ export class ATN {
      * staying in same rule. {@link Token//EPSILON} is in set if we reach end of
      * rule
      */
-    nextTokensNoContext(s) {
+    nextTokensNoContext(s: any) {
         if (s.nextTokenWithinRule !== null) {
             return s.nextTokenWithinRule;
         }
@@ -69,7 +79,7 @@ export class ATN {
         return s.nextTokenWithinRule;
     }
 
-    nextTokens(s, ctx) {
+    nextTokens(s: any, ctx: any) {
         if (ctx === undefined) {
             return this.nextTokensNoContext(s);
         } else {
@@ -77,7 +87,7 @@ export class ATN {
         }
     }
 
-    addState(state) {
+    addState(state: any) {
         if (state !== null) {
             state.atn = this;
             state.stateNumber = this.states.length;
@@ -85,17 +95,17 @@ export class ATN {
         this.states.push(state);
     }
 
-    removeState(state) {
+    removeState(state: any) {
         this.states[state.stateNumber] = null; // just free mem, don't shift states in list
     }
 
-    defineDecisionState(s) {
+    defineDecisionState(s: any) {
         this.decisionToState.push(s);
         s.decision = this.decisionToState.length - 1;
         return s.decision;
     }
 
-    getDecisionState(decision) {
+    getDecisionState(decision: any) {
         if (this.decisionToState.length === 0) {
             return null;
         } else {
@@ -124,30 +134,39 @@ export class ATN {
      * @throws IllegalArgumentException if the ATN does not contain a state with
      * number {@code stateNumber}
      */
-    getExpectedTokens(stateNumber, ctx) {
+    getExpectedTokens(stateNumber: any, ctx: any) {
         if (stateNumber < 0 || stateNumber >= this.states.length) {
             throw ("Invalid state number.");
         }
 
         const s = this.states[stateNumber];
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
         let following = this.nextTokens(s);
+        // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
         if (!following.contains(Token.EPSILON)) {
             return following;
         }
 
+        // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         const expected = new IntervalSet();
         expected.addSet(following);
+        // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
         expected.removeOne(Token.EPSILON);
+        // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
         while (ctx !== null && ctx.invokingState >= 0 && following.contains(Token.EPSILON)) {
             const invokingState = this.states[ctx.invokingState];
             const rt = invokingState.transitions[0];
+            // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
             following = this.nextTokens(rt.followState);
             expected.addSet(following);
+            // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
             expected.removeOne(Token.EPSILON);
             ctx = ctx.parent;
         }
 
+        // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
         if (following.contains(Token.EPSILON)) {
+            // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
             expected.addOne(Token.EOF);
         }
 
@@ -155,4 +174,5 @@ export class ATN {
     }
 }
 
+// @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
 ATN.INVALID_ALT_NUMBER = 0;

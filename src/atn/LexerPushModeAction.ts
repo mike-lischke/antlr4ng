@@ -12,7 +12,8 @@ import { LexerAction } from "./LexerAction.js";
  * {@link Lexer//pushMode} with the assigned mode
  */
 export class LexerPushModeAction extends LexerAction {
-    constructor(mode) {
+    mode: any;
+    constructor(mode: any) {
         super(LexerActionType.PUSH_MODE);
         this.mode = mode;
     }
@@ -21,15 +22,15 @@ export class LexerPushModeAction extends LexerAction {
      * <p>This action is implemented by calling {@link Lexer//pushMode} with the
      * value provided by {@link //getMode}.</p>
      */
-    execute(lexer) {
+    execute(lexer: any) {
         lexer.pushMode(this.mode);
     }
 
-    updateHashCode(hash) {
+    updateHashCode(hash: any) {
         hash.update(this.actionType, this.mode);
     }
 
-    equals(other) {
+    equals(other: any) {
         if (this === other) {
             return true;
         } else if (!(other instanceof LexerPushModeAction)) {

@@ -16,9 +16,24 @@ import { LexerNoViableAltException } from './LexerNoViableAltException.js';
  * uses simplified match() and error recovery mechanisms in the interest of speed.
  */
 export class Lexer extends Recognizer {
-    constructor(input) {
+    _channel: any;
+    _factory: any;
+    _hitEOF: any;
+    _input: any;
+    _mode: any;
+    _modeStack: any;
+    _text: any;
+    _token: any;
+    _tokenFactorySourcePair: any;
+    _tokenStartCharIndex: any;
+    _tokenStartColumn: any;
+    _tokenStartLine: any;
+    _type: any;
+    interpreter: any;
+    constructor(input: any) {
         super();
         this._input = input;
+        // @ts-expect-error TS(2339): Property 'DEFAULT' does not exist on type 'typeof ... Remove this comment to see the full error message
         this._factory = CommonTokenFactory.DEFAULT;
         this._tokenFactorySourcePair = [this, input];
 
@@ -53,12 +68,15 @@ export class Lexer extends Recognizer {
         this._hitEOF = false;
 
         // The channel number for the current token///
+        // @ts-expect-error TS(2339): Property 'DEFAULT_CHANNEL' does not exist on type ... Remove this comment to see the full error message
         this._channel = Token.DEFAULT_CHANNEL;
 
         // The token type for the current token///
+        // @ts-expect-error TS(2339): Property 'INVALID_TYPE' does not exist on type 'ty... Remove this comment to see the full error message
         this._type = Token.INVALID_TYPE;
 
         this._modeStack = [];
+        // @ts-expect-error TS(2339): Property 'DEFAULT_MODE' does not exist on type 'ty... Remove this comment to see the full error message
         this._mode = Lexer.DEFAULT_MODE;
 
         /**
@@ -74,7 +92,9 @@ export class Lexer extends Recognizer {
             this._input.seek(0); // rewind the input
         }
         this._token = null;
+        // @ts-expect-error TS(2339): Property 'INVALID_TYPE' does not exist on type 'ty... Remove this comment to see the full error message
         this._type = Token.INVALID_TYPE;
+        // @ts-expect-error TS(2339): Property 'DEFAULT_CHANNEL' does not exist on type ... Remove this comment to see the full error message
         this._channel = Token.DEFAULT_CHANNEL;
         this._tokenStartCharIndex = -1;
         this._tokenStartColumn = -1;
@@ -82,6 +102,7 @@ export class Lexer extends Recognizer {
         this._text = null;
 
         this._hitEOF = false;
+        // @ts-expect-error TS(2339): Property 'DEFAULT_MODE' does not exist on type 'ty... Remove this comment to see the full error message
         this._mode = Lexer.DEFAULT_MODE;
         this._modeStack = [];
 
@@ -106,6 +127,7 @@ export class Lexer extends Recognizer {
                     return this._token;
                 }
                 this._token = null;
+                // @ts-expect-error TS(2339): Property 'DEFAULT_CHANNEL' does not exist on type ... Remove this comment to see the full error message
                 this._channel = Token.DEFAULT_CHANNEL;
                 this._tokenStartCharIndex = this._input.index;
                 this._tokenStartColumn = this.interpreter.column;
@@ -113,7 +135,9 @@ export class Lexer extends Recognizer {
                 this._text = null;
                 let continueOuter = false;
                 for (; ;) {
+                    // @ts-expect-error TS(2339): Property 'INVALID_TYPE' does not exist on type 'ty... Remove this comment to see the full error message
                     this._type = Token.INVALID_TYPE;
+                    // @ts-expect-error TS(2339): Property 'SKIP' does not exist on type 'typeof Lex... Remove this comment to see the full error message
                     let ttype = Lexer.SKIP;
                     try {
                         ttype = this.interpreter.match(this._input, this._mode);
@@ -122,20 +146,25 @@ export class Lexer extends Recognizer {
                             this.notifyListeners(e); // report error
                             this.recover(e);
                         } else {
+                            // @ts-expect-error TS(2571): Object is of type 'unknown'.
                             console.log(e.stack);
                             throw e;
                         }
                     }
+                    // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
                     if (this._input.LA(1) === Token.EOF) {
                         this._hitEOF = true;
                     }
+                    // @ts-expect-error TS(2339): Property 'INVALID_TYPE' does not exist on type 'ty... Remove this comment to see the full error message
                     if (this._type === Token.INVALID_TYPE) {
                         this._type = ttype;
                     }
+                    // @ts-expect-error TS(2339): Property 'SKIP' does not exist on type 'typeof Lex... Remove this comment to see the full error message
                     if (this._type === Lexer.SKIP) {
                         continueOuter = true;
                         break;
                     }
+                    // @ts-expect-error TS(2339): Property 'MORE' does not exist on type 'typeof Lex... Remove this comment to see the full error message
                     if (this._type !== Lexer.MORE) {
                         break;
                     }
@@ -163,18 +192,20 @@ export class Lexer extends Recognizer {
      * and emits it.
      */
     skip() {
+        // @ts-expect-error TS(2339): Property 'SKIP' does not exist on type 'typeof Lex... Remove this comment to see the full error message
         this._type = Lexer.SKIP;
     }
 
     more() {
+        // @ts-expect-error TS(2339): Property 'MORE' does not exist on type 'typeof Lex... Remove this comment to see the full error message
         this._type = Lexer.MORE;
     }
 
-    mode(m) {
+    mode(m: any) {
         this._mode = m;
     }
 
-    pushMode(m) {
+    pushMode(m: any) {
         if (this.interpreter.debug) {
             console.log("pushMode " + m);
         }
@@ -199,7 +230,7 @@ export class Lexer extends Recognizer {
      * and getToken (to push tokens into a list and pull from that list
      * rather than a single variable as this implementation does).
      */
-    emitToken(token) {
+    emitToken(token: any) {
         this._token = token;
     }
 
@@ -222,7 +253,9 @@ export class Lexer extends Recognizer {
     emitEOF() {
         const cpos = this.column;
         const lpos = this.line;
+        // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         const eof = this._factory.create(this._tokenFactorySourcePair, Token.EOF,
+            // @ts-expect-error TS(2339): Property 'DEFAULT_CHANNEL' does not exist on type ... Remove this comment to see the full error message
             null, Token.DEFAULT_CHANNEL, this._input.index,
             this._input.index - 1, lpos, cpos);
         this.emitToken(eof);
@@ -241,6 +274,7 @@ export class Lexer extends Recognizer {
     getAllTokens() {
         const tokens = [];
         let t = this.nextToken();
+        // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         while (t.type !== Token.EOF) {
             tokens.push(t);
             t = this.nextToken();
@@ -248,7 +282,7 @@ export class Lexer extends Recognizer {
         return tokens;
     }
 
-    notifyListeners(e) {
+    notifyListeners(e: any) {
         const start = this._tokenStartCharIndex;
         const stop = this._input.index;
         const text = this._input.getText(start, stop);
@@ -258,7 +292,7 @@ export class Lexer extends Recognizer {
             this._tokenStartColumn, msg, e);
     }
 
-    getErrorDisplay(s) {
+    getErrorDisplay(s: any) {
         const d = [];
         for (let i = 0; i < s.length; i++) {
             d.push(s[i]);
@@ -266,7 +300,8 @@ export class Lexer extends Recognizer {
         return d.join('');
     }
 
-    getErrorDisplayForChar(c) {
+    getErrorDisplayForChar(c: any) {
+        // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         if (c.charCodeAt(0) === Token.EOF) {
             return "<EOF>";
         } else if (c === '\n') {
@@ -280,7 +315,7 @@ export class Lexer extends Recognizer {
         }
     }
 
-    getCharErrorDisplay(c) {
+    getCharErrorDisplay(c: any) {
         return "'" + this.getErrorDisplayForChar(c) + "'";
     }
 
@@ -290,7 +325,8 @@ export class Lexer extends Recognizer {
      * it all works out. You can instead use the rule invocation stack
      * to do sophisticated error recovery if you are in a fragment rule.
      */
-    recover(re) {
+    recover(re: any) {
+        // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         if (this._input.LA(1) !== Token.EOF) {
             if (re instanceof LexerNoViableAltException) {
                 // skip a char and try again
@@ -355,11 +391,18 @@ export class Lexer extends Recognizer {
     }
 }
 
+// @ts-expect-error TS(2339): Property 'DEFAULT_MODE' does not exist on type 'ty... Remove this comment to see the full error message
 Lexer.DEFAULT_MODE = 0;
+// @ts-expect-error TS(2339): Property 'MORE' does not exist on type 'typeof Lex... Remove this comment to see the full error message
 Lexer.MORE = -2;
+// @ts-expect-error TS(2339): Property 'SKIP' does not exist on type 'typeof Lex... Remove this comment to see the full error message
 Lexer.SKIP = -3;
 
+// @ts-expect-error TS(2339): Property 'DEFAULT_TOKEN_CHANNEL' does not exist on... Remove this comment to see the full error message
 Lexer.DEFAULT_TOKEN_CHANNEL = Token.DEFAULT_CHANNEL;
+// @ts-expect-error TS(2339): Property 'HIDDEN' does not exist on type 'typeof L... Remove this comment to see the full error message
 Lexer.HIDDEN = Token.HIDDEN_CHANNEL;
+// @ts-expect-error TS(2339): Property 'MIN_CHAR_VALUE' does not exist on type '... Remove this comment to see the full error message
 Lexer.MIN_CHAR_VALUE = 0x0000;
+// @ts-expect-error TS(2339): Property 'MAX_CHAR_VALUE' does not exist on type '... Remove this comment to see the full error message
 Lexer.MAX_CHAR_VALUE = 0x10FFFF;

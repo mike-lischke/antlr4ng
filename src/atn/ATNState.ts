@@ -5,6 +5,12 @@
  */
 
 export class ATNState {
+    atn: any;
+    epsilonOnlyTransitions: any;
+    nextTokenWithinRule: any;
+    ruleIndex: any;
+    stateNumber: any;
+    transitions: any;
     constructor() {
         // Which ATN are we in?
         this.atn = null;
@@ -19,6 +25,7 @@ export class ATNState {
     }
 
     get stateType() {
+        // @ts-expect-error TS(2339): Property 'INVALID_STATE_NUMBER' does not exist on ... Remove this comment to see the full error message
         return ATNState.INVALID_STATE_NUMBER;
     }
 
@@ -26,7 +33,7 @@ export class ATNState {
         return `${this.stateNumber}`;
     }
 
-    equals(other) {
+    equals(other: any) {
         if (other instanceof ATNState) {
             return this.stateNumber === other.stateNumber;
         } else {
@@ -38,7 +45,7 @@ export class ATNState {
         return false;
     }
 
-    addTransition(trans, index) {
+    addTransition(trans: any, index: any) {
         if (index === undefined) {
             index = -1;
         }
@@ -55,4 +62,5 @@ export class ATNState {
     }
 }
 
+// @ts-expect-error TS(2339): Property 'INVALID_STATE_NUMBER' does not exist on ... Remove this comment to see the full error message
 ATNState.INVALID_STATE_NUMBER = -1;

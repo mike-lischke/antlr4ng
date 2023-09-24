@@ -14,7 +14,7 @@
 import { TerminalNodeImpl } from "./TerminalNodeImpl.js";
 
 export class ErrorNodeImpl extends TerminalNodeImpl {
-    constructor(token) {
+    constructor(token: any) {
         super(token);
     }
 
@@ -22,7 +22,7 @@ export class ErrorNodeImpl extends TerminalNodeImpl {
         return true;
     }
 
-    accept(visitor) {
+    accept(visitor: any) {
         return visitor.visitErrorNode(this);
     }
 }

@@ -11,12 +11,13 @@ import { XPathElement } from "./XPathElement.js";
  * Either `ID` at start of path or `...//ID` in middle of path.
  */
 export class XPathRuleAnywhereElement extends XPathElement {
-    constructor(ruleName, ruleIndex) {
+    ruleIndex: any;
+    constructor(ruleName: any, ruleIndex: any) {
         super(ruleName);
         this.ruleIndex = ruleIndex;
     }
 
-    evaluate(t) {
+    evaluate(t: any) {
         return Trees.findAllRuleNodes(t, this.ruleIndex);
     }
 }

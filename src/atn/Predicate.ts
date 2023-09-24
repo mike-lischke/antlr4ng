@@ -7,24 +7,28 @@
 import { SemanticContext } from "./SemanticContext.js";
 
 export class Predicate extends SemanticContext {
+    isCtxDependent: any;
+    predIndex: any;
+    ruleIndex: any;
 
-    constructor(ruleIndex, predIndex, isCtxDependent) {
+    constructor(ruleIndex: any, predIndex: any, isCtxDependent: any) {
         super();
         this.ruleIndex = ruleIndex === undefined ? -1 : ruleIndex;
         this.predIndex = predIndex === undefined ? -1 : predIndex;
         this.isCtxDependent = isCtxDependent === undefined ? false : isCtxDependent; // e.g., $i ref in pred
     }
 
-    evaluate(parser, outerContext) {
+    evaluate(parser: any, outerContext: any) {
         const localctx = this.isCtxDependent ? outerContext : null;
         return parser.sempred(localctx, this.ruleIndex, this.predIndex);
     }
 
-    updateHashCode(hash) {
+    // @ts-expect-error TS(2425): Class 'SemanticContext' defines instance member pr... Remove this comment to see the full error message
+    updateHashCode(hash: any) {
         hash.update(this.ruleIndex, this.predIndex, this.isCtxDependent);
     }
 
-    equals(other) {
+    equals(other: any) {
         if (this === other) {
             return true;
         } else if (!(other instanceof Predicate)) {
@@ -45,4 +49,5 @@ export class Predicate extends SemanticContext {
  * The default {@link SemanticContext}, which is semantically equivalent to
  * a predicate of the form {@code {true}?}
  */
+// @ts-expect-error TS(2339): Property 'NONE' does not exist on type 'typeof Sem... Remove this comment to see the full error message
 SemanticContext.NONE = new Predicate();

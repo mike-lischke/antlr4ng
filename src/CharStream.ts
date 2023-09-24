@@ -16,7 +16,13 @@ import { IntStream } from "./IntStream.js";
  * units.
  */
 export class CharStream {
-    constructor(data, decodeToUnicodeCodePoints) {
+    _index: any;
+    _size: any;
+    data: any;
+    decodeToUnicodeCodePoints: any;
+    name: any;
+    stringData: any;
+    constructor(data: any, decodeToUnicodeCodePoints: any) {
         this.name = "";
         this.stringData = data;
         this.decodeToUnicodeCodePoints = decodeToUnicodeCodePoints ?? false;
@@ -55,7 +61,7 @@ export class CharStream {
         this._index += 1;
     }
 
-    LA(offset) {
+    LA(offset: any) {
         if (offset === 0) {
             return 0; // undefined
         }
@@ -64,6 +70,7 @@ export class CharStream {
         }
         const pos = this._index + offset - 1;
         if (pos < 0 || pos >= this._size) { // invalid
+            // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
             return Token.EOF;
         }
         return this.data[pos];
@@ -74,14 +81,14 @@ export class CharStream {
         return -1;
     }
 
-    release(marker) {
+    release(marker: any) {
     }
 
     /**
      * consume() ahead until p==_index; can't just set p=_index as we must
      * update line and column. If we seek backwards, just set p
      */
-    seek(_index) {
+    seek(_index: any) {
         if (_index <= this._index) {
             this._index = _index; // just jump; don't update stream state (line,
             // ...)
@@ -91,7 +98,7 @@ export class CharStream {
         this._index = Math.min(_index, this._size);
     }
 
-    getText(intervalOrStart, stop) {
+    getText(intervalOrStart: any, stop: any) {
         let start;
         if (intervalOrStart instanceof Interval) {
             start = intervalOrStart.start;
@@ -134,6 +141,7 @@ export class CharStream {
         if (this.name) {
             return this.name;
         } else {
+            // @ts-expect-error TS(2339): Property 'UNKNOWN_SOURCE_NAME' does not exist on t... Remove this comment to see the full error message
             return IntStream.UNKNOWN_SOURCE_NAME;
         }
     }

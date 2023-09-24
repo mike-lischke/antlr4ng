@@ -5,11 +5,12 @@
  */
 
 export class BitSet {
+    data: any;
     constructor() {
         this.data = [];
     }
 
-    clear(index) {
+    clear(index: any) {
         if (index === undefined) {
             this.data = [];
         } else {
@@ -18,7 +19,7 @@ export class BitSet {
         }
     }
 
-    or(set) {
+    or(set: any) {
         const minCount = Math.min(this.data.length, set.data.length);
         let k = 0 | 0;
         for (; k + 7 < minCount; k += 8) {
@@ -45,7 +46,7 @@ export class BitSet {
         }
     }
 
-    get(index) {
+    get(index: any) {
         return (this.data[index >>> 5] & (1 << index)) !== 0;
     }
 
@@ -61,6 +62,7 @@ export class BitSet {
     }
 
     values() {
+        // @ts-expect-error TS(6234): This expression is not callable because it is a 'g... Remove this comment to see the full error message
         const result = new Array(this.length());
         let pos = 0;
         const length = this.data.length;
@@ -75,17 +77,18 @@ export class BitSet {
         return result;
     }
 
-    nextSetBit(value) {
+    nextSetBit(value: any) {
         // Iterate over all set bits.
         for (let index of this) {
             // Use the first index > than the specified value index.
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             if (index > value) {
                 return index;
             }
         }
     }
 
-    set(index) {
+    set(index: any) {
         this.resize(index);
         this.data[index >>> 5] |= 1 << index;
     }
@@ -94,19 +97,19 @@ export class BitSet {
         return "{" + this.values().join(", ") + "}";
     }
 
-    resize(index) {
+    resize(index: any) {
         const count = (index + 32) >>> 5;
         for (let i = this.data.length; i < count; i++) {
             this.data[i] = 0;
         }
-    };
+    }
 
-    bitCount(v) { // a.k.a. hamming weight
+    bitCount(v: any) { // a.k.a. hamming weight
         v -= (v >>> 1) & 0x55555555;
         v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
 
         return (((v + (v >>> 4)) & 0xf0f0f0f) * 0x1010101) >>> 24;
-    };
+    }
 
     [Symbol.iterator]() {
         const length = this.data.length;
@@ -138,5 +141,5 @@ export class BitSet {
                 return { done: true, value: undefined };
             },
         };
-    };
+    }
 }

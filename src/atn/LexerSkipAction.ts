@@ -18,7 +18,7 @@ export class LexerSkipAction extends LexerAction {
         super(LexerActionType.SKIP);
     }
 
-    execute(lexer) {
+    execute(lexer: any) {
         lexer.skip();
     }
 
@@ -28,4 +28,5 @@ export class LexerSkipAction extends LexerAction {
 }
 
 // Provides a singleton instance of this parameterless lexer action.
+// @ts-expect-error TS(2339): Property 'INSTANCE' does not exist on type 'typeof... Remove this comment to see the full error message
 LexerSkipAction.INSTANCE = new LexerSkipAction();

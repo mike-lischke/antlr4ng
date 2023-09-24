@@ -8,7 +8,9 @@
  * Map a predicate to a predicted alternative.
  */
 export class PredPrediction {
-    constructor(pred, alt) {
+    alt: any;
+    pred: any;
+    constructor(pred: any, alt: any) {
         this.alt = alt;
         this.pred = pred;
     }

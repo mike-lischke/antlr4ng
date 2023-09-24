@@ -51,15 +51,21 @@ import { TransitionType } from "./TransitionType.js";
 
 const SERIALIZED_VERSION = 4;
 
-function initArray(length, value) {
+function initArray(length: any, value: any) {
     const tmp = [];
     tmp[length - 1] = value;
     return tmp.map(function (i) { return value; });
 }
 
 export class ATNDeserializer {
-    constructor(options) {
+    actionFactories: any;
+    data: any;
+    deserializationOptions: any;
+    pos: any;
+    stateFactories: any;
+    constructor(options: any) {
         if (options === undefined || options === null) {
+            // @ts-expect-error TS(2339): Property 'defaultOptions' does not exist on type '... Remove this comment to see the full error message
             options = ATNDeserializationOptions.defaultOptions;
         }
         this.deserializationOptions = options;
@@ -67,7 +73,7 @@ export class ATNDeserializer {
         this.actionFactories = null;
     }
 
-    deserialize(data) {
+    deserialize(data: any) {
         const legacy = this.reset(data);
         this.checkVersion(legacy);
         if (legacy)
@@ -76,7 +82,7 @@ export class ATNDeserializer {
         this.readStates(atn, legacy);
         this.readRules(atn, legacy);
         this.readModes(atn);
-        const sets = [];
+        const sets: any = [];
         this.readSets(atn, sets, this.readInt.bind(this));
         if (legacy)
             this.readSets(atn, sets, this.readInt32.bind(this));
@@ -93,10 +99,10 @@ export class ATNDeserializer {
         return atn;
     }
 
-    reset(data) {
+    reset(data: any) {
         const version = data.charCodeAt ? data.charCodeAt(0) : data[0];
         if (version === SERIALIZED_VERSION - 1) {
-            const adjust = function (c) {
+            const adjust = function (c: any) {
                 const v = c.charCodeAt(0);
                 return v > 1 ? v - 2 : v + 65534;
             };
@@ -119,7 +125,7 @@ export class ATNDeserializer {
             this.readInt();
     }
 
-    checkVersion(legacy) {
+    checkVersion(legacy: any) {
         const version = this.readInt();
         if (!legacy && version !== SERIALIZED_VERSION) {
             throw ("Could not deserialize ATN with version " + version + " (expected " + SERIALIZED_VERSION + ").");
@@ -132,7 +138,7 @@ export class ATNDeserializer {
         return new ATN(grammarType, maxTokenType);
     }
 
-    readStates(atn, legacy) {
+    readStates(atn: any, legacy: any) {
         let j, pair, stateNumber;
         const loopBackStateNumbers = [];
         const endStateNumbers = [];
@@ -183,7 +189,7 @@ export class ATNDeserializer {
         }
     }
 
-    readRules(atn, legacy) {
+    readRules(atn: any, legacy: any) {
         let i;
         const nrules = this.readInt();
         if (atn.grammarType === ATNType.LEXER) {
@@ -196,6 +202,7 @@ export class ATNDeserializer {
             if (atn.grammarType === ATNType.LEXER) {
                 let tokenType = this.readInt();
                 if (legacy && tokenType === 0xFFFF) {
+                    // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
                     tokenType = Token.EOF;
                 }
                 atn.ruleToTokenType[i] = tokenType;
@@ -212,7 +219,7 @@ export class ATNDeserializer {
         }
     }
 
-    readModes(atn) {
+    readModes(atn: any) {
         const nmodes = this.readInt();
         for (let i = 0; i < nmodes; i++) {
             let s = this.readInt();
@@ -220,9 +227,10 @@ export class ATNDeserializer {
         }
     }
 
-    readSets(atn, sets, reader) {
+    readSets(atn: any, sets: any, reader: any) {
         const m = this.readInt();
         for (let i = 0; i < m; i++) {
+            // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
             const iset = new IntervalSet();
             sets.push(iset);
             const n = this.readInt();
@@ -238,7 +246,7 @@ export class ATNDeserializer {
         }
     }
 
-    readEdges(atn, sets) {
+    readEdges(atn: any, sets: any) {
         let i, j, state, trans, target;
         const nedges = this.readInt();
         for (i = 0; i < nedges; i++) {
@@ -290,6 +298,7 @@ export class ATNDeserializer {
                 for (j = 0; j < state.transitions.length; j++) {
                     target = state.transitions[j].target;
                     if (target instanceof PlusBlockStartState) {
+                        // @ts-expect-error TS(2339): Property 'loopBackState' does not exist on type 'P... Remove this comment to see the full error message
                         target.loopBackState = state;
                     }
                 }
@@ -297,6 +306,7 @@ export class ATNDeserializer {
                 for (j = 0; j < state.transitions.length; j++) {
                     target = state.transitions[j].target;
                     if (target instanceof StarLoopEntryState) {
+                        // @ts-expect-error TS(2339): Property 'loopBackState' does not exist on type 'S... Remove this comment to see the full error message
                         target.loopBackState = state;
                     }
                 }
@@ -304,7 +314,7 @@ export class ATNDeserializer {
         }
     }
 
-    readDecisions(atn) {
+    readDecisions(atn: any) {
         const ndecisions = this.readInt();
         for (let i = 0; i < ndecisions; i++) {
             const s = this.readInt();
@@ -314,7 +324,7 @@ export class ATNDeserializer {
         }
     }
 
-    readLexerActions(atn, legacy) {
+    readLexerActions(atn: any, legacy: any) {
         if (atn.grammarType === ATNType.LEXER) {
             const count = this.readInt();
             atn.lexerActions = initArray(count, null);
@@ -333,7 +343,7 @@ export class ATNDeserializer {
         }
     }
 
-    generateRuleBypassTransitions(atn) {
+    generateRuleBypassTransitions(atn: any) {
         let i;
         const count = atn.ruleToStartState.length;
         for (i = 0; i < count; i++) {
@@ -344,7 +354,7 @@ export class ATNDeserializer {
         }
     }
 
-    generateRuleBypassTransition(atn, idx) {
+    generateRuleBypassTransition(atn: any, idx: any) {
         let i, state;
         const bypassStart = new BasicBlockStartState();
         bypassStart.ruleIndex = idx;
@@ -357,6 +367,7 @@ export class ATNDeserializer {
         bypassStart.endState = bypassStop;
         atn.defineDecisionState(bypassStart);
 
+        // @ts-expect-error TS(2339): Property 'startState' does not exist on type 'Bloc... Remove this comment to see the full error message
         bypassStop.startState = bypassStart;
 
         let excludeTransition = null;
@@ -400,20 +411,25 @@ export class ATNDeserializer {
         const ruleToStartState = atn.ruleToStartState[idx];
         const count = ruleToStartState.transitions.length;
         while (count > 0) {
+            // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
             bypassStart.addTransition(ruleToStartState.transitions[count - 1]);
             ruleToStartState.transitions = ruleToStartState.transitions.slice(-1);
         }
         // link the new states
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
         atn.ruleToStartState[idx].addTransition(new EpsilonTransition(bypassStart));
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
         bypassStop.addTransition(new EpsilonTransition(endState));
 
         const matchState = new BasicState();
         atn.addState(matchState);
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
         matchState.addTransition(new AtomTransition(bypassStop, atn.ruleToTokenType[idx]));
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
         bypassStart.addTransition(new EpsilonTransition(matchState));
     }
 
-    stateIsEndStateFor(state, idx) {
+    stateIsEndStateFor(state: any, idx: any) {
         if (state.ruleIndex !== idx) {
             return null;
         }
@@ -437,7 +453,7 @@ export class ATNDeserializer {
      * the {@link StarLoopEntryState} field to the correct value.
      * @param atn The ATN.
      */
-    markPrecedenceDecisions(atn) {
+    markPrecedenceDecisions(atn: any) {
         for (let i = 0; i < atn.states.length; i++) {
             const state = atn.states[i];
             if (!(state instanceof StarLoopEntryState)) {
@@ -458,7 +474,7 @@ export class ATNDeserializer {
         }
     }
 
-    verifyATN(atn) {
+    verifyATN(atn: any) {
         if (!this.deserializationOptions.verifyATN) {
             return;
         }
@@ -468,41 +484,57 @@ export class ATNDeserializer {
             if (state === null) {
                 continue;
             }
+            // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
             this.checkCondition(state.epsilonOnlyTransitions || state.transitions.length <= 1);
             if (state instanceof PlusBlockStartState) {
+                // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                 this.checkCondition(state.loopBackState !== null);
             } else if (state instanceof StarLoopEntryState) {
+                // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                 this.checkCondition(state.loopBackState !== null);
+                // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                 this.checkCondition(state.transitions.length === 2);
                 if (state.transitions[0].target instanceof StarBlockStartState) {
+                    // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                     this.checkCondition(state.transitions[1].target instanceof LoopEndState);
+                    // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                     this.checkCondition(!state.nonGreedy);
                 } else if (state.transitions[0].target instanceof LoopEndState) {
+                    // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                     this.checkCondition(state.transitions[1].target instanceof StarBlockStartState);
+                    // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                     this.checkCondition(state.nonGreedy);
                 } else {
                     throw ("IllegalState");
                 }
             } else if (state instanceof StarLoopbackState) {
+                // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                 this.checkCondition(state.transitions.length === 1);
+                // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                 this.checkCondition(state.transitions[0].target instanceof StarLoopEntryState);
             } else if (state instanceof LoopEndState) {
+                // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                 this.checkCondition(state.loopBackState !== null);
             } else if (state instanceof RuleStartState) {
+                // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                 this.checkCondition(state.stopState !== null);
             } else if (state instanceof BlockStartState) {
+                // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                 this.checkCondition(state.endState !== null);
             } else if (state instanceof BlockEndState) {
+                // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                 this.checkCondition(state.startState !== null);
             } else if (state instanceof DecisionState) {
+                // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                 this.checkCondition(state.transitions.length <= 1 || state.decision >= 0);
             } else {
+                // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                 this.checkCondition(state.transitions.length <= 1 || (state instanceof RuleStopState));
             }
         }
     }
 
-    checkCondition(condition, message) {
+    checkCondition(condition: any, message: any) {
         if (!condition) {
             if (message === undefined || message === null) {
                 message = "IllegalState";
@@ -521,12 +553,14 @@ export class ATNDeserializer {
         return low | (high << 16);
     }
 
-    edgeFactory(atn, type, src, trg, arg1, arg2, arg3, sets) {
+    edgeFactory(atn: any, type: any, src: any, trg: any, arg1: any, arg2: any, arg3: any, sets: any) {
         const target = atn.states[trg];
         switch (type) {
             case TransitionType.EPSILON:
+                // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                 return new EpsilonTransition(target);
             case TransitionType.RANGE:
+                // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
                 return arg3 !== 0 ? new RangeTransition(target, Token.EOF, arg2) : new RangeTransition(target, arg1, arg2);
             case TransitionType.RULE:
                 return new RuleTransition(atn.states[arg1], arg2, arg3, target);
@@ -535,6 +569,7 @@ export class ATNDeserializer {
             case TransitionType.PRECEDENCE:
                 return new PrecedencePredicateTransition(target, arg1);
             case TransitionType.ATOM:
+                // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
                 return arg3 !== 0 ? new AtomTransition(target, Token.EOF) : new AtomTransition(target, arg1);
             case TransitionType.ACTION:
                 return new ActionTransition(target, arg1, arg2, arg3 !== 0);
@@ -549,7 +584,7 @@ export class ATNDeserializer {
         }
     }
 
-    stateFactory(type, ruleIndex) {
+    stateFactory(type: any, ruleIndex: any) {
         if (this.stateFactories === null) {
             const sf = [];
             sf[ATNStateType.INVALID_TYPE] = null;
@@ -579,17 +614,20 @@ export class ATNDeserializer {
         }
     }
 
-    lexerActionFactory(type, data1, data2) {
+    lexerActionFactory(type: any, data1: any, data2: any) {
         if (this.actionFactories === null) {
             const af = [];
-            af[LexerActionType.CHANNEL] = (data1, data2) => new LexerChannelAction(data1);
-            af[LexerActionType.CUSTOM] = (data1, data2) => new LexerCustomAction(data1, data2);
-            af[LexerActionType.MODE] = (data1, data2) => new LexerModeAction(data1);
-            af[LexerActionType.MORE] = (data1, data2) => LexerMoreAction.INSTANCE;
-            af[LexerActionType.POP_MODE] = (data1, data2) => LexerPopModeAction.INSTANCE;
-            af[LexerActionType.PUSH_MODE] = (data1, data2) => new LexerPushModeAction(data1);
-            af[LexerActionType.SKIP] = (data1, data2) => LexerSkipAction.INSTANCE;
-            af[LexerActionType.TYPE] = (data1, data2) => new LexerTypeAction(data1);
+            af[LexerActionType.CHANNEL] = (data1: any, data2: any) => new LexerChannelAction(data1);
+            af[LexerActionType.CUSTOM] = (data1: any, data2: any) => new LexerCustomAction(data1, data2);
+            af[LexerActionType.MODE] = (data1: any, data2: any) => new LexerModeAction(data1);
+            // @ts-expect-error TS(2339): Property 'INSTANCE' does not exist on type 'typeof... Remove this comment to see the full error message
+            af[LexerActionType.MORE] = (data1: any, data2: any) => LexerMoreAction.INSTANCE;
+            // @ts-expect-error TS(2339): Property 'INSTANCE' does not exist on type 'typeof... Remove this comment to see the full error message
+            af[LexerActionType.POP_MODE] = (data1: any, data2: any) => LexerPopModeAction.INSTANCE;
+            af[LexerActionType.PUSH_MODE] = (data1: any, data2: any) => new LexerPushModeAction(data1);
+            // @ts-expect-error TS(2339): Property 'INSTANCE' does not exist on type 'typeof... Remove this comment to see the full error message
+            af[LexerActionType.SKIP] = (data1: any, data2: any) => LexerSkipAction.INSTANCE;
+            af[LexerActionType.TYPE] = (data1: any, data2: any) => new LexerTypeAction(data1);
             this.actionFactories = af;
         }
         if (type > this.actionFactories.length || this.actionFactories[type] === null) {

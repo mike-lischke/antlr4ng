@@ -7,6 +7,7 @@
 export class ParseCancellationException extends Error {
     constructor() {
         super();
+        // @ts-expect-error TS(2339): Property 'captureStackTrace' does not exist on typ... Remove this comment to see the full error message
         Error.captureStackTrace(this, ParseCancellationException);
     }
 }

@@ -22,7 +22,12 @@ import { TokenStream } from "./TokenStream.js";
  * {@link CommonTokenStream}.</p>
  */
 export class BufferedTokenStream extends TokenStream {
-    constructor(tokenSource) {
+    _index: any;
+    channel: any;
+    fetchedEOF: any;
+    tokenSource: any;
+    tokens: any;
+    constructor(tokenSource: any) {
 
         super();
         // The {@link TokenSource} from which tokens for this stream are fetched.
@@ -71,7 +76,7 @@ export class BufferedTokenStream extends TokenStream {
         return 0;
     }
 
-    release(marker) {
+    release(marker: any) {
         // no resources to release
     }
 
@@ -79,7 +84,7 @@ export class BufferedTokenStream extends TokenStream {
         this.seek(0);
     }
 
-    seek(index) {
+    seek(index: any) {
         this.lazyInit();
         this._index = this.adjustSeekIndex(index);
     }
@@ -92,7 +97,7 @@ export class BufferedTokenStream extends TokenStream {
         return this._index;
     }
 
-    get(index) {
+    get(index: any) {
         this.lazyInit();
         return this.tokens[index];
     }
@@ -112,6 +117,7 @@ export class BufferedTokenStream extends TokenStream {
             // not yet initialized
             skipEofCheck = false;
         }
+        // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         if (!skipEofCheck && this.LA(1) === Token.EOF) {
             throw "cannot consume EOF";
         }
@@ -127,7 +133,7 @@ export class BufferedTokenStream extends TokenStream {
      * {@code false}.
      * @see //get(int i)
      */
-    sync(i) {
+    sync(i: any) {
         const n = i - this.tokens.length + 1; // how many more elements we need?
         if (n > 0) {
             const fetched = this.fetch(n);
@@ -141,7 +147,7 @@ export class BufferedTokenStream extends TokenStream {
      *
      * @return {Number} The actual number of elements added to the buffer.
      */
-    fetch(n) {
+    fetch(n: any) {
         if (this.fetchedEOF) {
             return 0;
         }
@@ -149,6 +155,7 @@ export class BufferedTokenStream extends TokenStream {
             const t = this.tokenSource.nextToken();
             t.tokenIndex = this.tokens.length;
             this.tokens.push(t);
+            // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
             if (t.type === Token.EOF) {
                 this.fetchedEOF = true;
                 return i + 1;
@@ -158,7 +165,7 @@ export class BufferedTokenStream extends TokenStream {
     }
 
     // Get all tokens from start..stop inclusively///
-    getTokens(start, stop, types) {
+    getTokens(start: any, stop: any, types: any) {
         this.lazyInit();
 
         if (start === undefined && stop === undefined) {
@@ -188,6 +195,7 @@ export class BufferedTokenStream extends TokenStream {
 
         for (let i = start; i < stop; i++) {
             const t = this.tokens[i];
+            // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
             if (t.type === Token.EOF) {
                 subset.push(t); // Also include EOF.
                 break;
@@ -200,18 +208,18 @@ export class BufferedTokenStream extends TokenStream {
         return subset;
     }
 
-    LA(i) {
+    LA(i: any) {
         return this.LT(i).type;
     }
 
-    LB(k) {
+    LB(k: any) {
         if (this._index - k < 0) {
             return null;
         }
         return this.tokens[this._index - k];
     }
 
-    LT(k) {
+    LT(k: any) {
         this.lazyInit();
         if (k === 0) {
             return null;
@@ -242,7 +250,7 @@ export class BufferedTokenStream extends TokenStream {
      * @param {Number} i The target token index.
      * @return {Number} The adjusted target token index.
      */
-    adjustSeekIndex(i) {
+    adjustSeekIndex(i: any) {
         return i;
     }
 
@@ -258,7 +266,7 @@ export class BufferedTokenStream extends TokenStream {
     }
 
     // Reset this token stream by setting its token source.///
-    setTokenSource(tokenSource) {
+    setTokenSource(tokenSource: any) {
         this.tokenSource = tokenSource;
         this.tokens = [];
         this._index = -1;
@@ -274,13 +282,14 @@ export class BufferedTokenStream extends TokenStream {
      * Return i if tokens[i] is on channel. Return -1 if there are no tokens
      * on channel between i and EOF.
      */
-    nextTokenOnChannel(i, channel) {
+    nextTokenOnChannel(i: any, channel: any) {
         this.sync(i);
         if (i >= this.tokens.length) {
             return -1;
         }
         let token = this.tokens[i];
         while (token.channel !== this.channel) {
+            // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
             if (token.type === Token.EOF) {
                 return -1;
             }
@@ -296,7 +305,7 @@ export class BufferedTokenStream extends TokenStream {
      * Return i if tokens[i] is on channel. Return -1 if there are no tokens
      * on channel between i and 0.
      */
-    previousTokenOnChannel(i, channel) {
+    previousTokenOnChannel(i: any, channel: any) {
         while (i >= 0 && this.tokens[i].channel !== channel) {
             i -= 1;
         }
@@ -308,15 +317,17 @@ export class BufferedTokenStream extends TokenStream {
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL or
      * EOF. If channel is -1, find any non default channel token.
      */
-    getHiddenTokensToRight(tokenIndex,
-        channel) {
+    getHiddenTokensToRight(tokenIndex: any,
+        channel: any) {
         if (channel === undefined) {
             channel = -1;
         }
         this.lazyInit();
         if (tokenIndex < 0 || tokenIndex >= this.tokens.length) {
+            // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
             throw "" + tokenIndex + " not in 0.." + this.tokens.length - 1;
         }
+        // @ts-expect-error TS(2339): Property 'DEFAULT_TOKEN_CHANNEL' does not exist on... Remove this comment to see the full error message
         const nextOnChannel = this.nextTokenOnChannel(tokenIndex + 1, Lexer.DEFAULT_TOKEN_CHANNEL);
         const from_ = tokenIndex + 1;
         // if none onchannel to right, nextOnChannel=-1 so set to = last token
@@ -329,15 +340,17 @@ export class BufferedTokenStream extends TokenStream {
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL.
      * If channel is -1, find any non default channel token.
      */
-    getHiddenTokensToLeft(tokenIndex,
-        channel) {
+    getHiddenTokensToLeft(tokenIndex: any,
+        channel: any) {
         if (channel === undefined) {
             channel = -1;
         }
         this.lazyInit();
         if (tokenIndex < 0 || tokenIndex >= this.tokens.length) {
+            // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
             throw "" + tokenIndex + " not in 0.." + this.tokens.length - 1;
         }
+        // @ts-expect-error TS(2339): Property 'DEFAULT_TOKEN_CHANNEL' does not exist on... Remove this comment to see the full error message
         const prevOnChannel = this.previousTokenOnChannel(tokenIndex - 1, Lexer.DEFAULT_TOKEN_CHANNEL);
         if (prevOnChannel === tokenIndex - 1) {
             return null;
@@ -348,11 +361,12 @@ export class BufferedTokenStream extends TokenStream {
         return this.filterForChannel(from_, to, channel);
     }
 
-    filterForChannel(left, right, channel) {
+    filterForChannel(left: any, right: any, channel: any) {
         const hidden = [];
         for (let i = left; i < right + 1; i++) {
             const t = this.tokens[i];
             if (channel === -1) {
+                // @ts-expect-error TS(2339): Property 'DEFAULT_TOKEN_CHANNEL' does not exist on... Remove this comment to see the full error message
                 if (t.channel !== Lexer.DEFAULT_TOKEN_CHANNEL) {
                     hidden.push(t);
                 }
@@ -371,7 +385,7 @@ export class BufferedTokenStream extends TokenStream {
     }
 
     // Get the text of all tokens in this buffer.///
-    getText(interval) {
+    getText(interval: any) {
         this.lazyInit();
         this.fill();
         if (!interval) {
@@ -394,6 +408,7 @@ export class BufferedTokenStream extends TokenStream {
         let s = "";
         for (let i = start; i < stop + 1; i++) {
             const t = this.tokens[i];
+            // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
             if (t.type === Token.EOF) {
                 break;
             }

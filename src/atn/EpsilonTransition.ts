@@ -8,14 +8,17 @@ import { Transition } from "./Transition.js";
 import { TransitionType } from "./TransitionType.js";
 
 export class EpsilonTransition extends Transition {
-    constructor(target, outermostPrecedenceReturn) {
+    isEpsilon: any;
+    outermostPrecedenceReturn: any;
+    serializationType: any;
+    constructor(target: any, outermostPrecedenceReturn: any) {
         super(target);
         this.serializationType = TransitionType.EPSILON;
         this.isEpsilon = true;
         this.outermostPrecedenceReturn = outermostPrecedenceReturn;
     }
 
-    matches(symbol, minVocabSymbol, maxVocabSymbol) {
+    matches(symbol: any, minVocabSymbol: any, maxVocabSymbol: any) {
         return false;
     }
 

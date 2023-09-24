@@ -8,6 +8,7 @@ import { ATNState } from "./ATNState.js";
 import { ATNStateType } from "./ATNStateType.js";
 
 export class RuleStartState extends ATNState {
+    isPrecedenceRule: any;
     constructor() {
         super();
         this.isPrecedenceRule = false;
@@ -16,5 +17,4 @@ export class RuleStartState extends ATNState {
     get stateType() {
         return ATNStateType.RULE_START;
     }
-
 }

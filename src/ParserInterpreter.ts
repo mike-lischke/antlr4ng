@@ -21,6 +21,7 @@ import { DFA } from "./dfa/DFA.js";
 import { PredictionContextCache } from "./atn/PredictionContextCache.js";
 
 export class ParserInterpreter extends Parser {
+    action: any;
     #grammarFileName;
     #atn;
     #ruleNames;
@@ -30,7 +31,7 @@ export class ParserInterpreter extends Parser {
 
     #pushRecursionContextStates;
 
-    _rootContext;
+    _rootContext: any;
 
     _parentContextStack = [];
 
@@ -41,7 +42,7 @@ export class ParserInterpreter extends Parser {
 
     _overrideDecisionRoot = undefined;
 
-    constructor(grammarFileName, vocabulary, ruleNames, atn, input) {
+    constructor(grammarFileName: any, vocabulary: any, ruleNames: any, atn: any, input: any) {
         super(input);
         this.#grammarFileName = grammarFileName;
         this.#atn = atn;
@@ -56,7 +57,7 @@ export class ParserInterpreter extends Parser {
             }
         }
 
-        this.#decisionToDFA = atn.decisionToState.map(function (ds, i) {
+        this.#decisionToDFA = atn.decisionToState.map(function (ds: any, i: any) {
             return new DFA(ds, i);
         });
 
@@ -64,7 +65,9 @@ export class ParserInterpreter extends Parser {
         this.interpreter = new ParserATNSimulator(this, atn, this.#decisionToDFA, this.#sharedContextCache);
     }
 
-    reset(resetInput) {
+    // @ts-expect-error TS(2416): Property 'reset' in type 'ParserInterpreter' is no... Remove this comment to see the full error message
+    reset(resetInput: any) {
+        // @ts-expect-error TS(2554): Expected 0 arguments, but got 1.
         super.reset(resetInput);
 
         this.overrideDecisionReached = false;
@@ -75,10 +78,12 @@ export class ParserInterpreter extends Parser {
         return this.#atn;
     }
 
+    // @ts-expect-error TS(2611): 'vocabulary' is defined as a property in class 'Pa... Remove this comment to see the full error message
     get vocabulary() {
         return this.#vocabulary;
     }
 
+    // @ts-expect-error TS(2611): 'ruleNames' is defined as a property in class 'Par... Remove this comment to see the full error message
     get ruleNames() {
         return this.#ruleNames;
     }
@@ -91,9 +96,10 @@ export class ParserInterpreter extends Parser {
         return this.#atn.states[this.state];
     }
 
-    parse(startRuleIndex) {
+    parse(startRuleIndex: any) {
         let startRuleStartState = this.#atn.ruleToStartState[startRuleIndex];
 
+        // @ts-expect-error TS(2339): Property 'INVALID_STATE_NUMBER' does not exist on ... Remove this comment to see the full error message
         this._rootContext = this.createInterpreterRuleContext(undefined, ATNState.INVALID_STATE_NUMBER, startRuleIndex);
         if (startRuleStartState.isPrecedenceRule) {
             this.enterRecursionRule(this._rootContext, startRuleStartState.stateNumber, startRuleIndex, 0);
@@ -111,6 +117,7 @@ export class ParserInterpreter extends Parser {
                         if (startRuleStartState.isPrecedenceRule) {
                             let result = this._ctx;
                             let parentContext = this._parentContextStack.pop();
+                            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
                             this.unrollRecursionContexts(parentContext[0]);
                             return result;
                         }
@@ -143,12 +150,13 @@ export class ParserInterpreter extends Parser {
         }
     }
 
-    enterRecursionRule(localctx, state, ruleIndex, precedence) {
+    enterRecursionRule(localctx: any, state: any, ruleIndex: any, precedence: any) {
+        // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
         this._parentContextStack.push([this._ctx, localctx.invokingState]);
         super.enterRecursionRule(localctx, state, ruleIndex, precedence);
     }
 
-    visitState(p) {
+    visitState(p: any) {
         let predictedAlt = 1;
         if (p.transitions.length > 1) {
             predictedAlt = this.visitDecisionState(p);
@@ -177,6 +185,7 @@ export class ParserInterpreter extends Parser {
             case TransitionType.RANGE:
             case TransitionType.SET:
             case TransitionType.NOT_SET:
+                // @ts-expect-error TS(2339): Property 'MIN_USER_TOKEN_TYPE' does not exist on t... Remove this comment to see the full error message
                 if (!transition.matches(this._input.LA(1), Token.MIN_USER_TOKEN_TYPE, 65535)) {
                     this.recoverInline();
                 }
@@ -202,6 +211,7 @@ export class ParserInterpreter extends Parser {
             case TransitionType.PREDICATE:
                 let predicateTransition = transition;
                 if (!this.sempred(this._ctx, predicateTransition.ruleIndex, predicateTransition.predIndex)) {
+                    // @ts-expect-error TS(2554): Expected 3 arguments, but got 1.
                     throw new FailedPredicateException(this);
                 }
 
@@ -215,6 +225,7 @@ export class ParserInterpreter extends Parser {
             case TransitionType.PRECEDENCE:
                 if (!this.precpred(this._ctx, transition.precedence)) {
                     let precedence = transition.precedence;
+                    // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
                     throw new FailedPredicateException(this, `precpred(_ctx, ${precedence})`);
                 }
                 break;
@@ -226,7 +237,7 @@ export class ParserInterpreter extends Parser {
         this.state = transition.target.stateNumber;
     }
 
-    visitDecisionState(p) {
+    visitDecisionState(p: any) {
         let predictedAlt = 1;
 
         if (p.transitions.length > 1) {
@@ -244,15 +255,17 @@ export class ParserInterpreter extends Parser {
         return predictedAlt;
     }
 
-    createInterpreterRuleContext(parent, invokingStateNumber, ruleIndex) {
+    createInterpreterRuleContext(parent: any, invokingStateNumber: any, ruleIndex: any) {
         return new InterpreterRuleContext(ruleIndex, parent, invokingStateNumber);
     }
 
-    visitRuleStopState(p) {
+    visitRuleStopState(p: any) {
         let ruleStartState = this.#atn.ruleToStartState[p.ruleIndex];
         if (ruleStartState.isPrecedenceRule) {
             let parentContext = this._parentContextStack.pop();
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             this.unrollRecursionContexts(parentContext[0]);
+            // @ts-expect-error TS(2532): Object is possibly 'undefined'.
             this.state = parentContext[1];
         } else {
             this.exitRule();
@@ -262,7 +275,7 @@ export class ParserInterpreter extends Parser {
         this.state = ruleTransition.followState.stateNumber;
     }
 
-    addDecisionOverride(decision, tokenIndex, forcedAlt) {
+    addDecisionOverride(decision: any, tokenIndex: any, forcedAlt: any) {
         this.overrideDecision = decision;
         this.overrideDecisionInputIndex = tokenIndex;
         this.overrideDecisionAlt = forcedAlt;
@@ -272,7 +285,7 @@ export class ParserInterpreter extends Parser {
         return this._overrideDecisionRoot;
     }
 
-    recover(e) {
+    recover(e: any) {
         let i = this._input.index;
         this.errorHandler.recover(this, e);
         if (this._input.index === i) {
@@ -292,6 +305,7 @@ export class ParserInterpreter extends Parser {
                     throw new Error("Expected the exception to provide expected tokens");
                 }
 
+                // @ts-expect-error TS(2339): Property 'INVALID_TYPE' does not exist on type 'ty... Remove this comment to see the full error message
                 let expectedTokenType = Token.INVALID_TYPE;
                 if (!expectedTokens.isNil) {
                     // get any element
@@ -301,6 +315,7 @@ export class ParserInterpreter extends Parser {
                 let errToken =
                     this.getTokenFactory().create(sourcePair,
                         expectedTokenType, tok.text,
+                        // @ts-expect-error TS(2339): Property 'DEFAULT_CHANNEL' does not exist on type ... Remove this comment to see the full error message
                         Token.DEFAULT_CHANNEL,
                         -1, -1, // invalid start/stop
                         tok.line, tok.charPositionInLine);
@@ -308,7 +323,9 @@ export class ParserInterpreter extends Parser {
             } else { // NoViableAlt
                 let errToken =
                     this.getTokenFactory().create(sourcePair,
+                        // @ts-expect-error TS(2339): Property 'INVALID_TYPE' does not exist on type 'ty... Remove this comment to see the full error message
                         Token.INVALID_TYPE, tok.text,
+                        // @ts-expect-error TS(2339): Property 'DEFAULT_CHANNEL' does not exist on type ... Remove this comment to see the full error message
                         Token.DEFAULT_CHANNEL,
                         -1, -1, // invalid start/stop
                         tok.line, tok.charPositionInLine);

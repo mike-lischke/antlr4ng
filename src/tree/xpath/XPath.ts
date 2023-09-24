@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
@@ -59,7 +59,11 @@ export class XPath {
     static WILDCARD = "*"; // word not operator/separator
     static NOT = "!"; 	   // word for invert operator
 
-    constructor(parser, path) {
+    elements: any;
+    parser: any;
+    path: any;
+
+    constructor(parser: any, path: any) {
         this.parser = parser;
         this.path = path;
         this.elements = this.split(path);
@@ -68,17 +72,18 @@ export class XPath {
 
     // TODO: check for invalid token/rule names, bad syntax
 
-    split(path) {
-        let lexer = new class extends XPathLexer {
-            constructor(stream) {
+    split(path: any) {
+        let lexer = new (class extends XPathLexer {
+            constructor(stream: any) {
                 super(stream);
             }
 
-            recover(e) { throw e; }
-        }(CharStreams.fromString(path));
+            recover(e: any) { throw e; }
+        })(CharStreams.fromString(path));
 
         lexer.removeErrorListeners();
         lexer.addErrorListener(new XPathLexerErrorListener());
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
         let tokenStream = new CommonTokenStream(lexer);
         try {
             tokenStream.fill();
@@ -92,6 +97,7 @@ export class XPath {
             throw e;
         }
 
+        // @ts-expect-error TS(2554): Expected 3 arguments, but got 0.
         let tokens = tokenStream.getTokens();
         // console.log("path=" + path + "=>" + tokens);
         let elements = [];
@@ -128,6 +134,7 @@ export class XPath {
                     break;
                 }
 
+                // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
                 case Token.EOF: {
                     break loop;
                 }
@@ -145,7 +152,8 @@ export class XPath {
      * element. `anywhere` is `true` if `//` precedes the
      * word.
      */
-    getXPathElement(wordToken, anywhere) {
+    getXPathElement(wordToken: any, anywhere: any) {
+        // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         if (wordToken.type === Token.EOF) {
             throw new Error("Missing path element at end of path");
         }
@@ -164,6 +172,7 @@ export class XPath {
                     new XPathWildcardElement();
             case XPathLexer.TOKEN_REF:
             case XPathLexer.STRING:
+                // @ts-expect-error TS(2339): Property 'INVALID_TYPE' does not exist on type 'ty... Remove this comment to see the full error message
                 if (ttype === Token.INVALID_TYPE) {
                     throw new Error(word + " at index " +
                         wordToken.start +
@@ -184,7 +193,7 @@ export class XPath {
         }
     }
 
-    static findAll(tree, xpath, parser) {
+    static findAll(tree: any, xpath: any, parser: any) {
         let p = new XPath(parser, xpath);
         return p.evaluate(tree);
     }
@@ -193,7 +202,8 @@ export class XPath {
      * Return a list of all nodes starting at `t` as root that satisfy the
      * path. The root `/` is relative to the node passed to {@link evaluate}.
      */
-    evaluate(t) {
+    evaluate(t: any) {
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
         let dummyRoot = new ParserRuleContext();
         dummyRoot.addChild(t);
 
@@ -212,6 +222,7 @@ export class XPath {
                 }
             }
             i++;
+            // @ts-expect-error TS(2322): Type 'Set<unknown>' is not assignable to type 'Set... Remove this comment to see the full error message
             work = next;
         }
 

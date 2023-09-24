@@ -8,7 +8,12 @@ import { Transition } from "./Transition.js";
 import { TransitionType } from "./TransitionType.js";
 
 export class RuleTransition extends Transition {
-    constructor(ruleStart, ruleIndex, precedence, followState) {
+    followState: any;
+    isEpsilon: any;
+    precedence: any;
+    ruleIndex: any;
+    serializationType: any;
+    constructor(ruleStart: any, ruleIndex: any, precedence: any, followState: any) {
         super(ruleStart);
         // ptr to the rule definition object for this rule ref
         this.ruleIndex = ruleIndex;
@@ -19,7 +24,7 @@ export class RuleTransition extends Transition {
         this.isEpsilon = true;
     }
 
-    matches(symbol, minVocabSymbol, maxVocabSymbol) {
+    matches(symbol: any, minVocabSymbol: any, maxVocabSymbol: any) {
         return false;
     }
 }

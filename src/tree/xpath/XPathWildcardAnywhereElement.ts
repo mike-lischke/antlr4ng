@@ -13,7 +13,7 @@ export class XPathWildcardAnywhereElement extends XPathElement {
         super(XPath.WILDCARD);
     }
 
-    evaluate(t) {
+    evaluate(t: any) {
         if (this.invert) {
             // !* is weird but valid (empty)
             return [];

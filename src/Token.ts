@@ -10,6 +10,15 @@
  * we obtained this token.
  */
 export class Token {
+    _text: any;
+    channel: any;
+    column: any;
+    line: any;
+    source: any;
+    start: any;
+    stop: any;
+    tokenIndex: any;
+    type: any;
 
     constructor() {
         this.source = null;
@@ -40,16 +49,20 @@ export class Token {
     }
 }
 
+// @ts-expect-error TS(2339): Property 'INVALID_TYPE' does not exist on type 'ty... Remove this comment to see the full error message
 Token.INVALID_TYPE = 0;
 
 /**
  * During lookahead operations, this "token" signifies we hit rule end ATN state
  * and did not follow it despite needing to.
  */
+// @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
 Token.EPSILON = -2;
 
+// @ts-expect-error TS(2339): Property 'MIN_USER_TOKEN_TYPE' does not exist on t... Remove this comment to see the full error message
 Token.MIN_USER_TOKEN_TYPE = 1;
 
+// @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
 Token.EOF = -1;
 
 /**
@@ -57,10 +70,12 @@ Token.EOF = -1;
  * on a particular "channel". The parser tunes to a particular channel
  * so that whitespace etc... can go to the parser on a "hidden" channel.
  */
+// @ts-expect-error TS(2339): Property 'DEFAULT_CHANNEL' does not exist on type ... Remove this comment to see the full error message
 Token.DEFAULT_CHANNEL = 0;
 
 /**
  * Anything on different channel than DEFAULT_CHANNEL is not parsed
  * by parser.
  */
+// @ts-expect-error TS(2339): Property 'HIDDEN_CHANNEL' does not exist on type '... Remove this comment to see the full error message
 Token.HIDDEN_CHANNEL = 1;

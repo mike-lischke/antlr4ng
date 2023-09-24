@@ -9,10 +9,11 @@ import { ParserRuleContext } from "./ParserRuleContext.js";
 export class InterpreterRuleContext extends ParserRuleContext {
     _ruleIndex;
 
-    constructor(ruleIndex, parent, invokingStateNumber) {
+    constructor(ruleIndex: any, parent: any, invokingStateNumber: any) {
         if (invokingStateNumber !== undefined) {
             super(parent, invokingStateNumber);
         } else {
+            // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
             super();
         }
 

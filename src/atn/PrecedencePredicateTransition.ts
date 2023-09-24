@@ -9,14 +9,17 @@ import { AbstractPredicateTransition } from "../atn/AbstractPredicateTransition.
 import { TransitionType } from "./TransitionType.js";
 
 export class PrecedencePredicateTransition extends AbstractPredicateTransition {
-    constructor(target, precedence) {
+    isEpsilon: any;
+    precedence: any;
+    serializationType: any;
+    constructor(target: any, precedence: any) {
         super(target);
         this.serializationType = TransitionType.PRECEDENCE;
         this.precedence = precedence;
         this.isEpsilon = true;
     }
 
-    matches(symbol, minVocabSymbol, maxVocabSymbol) {
+    matches(symbol: any, minVocabSymbol: any, maxVocabSymbol: any) {
         return false;
     }
 

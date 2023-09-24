@@ -15,23 +15,29 @@ import { HashMap } from "../misc/HashMap.js";
  * Convert a {@link RuleContext} tree to a {@link PredictionContext} graph.
  * Return {@link //EMPTY} if {@code outerContext} is empty or null.
  */
-export function predictionContextFromRuleContext(atn, outerContext) {
+// @ts-expect-error TS(7023): 'predictionContextFromRuleContext' implicitly has ... Remove this comment to see the full error message
+export function predictionContextFromRuleContext(atn: any, outerContext: any) {
     if (outerContext === undefined || outerContext === null) {
+        // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Ru... Remove this comment to see the full error message
         outerContext = RuleContext.EMPTY;
     }
     // if we are in RuleContext of start rule, s, then PredictionContext
     // is EMPTY. Nobody called us. (if we are empty, return empty)
+    // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Ru... Remove this comment to see the full error message
     if (outerContext.parent === null || outerContext === RuleContext.EMPTY) {
+        // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         return PredictionContext.EMPTY;
     }
     // If we have a parent, convert it to a PredictionContext graph
+    // @ts-expect-error TS(7022): 'parent' implicitly has type 'any' because it does... Remove this comment to see the full error message
     const parent = predictionContextFromRuleContext(atn, outerContext.parent);
     const state = atn.states[outerContext.invokingState];
     const transition = state.transitions[0];
     return SingletonPredictionContext.create(parent, transition.followState.stateNumber);
 }
 
-export function getCachedPredictionContext(context, contextCache, visited) {
+// @ts-expect-error TS(7023): 'getCachedPredictionContext' implicitly has return... Remove this comment to see the full error message
+export function getCachedPredictionContext(context: any, contextCache: any, visited: any) {
     if (context.isEmpty()) {
         return context;
     }
@@ -47,6 +53,7 @@ export function getCachedPredictionContext(context, contextCache, visited) {
     let changed = false;
     let parents = [];
     for (let i = 0; i < parents.length; i++) {
+        // @ts-expect-error TS(7022): 'parent' implicitly has type 'any' because it does... Remove this comment to see the full error message
         const parent = getCachedPredictionContext(context.getParent(i), contextCache, visited);
         if (changed || parent !== context.getParent(i)) {
             if (!changed) {
@@ -66,6 +73,7 @@ export function getCachedPredictionContext(context, contextCache, visited) {
     }
     let updated = null;
     if (parents.length === 0) {
+        // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         updated = PredictionContext.EMPTY;
     } else if (parents.length === 1) {
         updated = SingletonPredictionContext.create(parents[0], context
@@ -80,7 +88,7 @@ export function getCachedPredictionContext(context, contextCache, visited) {
     return updated;
 }
 
-export function merge(a, b, rootIsWildcard, mergeCache) {
+export function merge(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
     // share same graph if both same
     if (a === b) {
         return a;
@@ -100,9 +108,11 @@ export function merge(a, b, rootIsWildcard, mergeCache) {
     }
     // convert singleton so both are arrays to normalize
     if (a instanceof SingletonPredictionContext) {
+        // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         a = new ArrayPredictionContext([a.getParent()], [a.returnState]);
     }
     if (b instanceof SingletonPredictionContext) {
+        // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         b = new ArrayPredictionContext([b.getParent()], [b.returnState]);
     }
     return mergeArrays(a, b, rootIsWildcard, mergeCache);
@@ -128,15 +138,17 @@ export function merge(a, b, rootIsWildcard, mergeCache) {
  * {@link SingletonPredictionContext}.<br>
  * <embed src="images/ArrayMerge_EqualTop.svg" type="image/svg+xml"/></p>
  */
-function mergeArrays(a, b, rootIsWildcard, mergeCache) {
+function mergeArrays(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
     if (mergeCache !== null) {
         let previous = mergeCache.get(a, b);
         if (previous !== null) {
+            // @ts-expect-error TS(2339): Property 'trace_atn_sim' does not exist on type 't... Remove this comment to see the full error message
             if (PredictionContext.trace_atn_sim) console.log("mergeArrays a=" + a + ",b=" + b + " -> previous");
             return previous;
         }
         previous = mergeCache.get(b, a);
         if (previous !== null) {
+            // @ts-expect-error TS(2339): Property 'trace_atn_sim' does not exist on type 't... Remove this comment to see the full error message
             if (PredictionContext.trace_atn_sim) console.log("mergeArrays a=" + a + ",b=" + b + " -> previous");
             return previous;
         }
@@ -156,6 +168,7 @@ function mergeArrays(a, b, rootIsWildcard, mergeCache) {
             // same payload (stack tops are equal), must yield merged singleton
             const payload = a.returnStates[i];
             // $+$ = $
+            // @ts-expect-error TS(2339): Property 'EMPTY_RETURN_STATE' does not exist on ty... Remove this comment to see the full error message
             const bothDollars = payload === PredictionContext.EMPTY_RETURN_STATE &&
                 a_parent === null && b_parent === null;
             const ax_ax = (a_parent !== null && b_parent !== null && a_parent === b_parent); // ax+ax
@@ -217,6 +230,7 @@ function mergeArrays(a, b, rootIsWildcard, mergeCache) {
         if (mergeCache !== null) {
             mergeCache.set(a, b, a);
         }
+        // @ts-expect-error TS(2339): Property 'trace_atn_sim' does not exist on type 't... Remove this comment to see the full error message
         if (PredictionContext.trace_atn_sim) console.log("mergeArrays a=" + a + ",b=" + b + " -> a");
         return a;
     }
@@ -224,6 +238,7 @@ function mergeArrays(a, b, rootIsWildcard, mergeCache) {
         if (mergeCache !== null) {
             mergeCache.set(a, b, b);
         }
+        // @ts-expect-error TS(2339): Property 'trace_atn_sim' does not exist on type 't... Remove this comment to see the full error message
         if (PredictionContext.trace_atn_sim) console.log("mergeArrays a=" + a + ",b=" + b + " -> b");
         return b;
     }
@@ -233,6 +248,7 @@ function mergeArrays(a, b, rootIsWildcard, mergeCache) {
         mergeCache.set(a, b, M);
     }
 
+    // @ts-expect-error TS(2339): Property 'trace_atn_sim' does not exist on type 't... Remove this comment to see the full error message
     if (PredictionContext.trace_atn_sim) console.log("mergeArrays a=" + a + ",b=" + b + " -> " + M);
 
     return M;
@@ -242,7 +258,8 @@ function mergeArrays(a, b, rootIsWildcard, mergeCache) {
  * Make pass over all <em>M</em> {@code parents}; merge any {@code equals()}
  * ones.
  */
-function combineCommonParents(parents) {
+function combineCommonParents(parents: any) {
+    // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
     const uniqueParents = new HashMap();
 
     for (let p = 0; p < parents.length; p++) {
@@ -287,7 +304,7 @@ function combineCommonParents(parents) {
  * otherwise false to indicate a full-context merge
  * @param mergeCache
  */
-function mergeSingletons(a, b, rootIsWildcard, mergeCache) {
+function mergeSingletons(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
     if (mergeCache !== null) {
         let previous = mergeCache.get(a, b);
         if (previous !== null) {
@@ -403,23 +420,33 @@ function mergeSingletons(a, b, rootIsWildcard, mergeCache) {
  * @param rootIsWildcard {@code true} if this is a local-context merge,
  * otherwise false to indicate a full-context merge
  */
-function mergeRoot(a, b, rootIsWildcard) {
+function mergeRoot(a: any, b: any, rootIsWildcard: any) {
     if (rootIsWildcard) {
+        // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         if (a === PredictionContext.EMPTY) {
+            // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
             return PredictionContext.EMPTY; // // + b =//
         }
+        // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         if (b === PredictionContext.EMPTY) {
+            // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
             return PredictionContext.EMPTY; // a +// =//
         }
     } else {
+        // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         if (a === PredictionContext.EMPTY && b === PredictionContext.EMPTY) {
+            // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
             return PredictionContext.EMPTY; // $ + $ = $
+        // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         } else if (a === PredictionContext.EMPTY) { // $ + x = [$,x]
             const payloads = [b.returnState,
+            // @ts-expect-error TS(2339): Property 'EMPTY_RETURN_STATE' does not exist on ty... Remove this comment to see the full error message
             PredictionContext.EMPTY_RETURN_STATE];
             const parents = [b.parent, null];
             return new ArrayPredictionContext(parents, payloads);
+        // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         } else if (b === PredictionContext.EMPTY) { // x + $ = [$,x] ($ is always first if present)
+            // @ts-expect-error TS(2339): Property 'EMPTY_RETURN_STATE' does not exist on ty... Remove this comment to see the full error message
             const payloads = [a.returnState, PredictionContext.EMPTY_RETURN_STATE];
             const parents = [a.parent, null];
             return new ArrayPredictionContext(parents, payloads);
@@ -429,11 +456,13 @@ function mergeRoot(a, b, rootIsWildcard) {
 }
 
 // ter's recursive version of Sam's getAllNodes()
-export function getAllContextNodes(context, nodes, visited) {
+// @ts-expect-error TS(7023): 'getAllContextNodes' implicitly has return type 'a... Remove this comment to see the full error message
+export function getAllContextNodes(context: any, nodes: any, visited: any) {
     if (nodes === null) {
         nodes = [];
         return getAllContextNodes(context, nodes, visited);
     } else if (visited === null) {
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
         visited = new HashMap();
         return getAllContextNodes(context, nodes, visited);
     } else {

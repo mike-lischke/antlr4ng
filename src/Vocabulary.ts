@@ -7,9 +7,16 @@
 import { Token } from "./Token.js";
 
 export class Vocabulary {
-    constructor(literalNames, symbolicNames, displayNames) {
+    displayNames: any;
+    literalNames: any;
+    maxTokenType: any;
+    symbolicNames: any;
+    constructor(literalNames: any, symbolicNames: any, displayNames: any) {
+        // @ts-expect-error TS(2339): Property 'EMPTY_NAMES' does not exist on type 'typ... Remove this comment to see the full error message
         this.literalNames = literalNames != null ? literalNames : Vocabulary.EMPTY_NAMES;
+        // @ts-expect-error TS(2339): Property 'EMPTY_NAMES' does not exist on type 'typ... Remove this comment to see the full error message
         this.symbolicNames = symbolicNames != null ? symbolicNames : Vocabulary.EMPTY_NAMES;
+        // @ts-expect-error TS(2339): Property 'EMPTY_NAMES' does not exist on type 'typ... Remove this comment to see the full error message
         this.displayNames = displayNames != null ? displayNames : Vocabulary.EMPTY_NAMES;
         // See note here on -1 part: https://github.com/antlr/antlr4/pull/1146
         this.maxTokenType =
@@ -17,8 +24,9 @@ export class Vocabulary {
                 Math.max(this.literalNames.length, this.symbolicNames.length)) - 1;
     }
 
-    static fromTokenNames(tokenNames) {
+    static fromTokenNames(tokenNames: any) {
         if (tokenNames == null || tokenNames.length === 0) {
+            // @ts-expect-error TS(2339): Property 'EMPTY_VOCABULARY' does not exist on type... Remove this comment to see the full error message
             return Vocabulary.EMPTY_VOCABULARY;
         }
 
@@ -53,7 +61,7 @@ export class Vocabulary {
         return this.maxTokenType;
     }
 
-    getLiteralName(tokenType) {
+    getLiteralName(tokenType: any) {
         if (tokenType >= 0 && tokenType < this.literalNames.length) {
             return this.literalNames[tokenType];
         }
@@ -61,11 +69,12 @@ export class Vocabulary {
         return null;
     }
 
-    getSymbolicName(tokenType) {
+    getSymbolicName(tokenType: any) {
         if (tokenType >= 0 && tokenType < this.symbolicNames.length) {
             return this.symbolicNames[tokenType];
         }
 
+        // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         if (tokenType === Token.EOF) {
             return "EOF";
         }
@@ -73,7 +82,7 @@ export class Vocabulary {
         return null;
     }
 
-    getDisplayName(tokenType) {
+    getDisplayName(tokenType: any) {
         if (tokenType >= 0 && tokenType < this.displayNames.length) {
             const displayName = this.displayNames[tokenType];
             if (displayName != null) {
@@ -107,5 +116,7 @@ export class Vocabulary {
     }
 }
 
+// @ts-expect-error TS(2339): Property 'EMPTY_NAMES' does not exist on type 'typ... Remove this comment to see the full error message
 Vocabulary.EMPTY_NAMES = [];
+// @ts-expect-error TS(2339): Property 'EMPTY_VOCABULARY' does not exist on type... Remove this comment to see the full error message
 Vocabulary.EMPTY_VOCABULARY = new Vocabulary(Vocabulary.EMPTY_NAMES, Vocabulary.EMPTY_NAMES, Vocabulary.EMPTY_NAMES);

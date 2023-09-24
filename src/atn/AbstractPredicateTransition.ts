@@ -7,7 +7,7 @@
 import { Transition } from "./Transition.js";
 
 export class AbstractPredicateTransition extends Transition {
-    constructor(target) {
+    constructor(target: any) {
         super(target);
     }
 }

@@ -9,7 +9,12 @@ import { AbstractPredicateTransition } from "../atn/AbstractPredicateTransition.
 import { TransitionType } from "./TransitionType.js";
 
 export class PredicateTransition extends AbstractPredicateTransition {
-    constructor(target, ruleIndex, predIndex, isCtxDependent) {
+    isCtxDependent: any;
+    isEpsilon: any;
+    predIndex: any;
+    ruleIndex: any;
+    serializationType: any;
+    constructor(target: any, ruleIndex: any, predIndex: any, isCtxDependent: any) {
         super(target);
         this.serializationType = TransitionType.PREDICATE;
         this.ruleIndex = ruleIndex;
@@ -18,7 +23,7 @@ export class PredicateTransition extends AbstractPredicateTransition {
         this.isEpsilon = true;
     }
 
-    matches(symbol, minVocabSymbol, maxVocabSymbol) {
+    matches(symbol: any, minVocabSymbol: any, maxVocabSymbol: any) {
         return false;
     }
 

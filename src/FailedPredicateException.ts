@@ -14,8 +14,12 @@ import { RecognitionException } from "./RecognitionException.js";
  * prediction.
  */
 export class FailedPredicateException extends RecognitionException {
+    offendingToken: any;
+    predicate: any;
+    predicateIndex: any;
+    ruleIndex: any;
 
-    constructor(recognizer, predicate, message) {
+    constructor(recognizer: any, predicate: any, message: any) {
         super({
             message: formatMessage(predicate, message || null),
             recognizer: recognizer,
@@ -36,7 +40,7 @@ export class FailedPredicateException extends RecognitionException {
 }
 
 
-function formatMessage(predicate, message) {
+function formatMessage(predicate: any, message: any) {
     if (message !== null) {
         return message;
     } else {

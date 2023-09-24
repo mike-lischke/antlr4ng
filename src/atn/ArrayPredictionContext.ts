@@ -9,8 +9,10 @@ import { equalArrays } from "../utils/equalArrays.js";
 import { HashCode } from "../misc/HashCode.js";
 
 export class ArrayPredictionContext extends PredictionContext {
+    parents: any;
+    returnStates: any;
 
-    constructor(parents, returnStates) {
+    constructor(parents: any, returnStates: any) {
         /**
          * Parent can be null only if full ctx mode and we make an array
          * from {@link //EMPTY} and non-empty. We merge {@link //EMPTY} by using
@@ -18,6 +20,7 @@ export class ArrayPredictionContext extends PredictionContext {
          * returnState == {@link //EMPTY_RETURN_STATE}.
          */
         const h = new HashCode();
+        // @ts-expect-error TS(2554): Expected 0 arguments, but got 2.
         h.update(parents, returnStates);
         const hashCode = h.finish();
         super(hashCode);
@@ -29,18 +32,20 @@ export class ArrayPredictionContext extends PredictionContext {
     isEmpty() {
         // since EMPTY_RETURN_STATE can only appear in the last position, we
         // don't need to verify that size==1
+        // @ts-expect-error TS(2339): Property 'EMPTY_RETURN_STATE' does not exist on ty... Remove this comment to see the full error message
         return this.returnStates[0] === PredictionContext.EMPTY_RETURN_STATE;
     }
 
-    getParent(index) {
+    getParent(index: any) {
         return this.parents[index];
     }
 
-    getReturnState(index) {
+    // @ts-expect-error TS(2425): Class 'PredictionContext' defines instance member ... Remove this comment to see the full error message
+    getReturnState(index: any) {
         return this.returnStates[index];
     }
 
-    equals(other) {
+    equals(other: any) {
         if (this === other) {
             return true;
         } else if (!(other instanceof ArrayPredictionContext)) {
@@ -62,6 +67,7 @@ export class ArrayPredictionContext extends PredictionContext {
                 if (i > 0) {
                     s = s + ", ";
                 }
+                // @ts-expect-error TS(2339): Property 'EMPTY_RETURN_STATE' does not exist on ty... Remove this comment to see the full error message
                 if (this.returnStates[i] === PredictionContext.EMPTY_RETURN_STATE) {
                     s = s + "$";
                     continue;
@@ -77,6 +83,7 @@ export class ArrayPredictionContext extends PredictionContext {
         }
     }
 
+    // @ts-expect-error TS(2611): 'length' is defined as a property in class 'Predic... Remove this comment to see the full error message
     get length() {
         return this.returnStates.length;
     }

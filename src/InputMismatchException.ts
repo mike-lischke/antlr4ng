@@ -11,8 +11,9 @@ import { RecognitionException } from "./RecognitionException.js";
  * when the current input does not match the expected token.
  */
 export class InputMismatchException extends RecognitionException {
-    constructor(recognizer) {
-        super({ message: "", recognizer: recognizer, input: recognizer.inputStream, ctx: recognizer._ctx });
-        this.offendingToken = recognizer.getCurrentToken();
-    }
+ offendingToken: any;
+ constructor(recognizer: any) {
+     super({ message: "", recognizer: recognizer, input: recognizer.inputStream, ctx: recognizer._ctx });
+     this.offendingToken = recognizer.getCurrentToken();
+ }
 }

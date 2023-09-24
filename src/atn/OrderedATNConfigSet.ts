@@ -9,7 +9,9 @@ import { HashSet } from "../misc/HashSet.js";
 
 export class OrderedATNConfigSet extends ATNConfigSet {
     constructor() {
+        // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         super();
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
         this.configLookup = new HashSet();
     }
 }

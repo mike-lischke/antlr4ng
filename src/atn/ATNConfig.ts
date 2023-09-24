@@ -7,21 +7,28 @@
 import { SemanticContext } from './SemanticContext.js';
 import { HashCode } from "../misc/HashCode.js";
 
-function checkParams(params, isCfg) {
+function checkParams(params: any, isCfg: any) {
     if (params === null) {
         const result = { state: null, alt: null, context: null, semanticContext: null };
         if (isCfg) {
+            // @ts-expect-error TS(2339): Property 'reachesIntoOuterContext' does not exist ... Remove this comment to see the full error message
             result.reachesIntoOuterContext = 0;
         }
         return result;
     } else {
         const props = {};
+        // @ts-expect-error TS(2339): Property 'state' does not exist on type '{}'.
         props.state = params.state || null;
+        // @ts-expect-error TS(2339): Property 'alt' does not exist on type '{}'.
         props.alt = (params.alt === undefined) ? null : params.alt;
+        // @ts-expect-error TS(2339): Property 'context' does not exist on type '{}'.
         props.context = params.context || null;
+        // @ts-expect-error TS(2339): Property 'semanticContext' does not exist on type ... Remove this comment to see the full error message
         props.semanticContext = params.semanticContext || null;
         if (isCfg) {
+            // @ts-expect-error TS(2339): Property 'reachesIntoOuterContext' does not exist ... Remove this comment to see the full error message
             props.reachesIntoOuterContext = params.reachesIntoOuterContext || 0;
+            // @ts-expect-error TS(2339): Property 'precedenceFilterSuppressed' does not exi... Remove this comment to see the full error message
             props.precedenceFilterSuppressed = params.precedenceFilterSuppressed || false;
         }
         return props;
@@ -29,6 +36,12 @@ function checkParams(params, isCfg) {
 }
 
 export class ATNConfig {
+    alt: any;
+    context: any;
+    precedenceFilterSuppressed: any;
+    reachesIntoOuterContext: any;
+    semanticContext: any;
+    state: any;
     /**
      * @param {Object} params A tuple: (ATN state, predicted alt, syntactic, semantic context).
      * The syntactic context is a graph-structured stack node whose
@@ -37,8 +50,9 @@ export class ATNConfig {
      * the tree of semantic predicates encountered before reaching
      * an ATN state
      */
-    constructor(params, config) {
+    constructor(params: any, config: any) {
         this.checkContext(params, config);
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
         params = checkParams(params);
         config = checkParams(config, true);
         // The ATN state associated with this configuration///
@@ -52,6 +66,7 @@ export class ATNConfig {
          */
         this.context = params.context !== null ? params.context : config.context;
         this.semanticContext = params.semanticContext !== null ? params.semanticContext :
+            // @ts-expect-error TS(2339): Property 'NONE' does not exist on type 'typeof Sem... Remove this comment to see the full error message
             (config.semanticContext !== null ? config.semanticContext : SemanticContext.NONE);
         // TODO: make it a boolean then
         /**
@@ -68,7 +83,7 @@ export class ATNConfig {
         this.precedenceFilterSuppressed = config.precedenceFilterSuppressed;
     }
 
-    checkContext(params, config) {
+    checkContext(params: any, config: any) {
         if ((params.context === null || params.context === undefined) &&
             (config === null || config.context === null || config.context === undefined)) {
             this.context = null;
@@ -81,7 +96,7 @@ export class ATNConfig {
         return hash.finish();
     }
 
-    updateHashCode(hash) {
+    updateHashCode(hash: any) {
         hash.update(this.state.stateNumber, this.alt, this.context, this.semanticContext);
     }
 
@@ -90,7 +105,7 @@ export class ATNConfig {
      * the same state, they predict the same alternative, and
      * syntactic/semantic contexts are the same
      */
-    equals(other) {
+    equals(other: any) {
         if (this === other) {
             return true;
         } else if (!(other instanceof ATNConfig)) {
@@ -106,11 +121,12 @@ export class ATNConfig {
 
     hashCodeForConfigSet() {
         const hash = new HashCode();
+        // @ts-expect-error TS(2554): Expected 0 arguments, but got 3.
         hash.update(this.state.stateNumber, this.alt, this.semanticContext);
         return hash.finish();
     }
 
-    equalsForConfigSet(other) {
+    equalsForConfigSet(other: any) {
         if (this === other) {
             return true;
         } else if (!(other instanceof ATNConfig)) {
@@ -125,6 +141,7 @@ export class ATNConfig {
     toString() {
         return "(" + this.state + "," + this.alt +
             (this.context !== null ? ",[" + this.context.toString() + "]" : "") +
+            // @ts-expect-error TS(2339): Property 'NONE' does not exist on type 'typeof Sem... Remove this comment to see the full error message
             (this.semanticContext !== SemanticContext.NONE ?
                 ("," + this.semanticContext.toString())
                 : "") +

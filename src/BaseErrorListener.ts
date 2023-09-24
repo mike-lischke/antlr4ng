@@ -9,15 +9,15 @@
  * necessary.
  */
 export class BaseErrorListener {
-    syntaxError(recognizer, offendingSymbol, line, column, msg, e) {
+    syntaxError(recognizer: any, offendingSymbol: any, line: any, column: any, msg: any, e: any) {
     }
 
-    reportAmbiguity(recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs) {
+    reportAmbiguity(recognizer: any, dfa: any, startIndex: any, stopIndex: any, exact: any, ambigAlts: any, configs: any) {
     }
 
-    reportAttemptingFullContext(recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs) {
+    reportAttemptingFullContext(recognizer: any, dfa: any, startIndex: any, stopIndex: any, conflictingAlts: any, configs: any) {
     }
 
-    reportContextSensitivity(recognizer, dfa, startIndex, stopIndex, prediction, configs) {
+    reportContextSensitivity(recognizer: any, dfa: any, startIndex: any, stopIndex: any, prediction: any, configs: any) {
     }
 }

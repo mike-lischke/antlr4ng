@@ -8,12 +8,13 @@ import { SetTransition } from "./SetTransition.js";
 import { TransitionType } from "./TransitionType.js";
 
 export class NotSetTransition extends SetTransition {
-    constructor(target, set) {
+    serializationType: any;
+    constructor(target: any, set: any) {
         super(target, set);
         this.serializationType = TransitionType.NOT_SET;
     }
 
-    matches(symbol, minVocabSymbol, maxVocabSymbol) {
+    matches(symbol: any, minVocabSymbol: any, maxVocabSymbol: any) {
         return symbol >= minVocabSymbol && symbol <= maxVocabSymbol &&
             !super.matches(symbol, minVocabSymbol, maxVocabSymbol);
     }

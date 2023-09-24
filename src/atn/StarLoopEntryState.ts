@@ -8,6 +8,7 @@ import { DecisionState } from "./DecisionState.js";
 import { ATNStateType } from "./ATNStateType.js";
 
 export class StarLoopEntryState extends DecisionState {
+    precedenceRuleDecision: any;
     constructor() {
         super();
         this.precedenceRuleDecision = false;
@@ -16,5 +17,4 @@ export class StarLoopEntryState extends DecisionState {
     get stateType() {
         return ATNStateType.STAR_LOOP_ENTRY;
     }
-
 }

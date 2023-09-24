@@ -10,7 +10,10 @@ import { arrayToString } from "../utils/arrayToString.js";
  * A DFA walker that knows how to dump them to serialized strings.
  */
 export class DFASerializer {
-    constructor(dfa, literalNames, symbolicNames) {
+    dfa: any;
+    literalNames: any;
+    symbolicNames: any;
+    constructor(dfa: any, literalNames: any, symbolicNames: any) {
         this.dfa = dfa;
 
         // XXX: switch to vocabulary.
@@ -44,7 +47,7 @@ export class DFASerializer {
         return buf.length === 0 ? null : buf;
     }
 
-    getEdgeLabel(i) {
+    getEdgeLabel(i: any) {
         if (i === 0) {
             return "EOF";
         } else if (this.literalNames !== null || this.symbolicNames !== null) {
@@ -54,7 +57,7 @@ export class DFASerializer {
         }
     }
 
-    getStateString(s) {
+    getStateString(s: any) {
         const baseStateStr = (s.isAcceptState ? ":" : "") + "s" + s.stateNumber + (s.requiresFullContext ? "^" : "");
         if (s.isAcceptState) {
             if (s.predicates !== null) {

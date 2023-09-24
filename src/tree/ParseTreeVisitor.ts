@@ -5,9 +5,9 @@
  */
 
 export class ParseTreeVisitor {
-    visit(ctx) {
+    visit(ctx: any) {
         if (Array.isArray(ctx)) {
-            return ctx.map(function (child) {
+            return ctx.map(function(this: any, child) {
                 return child.accept(this);
             }, this);
         } else {
@@ -15,7 +15,7 @@ export class ParseTreeVisitor {
         }
     }
 
-    visitChildren(ctx) {
+    visitChildren(ctx: any) {
         if (ctx.children) {
             return this.visit(ctx.children);
         } else {
@@ -23,9 +23,9 @@ export class ParseTreeVisitor {
         }
     }
 
-    visitTerminal(node) {
+    visitTerminal(node: any) {
     }
 
-    visitErrorNode(node) {
+    visitErrorNode(node: any) {
     }
 }

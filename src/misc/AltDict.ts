@@ -5,15 +5,16 @@
  */
 
 export class AltDict {
+    data: any;
     constructor() {
         this.data = {};
     }
 
-    get(key) {
+    get(key: any) {
         return this.data["k-" + key] || null;
     }
 
-    set(key, value) {
+    set(key: any, value: any) {
         this.data["k-" + key] = value;
     }
 

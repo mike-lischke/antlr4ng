@@ -5,15 +5,15 @@
  */
 
 export class ParseTreeListener {
-    visitTerminal(node) {
+    visitTerminal(node: any) {
     }
 
-    visitErrorNode(node) {
+    visitErrorNode(node: any) {
     }
 
-    enterEveryRule(node) {
+    enterEveryRule(node: any) {
     }
 
-    exitEveryRule(node) {
+    exitEveryRule(node: any) {
     }
 }

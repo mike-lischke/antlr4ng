@@ -8,8 +8,10 @@ import { PredictionContext } from "./PredictionContext.js";
 import { SingletonPredictionContext } from "./SingletonPredictionContext.js";
 
 export class EmptyPredictionContext extends SingletonPredictionContext {
+    returnState: any;
 
     constructor() {
+        // @ts-expect-error TS(2339): Property 'EMPTY_RETURN_STATE' does not exist on ty... Remove this comment to see the full error message
         super(null, PredictionContext.EMPTY_RETURN_STATE);
     }
 
@@ -17,15 +19,15 @@ export class EmptyPredictionContext extends SingletonPredictionContext {
         return true;
     }
 
-    getParent(index) {
+    getParent(index: any) {
         return null;
     }
 
-    getReturnState(index) {
+    getReturnState(index: any) {
         return this.returnState;
     }
 
-    equals(other) {
+    equals(other: any) {
         return this === other;
     }
 
@@ -35,4 +37,5 @@ export class EmptyPredictionContext extends SingletonPredictionContext {
 }
 
 
+// @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
 PredictionContext.EMPTY = new EmptyPredictionContext();

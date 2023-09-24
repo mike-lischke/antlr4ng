@@ -12,9 +12,16 @@
  *  and what kind of problem occurred.
  */
 export class RecognitionException extends Error {
-    constructor(params) {
+    ctx: any;
+    input: any;
+    offendingState: any;
+    offendingToken: any;
+    recognizer: any;
+    constructor(params: any) {
         super(params.message);
+        // @ts-expect-error TS(2339): Property 'captureStackTrace' does not exist on typ... Remove this comment to see the full error message
         if (Error.captureStackTrace)
+            // @ts-expect-error TS(2339): Property 'captureStackTrace' does not exist on typ... Remove this comment to see the full error message
             Error.captureStackTrace(this, RecognitionException);
         this.message = params.message;
         this.recognizer = params.recognizer;

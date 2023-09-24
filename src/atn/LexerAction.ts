@@ -7,7 +7,9 @@
 import { HashCode } from "../misc/HashCode.js";
 
 export class LexerAction {
-    constructor(action) {
+    actionType: any;
+    isPositionDependent: any;
+    constructor(action: any) {
         this.actionType = action;
         this.isPositionDependent = false;
     }
@@ -18,11 +20,11 @@ export class LexerAction {
         return hash.finish();
     }
 
-    updateHashCode(hash) {
+    updateHashCode(hash: any) {
         hash.update(this.actionType);
     }
 
-    equals(other) {
+    equals(other: any) {
         return this === other;
     }
 }

@@ -17,6 +17,7 @@ export class XPathLexer extends Lexer {
     static BANG = 6;
     static ID = 7;
     static STRING = 8;
+    // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
     static EOF = Token.EOF;
 
     static channelNames = [
@@ -41,7 +42,7 @@ export class XPathLexer extends Lexer {
         "STRING",
     ];
 
-    constructor(input) {
+    constructor(input: any) {
         super(input);
         this.interpreter = new LexerATNSimulator(this, XPathLexer._ATN, XPathLexer.decisionsToDFA, new PredictionContextCache());
     }
@@ -50,6 +51,7 @@ export class XPathLexer extends Lexer {
 
     get literalNames() { return XPathLexer.literalNames; }
     get symbolicNames() { return XPathLexer.symbolicNames; }
+    // @ts-expect-error TS(2611): 'ruleNames' is defined as a property in class 'Lex... Remove this comment to see the full error message
     get ruleNames() { return XPathLexer.ruleNames; }
 
     get serializedATN() { return XPathLexer._serializedATN; }
@@ -59,7 +61,7 @@ export class XPathLexer extends Lexer {
     get modeNames() { return XPathLexer.modeNames; }
 
     // @Override
-    action(localctx, ruleIndex, actionIndex) {
+    action(localctx: any, ruleIndex: any, actionIndex: any) {
         switch (ruleIndex) {
             case 4:
                 this.ID_action(localctx, actionIndex);
@@ -67,7 +69,7 @@ export class XPathLexer extends Lexer {
         }
     }
 
-    ID_action(localctx, actionIndex) {
+    ID_action(localctx: any, actionIndex: any) {
         switch (actionIndex) {
             case 0: {
                 let text = this.text;
@@ -349,9 +351,10 @@ export class XPathLexer extends Lexer {
         16, 1, 0, 0, 0, 3, 0, 30, 43, 1, 1, 4, 0,
     ];
 
-    static __ATN;
+    static __ATN: any;
     static get _ATN() {
         if (!XPathLexer.__ATN) {
+            // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
             XPathLexer.__ATN = new ATNDeserializer().deserialize(XPathLexer._serializedATN);
         }
 
@@ -360,9 +363,10 @@ export class XPathLexer extends Lexer {
 
     static vocabulary = new Vocabulary(XPathLexer.literalNames, XPathLexer.symbolicNames, []);
 
+    // @ts-expect-error TS(2425): Class 'Lexer' defines instance member property 'ge... Remove this comment to see the full error message
     getVocabulary() {
         return XPathLexer.vocabulary;
     }
 
-    static decisionsToDFA = XPathLexer._ATN.decisionToState.map((ds, index) => { return new DFA(ds, index); });
+    static decisionsToDFA = XPathLexer._ATN.decisionToState.map((ds: any, index: any) => { return new DFA(ds, index); });
 }

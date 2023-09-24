@@ -18,7 +18,10 @@
  * ATN transitions.</p>
  */
 export class Transition {
-    constructor(target) {
+    isEpsilon: any;
+    label: any;
+    target: any;
+    constructor(target: any) {
         // The target of this transition.
         if (target === undefined || target === null) {
             throw "target cannot be null.";

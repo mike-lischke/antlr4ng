@@ -9,7 +9,10 @@ import { Transition } from "./Transition.js";
 import { TransitionType } from "./TransitionType.js";
 
 export class AtomTransition extends Transition {
-    constructor(target, label) {
+    label: any;
+    label_: any;
+    serializationType: any;
+    constructor(target: any, label: any) {
         super(target);
         // The token type or character value; or, signifies special label.
         this.label_ = label;
@@ -18,12 +21,13 @@ export class AtomTransition extends Transition {
     }
 
     makeLabel() {
+        // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         const s = new IntervalSet();
         s.addOne(this.label_);
         return s;
     }
 
-    matches(symbol, minVocabSymbol, maxVocabSymbol) {
+    matches(symbol: any, minVocabSymbol: any, maxVocabSymbol: any) {
         return this.label_ === symbol;
     }
 

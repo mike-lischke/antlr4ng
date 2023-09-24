@@ -8,7 +8,12 @@ import { Transition } from "./Transition.js";
 import { TransitionType } from "./TransitionType.js";
 
 export class ActionTransition extends Transition {
-    constructor(target, ruleIndex, actionIndex, isCtxDependent) {
+    actionIndex: any;
+    isCtxDependent: any;
+    isEpsilon: any;
+    ruleIndex: any;
+    serializationType: any;
+    constructor(target: any, ruleIndex: any, actionIndex: any, isCtxDependent: any) {
         super(target);
         this.serializationType = TransitionType.ACTION;
         this.ruleIndex = ruleIndex;
@@ -17,7 +22,7 @@ export class ActionTransition extends Transition {
         this.isEpsilon = true;
     }
 
-    matches(symbol, minVocabSymbol, maxVocabSymbol) {
+    matches(symbol: any, minVocabSymbol: any, maxVocabSymbol: any) {
         return false;
     }
 

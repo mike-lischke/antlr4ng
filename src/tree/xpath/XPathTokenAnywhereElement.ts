@@ -8,12 +8,13 @@ import { Trees } from "../Trees.js";
 import { XPathElement } from "./XPathElement.js";
 
 export class XPathTokenAnywhereElement extends XPathElement {
-    constructor(tokenName, tokenType) {
+    tokenType: any;
+    constructor(tokenName: any, tokenType: any) {
         super(tokenName);
         this.tokenType = tokenType;
     }
 
-    evaluate(t) {
+    evaluate(t: any) {
         return Trees.findAllTokenNodes(t, this.tokenType);
     }
 }

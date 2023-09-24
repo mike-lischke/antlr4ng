@@ -18,7 +18,7 @@ import { LexerActionExecutor } from './LexerActionExecutor.js';
 import { LexerNoViableAltException } from '../LexerNoViableAltException.js';
 import { TransitionType } from "./TransitionType.js";
 
-function resetSimState(sim) {
+function resetSimState(sim: any) {
     sim.index = -1;
     sim.line = 0;
     sim.column = -1;
@@ -36,6 +36,13 @@ class SimState {
 }
 
 export class LexerATNSimulator extends ATNSimulator {
+    column: any;
+    decisionToDFA: any;
+    line: any;
+    mode: any;
+    prevAccept: any;
+    recog: any;
+    startIndex: any;
     /**
      * When we hit an accept state in either the DFA or the ATN, we
      * have to notify the character stream to start buffering characters
@@ -52,7 +59,7 @@ export class LexerATNSimulator extends ATNSimulator {
      * then the ATN does the accept and the DFA simulator that invoked it
      * can simply return the predicted token type.</p>
      */
-    constructor(recog, atn, decisionToDFA, sharedContextCache) {
+    constructor(recog: any, atn: any, decisionToDFA: any, sharedContextCache: any) {
         super(atn, sharedContextCache);
         this.decisionToDFA = decisionToDFA;
         this.recog = recog;
@@ -70,6 +77,7 @@ export class LexerATNSimulator extends ATNSimulator {
          * 0..n-1
          */
         this.column = 0;
+        // @ts-expect-error TS(2339): Property 'DEFAULT_MODE' does not exist on type 'ty... Remove this comment to see the full error message
         this.mode = Lexer.DEFAULT_MODE;
         /**
          * Used during DFA/ATN exec to record the most recent accept configuration
@@ -78,14 +86,14 @@ export class LexerATNSimulator extends ATNSimulator {
         this.prevAccept = new SimState();
     }
 
-    copyState(simulator) {
+    copyState(simulator: any) {
         this.column = simulator.column;
         this.line = simulator.line;
         this.mode = simulator.mode;
         this.startIndex = simulator.startIndex;
     }
 
-    match(input, mode) {
+    match(input: any, mode: any) {
         this.mode = mode;
         const mark = input.mark();
         try {
@@ -107,12 +115,14 @@ export class LexerATNSimulator extends ATNSimulator {
         this.startIndex = -1;
         this.line = 1;
         this.column = 0;
+        // @ts-expect-error TS(2339): Property 'DEFAULT_MODE' does not exist on type 'ty... Remove this comment to see the full error message
         this.mode = Lexer.DEFAULT_MODE;
     }
 
-    matchATN(input) {
+    matchATN(input: any) {
         const startState = this.atn.modeToStartState[this.mode];
 
+        // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
         if (LexerATNSimulator.debug) {
             console.log("matchATN mode " + this.mode + " start: " + startState);
         }
@@ -128,13 +138,15 @@ export class LexerATNSimulator extends ATNSimulator {
 
         const predict = this.execATN(input, next);
 
+        // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
         if (LexerATNSimulator.debug) {
             console.log("DFA after matchATN: " + this.decisionToDFA[old_mode].toLexerString());
         }
         return predict;
     }
 
-    execATN(input, ds0) {
+    execATN(input: any, ds0: any) {
+        // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
         if (LexerATNSimulator.debug) {
             console.log("start state closure=" + ds0.configs);
         }
@@ -146,6 +158,7 @@ export class LexerATNSimulator extends ATNSimulator {
         let s = ds0; // s is current/from DFA state
 
         for (; ;) { // while more work
+            // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
             if (LexerATNSimulator.debug) {
                 console.log("execATN loop starting closure: " + s.configs);
             }
@@ -176,6 +189,7 @@ export class LexerATNSimulator extends ATNSimulator {
                 target = this.computeTargetState(input, s, t);
                 // print("Computed:" + str(target))
             }
+            // @ts-expect-error TS(2339): Property 'ERROR' does not exist on type 'typeof AT... Remove this comment to see the full error message
             if (target === ATNSimulator.ERROR) {
                 break;
             }
@@ -183,11 +197,13 @@ export class LexerATNSimulator extends ATNSimulator {
             // capturing the accept state so the input index, line, and char
             // position accurately reflect the state of the interpreter at the
             // end of the token.
+            // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
             if (t !== Token.EOF) {
                 this.consume(input);
             }
             if (target.isAcceptState) {
                 this.captureSimState(this.prevAccept, input, target);
+                // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
                 if (t === Token.EOF) {
                     break;
                 }
@@ -209,15 +225,18 @@ export class LexerATNSimulator extends ATNSimulator {
      * {@code t}, or {@code null} if the target state for this edge is not
      * already cached
      */
-    getExistingTargetState(s, t) {
+    getExistingTargetState(s: any, t: any) {
+        // @ts-expect-error TS(2339): Property 'MIN_DFA_EDGE' does not exist on type 'ty... Remove this comment to see the full error message
         if (s.edges === null || t < LexerATNSimulator.MIN_DFA_EDGE || t > LexerATNSimulator.MAX_DFA_EDGE) {
             return null;
         }
 
+        // @ts-expect-error TS(2339): Property 'MIN_DFA_EDGE' does not exist on type 'ty... Remove this comment to see the full error message
         let target = s.edges[t - LexerATNSimulator.MIN_DFA_EDGE];
         if (target === undefined) {
             target = null;
         }
+        // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
         if (LexerATNSimulator.debug && target !== null) {
             console.log("reuse state " + s.stateNumber + " edge to " + target.stateNumber);
         }
@@ -236,7 +255,7 @@ export class LexerATNSimulator extends ATNSimulator {
      * {@code t}. If {@code t} does not lead to a valid DFA state, this method
      * returns {@link //ERROR}.
      */
-    computeTargetState(input, s, t) {
+    computeTargetState(input: any, s: any, t: any) {
         const reach = new OrderedATNConfigSet();
         // if we don't find an existing DFA state
         // Fill reach starting from closure, following t transitions
@@ -246,16 +265,18 @@ export class LexerATNSimulator extends ATNSimulator {
             if (!reach.hasSemanticContext) {
                 // we got nowhere on t, don't throw out this knowledge; it'd
                 // cause a failover from DFA later.
+                // @ts-expect-error TS(2554): Expected 4 arguments, but got 3.
                 this.addDFAEdge(s, t, ATNSimulator.ERROR);
             }
             // stop when we can't match any more char
+            // @ts-expect-error TS(2339): Property 'ERROR' does not exist on type 'typeof AT... Remove this comment to see the full error message
             return ATNSimulator.ERROR;
         }
         // Add an edge from s to target DFA found/created for reach
         return this.addDFAEdge(s, t, null, reach);
     }
 
-    failOrAccept(prevAccept, input, reach, t) {
+    failOrAccept(prevAccept: any, input: any, reach: any, t: any) {
         if (this.prevAccept.dfaState !== null) {
             const lexerActionExecutor = prevAccept.dfaState.lexerActionExecutor;
             this.accept(input, lexerActionExecutor, this.startIndex,
@@ -263,7 +284,9 @@ export class LexerATNSimulator extends ATNSimulator {
             return prevAccept.dfaState.prediction;
         } else {
             // if no accept and EOF is first char, return EOF
+            // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
             if (t === Token.EOF && input.index === this.startIndex) {
+                // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
                 return Token.EOF;
             }
             throw new LexerNoViableAltException(this.recog, input, this.startIndex, reach);
@@ -275,9 +298,10 @@ export class LexerATNSimulator extends ATNSimulator {
      * we can reach upon input {@code t}. Parameter {@code reach} is a return
      * parameter.
      */
-    getReachableConfigSet(input, closure, reach, t) {
+    getReachableConfigSet(input: any, closure: any, reach: any, t: any) {
         // this is used to skip processing for configs which have a lower priority
         // than a config that already reached an accept state for the same rule
+        // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
         let skipAlt = ATN.INVALID_ALT_NUMBER;
         for (let i = 0; i < closure.items.length; i++) {
             const cfg = closure.items[i];
@@ -285,6 +309,7 @@ export class LexerATNSimulator extends ATNSimulator {
             if (currentAltReachedAcceptState && cfg.passedThroughNonGreedyDecision) {
                 continue;
             }
+            // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
             if (LexerATNSimulator.debug) {
                 console.log("testing %s at %s\n", this.getTokenName(t), cfg
                     .toString(this.recog, true));
@@ -297,6 +322,7 @@ export class LexerATNSimulator extends ATNSimulator {
                     if (lexerActionExecutor !== null) {
                         lexerActionExecutor = lexerActionExecutor.fixOffsetBeforeMatch(input.index - this.startIndex);
                     }
+                    // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
                     const treatEofAsEpsilon = (t === Token.EOF);
                     const config = new LexerATNConfig({ state: target, lexerActionExecutor: lexerActionExecutor }, cfg);
                     if (this.closure(input, config, reach,
@@ -310,7 +336,8 @@ export class LexerATNSimulator extends ATNSimulator {
         }
     }
 
-    accept(input, lexerActionExecutor, startIndex, index, line, charPos) {
+    accept(input: any, lexerActionExecutor: any, startIndex: any, index: any, line: any, charPos: any) {
+        // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
         if (LexerATNSimulator.debug) {
             console.log("ACTION %s\n", lexerActionExecutor);
         }
@@ -323,7 +350,8 @@ export class LexerATNSimulator extends ATNSimulator {
         }
     }
 
-    getReachableTarget(trans, t) {
+    getReachableTarget(trans: any, t: any) {
+        // @ts-expect-error TS(2339): Property 'MAX_CHAR_VALUE' does not exist on type '... Remove this comment to see the full error message
         if (trans.matches(t, 0, Lexer.MAX_CHAR_VALUE)) {
             return trans.target;
         } else {
@@ -331,7 +359,8 @@ export class LexerATNSimulator extends ATNSimulator {
         }
     }
 
-    computeStartState(input, p) {
+    computeStartState(input: any, p: any) {
+        // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         const initialContext = PredictionContext.EMPTY;
         const configs = new OrderedATNConfigSet();
         for (let i = 0; i < p.transitions.length; i++) {
@@ -352,13 +381,15 @@ export class LexerATNSimulator extends ATNSimulator {
      * @return {Boolean} {@code true} if an accept state is reached, otherwise
      * {@code false}.
      */
-    closure(input, config, configs,
-        currentAltReachedAcceptState, speculative, treatEofAsEpsilon) {
+    closure(input: any, config: any, configs: any,
+        currentAltReachedAcceptState: any, speculative: any, treatEofAsEpsilon: any) {
         let cfg = null;
+        // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
         if (LexerATNSimulator.debug) {
             console.log("closure(" + config.toString(this.recog, true) + ")");
         }
         if (config.state instanceof RuleStopState) {
+            // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
             if (LexerATNSimulator.debug) {
                 if (this.recog !== null) {
                     console.log("closure at %s rule stop %s\n", this.recog.ruleNames[config.state.ruleIndex], config);
@@ -371,12 +402,14 @@ export class LexerATNSimulator extends ATNSimulator {
                     configs.add(config);
                     return true;
                 } else {
+                    // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
                     configs.add(new LexerATNConfig({ state: config.state, context: PredictionContext.EMPTY }, config));
                     currentAltReachedAcceptState = true;
                 }
             }
             if (config.context !== null && !config.context.isEmpty()) {
                 for (let i = 0; i < config.context.length; i++) {
+                    // @ts-expect-error TS(2339): Property 'EMPTY_RETURN_STATE' does not exist on ty... Remove this comment to see the full error message
                     if (config.context.getReturnState(i) !== PredictionContext.EMPTY_RETURN_STATE) {
                         const newContext = config.context.getParent(i); // "pop" return state
                         const returnState = this.atn.states[config.context.getReturnState(i)];
@@ -407,8 +440,8 @@ export class LexerATNSimulator extends ATNSimulator {
     }
 
     // side-effect: can alter configs.hasSemanticContext
-    getEpsilonTarget(input, config, trans,
-        configs, speculative, treatEofAsEpsilon) {
+    getEpsilonTarget(input: any, config: any, trans: any,
+        configs: any, speculative: any, treatEofAsEpsilon: any) {
         let cfg = null;
         if (trans.serializationType === TransitionType.RULE) {
             const newContext = SingletonPredictionContext.create(config.context, trans.followState.stateNumber);
@@ -434,6 +467,7 @@ export class LexerATNSimulator extends ATNSimulator {
             // states reached by traversing predicates. Since this is when we
             // test them, we cannot cash the DFA state target of ID.
 
+            // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
             if (LexerATNSimulator.debug) {
                 console.log("EVAL rule " + trans.ruleIndex + ":" + trans.predIndex);
             }
@@ -468,6 +502,7 @@ export class LexerATNSimulator extends ATNSimulator {
             trans.serializationType === TransitionType.RANGE ||
             trans.serializationType === TransitionType.SET) {
             if (treatEofAsEpsilon) {
+                // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
                 if (trans.matches(Token.EOF, 0, Lexer.MAX_CHAR_VALUE)) {
                     cfg = new LexerATNConfig({ state: trans.target }, config);
                 }
@@ -497,8 +532,8 @@ export class LexerATNSimulator extends ATNSimulator {
      * @return {@code true} if the specified predicate evaluates to
      * {@code true}.
      */
-    evaluatePredicate(input, ruleIndex,
-        predIndex, speculative) {
+    evaluatePredicate(input: any, ruleIndex: any,
+        predIndex: any, speculative: any) {
         // assume true if no recognizer was provided
         if (this.recog === null) {
             return true;
@@ -521,14 +556,14 @@ export class LexerATNSimulator extends ATNSimulator {
         }
     }
 
-    captureSimState(settings, input, dfaState) {
+    captureSimState(settings: any, input: any, dfaState: any) {
         settings.index = input.index;
         settings.line = this.line;
         settings.column = this.column;
         settings.dfaState = dfaState;
     }
 
-    addDFAEdge(from_, tk, to, configs) {
+    addDFAEdge(from_: any, tk: any, to: any, configs: any) {
         if (to === undefined) {
             to = null;
         }
@@ -559,10 +594,12 @@ export class LexerATNSimulator extends ATNSimulator {
             }
         }
         // add the edge
+        // @ts-expect-error TS(2339): Property 'MIN_DFA_EDGE' does not exist on type 'ty... Remove this comment to see the full error message
         if (tk < LexerATNSimulator.MIN_DFA_EDGE || tk > LexerATNSimulator.MAX_DFA_EDGE) {
             // Only track edges within the DFA bounds
             return to;
         }
+        // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
         if (LexerATNSimulator.debug) {
             console.log("EDGE " + from_ + " -> " + to + " upon " + tk);
         }
@@ -570,6 +607,7 @@ export class LexerATNSimulator extends ATNSimulator {
             // make room for tokens 1..n and -1 masquerading as index 0
             from_.edges = [];
         }
+        // @ts-expect-error TS(2339): Property 'MIN_DFA_EDGE' does not exist on type 'ty... Remove this comment to see the full error message
         from_.edges[tk - LexerATNSimulator.MIN_DFA_EDGE] = to; // connect
 
         return to;
@@ -581,7 +619,7 @@ export class LexerATNSimulator extends ATNSimulator {
      * configuration containing an ATN rule stop state. Later, when
      * traversing the DFA, we will know which rule to accept.
      */
-    addDFAState(configs) {
+    addDFAState(configs: any) {
         const proposed = new DFAState(null, configs);
         let firstConfigWithRuleStopState = null;
         for (let i = 0; i < configs.items.length; i++) {
@@ -609,17 +647,17 @@ export class LexerATNSimulator extends ATNSimulator {
         return newState;
     }
 
-    getDFA(mode) {
+    getDFA(mode: any) {
         return this.decisionToDFA[mode];
     }
 
     // Get the text matched so far for the current token.
-    getText(input) {
+    getText(input: any) {
         // index is first lookahead char, don't include.
         return input.getText(this.startIndex, input.index - 1);
     }
 
-    consume(input) {
+    consume(input: any) {
         const curChar = input.LA(1);
         if (curChar === "\n".charCodeAt(0)) {
             this.line += 1;
@@ -630,7 +668,7 @@ export class LexerATNSimulator extends ATNSimulator {
         input.consume();
     }
 
-    getTokenName(tt) {
+    getTokenName(tt: any) {
         if (tt === -1) {
             return "EOF";
         } else {
@@ -639,8 +677,12 @@ export class LexerATNSimulator extends ATNSimulator {
     }
 }
 
+// @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
 LexerATNSimulator.debug = false;
+// @ts-expect-error TS(2339): Property 'dfa_debug' does not exist on type 'typeo... Remove this comment to see the full error message
 LexerATNSimulator.dfa_debug = false;
 
+// @ts-expect-error TS(2339): Property 'MIN_DFA_EDGE' does not exist on type 'ty... Remove this comment to see the full error message
 LexerATNSimulator.MIN_DFA_EDGE = 0;
+// @ts-expect-error TS(2339): Property 'MAX_DFA_EDGE' does not exist on type 'ty... Remove this comment to see the full error message
 LexerATNSimulator.MAX_DFA_EDGE = 127; // forces unicode to stay in ATN

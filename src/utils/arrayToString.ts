@@ -6,6 +6,6 @@
 
 import { valueToString } from "./valueToString.js";
 
-export function arrayToString(a) {
+export function arrayToString(a: any) {
     return Array.isArray(a) ? ("[" + a.map(valueToString).join(", ") + "]") : "null";
 }

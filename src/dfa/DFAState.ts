@@ -34,11 +34,20 @@ import { HashSet } from "../misc/HashSet.js";
  * meaning that state was reached via a different set of rule invocations.</p>
  */
 export class DFAState {
-    constructor(stateNumber, configs) {
+    configs: any;
+    edges: any;
+    isAcceptState: any;
+    lexerActionExecutor: any;
+    predicates: any;
+    prediction: any;
+    requiresFullContext: any;
+    stateNumber: any;
+    constructor(stateNumber: any, configs: any) {
         if (stateNumber === null) {
             stateNumber = -1;
         }
         if (configs === null) {
+            // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
             configs = new ATNConfigSet();
         }
         this.stateNumber = stateNumber;
@@ -88,6 +97,7 @@ export class DFAState {
      * DFA state.
      */
     getAltSet() {
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
         const alts = new HashSet();
         if (this.configs !== null) {
             for (let i = 0; i < this.configs.length; i++) {
@@ -115,7 +125,7 @@ export class DFAState {
      * exists that has this exact set of ATN configurations. The
      * {@link //stateNumber} is irrelevant.</p>
      */
-    equals(other) {
+    equals(other: any) {
         // compare set of ATN configurations in this set with other
         return this === other ||
             (other instanceof DFAState &&
@@ -136,6 +146,7 @@ export class DFAState {
 
     hashCode() {
         const hash = new HashCode();
+        // @ts-expect-error TS(2554): Expected 0 arguments, but got 1.
         hash.update(this.configs);
         return hash.finish();
     }

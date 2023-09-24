@@ -5,7 +5,10 @@
  */
 
 export class ATNDeserializationOptions {
-    constructor(copyFrom) {
+    generateRuleBypassTransitions: any;
+    readOnly: any;
+    verifyATN: any;
+    constructor(copyFrom: any) {
         if (copyFrom === undefined) {
             copyFrom = null;
         }
@@ -15,5 +18,7 @@ export class ATNDeserializationOptions {
     }
 }
 
+// @ts-expect-error TS(2339): Property 'defaultOptions' does not exist on type '... Remove this comment to see the full error message
 ATNDeserializationOptions.defaultOptions = new ATNDeserializationOptions();
+// @ts-expect-error TS(2339): Property 'defaultOptions' does not exist on type '... Remove this comment to see the full error message
 ATNDeserializationOptions.defaultOptions.readOnly = true;

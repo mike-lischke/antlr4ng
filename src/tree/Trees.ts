@@ -17,12 +17,13 @@ export const Trees = {
      *  node payloads to get the text for the nodes.  Detect
      *  parse trees and extract data appropriately.
      */
-    toStringTree: function (tree, ruleNames, recog) {
+    toStringTree: function (tree: any, ruleNames: any, recog: any) {
         ruleNames = ruleNames || null;
         recog = recog || null;
         if (recog !== null) {
             ruleNames = recog.ruleNames;
         }
+        // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
         let s = Trees.getNodeText(tree, ruleNames);
         s = escapeWhitespace(s, false);
         const c = tree.getChildCount();
@@ -31,10 +32,12 @@ export const Trees = {
         }
         let res = "(" + s + ' ';
         if (c > 0) {
+            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             s = Trees.toStringTree(tree.getChild(0), ruleNames);
             res = res.concat(s);
         }
         for (let i = 1; i < c; i++) {
+            // @ts-expect-error TS(2554): Expected 3 arguments, but got 2.
             s = Trees.toStringTree(tree.getChild(i), ruleNames);
             res = res.concat(' ' + s);
         }
@@ -42,7 +45,7 @@ export const Trees = {
         return res;
     },
 
-    getNodeText: function (t, ruleNames, recog) {
+    getNodeText: function (t: any, ruleNames: any, recog: any) {
         ruleNames = ruleNames || null;
         recog = recog || null;
         if (recog !== null) {
@@ -60,7 +63,9 @@ export const Trees = {
             } else if (t instanceof ErrorNode) {
                 return t.toString();
             } else if (t instanceof TerminalNode) {
+                // @ts-expect-error TS(2339): Property 'symbol' does not exist on type 'Terminal... Remove this comment to see the full error message
                 if (t.symbol !== null) {
+                    // @ts-expect-error TS(2339): Property 'symbol' does not exist on type 'Terminal... Remove this comment to see the full error message
                     return t.symbol.text;
                 }
             }
@@ -76,7 +81,7 @@ export const Trees = {
     /**
      * Return ordered list of all children of this node
      */
-    getChildren: function (t) {
+    getChildren: function (t: any) {
         const list = [];
         for (let i = 0; i < t.getChildCount(); i++) {
             list.push(t.getChild(i));
@@ -88,8 +93,8 @@ export const Trees = {
      * Return a list of all ancestors of this node.  The first node of
      * list is the root and the last is the parent of this node.
      */
-    getAncestors: function (t) {
-        let ancestors = [];
+    getAncestors: function (t: any) {
+        let ancestors: any = [];
         t = t.getParent();
         while (t !== null) {
             ancestors = [t].concat(ancestors);
@@ -98,23 +103,24 @@ export const Trees = {
         return ancestors;
     },
 
-    findAllTokenNodes: function (t, ttype) {
+    findAllTokenNodes: function (t: any, ttype: any) {
         return Trees.findAllNodes(t, ttype, true);
     },
 
-    findAllRuleNodes: function (t, ruleIndex) {
+    findAllRuleNodes: function (t: any, ruleIndex: any) {
         return Trees.findAllNodes(t, ruleIndex, false);
     },
 
-    findAllNodes: function (t, index, findTokens) {
-        const nodes = [];
+    findAllNodes: function (t: any, index: any, findTokens: any) {
+        const nodes: any = [];
         Trees._findAllNodes(t, index, findTokens, nodes);
         return nodes;
     },
 
-    _findAllNodes: function (t, index, findTokens, nodes) {
+    _findAllNodes: function (t: any, index: any, findTokens: any, nodes: any) {
         // check this node (the root) first
         if (findTokens && (t instanceof TerminalNode)) {
+            // @ts-expect-error TS(2339): Property 'symbol' does not exist on type 'Terminal... Remove this comment to see the full error message
             if (t.symbol.type === index) {
                 nodes.push(t);
             }
@@ -129,7 +135,7 @@ export const Trees = {
         }
     },
 
-    descendants: function (t) {
+    descendants: function (t: any) {
         let nodes = [t];
         for (let i = 0; i < t.getChildCount(); i++) {
             nodes = nodes.concat(Trees.descendants(t.getChild(i)));

@@ -12,11 +12,11 @@ import { HashSet } from "../misc/HashSet.js";
 import { equalArrays } from "../utils/equalArrays.js";
 import { HashCode } from "../misc/HashCode.js";
 
-function hashATNConfig(c) {
+function hashATNConfig(c: any) {
     return c.hashCodeForConfigSet();
 }
 
-function equalATNConfigs(a, b) {
+function equalATNConfigs(a: any, b: any) {
     if (a === b) {
         return true;
     } else if (a === null || b === null) {
@@ -31,7 +31,16 @@ function equalATNConfigs(a, b) {
  * graph-structured stack
  */
 export class ATNConfigSet {
-    constructor(fullCtx) {
+    cachedHashCode: any;
+    configLookup: any;
+    configs: any;
+    conflictingAlts: any;
+    dipsIntoOuterContext: any;
+    fullCtx: any;
+    hasSemanticContext: any;
+    readOnly: any;
+    uniqueAlt: any;
+    constructor(fullCtx: any) {
         /**
          * The reason that we need this is because we don't want the hash map to use
          * the standard hash code and equals. We need all configurations with the
@@ -89,13 +98,14 @@ export class ATNConfigSet {
      * <p>This method updates {@link //dipsIntoOuterContext} and
      * {@link //hasSemanticContext} when necessary.</p>
      */
-    add(config, mergeCache) {
+    add(config: any, mergeCache: any) {
         if (mergeCache === undefined) {
             mergeCache = null;
         }
         if (this.readOnly) {
             throw "This set is readonly";
         }
+        // @ts-expect-error TS(2339): Property 'NONE' does not exist on type 'typeof Sem... Remove this comment to see the full error message
         if (config.semanticContext !== SemanticContext.NONE) {
             this.hasSemanticContext = true;
         }
@@ -126,6 +136,7 @@ export class ATNConfigSet {
     }
 
     getStates() {
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
         const states = new HashSet();
         for (let i = 0; i < this.configs.length; i++) {
             states.add(this.configs[i].state);
@@ -137,6 +148,7 @@ export class ATNConfigSet {
         const preds = [];
         for (let i = 0; i < this.configs.length; i++) {
             const c = this.configs[i].semanticContext;
+            // @ts-expect-error TS(2339): Property 'NONE' does not exist on type 'typeof Sem... Remove this comment to see the full error message
             if (c !== SemanticContext.NONE) {
                 preds.push(c.semanticContext);
             }
@@ -144,7 +156,7 @@ export class ATNConfigSet {
         return preds;
     }
 
-    optimizeConfigs(interpreter) {
+    optimizeConfigs(interpreter: any) {
         if (this.readOnly) {
             throw "This set is readonly";
         }
@@ -157,14 +169,15 @@ export class ATNConfigSet {
         }
     }
 
-    addAll(coll) {
+    addAll(coll: any) {
         for (let i = 0; i < coll.length; i++) {
+            // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
             this.add(coll[i]);
         }
         return false;
     }
 
-    equals(other) {
+    equals(other: any) {
         return this === other ||
             (other instanceof ATNConfigSet &&
                 equalArrays(this.configs, other.configs) &&
@@ -177,11 +190,12 @@ export class ATNConfigSet {
 
     hashCode() {
         const hash = new HashCode();
+        // @ts-expect-error TS(2554): Expected 0 arguments, but got 1.
         hash.update(this.configs);
         return hash.finish();
     }
 
-    updateHashCode(hash) {
+    updateHashCode(hash: any) {
         if (this.readOnly) {
             if (this.cachedHashCode === -1) {
                 this.cachedHashCode = this.hashCode();
@@ -196,14 +210,14 @@ export class ATNConfigSet {
         return this.configs.length === 0;
     }
 
-    contains(item) {
+    contains(item: any) {
         if (this.configLookup === null) {
             throw "This method is not implemented for readonly sets.";
         }
         return this.configLookup.contains(item);
     }
 
-    containsFast(item) {
+    containsFast(item: any) {
         if (this.configLookup === null) {
             throw "This method is not implemented for readonly sets.";
         }
@@ -216,10 +230,11 @@ export class ATNConfigSet {
         }
         this.configs = [];
         this.cachedHashCode = -1;
+        // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
         this.configLookup = new HashSet();
     }
 
-    setReadonly(readOnly) {
+    setReadonly(readOnly: any) {
         this.readOnly = readOnly;
         if (readOnly) {
             this.configLookup = null; // can't mod, no need for lookup cache
@@ -229,6 +244,7 @@ export class ATNConfigSet {
     toString() {
         return arrayToString(this.configs) +
             (this.hasSemanticContext ? ",hasSemanticContext=" + this.hasSemanticContext : "") +
+            // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
             (this.uniqueAlt !== ATN.INVALID_ALT_NUMBER ? ",uniqueAlt=" + this.uniqueAlt : "") +
             (this.conflictingAlts !== null ? ",conflictingAlts=" + this.conflictingAlts : "") +
             (this.dipsIntoOuterContext ? ",dipsIntoOuterContext" : "");

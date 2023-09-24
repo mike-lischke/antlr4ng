@@ -6,7 +6,7 @@
 
 export const StringSeedHashCode = Math.round(Math.random() * Math.pow(2, 32));
 
-export function stringHashCode(value) {
+export function stringHashCode(value: any) {
     if (!value) {
         return 0;
     }

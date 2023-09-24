@@ -35,8 +35,14 @@ import { Interval } from "./misc/Interval.js";
  *  satisfy the superclass interface.
  */
 export class ParserRuleContext extends RuleContext {
+    _parent: any;
+    children: any;
+    exception: any;
+    invokingState: any;
+    start: any;
+    stop: any;
 
-    constructor(parent, invokingStateNumber) {
+    constructor(parent: any, invokingStateNumber: any) {
         super(parent, invokingStateNumber);
         /**
          * If we are debugging or building a parse tree for a visitor,
@@ -56,7 +62,7 @@ export class ParserRuleContext extends RuleContext {
     }
 
     // COPY a ctx (I'm deliberately not using copy constructor)
-    copyFrom(ctx) {
+    copyFrom(ctx: any) {
         // from RuleContext
         this._parent = ctx._parent;
         this.invokingState = ctx.invokingState;
@@ -67,7 +73,7 @@ export class ParserRuleContext extends RuleContext {
         if (ctx.children) {
             this.children = [];
             // reset parent pointer for any error nodes
-            ctx.children.map(function (child) {
+            ctx.children.map(function(this: any, child: any) {
                 if (child instanceof ErrorNodeImpl) {
                     this.children.push(child);
                     child.parent = this;
@@ -77,14 +83,14 @@ export class ParserRuleContext extends RuleContext {
     }
 
     // Double dispatch methods for listeners
-    enterRule(listener) {
+    enterRule(listener: any) {
     }
 
-    exitRule(listener) {
+    exitRule(listener: any) {
     }
 
     // Does not set parent link; other add methods do that
-    addChild(child) {
+    addChild(child: any) {
         if (this.children === null) {
             this.children = [];
         }
@@ -102,21 +108,22 @@ export class ParserRuleContext extends RuleContext {
         }
     }
 
-    addTokenNode(token) {
+    addTokenNode(token: any) {
         const node = new TerminalNodeImpl(token);
         this.addChild(node);
         node.parent = this;
         return node;
     }
 
-    addErrorNode(badToken) {
+    addErrorNode(badToken: any) {
         const node = new ErrorNodeImpl(badToken);
         this.addChild(node);
         node.parent = this;
         return node;
     }
 
-    getChild(i, type) {
+    // @ts-expect-error TS(2416): Property 'getChild' in type 'ParserRuleContext' is... Remove this comment to see the full error message
+    getChild(i: any, type: any) {
         type = type ?? null;
         if (this.children === null || i < 0 || i >= this.children.length) {
             return null;
@@ -138,13 +145,14 @@ export class ParserRuleContext extends RuleContext {
         }
     }
 
-    getToken(ttype, i) {
+    getToken(ttype: any, i: any) {
         if (this.children === null || i < 0 || i >= this.children.length) {
             return null;
         }
         for (let j = 0; j < this.children.length; j++) {
             const child = this.children[j];
             if (child instanceof TerminalNode) {
+                // @ts-expect-error TS(2339): Property 'symbol' does not exist on type 'Terminal... Remove this comment to see the full error message
                 if (child.symbol.type === ttype) {
                     if (i === 0) {
                         return child;
@@ -157,7 +165,7 @@ export class ParserRuleContext extends RuleContext {
         return null;
     }
 
-    getTokens(ttype) {
+    getTokens(ttype: any) {
         if (this.children === null) {
             return [];
         } else {
@@ -165,6 +173,7 @@ export class ParserRuleContext extends RuleContext {
             for (let j = 0; j < this.children.length; j++) {
                 const child = this.children[j];
                 if (child instanceof TerminalNode) {
+                    // @ts-expect-error TS(2339): Property 'symbol' does not exist on type 'Terminal... Remove this comment to see the full error message
                     if (child.symbol.type === ttype) {
                         tokens.push(child);
                     }
@@ -174,11 +183,11 @@ export class ParserRuleContext extends RuleContext {
         }
     }
 
-    getRuleContext(i, ctxType) {
+    getRuleContext(i: any, ctxType: any) {
         return this.getChild(i, ctxType);
     }
 
-    getRuleContexts(ctxType) {
+    getRuleContexts(ctxType: any) {
         if (this.children === null) {
             return [];
         } else {
@@ -203,6 +212,7 @@ export class ParserRuleContext extends RuleContext {
 
     getSourceInterval() {
         if (this.start === null || this.stop === null) {
+            // @ts-expect-error TS(2339): Property 'INVALID_INTERVAL' does not exist on type... Remove this comment to see the full error message
             return Interval.INVALID_INTERVAL;
         } else {
             return new Interval(this.start.tokenIndex, this.stop.tokenIndex);
@@ -210,4 +220,5 @@ export class ParserRuleContext extends RuleContext {
     }
 }
 
+// @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Ru... Remove this comment to see the full error message
 RuleContext.EMPTY = new ParserRuleContext();

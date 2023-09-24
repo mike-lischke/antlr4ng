@@ -8,7 +8,9 @@ import { DecisionState } from "./DecisionState.js";
 import { ATNConfig } from "./ATNConfig.js";
 
 export class LexerATNConfig extends ATNConfig {
-    constructor(params, config) {
+    lexerActionExecutor: any;
+    passedThroughNonGreedyDecision: any;
+    constructor(params: any, config: any) {
         super(params, config);
 
         // This is the backing field for {@link //getLexerActionExecutor}.
@@ -20,11 +22,11 @@ export class LexerATNConfig extends ATNConfig {
         return this;
     }
 
-    updateHashCode(hash) {
+    updateHashCode(hash: any) {
         hash.update(this.state.stateNumber, this.alt, this.context, this.semanticContext, this.passedThroughNonGreedyDecision, this.lexerActionExecutor);
     }
 
-    equals(other) {
+    equals(other: any) {
         return this === other ||
             (other instanceof LexerATNConfig &&
                 this.passedThroughNonGreedyDecision === other.passedThroughNonGreedyDecision &&
@@ -32,7 +34,7 @@ export class LexerATNConfig extends ATNConfig {
                 super.equals(other));
     }
 
-    checkNonGreedyDecision(source, target) {
+    checkNonGreedyDecision(source: any, target: any) {
         return source.passedThroughNonGreedyDecision ||
             (target instanceof DecisionState) && target.nonGreedy;
     }

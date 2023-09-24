@@ -28,14 +28,15 @@ import { BitSet } from "./misc/BitSet.js";
  *  </ul>
  */
 export class DiagnosticErrorListener extends BaseErrorListener {
-    constructor(exactOnly) {
+    exactOnly: any;
+    constructor(exactOnly: any) {
         super();
         exactOnly = exactOnly || true;
         // whether all ambiguities or only exact ambiguities are reported.
         this.exactOnly = exactOnly;
     }
 
-    reportAmbiguity(recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs) {
+    reportAmbiguity(recognizer: any, dfa: any, startIndex: any, stopIndex: any, exact: any, ambigAlts: any, configs: any) {
         if (this.exactOnly && !exact) {
             return;
         }
@@ -48,7 +49,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
         recognizer.notifyErrorListeners(msg);
     }
 
-    reportAttemptingFullContext(recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs) {
+    reportAttemptingFullContext(recognizer: any, dfa: any, startIndex: any, stopIndex: any, conflictingAlts: any, configs: any) {
         const msg = "reportAttemptingFullContext d=" +
             this.getDecisionDescription(recognizer, dfa) +
             ", input='" +
@@ -56,7 +57,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
         recognizer.notifyErrorListeners(msg);
     }
 
-    reportContextSensitivity(recognizer, dfa, startIndex, stopIndex, prediction, configs) {
+    reportContextSensitivity(recognizer: any, dfa: any, startIndex: any, stopIndex: any, prediction: any, configs: any) {
         const msg = "reportContextSensitivity d=" +
             this.getDecisionDescription(recognizer, dfa) +
             ", input='" +
@@ -64,7 +65,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
         recognizer.notifyErrorListeners(msg);
     }
 
-    getDecisionDescription(recognizer, dfa) {
+    getDecisionDescription(recognizer: any, dfa: any) {
         const decision = dfa.decision;
         const ruleIndex = dfa.atnStartState.ruleIndex;
 
@@ -90,12 +91,13 @@ export class DiagnosticErrorListener extends BaseErrorListener {
      * @return Returns {@code reportedAlts} if it is not {@code null}, otherwise
      * returns the set of alternatives represented in {@code configs}.
      */
-    getConflictingAlts(reportedAlts, configs) {
+    getConflictingAlts(reportedAlts: any, configs: any) {
         if (reportedAlts !== null) {
             return reportedAlts;
         }
         const result = new BitSet();
         for (let i = 0; i < configs.items.length; i++) {
+            // @ts-expect-error TS(2339): Property 'add' does not exist on type 'BitSet'.
             result.add(configs.items[i].alt);
         }
         return `{${result.values().join(", ")}}`;

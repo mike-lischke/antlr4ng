@@ -7,6 +7,8 @@
 import { stringHashCode } from "../utils/stringHashCode.js";
 
 export class HashCode {
+    count: any;
+    hash: any;
 
     constructor() {
         this.count = 0;
@@ -19,6 +21,7 @@ export class HashCode {
             if (value == null)
                 continue;
             if (Array.isArray(value))
+                // @ts-expect-error TS(2345): Argument of type 'any[]' is not assignable to para... Remove this comment to see the full error message
                 this.update.apply(this, value);
             else {
                 let k = 0;
@@ -28,6 +31,7 @@ export class HashCode {
                         continue;
                     case 'number':
                     case 'boolean':
+                        // @ts-expect-error TS(2322): Type 'number | boolean' is not assignable to type ... Remove this comment to see the full error message
                         k = value;
                         break;
                     case 'string':
@@ -64,6 +68,7 @@ export class HashCode {
 
     static hashStuff() {
         const hash = new HashCode();
+        // @ts-expect-error TS(2345): Argument of type 'IArguments' is not assignable to... Remove this comment to see the full error message
         hash.update.apply(hash, arguments);
         return hash.finish();
     }

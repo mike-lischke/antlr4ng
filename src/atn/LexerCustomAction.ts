@@ -18,6 +18,8 @@ import { LexerAction } from "./LexerAction.js";
  * command argument could not be evaluated when the grammar was compiled.</p>
  */
 export class LexerCustomAction extends LexerAction {
+    actionIndex: any;
+    ruleIndex: any;
     /**
      * Constructs a custom lexer action with the specified rule and action
      * indexes.
@@ -27,7 +29,7 @@ export class LexerCustomAction extends LexerAction {
      * @param actionIndex The action index to use for calls to
      * {@link Recognizer//action}.
      */
-    constructor(ruleIndex, actionIndex) {
+    constructor(ruleIndex: any, actionIndex: any) {
         super(LexerActionType.CUSTOM);
         this.ruleIndex = ruleIndex;
         this.actionIndex = actionIndex;
@@ -38,15 +40,15 @@ export class LexerCustomAction extends LexerAction {
      * <p>Custom actions are implemented by calling {@link Lexer//action} with the
      * appropriate rule and action indexes.</p>
      */
-    execute(lexer) {
+    execute(lexer: any) {
         lexer.action(null, this.ruleIndex, this.actionIndex);
     }
 
-    updateHashCode(hash) {
+    updateHashCode(hash: any) {
         hash.update(this.actionType, this.ruleIndex, this.actionIndex);
     }
 
-    equals(other) {
+    equals(other: any) {
         if (this === other) {
             return true;
         } else if (!(other instanceof LexerCustomAction)) {
