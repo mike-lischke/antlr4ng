@@ -60,6 +60,6 @@ export declare class Interval {
      */
     public differenceNotProperlyContained(other: Interval): Interval;
 
-    public length(): number;
+    public get length(): number;
     public toString(): string;
 }
