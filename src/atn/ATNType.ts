@@ -7,7 +7,10 @@
 /**
  * Represents the type of recognizer an ATN applies to
  */
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const ATNType = {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     LEXER: 0,
+    // eslint-disable-next-line @typescript-eslint/naming-convention, comma-dangle
     PARSER: 1
 };

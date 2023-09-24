@@ -1,28 +1,35 @@
-/* eslint-disable jsdoc/require-jsdoc, jsdoc/no-undefined-types, jsdoc/require-param, jsdoc/require-returns */
+/* eslint-disable jsdoc/require-jsdoc, jsdoc/no-undefined-types, jsdoc/require-param, jsdoc/require-returns, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATN } from './ATN.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { SemanticContext } from './SemanticContext.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { merge } from './PredictionContextUtils.js';
 import { arrayToString } from "../utils/arrayToString.js";
 import { HashSet } from "../misc/HashSet.js";
 import { equalArrays } from "../utils/equalArrays.js";
 import { HashCode } from "../misc/HashCode.js";
 
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
 function hashATNConfig(c: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
     return c.hashCodeForConfigSet();
 }
 
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
 function equalATNConfigs(a: any, b: any) {
     if (a === b) {
         return true;
     } else if (a === null || b === null) {
         return false;
     } else
+        // eslint-disable-next-line curly, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
         return a.equalsForConfigSet(b);
 }
 
@@ -32,15 +39,25 @@ function equalATNConfigs(a: any, b: any) {
  * graph-structured stack
  */
 export class ATNConfigSet {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     cachedHashCode: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     configLookup: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     configs: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     conflictingAlts: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     dipsIntoOuterContext: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     fullCtx: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     hasSemanticContext: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     readOnly: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     uniqueAlt: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(fullCtx: any) {
         /**
          * The reason that we need this is because we don't want the hash map to use
@@ -99,11 +116,13 @@ export class ATNConfigSet {
      * <p>This method updates {@link //dipsIntoOuterContext} and
      * {@link //hasSemanticContext} when necessary.</p>
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     add(config: any, mergeCache: any) {
         if (mergeCache === undefined) {
             mergeCache = null;
         }
         if (this.readOnly) {
+            // eslint-disable-next-line no-throw-literal
             throw "This set is readonly";
         }
         // @ts-expect-error TS(2339): Property 'NONE' does not exist on type 'typeof Sem... Remove this comment to see the full error message
@@ -113,10 +132,13 @@ export class ATNConfigSet {
         if (config.reachesIntoOuterContext > 0) {
             this.dipsIntoOuterContext = true;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const existing = this.configLookup.add(config);
         if (existing === config) {
             this.cachedHashCode = -1;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.configs.push(config); // track order here
+            // eslint-disable-next-line padding-line-between-statements
             return true;
         }
         // a previous (s,i,pi,_), merge with it and save result
@@ -127,26 +149,33 @@ export class ATNConfigSet {
          * since only way to create new graphs is "call rule" and here. We
          * cache at both places
          */
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         existing.reachesIntoOuterContext = Math.max(existing.reachesIntoOuterContext, config.reachesIntoOuterContext);
         // make sure to preserve the precedence filter suppression during the merge
         if (config.precedenceFilterSuppressed) {
             existing.precedenceFilterSuppressed = true;
         }
         existing.context = merged; // replace context; no need to alt mapping
+        // eslint-disable-next-line padding-line-between-statements
         return true;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     getStates() {
         // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
         const states = new HashSet();
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < this.configs.length; i++) {
             states.add(this.configs[i].state);
         }
+        // eslint-disable-next-line padding-line-between-statements
         return states;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     getPredicates() {
         const preds = [];
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < this.configs.length; i++) {
             const c = this.configs[i].semanticContext;
             // @ts-expect-error TS(2339): Property 'NONE' does not exist on type 'typeof Sem... Remove this comment to see the full error message
@@ -154,30 +183,39 @@ export class ATNConfigSet {
                 preds.push(c.semanticContext);
             }
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return preds;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     optimizeConfigs(interpreter: any) {
         if (this.readOnly) {
+            // eslint-disable-next-line no-throw-literal
             throw "This set is readonly";
         }
         if (this.configLookup.length === 0) {
             return;
         }
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < this.configs.length; i++) {
             const config = this.configs[i];
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             config.context = interpreter.getCachedContext(config.context);
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     addAll(coll: any) {
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < coll.length; i++) {
             // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
             this.add(coll[i]);
         }
+        // eslint-disable-next-line padding-line-between-statements
         return false;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     equals(other: any) {
         return this === other ||
             (other instanceof ATNConfigSet &&
@@ -189,44 +227,58 @@ export class ATNConfigSet {
                 this.dipsIntoOuterContext === other.dipsIntoOuterContext);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     hashCode() {
         const hash = new HashCode();
         // @ts-expect-error TS(2554): Expected 0 arguments, but got 1.
         hash.update(this.configs);
+        // eslint-disable-next-line padding-line-between-statements
         return hash.finish();
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     updateHashCode(hash: any) {
         if (this.readOnly) {
             if (this.cachedHashCode === -1) {
                 this.cachedHashCode = this.hashCode();
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             hash.update(this.cachedHashCode);
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             hash.update(this.hashCode());
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     isEmpty() {
         return this.configs.length === 0;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     contains(item: any) {
         if (this.configLookup === null) {
+            // eslint-disable-next-line no-throw-literal
             throw "This method is not implemented for readonly sets.";
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
         return this.configLookup.contains(item);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     containsFast(item: any) {
         if (this.configLookup === null) {
+            // eslint-disable-next-line no-throw-literal
             throw "This method is not implemented for readonly sets.";
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
         return this.configLookup.containsFast(item);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     clear() {
         if (this.readOnly) {
+            // eslint-disable-next-line no-throw-literal
             throw "This set is readonly";
         }
         this.configs = [];
@@ -235,6 +287,7 @@ export class ATNConfigSet {
         this.configLookup = new HashSet();
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     setReadonly(readOnly: any) {
         this.readOnly = readOnly;
         if (readOnly) {
@@ -242,6 +295,7 @@ export class ATNConfigSet {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     toString() {
         return arrayToString(this.configs) +
             (this.hasSemanticContext ? ",hasSemanticContext=" + this.hasSemanticContext : "") +
@@ -251,11 +305,15 @@ export class ATNConfigSet {
             (this.dipsIntoOuterContext ? ",dipsIntoOuterContext" : "");
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get items() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.configs;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get length() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.configs.length;
     }
 }

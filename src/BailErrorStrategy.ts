@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/no-undefined-types, jsdoc/no-multi-asterisks, jsdoc/require-param */
+/* eslint-disable jsdoc/no-undefined-types, jsdoc/no-multi-asterisks, jsdoc/require-param, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -39,6 +39,7 @@ import { DefaultErrorStrategy } from "./DefaultErrorStrategy.js";
  * */
 export class BailErrorStrategy extends DefaultErrorStrategy {
 
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
     constructor() {
         super();
     }
@@ -49,7 +50,9 @@ export class BailErrorStrategy extends DefaultErrorStrategy {
      * rule function catches. Use {@link Exception//getCause()} to get the
      * original {@link RecognitionException}.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     recover(recognizer: any, e: any) {
+        // eslint-disable-next-line no-underscore-dangle
         let context = recognizer._ctx;
         while (context !== null) {
             context.exception = e;
@@ -63,11 +66,13 @@ export class BailErrorStrategy extends DefaultErrorStrategy {
      * Make sure we don't attempt to recover inline; if the parser
      * successfully recovers, it won't throw an exception.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     recoverInline(recognizer: any) {
         this.recover(recognizer, new InputMismatchException(recognizer));
     }
 
     // Make sure we don't attempt to recover from problems in subrules.//
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
     sync(recognizer: any) {
         // pass
     }

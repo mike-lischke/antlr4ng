@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -20,15 +21,18 @@ import { BaseErrorListener } from "./BaseErrorListener.js";
  *
  */
 export class ConsoleErrorListener extends BaseErrorListener {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
     constructor() {
         super();
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     syntaxError(recognizer: any, offendingSymbol: any, line: any, column: any, msg: any, e: any) {
         console.error("line " + line + ":" + column + " " + msg);
     }
 }
 
+// eslint-disable-next-line no-multiple-empty-lines
 
 /**
  * Provides a default instance of {@link ConsoleErrorListener}.

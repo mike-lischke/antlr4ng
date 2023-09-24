@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -10,16 +11,26 @@
  * we obtained this token.
  */
 export class Token {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     _text: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     channel: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     column: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     line: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     source: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     start: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     stop: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     tokenIndex: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     type: any;
 
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
     constructor() {
         this.source = null;
         this.type = null; // token type of the token
@@ -29,22 +40,31 @@ export class Token {
         this.tokenIndex = null; // from 0..n-1 of the token object in the input stream
         this.line = null; // line=1..n of the 1st character
         this.column = null; // beginning of the line at which it occurs, 0..n-1
+        // eslint-disable-next-line no-underscore-dangle
         this._text = null; // text of the token.
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     getTokenSource() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.source[0];
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     getInputStream() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.source[1];
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get text() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, no-underscore-dangle
         return this._text;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types
     set text(text) {
+        // eslint-disable-next-line no-underscore-dangle
         this._text = text;
     }
 }

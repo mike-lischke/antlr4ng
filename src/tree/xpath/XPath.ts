@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/require-param, jsdoc/require-returns, jsdoc/no-undefined-types */
+/* eslint-disable jsdoc/require-param, jsdoc/require-returns, jsdoc/no-undefined-types, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -57,13 +57,19 @@ import { LexerNoViableAltException } from "../../LexerNoViableAltException.js";
  * Whitespace is not allowed.
  */
 export class XPath {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention
     static WILDCARD = "*"; // word not operator/separator
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention
     static NOT = "!"; 	   // word for invert operator
 
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     elements: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     parser: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     path: any;
 
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(parser: any, path: any) {
         this.parser = parser;
         this.path = path;
@@ -73,25 +79,32 @@ export class XPath {
 
     // TODO: check for invalid token/rule names, bad syntax
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     split(path: any) {
+        // eslint-disable-next-line prefer-const
         let lexer = new (class extends XPathLexer {
+            // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
             constructor(stream: any) {
                 super(stream);
             }
 
+            // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
             recover(e: any) { throw e; }
         })(CharStreams.fromString(path));
 
         lexer.removeErrorListeners();
         lexer.addErrorListener(new XPathLexerErrorListener());
         // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
+        // eslint-disable-next-line prefer-const
         let tokenStream = new CommonTokenStream(lexer);
         try {
             tokenStream.fill();
         }
         catch (e) {
             if (e instanceof LexerNoViableAltException) {
+                // eslint-disable-next-line prefer-const
                 let pos = lexer.column;
+                // eslint-disable-next-line prefer-const
                 let msg = "Invalid tokens or characters at index " + pos + " in path '" + path + "' -- " + e.message;
                 throw new RangeError(msg);
             }
@@ -99,14 +112,18 @@ export class XPath {
         }
 
         // @ts-expect-error TS(2554): Expected 3 arguments, but got 0.
+        // eslint-disable-next-line prefer-const
         let tokens = tokenStream.getTokens();
         // console.log("path=" + path + "=>" + tokens);
+        // eslint-disable-next-line prefer-const
         let elements = [];
+        // eslint-disable-next-line prefer-const
         let n = tokens.length;
         let i = 0;
 
         loop:
         while (i < n) {
+            // eslint-disable-next-line prefer-const
             let el = tokens[i];
             let next;
             switch (el.type) {
@@ -120,6 +137,7 @@ export class XPath {
                         i++;
                         next = tokens[i];
                     }
+                    // eslint-disable-next-line prefer-const
                     let pathElement = this.getXPathElement(next, anywhere);
                     pathElement.invert = invert;
                     elements.push(pathElement);
@@ -145,6 +163,7 @@ export class XPath {
                 }
             }
         }
+        // eslint-disable-next-line padding-line-between-statements
         return elements;
     }
 
@@ -153,18 +172,22 @@ export class XPath {
      * element. `anywhere` is `true` if `//` precedes the
      * word.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getXPathElement(wordToken: any, anywhere: any) {
         // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         if (wordToken.type === Token.EOF) {
             throw new Error("Missing path element at end of path");
         }
 
+        // eslint-disable-next-line prefer-const
         let word = wordToken.text;
         if (word == null) {
             throw new Error("Expected wordToken to have text content.");
         }
 
+        // eslint-disable-next-line prefer-const, @typescript-eslint/no-unsafe-call
         let ttype = this.parser.getTokenType(word);
+        // eslint-disable-next-line prefer-const, @typescript-eslint/no-unsafe-call
         let ruleIndex = this.parser.getRuleIndex(word);
         switch (wordToken.type) {
             case XPathLexer.WILDCARD:
@@ -179,6 +202,7 @@ export class XPath {
                         wordToken.start +
                         " isn't a valid token name");
                 }
+                // eslint-disable-next-line padding-line-between-statements
                 return anywhere ?
                     new XPathTokenAnywhereElement(word, ttype) :
                     new XPathTokenElement(word, ttype);
@@ -188,14 +212,18 @@ export class XPath {
                         wordToken.start +
                         " isn't a valid rule name");
                 }
+                // eslint-disable-next-line padding-line-between-statements
                 return anywhere ?
                     new XPathRuleAnywhereElement(word, ruleIndex) :
                     new XPathRuleElement(word, ruleIndex);
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/member-ordering, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     static findAll(tree: any, xpath: any, parser: any) {
+        // eslint-disable-next-line prefer-const
         let p = new XPath(parser, xpath);
+        // eslint-disable-next-line padding-line-between-statements
         return p.evaluate(tree);
     }
 
@@ -203,8 +231,10 @@ export class XPath {
      * Return a list of all nodes starting at `t` as root that satisfy the
      * path. The root `/` is relative to the node passed to {@link evaluate}.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     evaluate(t: any) {
         // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
+        // eslint-disable-next-line prefer-const
         let dummyRoot = new ParserRuleContext();
         dummyRoot.addChild(t);
 
@@ -212,13 +242,17 @@ export class XPath {
 
         let i = 0;
         while (i < this.elements.length) {
+            // eslint-disable-next-line prefer-const
             let next = new Set();
+            // eslint-disable-next-line prefer-const
             for (let node of work) {
                 if (node.getChildCount() > 0) {
                     // only try to match next element if it has children
                     // e.g., //func/*/stat might have a token node for which
                     // we can't go looking for stat nodes.
+                    // eslint-disable-next-line prefer-const, @typescript-eslint/no-unsafe-call
                     let matching = this.elements[i].evaluate(node);
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/unbound-method
                     matching.forEach(next.add, next);
                 }
             }

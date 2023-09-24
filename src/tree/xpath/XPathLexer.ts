@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 // Generated from XPathLexer.g4 by ANTLR 4.13.0
 
 import { Lexer } from "../../Lexer.js";
@@ -9,59 +10,84 @@ import { PredictionContextCache } from "../../atn/PredictionContextCache.js";
 import { DFA } from "../../dfa/DFA.js";
 
 export class XPathLexer extends Lexer {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention
     static TOKEN_REF = 1;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention
     static RULE_REF = 2;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention
     static ANYWHERE = 3;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention
     static ROOT = 4;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention
     static WILDCARD = 5;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention
     static BANG = 6;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention
     static ID = 7;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention
     static STRING = 8;
     // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention
     static EOF = Token.EOF;
 
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
     static channelNames = [
         "DEFAULT_TOKEN_CHANNEL", "HIDDEN",
     ];
 
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
     static literalNames = [
         null, null, null, "'//'", "'/'", "'*'", "'!'",
     ];
 
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
     static symbolicNames = [
         null, "TOKEN_REF", "RULE_REF", "ANYWHERE", "ROOT", "WILDCARD", "BANG",
         "ID", "STRING",
     ];
 
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
     static modeNames = [
         "DEFAULT_MODE",
     ];
 
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
     static ruleNames = [
         "ANYWHERE", "ROOT", "WILDCARD", "BANG", "ID", "NameChar", "NameStartChar",
         "STRING",
     ];
 
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(input: any) {
         super(input);
+        // eslint-disable-next-line no-underscore-dangle
         this.interpreter = new LexerATNSimulator(this, XPathLexer._ATN, XPathLexer.decisionsToDFA, new PredictionContextCache());
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get grammarFileName() { return "XPathLexer.g4"; }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get literalNames() { return XPathLexer.literalNames; }
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get symbolicNames() { return XPathLexer.symbolicNames; }
     // @ts-expect-error TS(2611): 'ruleNames' is defined as a property in class 'Lex... Remove this comment to see the full error message
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get ruleNames() { return XPathLexer.ruleNames; }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, no-underscore-dangle
     get serializedATN() { return XPathLexer._serializedATN; }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get channelNames() { return XPathLexer.channelNames; }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get modeNames() { return XPathLexer.modeNames; }
 
     // @Override
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     action(localctx: any, ruleIndex: any, actionIndex: any) {
+        // eslint-disable-next-line default-case
         switch (ruleIndex) {
             case 4:
                 this.ID_action(localctx, actionIndex);
@@ -69,13 +95,19 @@ export class XPathLexer extends Lexer {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any
     ID_action(localctx: any, actionIndex: any) {
+        // eslint-disable-next-line default-case
         switch (actionIndex) {
             case 0: {
+                // eslint-disable-next-line prefer-const
                 let text = this.text;
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 if (text.charAt(0) === text.charAt(0).toUpperCase()) {
+                    // eslint-disable-next-line no-underscore-dangle
                     this._type = XPathLexer.TOKEN_REF;
                 } else {
+                    // eslint-disable-next-line no-underscore-dangle
                     this._type = XPathLexer.RULE_REF;
                 }
 
@@ -84,6 +116,7 @@ export class XPathLexer extends Lexer {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/member-ordering, @typescript-eslint/explicit-member-accessibility
     static _serializedATN = [
         4, 0, 8, 48, 6, -1, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7, 4, 2, 5, 7, 5, 2,
         6, 7, 6, 2, 7, 7, 7, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 2, 1, 2, 1, 3, 1, 3, 1, 4, 1, 4, 5, 4, 29,
@@ -351,22 +384,30 @@ export class XPathLexer extends Lexer {
         16, 1, 0, 0, 0, 3, 0, 30, 43, 1, 1, 4, 0,
     ];
 
+    // eslint-disable-next-line @typescript-eslint/member-ordering, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     static __ATN: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     static get _ATN() {
+        // eslint-disable-next-line no-underscore-dangle
         if (!XPathLexer.__ATN) {
             // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
+            // eslint-disable-next-line no-underscore-dangle
             XPathLexer.__ATN = new ATNDeserializer().deserialize(XPathLexer._serializedATN);
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, no-underscore-dangle
         return XPathLexer.__ATN;
     }
 
+    // eslint-disable-next-line @typescript-eslint/member-ordering, @typescript-eslint/explicit-member-accessibility
     static vocabulary = new Vocabulary(XPathLexer.literalNames, XPathLexer.symbolicNames, []);
 
     // @ts-expect-error TS(2425): Class 'Lexer' defines instance member property 'ge... Remove this comment to see the full error message
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     getVocabulary() {
         return XPathLexer.vocabulary;
     }
 
+    // eslint-disable-next-line @typescript-eslint/member-ordering, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-unsafe-call, no-underscore-dangle, @typescript-eslint/no-explicit-any
     static decisionsToDFA = XPathLexer._ATN.decisionToState.map((ds: any, index: any) => { return new DFA(ds, index); });
 }

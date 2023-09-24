@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -13,15 +14,23 @@ import { RecognitionException } from "./RecognitionException.js";
  * in the various paths when the error. Reported by reportNoViableAlternative()
  */
 export class NoViableAltException extends RecognitionException {
+ // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
  deadEndConfigs: any;
+ // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
  offendingToken: any;
+ // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
  startToken: any;
+ // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
  constructor(recognizer: any, input: any, startToken: any, offendingToken: any, deadEndConfigs: any, ctx: any) {
+     // eslint-disable-next-line no-underscore-dangle
      ctx = ctx ?? recognizer._ctx;
+     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
      offendingToken = offendingToken ?? recognizer.getCurrentToken();
+     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
      startToken = startToken ?? recognizer.getCurrentToken();
      input = input ?? recognizer.inputStream;
 
+     // eslint-disable-next-line object-shorthand
      super({ message: "", recognizer: recognizer, input: input, ctx: ctx });
 
      // Which configurations did we try at input.index() that couldn't match

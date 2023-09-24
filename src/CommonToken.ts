@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/require-returns, jsdoc/no-undefined-types, jsdoc/check-param-names */
+/* eslint-disable jsdoc/require-returns, jsdoc/no-undefined-types, jsdoc/check-param-names, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -8,16 +8,27 @@
 import { Token } from "./Token.js";
 
 export class CommonToken extends Token {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     _channel: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     _text: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     channel: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     column: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     line: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     source: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     start: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     stop: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     tokenIndex: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     type: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(source: any, type: any, channel: any, start: any, stop: any) {
         super();
         // @ts-expect-error TS(2339): Property 'EMPTY_SOURCE' does not exist on type 'ty... Remove this comment to see the full error message
@@ -49,15 +60,18 @@ export class CommonToken extends Token {
      *
      * @param oldToken The token to copy.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     clone() {
         const t = new CommonToken(this.source, this.type, this.channel, this.start, this.stop);
         t.tokenIndex = this.tokenIndex;
         t.line = this.line;
         t.column = this.column;
         t.text = this.text;
+        // eslint-disable-next-line padding-line-between-statements
         return t;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     cloneWithType(type: any) {
         const t = new CommonToken(this.source, type, this.channel, this.start, this.stop);
         t.tokenIndex = this.tokenIndex;
@@ -65,20 +79,27 @@ export class CommonToken extends Token {
         t.column = this.column;
         // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         if (type === Token.EOF)
+            // eslint-disable-next-line curly
             t.text = "";
+        // eslint-disable-next-line padding-line-between-statements
         return t;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     toString(recognizer: any) {
         let channelStr = "";
+        // eslint-disable-next-line no-underscore-dangle
         if (this._channel > 0) {
             channelStr = ",channel=" + this.channel;
         }
 
         let text = this.text;
         if (text) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             text = text.replace(/\n/g, "\\n");
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             text = text.replace(/\r/g, "\\r");
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             text = text.replace(/\t/g, "\\t");
         } else {
             text = "<no text>";
@@ -86,6 +107,7 @@ export class CommonToken extends Token {
 
         let typeString = String(this.type);
         if (recognizer) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             typeString = recognizer.vocabulary.getDisplayName(this.type);
         }
 
@@ -93,8 +115,11 @@ export class CommonToken extends Token {
             channelStr + "," + this.line + ":" + this.column + "]";
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get text() {
+        // eslint-disable-next-line no-underscore-dangle
         if (this._text !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, no-underscore-dangle
             return this._text;
         }
         const input = this.getInputStream();
@@ -103,13 +128,16 @@ export class CommonToken extends Token {
         }
         const n = input.size;
         if (this.start < n && this.stop < n) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
             return input.getText(this.start, this.stop);
         } else {
             return "<EOF>";
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types
     set text(text) {
+        // eslint-disable-next-line no-underscore-dangle
         this._text = text;
     }
 }

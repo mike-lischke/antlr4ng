@@ -1,17 +1,24 @@
+/* eslint-disable max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// eslint-disable-next-line @typescript-eslint/quotes
 import { DFAState } from '../dfa/DFAState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATNConfigSet } from './ATNConfigSet.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { getCachedPredictionContext } from './PredictionContextUtils.js';
 import { HashMap } from "../misc/HashMap.js";
 
 export class ATNSimulator {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     atn: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     sharedContextCache: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(atn: any, sharedContextCache: any) {
         /**
          * The context cache maps all PredictionContext objects that are ==
@@ -36,15 +43,19 @@ export class ATNSimulator {
          */
         this.atn = atn;
         this.sharedContextCache = sharedContextCache;
+        // eslint-disable-next-line padding-line-between-statements
         return this;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getCachedContext(context: any) {
         if (this.sharedContextCache === null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return context;
         }
         // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
         const visited = new HashMap();
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return getCachedPredictionContext(context, this.sharedContextCache, visited);
     }
 }

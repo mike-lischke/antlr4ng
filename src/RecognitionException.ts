@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/no-undefined-types, jsdoc/check-alignment, jsdoc/require-returns, jsdoc/check-tag-names */
+/* eslint-disable jsdoc/no-undefined-types, jsdoc/check-alignment, jsdoc/require-returns, jsdoc/check-tag-names, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -13,16 +13,24 @@
  *  and what kind of problem occurred.
  */
 export class RecognitionException extends Error {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     ctx: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     input: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     offendingState: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     offendingToken: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     recognizer: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(params: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         super(params.message);
         // @ts-expect-error TS(2339): Property 'captureStackTrace' does not exist on typ... Remove this comment to see the full error message
         if (Error.captureStackTrace)
             // @ts-expect-error TS(2339): Property 'captureStackTrace' does not exist on typ... Remove this comment to see the full error message
+            // eslint-disable-next-line curly
             Error.captureStackTrace(this, RecognitionException);
         this.message = params.message;
         this.recognizer = params.recognizer;
@@ -59,8 +67,10 @@ export class RecognitionException extends Error {
      * @return The set of token types that could potentially follow the current
      * state in the ATN, or {@code null} if the information is not available.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     getExpectedTokens() {
         if (this.recognizer !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
             return this.recognizer.atn.getExpectedTokens(this.offendingState, this.ctx);
         } else {
             return null;
@@ -68,6 +78,7 @@ export class RecognitionException extends Error {
     }
 
     // <p>If the state number is not known, this method returns -1.</p>
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     toString() {
         return this.message;
     }

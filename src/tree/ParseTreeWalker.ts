@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/tag-lines */
+/* eslint-disable jsdoc/tag-lines, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -17,16 +17,22 @@ export class ParseTreeWalker {
      * @param listener The listener used by the walker to process grammar rules
      * @param t The parse tree to be walked on
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     walk(listener: any, t: any) {
         const errorNode = t instanceof ErrorNode ||
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             (t.isErrorNode !== undefined && t.isErrorNode());
         if (errorNode) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             listener.visitErrorNode(t);
         } else if (t instanceof TerminalNode) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             listener.visitTerminal(t);
         } else {
             this.enterRule(listener, t);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             for (let i = 0; i < t.getChildCount(); i++) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const child = t.getChild(i);
                 this.walk(listener, child);
             }
@@ -40,9 +46,12 @@ export class ParseTreeWalker {
      * @param listener The listener responding to the trigger events
      * @param r The grammar rule containing the rule context
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     enterRule(listener: any, r: any) {
         const ctx = r.ruleContext;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         listener.enterEveryRule(ctx);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         ctx.enterRule(listener);
     }
 
@@ -52,9 +61,12 @@ export class ParseTreeWalker {
      * @param listener The listener responding to the trigger events
      * @param r The grammar rule containing the rule context
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     exitRule(listener: any, r: any) {
         const ctx = r.ruleContext;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         ctx.exitRule(listener);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         listener.exitEveryRule(ctx);
     }
 }

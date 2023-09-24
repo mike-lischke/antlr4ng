@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -9,9 +10,12 @@ import { equalArrays } from "../utils/equalArrays.js";
 import { HashCode } from "../misc/HashCode.js";
 
 export class ArrayPredictionContext extends PredictionContext {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     parents: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     returnStates: any;
 
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(parents: any, returnStates: any) {
         /**
          * Parent can be null only if full ctx mode and we make an array
@@ -26,9 +30,11 @@ export class ArrayPredictionContext extends PredictionContext {
         super(hashCode);
         this.parents = parents;
         this.returnStates = returnStates;
+        // eslint-disable-next-line padding-line-between-statements
         return this;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     isEmpty() {
         // since EMPTY_RETURN_STATE can only appear in the last position, we
         // don't need to verify that size==1
@@ -36,15 +42,20 @@ export class ArrayPredictionContext extends PredictionContext {
         return this.returnStates[0] === PredictionContext.EMPTY_RETURN_STATE;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getParent(index: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.parents[index];
     }
 
     // @ts-expect-error TS(2425): Class 'PredictionContext' defines instance member ... Remove this comment to see the full error message
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getReturnState(index: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.returnStates[index];
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     equals(other: any) {
         if (this === other) {
             return true;
@@ -58,6 +69,7 @@ export class ArrayPredictionContext extends PredictionContext {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     toString() {
         if (this.isEmpty()) {
             return "[]";
@@ -79,12 +91,15 @@ export class ArrayPredictionContext extends PredictionContext {
                     s = s + "null";
                 }
             }
+            // eslint-disable-next-line padding-line-between-statements
             return s + "]";
         }
     }
 
     // @ts-expect-error TS(2611): 'length' is defined as a property in class 'Predic... Remove this comment to see the full error message
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get length() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.returnStates.length;
     }
 }

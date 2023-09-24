@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/no-undefined-types, jsdoc/require-param */
+/* eslint-disable jsdoc/no-undefined-types, jsdoc/require-param, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -31,10 +31,15 @@
 import { LexerAction } from "./LexerAction.js";
 
 export class LexerIndexedCustomAction extends LexerAction {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     action: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     actionType: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     isPositionDependent: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     offset: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(offset: any, action: any) {
         super(action.actionType);
         this.offset = offset;
@@ -46,15 +51,20 @@ export class LexerIndexedCustomAction extends LexerAction {
      * <p>This method calls {@link //execute} on the result of {@link //getAction}
      * using the provided {@code lexer}.</p>
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     execute(lexer: any) {
         // assume the input stream position was properly set by the calling code
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.action.execute(lexer);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     updateHashCode(hash: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         hash.update(this.actionType, this.offset, this.action);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     equals(other: any) {
         if (this === other) {
             return true;

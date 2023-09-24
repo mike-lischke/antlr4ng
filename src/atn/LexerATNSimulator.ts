@@ -1,24 +1,37 @@
-/* eslint-disable jsdoc/require-jsdoc, jsdoc/require-param, jsdoc/require-returns, jsdoc/check-tag-names, jsdoc/check-types, jsdoc/valid-types */
+/* eslint-disable jsdoc/require-jsdoc, jsdoc/require-param, jsdoc/require-returns, jsdoc/check-tag-names, jsdoc/check-types, jsdoc/valid-types, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// eslint-disable-next-line max-classes-per-file, @typescript-eslint/quotes
 import { Token } from '../Token.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { Lexer } from './../Lexer.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATN } from './ATN.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATNSimulator } from './ATNSimulator.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { DFAState } from '../dfa/DFAState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { OrderedATNConfigSet } from './OrderedATNConfigSet.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { PredictionContext } from './PredictionContext.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { SingletonPredictionContext } from './SingletonPredictionContext.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { RuleStopState } from './RuleStopState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { LexerATNConfig } from './LexerATNConfig.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { LexerActionExecutor } from './LexerActionExecutor.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { LexerNoViableAltException } from '../LexerNoViableAltException.js';
 import { TransitionType } from "./TransitionType.js";
 
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
 function resetSimState(sim: any) {
     sim.index = -1;
     sim.line = 0;
@@ -27,22 +40,31 @@ function resetSimState(sim: any) {
 }
 
 class SimState {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
     constructor() {
         resetSimState(this);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
     reset() {
         resetSimState(this);
     }
 }
 
 export class LexerATNSimulator extends ATNSimulator {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     column: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     decisionToDFA: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     line: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     mode: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     prevAccept: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     recog: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     startIndex: any;
     /**
      * When we hit an accept state in either the DFA or the ATN, we
@@ -60,6 +82,7 @@ export class LexerATNSimulator extends ATNSimulator {
      * then the ATN does the accept and the DFA simulator that invoked it
      * can simply return the predicted token type.</p>
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(recog: any, atn: any, decisionToDFA: any, sharedContextCache: any) {
         super(atn, sharedContextCache);
         this.decisionToDFA = decisionToDFA;
@@ -87,6 +110,7 @@ export class LexerATNSimulator extends ATNSimulator {
         this.prevAccept = new SimState();
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     copyState(simulator: any) {
         this.column = simulator.column;
         this.line = simulator.line;
@@ -94,24 +118,32 @@ export class LexerATNSimulator extends ATNSimulator {
         this.startIndex = simulator.startIndex;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     match(input: any, mode: any) {
         this.mode = mode;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const mark = input.mark();
         try {
             this.startIndex = input.index;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.prevAccept.reset();
             const dfa = this.decisionToDFA[mode];
             if (dfa.s0 === null) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-return
                 return this.matchATN(input);
             } else {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-return
                 return this.execATN(input, dfa.s0);
             }
         } finally {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             input.release(mark);
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     reset() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.prevAccept.reset();
         this.startIndex = -1;
         this.line = 1;
@@ -120,6 +152,7 @@ export class LexerATNSimulator extends ATNSimulator {
         this.mode = Lexer.DEFAULT_MODE;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     matchATN(input: any) {
         const startState = this.atn.modeToStartState[this.mode];
 
@@ -127,7 +160,9 @@ export class LexerATNSimulator extends ATNSimulator {
         if (LexerATNSimulator.debug) {
             console.log("matchATN mode " + this.mode + " start: " + startState);
         }
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         const old_mode = this.mode;
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         const s0_closure = this.computeStartState(input, startState);
         const suppressEdge = s0_closure.hasSemanticContext;
         s0_closure.hasSemanticContext = false;
@@ -141,11 +176,14 @@ export class LexerATNSimulator extends ATNSimulator {
 
         // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
         if (LexerATNSimulator.debug) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             console.log("DFA after matchATN: " + this.decisionToDFA[old_mode].toLexerString());
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return predict;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     execATN(input: any, ds0: any) {
         // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
         if (LexerATNSimulator.debug) {
@@ -155,6 +193,7 @@ export class LexerATNSimulator extends ATNSimulator {
             // allow zero-length tokens
             this.captureSimState(this.prevAccept, input, ds0);
         }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         let t = input.LA(1);
         let s = ds0; // s is current/from DFA state
 
@@ -209,9 +248,11 @@ export class LexerATNSimulator extends ATNSimulator {
                     break;
                 }
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             t = input.LA(1);
             s = target; // flip; current DFA target becomes new src/from state
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return this.failOrAccept(this.prevAccept, input, s.configs, t);
     }
 
@@ -226,6 +267,7 @@ export class LexerATNSimulator extends ATNSimulator {
      * {@code t}, or {@code null} if the target state for this edge is not
      * already cached
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getExistingTargetState(s: any, t: any) {
         // @ts-expect-error TS(2339): Property 'MIN_DFA_EDGE' does not exist on type 'ty... Remove this comment to see the full error message
         if (s.edges === null || t < LexerATNSimulator.MIN_DFA_EDGE || t > LexerATNSimulator.MAX_DFA_EDGE) {
@@ -241,6 +283,7 @@ export class LexerATNSimulator extends ATNSimulator {
         if (LexerATNSimulator.debug && target !== null) {
             console.log("reuse state " + s.stateNumber + " edge to " + target.stateNumber);
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return target;
     }
 
@@ -256,6 +299,7 @@ export class LexerATNSimulator extends ATNSimulator {
      * {@code t}. If {@code t} does not lead to a valid DFA state, this method
      * returns {@link //ERROR}.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     computeTargetState(input: any, s: any, t: any) {
         const reach = new OrderedATNConfigSet();
         // if we don't find an existing DFA state
@@ -271,23 +315,28 @@ export class LexerATNSimulator extends ATNSimulator {
             }
             // stop when we can't match any more char
             // @ts-expect-error TS(2339): Property 'ERROR' does not exist on type 'typeof AT... Remove this comment to see the full error message
+            // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
             return ATNSimulator.ERROR;
         }
         // Add an edge from s to target DFA found/created for reach
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return this.addDFAEdge(s, t, null, reach);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     failOrAccept(prevAccept: any, input: any, reach: any, t: any) {
         if (this.prevAccept.dfaState !== null) {
             const lexerActionExecutor = prevAccept.dfaState.lexerActionExecutor;
             this.accept(input, lexerActionExecutor, this.startIndex,
                 prevAccept.index, prevAccept.line, prevAccept.column);
+            // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
             return prevAccept.dfaState.prediction;
         } else {
             // if no accept and EOF is first char, return EOF
             // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
             if (t === Token.EOF && input.index === this.startIndex) {
                 // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-return
                 return Token.EOF;
             }
             throw new LexerNoViableAltException(this.recog, input, this.startIndex, reach);
@@ -299,11 +348,13 @@ export class LexerATNSimulator extends ATNSimulator {
      * we can reach upon input {@code t}. Parameter {@code reach} is a return
      * parameter.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getReachableConfigSet(input: any, closure: any, reach: any, t: any) {
         // this is used to skip processing for configs which have a lower priority
         // than a config that already reached an accept state for the same rule
         // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
         let skipAlt = ATN.INVALID_ALT_NUMBER;
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < closure.items.length; i++) {
             const cfg = closure.items[i];
             const currentAltReachedAcceptState = (cfg.alt === skipAlt);
@@ -312,19 +363,23 @@ export class LexerATNSimulator extends ATNSimulator {
             }
             // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
             if (LexerATNSimulator.debug) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 console.log("testing %s at %s\n", this.getTokenName(t), cfg
                     .toString(this.recog, true));
             }
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let j = 0; j < cfg.state.transitions.length; j++) {
                 const trans = cfg.state.transitions[j]; // for each transition
                 const target = this.getReachableTarget(trans, t);
                 if (target !== null) {
                     let lexerActionExecutor = cfg.lexerActionExecutor;
                     if (lexerActionExecutor !== null) {
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                         lexerActionExecutor = lexerActionExecutor.fixOffsetBeforeMatch(input.index - this.startIndex);
                     }
                     // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
                     const treatEofAsEpsilon = (t === Token.EOF);
+                    // eslint-disable-next-line object-shorthand
                     const config = new LexerATNConfig({ state: target, lexerActionExecutor: lexerActionExecutor }, cfg);
                     if (this.closure(input, config, reach,
                         currentAltReachedAcceptState, true, treatEofAsEpsilon)) {
@@ -337,29 +392,36 @@ export class LexerATNSimulator extends ATNSimulator {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     accept(input: any, lexerActionExecutor: any, startIndex: any, index: any, line: any, charPos: any) {
         // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
         if (LexerATNSimulator.debug) {
             console.log("ACTION %s\n", lexerActionExecutor);
         }
         // seek to after last char in token
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         input.seek(index);
         this.line = line;
         this.column = charPos;
         if (lexerActionExecutor !== null && this.recog !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             lexerActionExecutor.execute(this.recog, input, startIndex);
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getReachableTarget(trans: any, t: any) {
         // @ts-expect-error TS(2339): Property 'MAX_CHAR_VALUE' does not exist on type '... Remove this comment to see the full error message
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (trans.matches(t, 0, Lexer.MAX_CHAR_VALUE)) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return trans.target;
         } else {
             return null;
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     computeStartState(input: any, p: any) {
         // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         const initialContext = PredictionContext.EMPTY;
@@ -369,6 +431,7 @@ export class LexerATNSimulator extends ATNSimulator {
             const cfg = new LexerATNConfig({ state: target, alt: i + 1, context: initialContext }, null);
             this.closure(input, cfg, configs, false, false, false);
         }
+        // eslint-disable-next-line padding-line-between-statements
         return configs;
     }
 
@@ -382,11 +445,14 @@ export class LexerATNSimulator extends ATNSimulator {
      * @return {Boolean} {@code true} if an accept state is reached, otherwise
      * {@code false}.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     closure(input: any, config: any, configs: any,
+        // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
         currentAltReachedAcceptState: any, speculative: any, treatEofAsEpsilon: any) {
         let cfg = null;
         // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
         if (LexerATNSimulator.debug) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             console.log("closure(" + config.toString(this.recog, true) + ")");
         }
         if (config.state instanceof RuleStopState) {
@@ -398,21 +464,30 @@ export class LexerATNSimulator extends ATNSimulator {
                     console.log("closure at rule stop %s\n", config);
                 }
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             if (config.context === null || config.context.hasEmptyPath()) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 if (config.context === null || config.context.isEmpty()) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     configs.add(config);
+                    // eslint-disable-next-line padding-line-between-statements
                     return true;
                 } else {
                     // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     configs.add(new LexerATNConfig({ state: config.state, context: PredictionContext.EMPTY }, config));
                     currentAltReachedAcceptState = true;
                 }
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             if (config.context !== null && !config.context.isEmpty()) {
                 for (let i = 0; i < config.context.length; i++) {
                     // @ts-expect-error TS(2339): Property 'EMPTY_RETURN_STATE' does not exist on ty... Remove this comment to see the full error message
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     if (config.context.getReturnState(i) !== PredictionContext.EMPTY_RETURN_STATE) {
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                         const newContext = config.context.getParent(i); // "pop" return state
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                         const returnState = this.atn.states[config.context.getReturnState(i)];
                         cfg = new LexerATNConfig({ state: returnState, context: newContext }, config);
                         currentAltReachedAcceptState = this.closure(input, cfg,
@@ -421,14 +496,17 @@ export class LexerATNSimulator extends ATNSimulator {
                     }
                 }
             }
+            // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
             return currentAltReachedAcceptState;
         }
         // optimization
         if (!config.state.epsilonOnlyTransitions) {
             if (!currentAltReachedAcceptState || !config.passedThroughNonGreedyDecision) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 configs.add(config);
             }
         }
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let j = 0; j < config.state.transitions.length; j++) {
             const trans = config.state.transitions[j];
             cfg = this.getEpsilonTarget(input, config, trans, configs, speculative, treatEofAsEpsilon);
@@ -437,17 +515,21 @@ export class LexerATNSimulator extends ATNSimulator {
                     currentAltReachedAcceptState, speculative, treatEofAsEpsilon);
             }
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return currentAltReachedAcceptState;
     }
 
     // side-effect: can alter configs.hasSemanticContext
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getEpsilonTarget(input: any, config: any, trans: any,
+        // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
         configs: any, speculative: any, treatEofAsEpsilon: any) {
         let cfg = null;
         if (trans.serializationType === TransitionType.RULE) {
             const newContext = SingletonPredictionContext.create(config.context, trans.followState.stateNumber);
             cfg = new LexerATNConfig({ state: trans.target, context: newContext }, config);
         } else if (trans.serializationType === TransitionType.PRECEDENCE) {
+            // eslint-disable-next-line no-throw-literal
             throw "Precedence predicates are not supported in lexers.";
         } else if (trans.serializationType === TransitionType.PREDICATE) {
             // Track traversing semantic predicates. If we traverse,
@@ -477,6 +559,7 @@ export class LexerATNSimulator extends ATNSimulator {
                 cfg = new LexerATNConfig({ state: trans.target }, config);
             }
         } else if (trans.serializationType === TransitionType.ACTION) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             if (config.context === null || config.context.hasEmptyPath()) {
                 // execute actions anywhere in the start rule for a token.
                 //
@@ -492,6 +575,7 @@ export class LexerATNSimulator extends ATNSimulator {
                 // the split operation.
                 const lexerActionExecutor = LexerActionExecutor.append(config.lexerActionExecutor,
                     this.atn.lexerActions[trans.actionIndex]);
+                // eslint-disable-next-line object-shorthand
                 cfg = new LexerATNConfig({ state: trans.target, lexerActionExecutor: lexerActionExecutor }, config);
             } else {
                 // ignore actions in referenced rules
@@ -504,11 +588,13 @@ export class LexerATNSimulator extends ATNSimulator {
             trans.serializationType === TransitionType.SET) {
             if (treatEofAsEpsilon) {
                 // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 if (trans.matches(Token.EOF, 0, Lexer.MAX_CHAR_VALUE)) {
                     cfg = new LexerATNConfig({ state: trans.target }, config);
                 }
             }
         }
+        // eslint-disable-next-line padding-line-between-statements
         return cfg;
     }
 
@@ -533,30 +619,38 @@ export class LexerATNSimulator extends ATNSimulator {
      * @return {@code true} if the specified predicate evaluates to
      * {@code true}.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     evaluatePredicate(input: any, ruleIndex: any,
+        // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
         predIndex: any, speculative: any) {
         // assume true if no recognizer was provided
         if (this.recog === null) {
             return true;
         }
         if (!speculative) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
             return this.recog.sempred(null, ruleIndex, predIndex);
         }
         const savedColumn = this.column;
         const savedLine = this.line;
         const index = input.index;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const marker = input.mark();
         try {
             this.consume(input);
+            // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
             return this.recog.sempred(null, ruleIndex, predIndex);
         } finally {
             this.column = savedColumn;
             this.line = savedLine;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             input.seek(index);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             input.release(marker);
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     captureSimState(settings: any, input: any, dfaState: any) {
         settings.index = input.index;
         settings.line = this.line;
@@ -564,6 +658,7 @@ export class LexerATNSimulator extends ATNSimulator {
         settings.dfaState = dfaState;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any
     addDFAEdge(from_: any, tk: any, to: any, configs: any) {
         if (to === undefined) {
             to = null;
@@ -591,6 +686,7 @@ export class LexerATNSimulator extends ATNSimulator {
             to = this.addDFAState(configs);
 
             if (suppressEdge) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-return
                 return to;
             }
         }
@@ -598,6 +694,7 @@ export class LexerATNSimulator extends ATNSimulator {
         // @ts-expect-error TS(2339): Property 'MIN_DFA_EDGE' does not exist on type 'ty... Remove this comment to see the full error message
         if (tk < LexerATNSimulator.MIN_DFA_EDGE || tk > LexerATNSimulator.MAX_DFA_EDGE) {
             // Only track edges within the DFA bounds
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return to;
         }
         // @ts-expect-error TS(2339): Property 'debug' does not exist on type 'typeof Le... Remove this comment to see the full error message
@@ -611,6 +708,7 @@ export class LexerATNSimulator extends ATNSimulator {
         // @ts-expect-error TS(2339): Property 'MIN_DFA_EDGE' does not exist on type 'ty... Remove this comment to see the full error message
         from_.edges[tk - LexerATNSimulator.MIN_DFA_EDGE] = to; // connect
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return to;
     }
 
@@ -620,9 +718,11 @@ export class LexerATNSimulator extends ATNSimulator {
      * configuration containing an ATN rule stop state. Later, when
      * traversing the DFA, we will know which rule to accept.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     addDFAState(configs: any) {
         const proposed = new DFAState(null, configs);
         let firstConfigWithRuleStopState = null;
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < configs.items.length; i++) {
             const cfg = configs.items[i];
             if (cfg.state instanceof RuleStopState) {
@@ -636,29 +736,40 @@ export class LexerATNSimulator extends ATNSimulator {
             proposed.prediction = this.atn.ruleToTokenType[firstConfigWithRuleStopState.state.ruleIndex];
         }
         const dfa = this.decisionToDFA[this.mode];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const existing = dfa.states.get(proposed);
         if (existing !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return existing;
         }
         const newState = proposed;
         newState.stateNumber = dfa.states.length;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         configs.setReadonly(true);
         newState.configs = configs;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         dfa.states.add(newState);
+        // eslint-disable-next-line padding-line-between-statements
         return newState;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getDFA(mode: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.decisionToDFA[mode];
     }
 
     // Get the text matched so far for the current token.
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getText(input: any) {
         // index is first lookahead char, don't include.
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
         return input.getText(this.startIndex, input.index - 1);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     consume(input: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const curChar = input.LA(1);
         if (curChar === "\n".charCodeAt(0)) {
             this.line += 1;
@@ -666,13 +777,16 @@ export class LexerATNSimulator extends ATNSimulator {
         } else {
             this.column += 1;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         input.consume();
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getTokenName(tt: any) {
         if (tt === -1) {
             return "EOF";
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             return "'" + String.fromCharCode(tt) + "'";
         }
     }

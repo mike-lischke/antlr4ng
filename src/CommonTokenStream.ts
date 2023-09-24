@@ -1,10 +1,13 @@
+/* eslint-disable max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// eslint-disable-next-line @typescript-eslint/quotes
 import { Token } from './Token.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { BufferedTokenStream } from './BufferedTokenStream.js';
 
 /**
@@ -32,16 +35,20 @@ import { BufferedTokenStream } from './BufferedTokenStream.js';
  * channel.</p>
  */
 export class CommonTokenStream extends BufferedTokenStream {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(lexer: any, channel: any) {
         super(lexer);
         // @ts-expect-error TS(2339): Property 'DEFAULT_CHANNEL' does not exist on type ... Remove this comment to see the full error message
         this.channel = channel === undefined ? Token.DEFAULT_CHANNEL : channel;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     adjustSeekIndex(i: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.nextTokenOnChannel(i, this.channel);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any
     LB(k: any) {
         if (k === 0 || this.index - k < 0) {
             return null;
@@ -57,15 +64,18 @@ export class CommonTokenStream extends BufferedTokenStream {
         if (i < 0) {
             return null;
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return this.tokens[i];
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any
     LT(k: any) {
         this.lazyInit();
         if (k === 0) {
             return null;
         }
         if (k < 0) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return this.LB(-k);
         }
         let i = this.index;
@@ -78,13 +88,16 @@ export class CommonTokenStream extends BufferedTokenStream {
             }
             n += 1;
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return this.tokens[i];
     }
 
     // Count EOF just once.
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     getNumberOfOnChannelTokens() {
         let n = 0;
         this.fill();
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < this.tokens.length; i++) {
             const t = this.tokens[i];
             if (t.channel === this.channel) {
@@ -95,6 +108,7 @@ export class CommonTokenStream extends BufferedTokenStream {
                 break;
             }
         }
+        // eslint-disable-next-line padding-line-between-statements
         return n;
     }
 }

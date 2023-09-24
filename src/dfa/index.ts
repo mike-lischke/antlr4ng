@@ -4,7 +4,11 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// eslint-disable-next-line @typescript-eslint/quotes
 export { DFA } from './DFA.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 export { DFASerializer } from './DFASerializer.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 export { LexerDFASerializer } from './LexerDFASerializer.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 export { PredPrediction } from './PredPrediction.js';

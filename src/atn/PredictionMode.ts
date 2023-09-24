@@ -1,14 +1,19 @@
-/* eslint-disable jsdoc/require-param, jsdoc/require-returns, jsdoc/check-tag-names, jsdoc/valid-types */
+/* eslint-disable jsdoc/require-param, jsdoc/require-returns, jsdoc/check-tag-names, jsdoc/valid-types, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATN } from './ATN.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { RuleStopState } from './RuleStopState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATNConfigSet } from './ATNConfigSet.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATNConfig } from './ATNConfig.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { SemanticContext } from './SemanticContext.js';
 import { BitSet } from "../misc/BitSet.js";
 import { AltDict } from "../misc/AltDict.js";
@@ -20,6 +25,7 @@ import { HashMap } from "../misc/HashMap.js";
  * utility methods for analyzing configuration sets for conflicts and/or
  * ambiguities.
  */
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const PredictionMode = {
     /**
      * The SLL(*) prediction mode. This prediction mode ignores the current
@@ -42,6 +48,7 @@ export const PredictionMode = {
      * This prediction mode does not provide any guarantees for prediction
      * behavior for syntactically-incorrect inputs.</p>
      */
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     SLL: 0,
 
     /**
@@ -62,6 +69,7 @@ export const PredictionMode = {
      * This prediction mode does not provide any guarantees for prediction
      * behavior for syntactically-incorrect inputs.</p>
      */
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     LL: 1,
 
     /**
@@ -82,6 +90,7 @@ export const PredictionMode = {
      * This prediction mode does not provide any guarantees for prediction
      * behavior for syntactically-incorrect inputs.</p>
      */
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     LL_EXACT_AMBIG_DETECTION: 2,
 
     /**
@@ -177,6 +186,7 @@ export const PredictionMode = {
      * the configurations to strip out all of the predicates so that a standard
      * {@link ATNConfigSet} will merge everything ignoring predicates.</p>
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, object-shorthand, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
     hasSLLConflictTerminatingPrediction: function (mode: any, configs: any) {
         // Configs in rule stop states indicate reaching the end of the decision
         // rule (local context) or end of start rule (full context). If all
@@ -195,6 +205,7 @@ export const PredictionMode = {
                 // dup configs, tossing out semantic predicates
                 // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
                 const dup = new ATNConfigSet();
+                // eslint-disable-next-line @typescript-eslint/prefer-for-of
                 for (let i = 0; i < configs.items.length; i++) {
                     let c = configs.items[i];
                     // @ts-expect-error TS(2339): Property 'NONE' does not exist on type 'typeof Sem... Remove this comment to see the full error message
@@ -208,6 +219,7 @@ export const PredictionMode = {
         }
         // pure SLL or combined SLL+LL mode parsing
         const altsets = PredictionMode.getConflictingAltSubsets(configs);
+        // eslint-disable-next-line padding-line-between-statements
         return PredictionMode.hasConflictingAltSet(altsets) && !PredictionMode.hasStateAssociatedWithOneAlt(configs);
     },
 
@@ -221,13 +233,16 @@ export const PredictionMode = {
      * @return {@code true} if any configuration in {@code configs} is in a
      * {@link RuleStopState}, otherwise {@code false}
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, object-shorthand, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
     hasConfigInRuleStopState: function (configs: any) {
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < configs.items.length; i++) {
             const c = configs.items[i];
             if (c.state instanceof RuleStopState) {
                 return true;
             }
         }
+        // eslint-disable-next-line padding-line-between-statements
         return false;
     },
 
@@ -241,13 +256,16 @@ export const PredictionMode = {
      * @return {@code true} if all configurations in {@code configs} are in a
      * {@link RuleStopState}, otherwise {@code false}
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, object-shorthand, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
     allConfigsInRuleStopStates: function (configs: any) {
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < configs.items.length; i++) {
             const c = configs.items[i];
             if (!(c.state instanceof RuleStopState)) {
                 return false;
             }
         }
+        // eslint-disable-next-line padding-line-between-statements
         return true;
     },
 
@@ -393,7 +411,9 @@ export const PredictionMode = {
      * we need exact ambiguity detection when the sets look like
      * {@code A={{1,2}}} or {@code {{1,2},{1,2}}}, etc...</p>
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, object-shorthand, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
     resolvesToJustOneViableAlt: function (altsets: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return PredictionMode.getSingleViableAlt(altsets);
     },
 
@@ -405,6 +425,7 @@ export const PredictionMode = {
      * @return {@code true} if every {@link BitSet} in {@code altsets} has
      * {@link BitSet//cardinality cardinality} &gt; 1, otherwise {@code false}
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, object-shorthand, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
     allSubsetsConflict: function (altsets: any) {
         return !PredictionMode.hasNonConflictingAltSet(altsets);
     },
@@ -416,16 +437,20 @@ export const PredictionMode = {
      * @return {@code true} if {@code altsets} contains a {@link BitSet} with
      * {@link BitSet//cardinality cardinality} 1, otherwise {@code false}
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, object-shorthand, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
     hasNonConflictingAltSet: function (altsets: any) {
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < altsets.length; i++) {
             const alts = altsets[i];
             if (alts.length === 1) {
                 return true;
             }
         }
+        // eslint-disable-next-line padding-line-between-statements
         return false;
     },
 
+// eslint-disable-next-line no-multiple-empty-lines
 
     /**
      * Determines if any single alternative subset in {@code altsets} contains
@@ -435,16 +460,20 @@ export const PredictionMode = {
      * @return {@code true} if {@code altsets} contains a {@link BitSet} with
      * {@link BitSet//cardinality cardinality} &gt; 1, otherwise {@code false}
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, object-shorthand, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
     hasConflictingAltSet: function (altsets: any) {
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < altsets.length; i++) {
             const alts = altsets[i];
             if (alts.length > 1) {
                 return true;
             }
         }
+        // eslint-disable-next-line padding-line-between-statements
         return false;
     },
 
+// eslint-disable-next-line no-multiple-empty-lines
 
     /**
      * Determines if every alternative subset in {@code altsets} is equivalent.
@@ -453,8 +482,10 @@ export const PredictionMode = {
      * @return {@code true} if every member of {@code altsets} is equal to the
      * others, otherwise {@code false}
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, object-shorthand, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
     allSubsetsEqual: function (altsets: any) {
         let first = null;
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < altsets.length; i++) {
             const alts = altsets[i];
             if (first === null) {
@@ -463,9 +494,11 @@ export const PredictionMode = {
                 return false;
             }
         }
+        // eslint-disable-next-line padding-line-between-statements
         return true;
     },
 
+// eslint-disable-next-line no-multiple-empty-lines
 
     /**
      * Returns the unique alternative predicted by all alternative subsets in
@@ -474,12 +507,14 @@ export const PredictionMode = {
      *
      * @param altsets a collection of alternative subsets
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, object-shorthand, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
     getUniqueAlt: function (altsets: any) {
         const all = PredictionMode.getAlts(altsets);
         if (all.length === 1) {
             return all.nextSetBit(0);
         } else {
             // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return ATN.INVALID_ALT_NUMBER;
         }
     },
@@ -492,9 +527,12 @@ export const PredictionMode = {
      * @param altsets a collection of alternative subsets
      * @return the set of represented alternatives in {@code altsets}
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, object-shorthand, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
     getAlts: function (altsets: any) {
         const all = new BitSet();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, array-callback-return, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
         altsets.map(function (alts: any) { all.or(alts); });
+        // eslint-disable-next-line padding-line-between-statements
         return all;
     },
 
@@ -507,20 +545,26 @@ export const PredictionMode = {
      * alt and not pred
      * </pre>
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, object-shorthand, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
     getConflictingAltSubsets: function (configs: any) {
         // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
         const configToAlts = new HashMap();
         // @ts-expect-error TS(2554): Expected 0 arguments, but got 2.
+        // eslint-disable-next-line prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
         configToAlts.hashFunction = function (cfg: any) { HashCode.hashStuff(cfg.state.stateNumber, cfg.context); };
+        // eslint-disable-next-line prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
         configToAlts.equalsFunction = function (c1: any, c2: any) { return c1.state.stateNumber === c2.state.stateNumber && c1.context.equals(c2.context); };
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, array-callback-return, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
         configs.items.map(function (cfg: any) {
             let alts = configToAlts.get(cfg);
             if (alts === null) {
                 alts = new BitSet();
                 configToAlts.set(cfg, alts);
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             alts.set(cfg.alt);
         });
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return configToAlts.getValues();
     },
 
@@ -532,41 +576,54 @@ export const PredictionMode = {
      * map[c.{@link ATNConfig//state state}] U= c.{@link ATNConfig//alt alt}
      * </pre>
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, object-shorthand, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
     getStateToAltMap: function (configs: any) {
         const m = new AltDict();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, array-callback-return, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
         configs.items.map(function (c: any) {
             let alts = m.get(c.state);
             if (alts === null) {
                 alts = new BitSet();
                 m.set(c.state, alts);
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             alts.set(c.alt);
         });
+        // eslint-disable-next-line padding-line-between-statements
         return m;
     },
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, object-shorthand, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
     hasStateAssociatedWithOneAlt: function (configs: any) {
         const values = PredictionMode.getStateToAltMap(configs).values();
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < values.length; i++) {
             if (values[i].length === 1) {
                 return true;
             }
         }
+        // eslint-disable-next-line padding-line-between-statements
         return false;
     },
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, object-shorthand, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
     getSingleViableAlt: function (altsets: any) {
         let result = null;
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < altsets.length; i++) {
             const alts = altsets[i];
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             const minAlt = alts.nextSetBit(0);
             if (result === null) {
                 result = minAlt;
             } else if (result !== minAlt) { // more than 1 viable alt
                 // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-return
                 return ATN.INVALID_ALT_NUMBER;
             }
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return result;
+    // eslint-disable-next-line comma-dangle
     }
 };

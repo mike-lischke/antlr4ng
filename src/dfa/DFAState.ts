@@ -1,10 +1,11 @@
-/* eslint-disable jsdoc/require-returns, jsdoc/require-param */
+/* eslint-disable jsdoc/require-returns, jsdoc/require-param, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATNConfigSet } from '../atn/ATNConfigSet.js';
 import { HashCode } from "../misc/HashCode.js";
 import { HashSet } from "../misc/HashSet.js";
@@ -35,14 +36,23 @@ import { HashSet } from "../misc/HashSet.js";
  * meaning that state was reached via a different set of rule invocations.</p>
  */
 export class DFAState {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     configs: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     edges: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     isAcceptState: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     lexerActionExecutor: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     predicates: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     prediction: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     requiresFullContext: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     stateNumber: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(stateNumber: any, configs: any) {
         if (stateNumber === null) {
             stateNumber = -1;
@@ -90,6 +100,7 @@ export class DFAState {
          * ParserATNSimulator//predicateDFAState}.</p>
          */
         this.predicates = null;
+        // eslint-disable-next-line padding-line-between-statements
         return this;
     }
 
@@ -97,10 +108,12 @@ export class DFAState {
      * Get the set of all alts mentioned by all ATN configurations in this
      * DFA state.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     getAltSet() {
         // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
         const alts = new HashSet();
         if (this.configs !== null) {
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let i = 0; i < this.configs.length; i++) {
                 const c = this.configs[i];
                 alts.add(c.alt);
@@ -126,29 +139,38 @@ export class DFAState {
      * exists that has this exact set of ATN configurations. The
      * {@link //stateNumber} is irrelevant.</p>
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     equals(other: any) {
         // compare set of ATN configurations in this set with other
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this === other ||
             (other instanceof DFAState &&
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 this.configs.equals(other.configs));
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     toString() {
         let s = "" + this.stateNumber + ":" + this.configs;
         if (this.isAcceptState) {
             s = s + "=>";
             if (this.predicates !== null)
+                // eslint-disable-next-line curly
                 s = s + this.predicates;
             else
+                // eslint-disable-next-line curly
                 s = s + this.prediction;
         }
+        // eslint-disable-next-line padding-line-between-statements
         return s;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     hashCode() {
         const hash = new HashCode();
         // @ts-expect-error TS(2554): Expected 0 arguments, but got 1.
         hash.update(this.configs);
+        // eslint-disable-next-line padding-line-between-statements
         return hash.finish();
     }
 }

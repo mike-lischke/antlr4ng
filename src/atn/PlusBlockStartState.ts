@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/no-undefined-types */
+/* eslint-disable jsdoc/no-undefined-types, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -15,6 +15,7 @@ import { BlockStartState } from "./BlockStartState.js";
  * real decision-making note for {@code A+}
  */
 export class PlusBlockStartState extends BlockStartState {
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get stateType() {
         return ATNStateType.PLUS_BLOCK_START;
     }

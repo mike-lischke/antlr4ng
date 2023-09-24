@@ -1,12 +1,15 @@
-/* eslint-disable jsdoc/no-undefined-types, jsdoc/require-param, jsdoc/require-returns, jsdoc/check-tag-names, jsdoc/check-types */
+/* eslint-disable jsdoc/no-undefined-types, jsdoc/require-param, jsdoc/require-returns, jsdoc/check-tag-names, jsdoc/check-types, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// eslint-disable-next-line @typescript-eslint/quotes
 import { Token } from './Token.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { Lexer } from './Lexer.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { Interval } from './misc/Interval.js';
 import { TokenStream } from "./TokenStream.js";
 
@@ -23,11 +26,17 @@ import { TokenStream } from "./TokenStream.js";
  * {@link CommonTokenStream}.</p>
  */
 export class BufferedTokenStream extends TokenStream {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     _index: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     channel: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     fetchedEOF: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     tokenSource: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     tokens: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(tokenSource: any) {
 
         super();
@@ -52,6 +61,7 @@ export class BufferedTokenStream extends TokenStream {
          * see the documentation of {@link IntStream} for a description of
          * Initializing Methods.</p>
          */
+        // eslint-disable-next-line no-underscore-dangle
         this._index = -1;
 
         /**
@@ -73,45 +83,60 @@ export class BufferedTokenStream extends TokenStream {
         this.fetchedEOF = false;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     mark() {
         return 0;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
     release(marker: any) {
         // no resources to release
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     reset() {
         this.seek(0);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     seek(index: any) {
         this.lazyInit();
+        // eslint-disable-next-line no-underscore-dangle
         this._index = this.adjustSeekIndex(index);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get size() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.tokens.length;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get index() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, no-underscore-dangle
         return this._index;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     get(index: any) {
         this.lazyInit();
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return this.tokens[index];
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     consume() {
         let skipEofCheck = false;
+        // eslint-disable-next-line no-underscore-dangle
         if (this._index >= 0) {
             if (this.fetchedEOF) {
                 // the last token in tokens is EOF. skip check if p indexes any
                 // fetched token except the last.
+                // eslint-disable-next-line no-underscore-dangle
                 skipEofCheck = this._index < this.tokens.length - 1;
             } else {
                 // no EOF token in tokens. skip check if p indexes a fetched token.
+                // eslint-disable-next-line no-underscore-dangle
                 skipEofCheck = this._index < this.tokens.length;
             }
         } else {
@@ -120,9 +145,12 @@ export class BufferedTokenStream extends TokenStream {
         }
         // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         if (!skipEofCheck && this.LA(1) === Token.EOF) {
+            // eslint-disable-next-line no-throw-literal
             throw "cannot consume EOF";
         }
+        // eslint-disable-next-line no-underscore-dangle
         if (this.sync(this._index + 1)) {
+            // eslint-disable-next-line no-underscore-dangle
             this._index = this.adjustSeekIndex(this._index + 1);
         }
     }
@@ -134,12 +162,15 @@ export class BufferedTokenStream extends TokenStream {
      * {@code false}.
      * @see //get(int i)
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     sync(i: any) {
         const n = i - this.tokens.length + 1; // how many more elements we need?
         if (n > 0) {
             const fetched = this.fetch(n);
+            // eslint-disable-next-line padding-line-between-statements
             return fetched >= n;
         }
+        // eslint-disable-next-line padding-line-between-statements
         return true;
     }
 
@@ -148,28 +179,35 @@ export class BufferedTokenStream extends TokenStream {
      *
      * @return {Number} The actual number of elements added to the buffer.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     fetch(n: any) {
         if (this.fetchedEOF) {
             return 0;
         }
         for (let i = 0; i < n; i++) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             const t = this.tokenSource.nextToken();
             t.tokenIndex = this.tokens.length;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.tokens.push(t);
             // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
             if (t.type === Token.EOF) {
                 this.fetchedEOF = true;
+                // eslint-disable-next-line padding-line-between-statements
                 return i + 1;
             }
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return n;
     }
 
     // Get all tokens from start..stop inclusively///
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getTokens(start: any, stop: any, types: any) {
         this.lazyInit();
 
         if (start === undefined && stop === undefined) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return this.tokens;
         }
 
@@ -186,6 +224,7 @@ export class BufferedTokenStream extends TokenStream {
         }
 
         if (types === undefined) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
             return this.tokens.slice(start, stop + 1);
         }
 
@@ -202,38 +241,50 @@ export class BufferedTokenStream extends TokenStream {
                 break;
             }
 
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             if (types.contains(t.type)) {
                 subset.push(t);
             }
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return subset;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any
     LA(i: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.LT(i).type;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any
     LB(k: any) {
+        // eslint-disable-next-line no-underscore-dangle
         if (this._index - k < 0) {
             return null;
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return, no-underscore-dangle
         return this.tokens[this._index - k];
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any
     LT(k: any) {
         this.lazyInit();
         if (k === 0) {
             return null;
         }
         if (k < 0) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return this.LB(-k);
         }
+        // eslint-disable-next-line no-underscore-dangle
         const i = this._index + k - 1;
         this.sync(i);
         if (i >= this.tokens.length) { // return EOF token
             // EOF must be last token
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return this.tokens[this.tokens.length - 1];
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return this.tokens[i];
     }
 
@@ -251,30 +302,40 @@ export class BufferedTokenStream extends TokenStream {
      * @param {Number} i The target token index.
      * @return {Number} The adjusted target token index.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     adjustSeekIndex(i: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return i;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     lazyInit() {
+        // eslint-disable-next-line no-underscore-dangle
         if (this._index === -1) {
             this.setup();
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     setup() {
         this.sync(0);
+        // eslint-disable-next-line no-underscore-dangle
         this._index = this.adjustSeekIndex(0);
     }
 
     // Reset this token stream by setting its token source.///
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     setTokenSource(tokenSource: any) {
         this.tokenSource = tokenSource;
         this.tokens = [];
+        // eslint-disable-next-line no-underscore-dangle
         this._index = -1;
         this.fetchedEOF = false;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     getTokenSource() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.tokenSource;
     }
 
@@ -283,6 +344,7 @@ export class BufferedTokenStream extends TokenStream {
      * Return i if tokens[i] is on channel. Return -1 if there are no tokens
      * on channel between i and EOF.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     nextTokenOnChannel(i: any, channel: any) {
         this.sync(i);
         if (i >= this.tokens.length) {
@@ -298,6 +360,7 @@ export class BufferedTokenStream extends TokenStream {
             this.sync(i);
             token = this.tokens[i];
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return i;
     }
 
@@ -306,10 +369,12 @@ export class BufferedTokenStream extends TokenStream {
      * Return i if tokens[i] is on channel. Return -1 if there are no tokens
      * on channel between i and 0.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     previousTokenOnChannel(i: any, channel: any) {
         while (i >= 0 && this.tokens[i].channel !== channel) {
             i -= 1;
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return i;
     }
 
@@ -318,7 +383,9 @@ export class BufferedTokenStream extends TokenStream {
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL or
      * EOF. If channel is -1, find any non default channel token.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getHiddenTokensToRight(tokenIndex: any,
+        // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
         channel: any) {
         if (channel === undefined) {
             channel = -1;
@@ -326,13 +393,16 @@ export class BufferedTokenStream extends TokenStream {
         this.lazyInit();
         if (tokenIndex < 0 || tokenIndex >= this.tokens.length) {
             // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
+            // eslint-disable-next-line no-throw-literal
             throw "" + tokenIndex + " not in 0.." + this.tokens.length - 1;
         }
         // @ts-expect-error TS(2339): Property 'DEFAULT_TOKEN_CHANNEL' does not exist on... Remove this comment to see the full error message
         const nextOnChannel = this.nextTokenOnChannel(tokenIndex + 1, Lexer.DEFAULT_TOKEN_CHANNEL);
+        // eslint-disable-next-line no-underscore-dangle, @typescript-eslint/naming-convention
         const from_ = tokenIndex + 1;
         // if none onchannel to right, nextOnChannel=-1 so set to = last token
         const to = nextOnChannel === -1 ? this.tokens.length - 1 : nextOnChannel;
+        // eslint-disable-next-line padding-line-between-statements
         return this.filterForChannel(from_, to, channel);
     }
 
@@ -341,7 +411,9 @@ export class BufferedTokenStream extends TokenStream {
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL.
      * If channel is -1, find any non default channel token.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getHiddenTokensToLeft(tokenIndex: any,
+        // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
         channel: any) {
         if (channel === undefined) {
             channel = -1;
@@ -349,6 +421,7 @@ export class BufferedTokenStream extends TokenStream {
         this.lazyInit();
         if (tokenIndex < 0 || tokenIndex >= this.tokens.length) {
             // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
+            // eslint-disable-next-line no-throw-literal
             throw "" + tokenIndex + " not in 0.." + this.tokens.length - 1;
         }
         // @ts-expect-error TS(2339): Property 'DEFAULT_TOKEN_CHANNEL' does not exist on... Remove this comment to see the full error message
@@ -357,11 +430,14 @@ export class BufferedTokenStream extends TokenStream {
             return null;
         }
         // if none on channel to left, prevOnChannel=-1 then from=0
+        // eslint-disable-next-line no-underscore-dangle, @typescript-eslint/naming-convention
         const from_ = prevOnChannel + 1;
         const to = tokenIndex - 1;
+        // eslint-disable-next-line padding-line-between-statements
         return this.filterForChannel(from_, to, channel);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     filterForChannel(left: any, right: any, channel: any) {
         const hidden = [];
         for (let i = left; i < right + 1; i++) {
@@ -378,14 +454,18 @@ export class BufferedTokenStream extends TokenStream {
         if (hidden.length === 0) {
             return null;
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return hidden;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     getSourceName() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.tokenSource.sourceName;
     }
 
     // Get the text of all tokens in this buffer.///
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getText(interval: any) {
         this.lazyInit();
         this.fill();
@@ -415,12 +495,15 @@ export class BufferedTokenStream extends TokenStream {
             }
             s = s + t.text;
         }
+        // eslint-disable-next-line padding-line-between-statements
         return s;
     }
 
     // Get all tokens from lexer until EOF///
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     fill() {
         this.lazyInit();
+        // eslint-disable-next-line curly
         while (this.fetch(1000) === 1000);
     }
 }

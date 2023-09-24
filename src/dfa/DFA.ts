@@ -1,23 +1,34 @@
-/* eslint-disable jsdoc/require-returns, jsdoc/check-tag-names */
+/* eslint-disable jsdoc/require-returns, jsdoc/check-tag-names, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// eslint-disable-next-line @typescript-eslint/quotes
 import { DFAState } from './DFAState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { StarLoopEntryState } from '../atn/StarLoopEntryState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATNConfigSet } from './../atn/ATNConfigSet.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { DFASerializer } from './DFASerializer.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { LexerDFASerializer } from './LexerDFASerializer.js';
 import { HashSet } from "../misc/HashSet.js";
 
 export class DFA {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     _states: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     atnStartState: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     decision: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     precedenceDfa: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     s0: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(atnStartState: any, decision: any) {
         if (decision === undefined) {
             decision = 0;
@@ -32,6 +43,7 @@ export class DFA {
          * ({@link Set} only allows you to see if it's there).
          */
         // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
+        // eslint-disable-next-line no-underscore-dangle
         this._states = new HashSet();
         this.s0 = null;
         /**
@@ -63,14 +75,17 @@ export class DFA {
      * @throws IllegalStateException if this is not a precedence DFA.
      * @see //isPrecedenceDfa()
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getPrecedenceStartState(precedence: any) {
         if (!(this.precedenceDfa)) {
+            // eslint-disable-next-line no-throw-literal
             throw ("Only precedence DFAs may contain a precedence start state.");
         }
         // s0.edges is never null for a precedence DFA
         if (precedence < 0 || precedence >= this.s0.edges.length) {
             return null;
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return this.s0.edges[precedence] || null;
     }
 
@@ -84,8 +99,10 @@ export class DFA {
      * @throws IllegalStateException if this is not a precedence DFA.
      * @see //isPrecedenceDfa()
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     setPrecedenceStartState(precedence: any, startState: any) {
         if (!(this.precedenceDfa)) {
+            // eslint-disable-next-line no-throw-literal
             throw ("Only precedence DFAs may contain a precedence start state.");
         }
         if (precedence < 0) {
@@ -117,9 +134,11 @@ export class DFA {
      * @param precedenceDfa {@code true} if this is a precedence DFA; otherwise,
      * {@code false}
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     setPrecedenceDfa(precedenceDfa: any) {
         if (this.precedenceDfa !== precedenceDfa) {
             // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
+            // eslint-disable-next-line no-underscore-dangle
             this._states = new HashSet();
             if (precedenceDfa) {
                 // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
@@ -138,13 +157,17 @@ export class DFA {
     /**
      * Return a list of all states in this DFA, ordered by state number.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     sortedStates() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, no-underscore-dangle
         const list = this._states.values();
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
         return list.sort(function (a: any, b: any) {
             return a.stateNumber - b.stateNumber;
         });
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     toString(literalNames: any, symbolicNames: any) {
         literalNames = literalNames || null;
         symbolicNames = symbolicNames || null;
@@ -152,18 +175,23 @@ export class DFA {
             return "";
         }
         const serializer = new DFASerializer(this, literalNames, symbolicNames);
+        // eslint-disable-next-line padding-line-between-statements
         return serializer.toString();
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     toLexerString() {
         if (this.s0 === null) {
             return "";
         }
         const serializer = new LexerDFASerializer(this);
+        // eslint-disable-next-line padding-line-between-statements
         return serializer.toString();
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get states() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, no-underscore-dangle
         return this._states;
     }
 }

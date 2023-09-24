@@ -8,6 +8,7 @@ import { ATNConfigSet } from "./ATNConfigSet.js";
 import { HashSet } from "../misc/HashSet.js";
 
 export class OrderedATNConfigSet extends ATNConfigSet {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
     constructor() {
         // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         super();

@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/require-returns */
+/* eslint-disable jsdoc/require-returns, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -6,9 +6,13 @@
  */
 
 export class PredictionContext {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     cachedHashCode: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getReturnState: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     length: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(cachedHashCode: any) {
         this.cachedHashCode = cachedHashCode;
     }
@@ -39,21 +43,28 @@ export class PredictionContext {
      * </pre>
      * This means only the {@link //EMPTY} context is in set.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     isEmpty() {
         // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         return this === PredictionContext.EMPTY;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     hasEmptyPath() {
         // @ts-expect-error TS(2339): Property 'EMPTY_RETURN_STATE' does not exist on ty... Remove this comment to see the full error message
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         return this.getReturnState(this.length - 1) === PredictionContext.EMPTY_RETURN_STATE;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     hashCode() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.cachedHashCode;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     updateHashCode(hash: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         hash.update(this.cachedHashCode);
     }
 }

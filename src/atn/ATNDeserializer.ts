@@ -1,69 +1,116 @@
-/* eslint-disable jsdoc/require-jsdoc, jsdoc/tag-lines */
+/* eslint-disable jsdoc/require-jsdoc, jsdoc/tag-lines, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// eslint-disable-next-line @typescript-eslint/quotes
 import { Token } from '../Token.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATN } from './ATN.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATNType } from './ATNType.js';
 
+// eslint-disable-next-line @typescript-eslint/quotes
 import { BasicState } from './BasicState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { DecisionState } from './DecisionState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { BlockStartState } from './BlockStartState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { BlockEndState } from './BlockEndState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { LoopEndState } from './LoopEndState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { RuleStartState } from './RuleStartState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { RuleStopState } from './RuleStopState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { TokensStartState } from './TokensStartState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { PlusLoopbackState } from './PlusLoopbackState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { StarLoopbackState } from './StarLoopbackState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { StarLoopEntryState } from './StarLoopEntryState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { PlusBlockStartState } from './PlusBlockStartState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { StarBlockStartState } from './StarBlockStartState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { BasicBlockStartState } from './BasicBlockStartState.js';
 
+// eslint-disable-next-line @typescript-eslint/quotes
 import { AtomTransition } from './AtomTransition.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { SetTransition } from './SetTransition.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { NotSetTransition } from './NotSetTransition.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { RuleTransition } from './RuleTransition.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { RangeTransition } from './RangeTransition.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ActionTransition } from './ActionTransition.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { EpsilonTransition } from './EpsilonTransition.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { WildcardTransition } from './WildcardTransition.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { PredicateTransition } from './PredicateTransition.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { PrecedencePredicateTransition } from './PrecedencePredicateTransition.js';
 
+// eslint-disable-next-line @typescript-eslint/quotes
 import { IntervalSet } from '../misc/IntervalSet.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATNDeserializationOptions } from './ATNDeserializationOptions.js';
 
+// eslint-disable-next-line @typescript-eslint/quotes
 import { LexerActionType } from './LexerActionType.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { LexerSkipAction } from './LexerSkipAction.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { LexerChannelAction } from './LexerChannelAction.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { LexerCustomAction } from './LexerCustomAction.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { LexerMoreAction } from './LexerMoreAction.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { LexerTypeAction } from './LexerTypeAction.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { LexerPushModeAction } from './LexerPushModeAction.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { LexerPopModeAction } from './LexerPopModeAction.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { LexerModeAction } from './LexerModeAction.js';
 import { ATNStateType } from "./ATNStateType.js";
 import { TransitionType } from "./TransitionType.js";
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const SERIALIZED_VERSION = 4;
 
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
 function initArray(length: any, value: any) {
     const tmp = [];
     tmp[length - 1] = value;
+    // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-unused-vars
     return tmp.map(function (i) { return value; });
 }
 
 export class ATNDeserializer {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     actionFactories: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     data: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     deserializationOptions: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     pos: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     stateFactories: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(options: any) {
         if (options === undefined || options === null) {
             // @ts-expect-error TS(2339): Property 'defaultOptions' does not exist on type '... Remove this comment to see the full error message
@@ -74,18 +121,22 @@ export class ATNDeserializer {
         this.actionFactories = null;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     deserialize(data: any) {
         const legacy = this.reset(data);
         this.checkVersion(legacy);
         if (legacy)
+            // eslint-disable-next-line curly
             this.skipUUID();
         const atn = this.readATN();
         this.readStates(atn, legacy);
         this.readRules(atn, legacy);
         this.readModes(atn);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const sets: any = [];
         this.readSets(atn, sets, this.readInt.bind(this));
         if (legacy)
+            // eslint-disable-next-line curly
             this.readSets(atn, sets, this.readInt32.bind(this));
         this.readEdges(atn, sets);
         this.readDecisions(atn);
@@ -97,49 +148,67 @@ export class ATNDeserializer {
             // re-verify after modification
             this.verifyATN(atn);
         }
+        // eslint-disable-next-line padding-line-between-statements
         return atn;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     reset(data: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const version = data.charCodeAt ? data.charCodeAt(0) : data[0];
         if (version === SERIALIZED_VERSION - 1) {
+            // eslint-disable-next-line prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
             const adjust = function (c: any) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const v = c.charCodeAt(0);
+                // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
                 return v > 1 ? v - 2 : v + 65534;
             };
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             const temp = data.split("").map(adjust);
             // don't adjust the first value since that's the version number
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             temp[0] = data.charCodeAt(0);
             this.data = temp;
             this.pos = 0;
+            // eslint-disable-next-line padding-line-between-statements
             return true;
         } else {
             this.data = data;
             this.pos = 0;
+            // eslint-disable-next-line padding-line-between-statements
             return false;
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     skipUUID() {
         let count = 0;
         while (count++ < 8)
+            // eslint-disable-next-line curly
             this.readInt();
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     checkVersion(legacy: any) {
         const version = this.readInt();
         if (!legacy && version !== SERIALIZED_VERSION) {
+            // eslint-disable-next-line no-throw-literal
             throw ("Could not deserialize ATN with version " + version + " (expected " + SERIALIZED_VERSION + ").");
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     readATN() {
         const grammarType = this.readInt();
         const maxTokenType = this.readInt();
+        // eslint-disable-next-line padding-line-between-statements
         return new ATN(grammarType, maxTokenType);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     readStates(atn: any, legacy: any) {
+        // eslint-disable-next-line one-var
         let j, pair, stateNumber;
         const loopBackStateNumbers = [];
         const endStateNumbers = [];
@@ -148,6 +217,7 @@ export class ATNDeserializer {
             const stype = this.readInt();
             // ignore bad type of states
             if (stype === ATNStateType.INVALID_TYPE) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 atn.addState(null);
                 continue;
             }
@@ -163,6 +233,7 @@ export class ATNDeserializer {
                 const endStateNumber = this.readInt();
                 endStateNumbers.push([s, endStateNumber]);
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             atn.addState(s);
         }
         // delay the assignment of loop back and end states until we know all the
@@ -177,12 +248,14 @@ export class ATNDeserializer {
             pair[0].endState = atn.states[pair[1]];
         }
 
+        // eslint-disable-next-line prefer-const
         let numNonGreedyStates = this.readInt();
         for (j = 0; j < numNonGreedyStates; j++) {
             stateNumber = this.readInt();
             atn.states[stateNumber].nonGreedy = true;
         }
 
+        // eslint-disable-next-line prefer-const
         let numPrecedenceStates = this.readInt();
         for (j = 0; j < numPrecedenceStates; j++) {
             stateNumber = this.readInt();
@@ -190,6 +263,7 @@ export class ATNDeserializer {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     readRules(atn: any, legacy: any) {
         let i;
         const nrules = this.readInt();
@@ -220,19 +294,24 @@ export class ATNDeserializer {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     readModes(atn: any) {
         const nmodes = this.readInt();
         for (let i = 0; i < nmodes; i++) {
+            // eslint-disable-next-line prefer-const
             let s = this.readInt();
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             atn.modeToStartState.push(atn.states[s]);
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     readSets(atn: any, sets: any, reader: any) {
         const m = this.readInt();
         for (let i = 0; i < m; i++) {
             // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
             const iset = new IntervalSet();
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             sets.push(iset);
             const n = this.readInt();
             const containsEof = this.readInt();
@@ -240,14 +319,18 @@ export class ATNDeserializer {
                 iset.addOne(-1);
             }
             for (let j = 0; j < n; j++) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const i1 = reader();
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const i2 = reader();
                 iset.addRange(i1, i2);
             }
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     readEdges(atn: any, sets: any) {
+        // eslint-disable-next-line one-var
         let i, j, state, trans, target;
         const nedges = this.readInt();
         for (i = 0; i < nedges; i++) {
@@ -259,6 +342,7 @@ export class ATNDeserializer {
             const arg3 = this.readInt();
             trans = this.edgeFactory(atn, ttype, src, trg, arg1, arg2, arg3, sets);
             const srcState = atn.states[src];
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             srcState.addTransition(trans);
         }
         // edges for rule stop states can be derived, so they aren't serialized
@@ -277,6 +361,7 @@ export class ATNDeserializer {
                 }
 
                 trans = new EpsilonTransition(t.followState, outermostPrecedenceReturn);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 atn.ruleToStopState[t.target.ruleIndex].addTransition(trans);
             }
         }
@@ -286,11 +371,13 @@ export class ATNDeserializer {
             if (state instanceof BlockStartState) {
                 // we need to know the end state to set its start state
                 if (state.endState === null) {
+                    // eslint-disable-next-line no-throw-literal
                     throw ("IllegalState");
                 }
                 // block end states can only be associated to a single block start
                 // state
                 if (state.endState.startState) {
+                    // eslint-disable-next-line no-throw-literal
                     throw ("IllegalState");
                 }
                 state.endState.startState = state;
@@ -315,16 +402,19 @@ export class ATNDeserializer {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     readDecisions(atn: any) {
         const ndecisions = this.readInt();
         for (let i = 0; i < ndecisions; i++) {
             const s = this.readInt();
             const decState = atn.states[s];
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             atn.decisionToState.push(decState);
             decState.decision = i;
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     readLexerActions(atn: any, legacy: any) {
         if (atn.grammarType === ATNType.LEXER) {
             const count = this.readInt();
@@ -344,6 +434,7 @@ export class ATNDeserializer {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     generateRuleBypassTransitions(atn: any) {
         let i;
         const count = atn.ruleToStartState.length;
@@ -355,17 +446,22 @@ export class ATNDeserializer {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     generateRuleBypassTransition(atn: any, idx: any) {
+        // eslint-disable-next-line one-var
         let i, state;
         const bypassStart = new BasicBlockStartState();
         bypassStart.ruleIndex = idx;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         atn.addState(bypassStart);
 
         const bypassStop = new BlockEndState();
         bypassStop.ruleIndex = idx;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         atn.addState(bypassStop);
 
         bypassStart.endState = bypassStop;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         atn.defineDecisionState(bypassStart);
 
         // @ts-expect-error TS(2339): Property 'startState' does not exist on type 'Bloc... Remove this comment to see the full error message
@@ -386,6 +482,7 @@ export class ATNDeserializer {
                 }
             }
             if (excludeTransition === null) {
+                // eslint-disable-next-line no-throw-literal
                 throw ("Couldn't identify final state of the precedence rule prefix section.");
             }
         } else {
@@ -396,6 +493,7 @@ export class ATNDeserializer {
         // target blockEnd instead
         for (i = 0; i < atn.states.length; i++) {
             state = atn.states[i];
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let j = 0; j < state.transitions.length; j++) {
                 const transition = state.transitions[j];
                 if (transition === excludeTransition) {
@@ -414,15 +512,18 @@ export class ATNDeserializer {
         while (count > 0) {
             // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
             bypassStart.addTransition(ruleToStartState.transitions[count - 1]);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             ruleToStartState.transitions = ruleToStartState.transitions.slice(-1);
         }
         // link the new states
         // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         atn.ruleToStartState[idx].addTransition(new EpsilonTransition(bypassStart));
         // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
         bypassStop.addTransition(new EpsilonTransition(endState));
 
         const matchState = new BasicState();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         atn.addState(matchState);
         // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
         matchState.addTransition(new AtomTransition(bypassStop, atn.ruleToTokenType[idx]));
@@ -430,6 +531,7 @@ export class ATNDeserializer {
         bypassStart.addTransition(new EpsilonTransition(matchState));
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     stateIsEndStateFor(state: any, idx: any) {
         if (state.ruleIndex !== idx) {
             return null;
@@ -454,7 +556,9 @@ export class ATNDeserializer {
      * the {@link StarLoopEntryState} field to the correct value.
      * @param atn The ATN.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     markPrecedenceDecisions(atn: any) {
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < atn.states.length; i++) {
             const state = atn.states[i];
             if (!(state instanceof StarLoopEntryState)) {
@@ -475,11 +579,13 @@ export class ATNDeserializer {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     verifyATN(atn: any) {
         if (!this.deserializationOptions.verifyATN) {
             return;
         }
         // verify assumptions
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < atn.states.length; i++) {
             const state = atn.states[i];
             if (state === null) {
@@ -506,6 +612,7 @@ export class ATNDeserializer {
                     // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
                     this.checkCondition(state.nonGreedy);
                 } else {
+                    // eslint-disable-next-line no-throw-literal
                     throw ("IllegalState");
                 }
             } else if (state instanceof StarLoopbackState) {
@@ -535,6 +642,7 @@ export class ATNDeserializer {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     checkCondition(condition: any, message: any) {
         if (!condition) {
             if (message === undefined || message === null) {
@@ -544,16 +652,21 @@ export class ATNDeserializer {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     readInt() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.data[this.pos++];
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     readInt32() {
         const low = this.readInt();
         const high = this.readInt();
+        // eslint-disable-next-line padding-line-between-statements
         return low | (high << 16);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     edgeFactory(atn: any, type: any, src: any, trg: any, arg1: any, arg2: any, arg3: any, sets: any) {
         const target = atn.states[trg];
         switch (type) {
@@ -581,59 +694,87 @@ export class ATNDeserializer {
             case TransitionType.WILDCARD:
                 return new WildcardTransition(target);
             default:
+                // eslint-disable-next-line no-throw-literal
                 throw "The specified transition type: " + type + " is not valid.";
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     stateFactory(type: any, ruleIndex: any) {
         if (this.stateFactories === null) {
             const sf = [];
             sf[ATNStateType.INVALID_TYPE] = null;
+            // eslint-disable-next-line arrow-body-style
             sf[ATNStateType.BASIC] = () => new BasicState();
+            // eslint-disable-next-line arrow-body-style
             sf[ATNStateType.RULE_START] = () => new RuleStartState();
+            // eslint-disable-next-line arrow-body-style
             sf[ATNStateType.BLOCK_START] = () => new BasicBlockStartState();
+            // eslint-disable-next-line arrow-body-style
             sf[ATNStateType.PLUS_BLOCK_START] = () => new PlusBlockStartState();
+            // eslint-disable-next-line arrow-body-style
             sf[ATNStateType.STAR_BLOCK_START] = () => new StarBlockStartState();
+            // eslint-disable-next-line arrow-body-style
             sf[ATNStateType.TOKEN_START] = () => new TokensStartState();
+            // eslint-disable-next-line arrow-body-style
             sf[ATNStateType.RULE_STOP] = () => new RuleStopState();
+            // eslint-disable-next-line arrow-body-style
             sf[ATNStateType.BLOCK_END] = () => new BlockEndState();
+            // eslint-disable-next-line arrow-body-style
             sf[ATNStateType.STAR_LOOP_BACK] = () => new StarLoopbackState();
+            // eslint-disable-next-line arrow-body-style
             sf[ATNStateType.STAR_LOOP_ENTRY] = () => new StarLoopEntryState();
+            // eslint-disable-next-line arrow-body-style
             sf[ATNStateType.PLUS_LOOP_BACK] = () => new PlusLoopbackState();
+            // eslint-disable-next-line arrow-body-style
             sf[ATNStateType.LOOP_END] = () => new LoopEndState();
             this.stateFactories = sf;
         }
 
         if (type > this.stateFactories.length || this.stateFactories[type] === null) {
+            // eslint-disable-next-line no-throw-literal
             throw ("The specified state type " + type + " is not valid.");
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             const s = this.stateFactories[type]();
             if (s !== null) {
                 s.ruleIndex = ruleIndex;
+                // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
                 return s;
             }
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     lexerActionFactory(type: any, data1: any, data2: any) {
         if (this.actionFactories === null) {
             const af = [];
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, arrow-body-style
             af[LexerActionType.CHANNEL] = (data1: any, data2: any) => new LexerChannelAction(data1);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any, arrow-body-style
             af[LexerActionType.CUSTOM] = (data1: any, data2: any) => new LexerCustomAction(data1, data2);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, arrow-body-style
             af[LexerActionType.MODE] = (data1: any, data2: any) => new LexerModeAction(data1);
             // @ts-expect-error TS(2339): Property 'INSTANCE' does not exist on type 'typeof... Remove this comment to see the full error message
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, arrow-body-style
             af[LexerActionType.MORE] = (data1: any, data2: any) => LexerMoreAction.INSTANCE;
             // @ts-expect-error TS(2339): Property 'INSTANCE' does not exist on type 'typeof... Remove this comment to see the full error message
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, arrow-body-style
             af[LexerActionType.POP_MODE] = (data1: any, data2: any) => LexerPopModeAction.INSTANCE;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, arrow-body-style
             af[LexerActionType.PUSH_MODE] = (data1: any, data2: any) => new LexerPushModeAction(data1);
             // @ts-expect-error TS(2339): Property 'INSTANCE' does not exist on type 'typeof... Remove this comment to see the full error message
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, arrow-body-style
             af[LexerActionType.SKIP] = (data1: any, data2: any) => LexerSkipAction.INSTANCE;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, arrow-body-style
             af[LexerActionType.TYPE] = (data1: any, data2: any) => new LexerTypeAction(data1);
             this.actionFactories = af;
         }
         if (type > this.actionFactories.length || this.actionFactories[type] === null) {
+            // eslint-disable-next-line no-throw-literal
             throw ("The specified lexer action type " + type + " is not valid.");
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
             return this.actionFactories[type](data1, data2);
         }
     }

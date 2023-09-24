@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/no-undefined-types, jsdoc/require-param, jsdoc/tag-lines, jsdoc/require-param-description, jsdoc/require-returns, jsdoc/check-alignment, jsdoc/check-tag-names, jsdoc/valid-types */
+/* eslint-disable jsdoc/no-undefined-types, jsdoc/require-param, jsdoc/tag-lines, jsdoc/require-param-description, jsdoc/require-returns, jsdoc/check-alignment, jsdoc/check-tag-names, jsdoc/valid-types, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -9,6 +9,7 @@ import { FailedPredicateException } from "./FailedPredicateException.js";
 import { InputMismatchException } from "./InputMismatchException.js";
 import { NoViableAltException } from "./NoViableAltException.js";
 import { ATNState } from "./atn/ATNState.js";
+// eslint-disable-next-line @typescript-eslint/quotes
 import { Token } from './Token.js';
 import { Interval } from "./misc/Interval.js";
 import { IntervalSet } from "./misc/IntervalSet.js";
@@ -19,12 +20,19 @@ import { ATNStateType } from "./atn/ATNStateType.js";
  * error reporting and recovery in ANTLR parsers.
  */
 export class DefaultErrorStrategy {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     errorRecoveryMode: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     lastErrorIndex: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     lastErrorStates: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     nextTokenState: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     nextTokensContext: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     nextTokensState: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
     constructor() {
         /**
          * Indicates whether the error strategy is currently "recovering from an
@@ -52,6 +60,7 @@ export class DefaultErrorStrategy {
      * <p>The default implementation simply calls {@link //endErrorCondition} to
      * ensure that the handler is not in error recovery mode.</p>
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     reset(recognizer: any) {
         this.endErrorCondition(recognizer);
     }
@@ -62,11 +71,14 @@ export class DefaultErrorStrategy {
      *
      * @param recognizer the parser instance
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
     beginErrorCondition(recognizer: any) {
         this.errorRecoveryMode = true;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
     inErrorRecoveryMode(recognizer: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.errorRecoveryMode;
     }
 
@@ -75,6 +87,7 @@ export class DefaultErrorStrategy {
      * a recognition exception.
      * @param recognizer
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
     endErrorCondition(recognizer: any) {
         this.errorRecoveryMode = false;
         this.lastErrorStates = null;
@@ -85,6 +98,7 @@ export class DefaultErrorStrategy {
      * {@inheritDoc}
      * <p>The default implementation simply calls {@link //endErrorCondition}.</p>
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     reportMatch(recognizer: any) {
         this.endErrorCondition(recognizer);
     }
@@ -108,6 +122,7 @@ export class DefaultErrorStrategy {
      * the exception</li>
      * </ul>
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     reportError(recognizer: any, e: any) {
         // if we've already reported an error and have not matched a token
         // yet successfully, don't report any errors.
@@ -124,6 +139,7 @@ export class DefaultErrorStrategy {
         } else {
             console.log("unknown recognition error type: " + e.constructor.name);
             console.log(e.stack);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             recognizer.notifyErrorListeners(e.offendingToken, e.getMessage(), e);
         }
     }
@@ -137,19 +153,24 @@ export class DefaultErrorStrategy {
      * that can follow the current rule.</p>
      *
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     recover(recognizer: any, e: any) {
         if (this.lastErrorIndex === recognizer.inputStream.index &&
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.lastErrorStates !== null && this.lastErrorStates.indexOf(recognizer.state) >= 0) {
             // uh oh, another error at same token index and previously-visited
             // state in ATN; must be a case where LT(1) is in the recovery
             // token set so nothing got consumed. Consume a single token
             // at least to prevent an infinite loop; this is a failsafe.
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             recognizer.consume();
         }
+        // eslint-disable-next-line no-underscore-dangle
         this.lastErrorIndex = recognizer._input.index;
         if (this.lastErrorStates === null) {
             this.lastErrorStates = [];
         }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.lastErrorStates.push(recognizer.state);
         const followSet = this.getErrorRecoverySet(recognizer);
         this.consumeUntil(recognizer, followSet);
@@ -202,28 +223,37 @@ export class DefaultErrorStrategy {
      * functionality by simply overriding this method as a blank { }.</p>
      *
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     sync(recognizer: any) {
         // If already recovering, don't try to sync
         if (this.inErrorRecoveryMode(recognizer)) {
             return;
         }
         const s = recognizer.interpreter.atn.states[recognizer.state];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const la = recognizer.tokenStream.LA(1);
         // try cheaper subset first; might get lucky. seems to shave a wee bit off
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const nextTokens = recognizer.atn.nextTokens(s);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (nextTokens.contains(la)) {
             this.nextTokensContext = null;
             // @ts-expect-error TS(2339): Property 'INVALID_STATE_NUMBER' does not exist on ... Remove this comment to see the full error message
             this.nextTokenState = ATNState.INVALID_STATE_NUMBER;
+            // eslint-disable-next-line padding-line-between-statements
             return;
         // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         } else if (nextTokens.contains(Token.EPSILON)) {
             if (this.nextTokensContext === null) {
                 // It's possible the next token won't match information tracked
                 // by sync is restricted for performance.
+                // eslint-disable-next-line no-underscore-dangle
                 this.nextTokensContext = recognizer._ctx;
+                // eslint-disable-next-line no-underscore-dangle
                 this.nextTokensState = recognizer._stateNumber;
             }
+            // eslint-disable-next-line padding-line-between-statements
             return;
         }
         switch (s.stateType) {
@@ -243,6 +273,7 @@ export class DefaultErrorStrategy {
                     this.reportUnwantedToken(recognizer);
                     // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
                     const expecting = new IntervalSet();
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     expecting.addSet(recognizer.getExpectedTokens());
                     const whatFollowsLoopIterationOrRule = expecting.addSet(this.getErrorRecoverySet(recognizer));
                     this.consumeUntil(recognizer, whatFollowsLoopIterationOrRule);
@@ -262,6 +293,7 @@ export class DefaultErrorStrategy {
      * @param recognizer the parser instance
      * @param e the recognition exception
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     reportNoViableAlternative(recognizer: any, e: any) {
         const tokens = recognizer.tokenStream;
         let input;
@@ -270,12 +302,14 @@ export class DefaultErrorStrategy {
             if (e.startToken.type === Token.EOF) {
                 input = "<EOF>";
             } else {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 input = tokens.getText(new Interval(e.startToken.tokenIndex, e.offendingToken.tokenIndex));
             }
         } else {
             input = "<unknown input>";
         }
         const msg = "no viable alternative at input " + this.escapeWSAndQuote(input);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         recognizer.notifyErrorListeners(msg, e.offendingToken, e);
     }
 
@@ -288,9 +322,12 @@ export class DefaultErrorStrategy {
      * @param recognizer the parser instance
      * @param e the recognition exception
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     reportInputMismatch(recognizer: any, e: any) {
         const msg = "mismatched input " + this.getTokenErrorDisplay(e.offendingToken) +
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             " expecting " + e.getExpectedTokens().toString(recognizer.vocabulary);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         recognizer.notifyErrorListeners(msg, e.offendingToken, e);
     }
 
@@ -303,9 +340,12 @@ export class DefaultErrorStrategy {
      * @param recognizer the parser instance
      * @param e the recognition exception
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     reportFailedPredicate(recognizer: any, e: any) {
+        // eslint-disable-next-line no-underscore-dangle
         const ruleName = recognizer.ruleNames[recognizer._ctx.ruleIndex];
         const msg = "rule " + ruleName + " " + e.message;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         recognizer.notifyErrorListeners(msg, e.offendingToken, e);
     }
 
@@ -328,15 +368,19 @@ export class DefaultErrorStrategy {
      * @param recognizer the parser instance
      *
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     reportUnwantedToken(recognizer: any) {
         if (this.inErrorRecoveryMode(recognizer)) {
             return;
         }
         this.beginErrorCondition(recognizer);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const t = recognizer.getCurrentToken();
         const tokenName = this.getTokenErrorDisplay(t);
         const expecting = this.getExpectedTokens(recognizer);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const msg = "extraneous input " + tokenName + " expecting " + expecting.toString(recognizer.vocabulary);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         recognizer.notifyErrorListeners(msg, t, null);
     }
 
@@ -357,16 +401,20 @@ export class DefaultErrorStrategy {
      *
      * @param recognizer the parser instance
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     reportMissingToken(recognizer: any) {
         if (this.inErrorRecoveryMode(recognizer)) {
             return;
         }
         this.beginErrorCondition(recognizer);
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const t = recognizer.getCurrentToken();
         const expecting = this.getExpectedTokens(recognizer);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const msg = "missing " + expecting.toString(recognizer.vocabulary) +
             " at " + this.getTokenErrorDisplay(t);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         recognizer.notifyErrorListeners(msg, t, null);
     }
 
@@ -420,17 +468,21 @@ export class DefaultErrorStrategy {
      * is in the set of tokens that can follow the {@code ')'} token reference
      * in rule {@code atom}. It can assume that you forgot the {@code ')'}.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     recoverInline(recognizer: any) {
         // SINGLE TOKEN DELETION
         const matchedSymbol = this.singleTokenDeletion(recognizer);
         if (matchedSymbol !== null) {
             // we have deleted the extra token.
             // now, move past ttype token as if all were ok
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             recognizer.consume();
+            // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
             return matchedSymbol;
         }
         // SINGLE TOKEN INSERTION
         if (this.singleTokenInsertion(recognizer)) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return this.getMissingSymbol(recognizer);
         }
         // even that didn't work; must throw the exception
@@ -454,7 +506,9 @@ export class DefaultErrorStrategy {
      * @return {@code true} if single-token insertion is a viable recovery
      * strategy for the current mismatched input, otherwise {@code false}
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     singleTokenInsertion(recognizer: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const currentSymbolType = recognizer.tokenStream.LA(1);
         // if current token is consistent with what could come after current
         // ATN state, then we know we're missing a token; error recovery
@@ -462,9 +516,12 @@ export class DefaultErrorStrategy {
         const atn = recognizer.interpreter.atn;
         const currentState = atn.states[recognizer.state];
         const next = currentState.transitions[0].target;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, no-underscore-dangle
         const expectingAtLL2 = atn.nextTokens(next, recognizer._ctx);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (expectingAtLL2.contains(currentSymbolType)) {
             this.reportMissingToken(recognizer);
+            // eslint-disable-next-line padding-line-between-statements
             return true;
         } else {
             return false;
@@ -490,19 +547,25 @@ export class DefaultErrorStrategy {
      * deletion successfully recovers from the mismatched input, otherwise
      * {@code null}
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     singleTokenDeletion(recognizer: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const nextTokenType = recognizer.tokenStream.LA(2);
         const expecting = this.getExpectedTokens(recognizer);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (expecting.contains(nextTokenType)) {
             this.reportUnwantedToken(recognizer);
             // print("recoverFromMismatchedToken deleting " \
             // + str(recognizer.tokenStream.LT(1)) \
             // + " since " + str(recognizer.tokenStream.LT(2)) \
             // + " is what we want", file=sys.stderr)
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             recognizer.consume(); // simply delete extra token
             // we want to return the token we're actually matching
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             const matchedSymbol = recognizer.getCurrentToken();
             this.reportMatch(recognizer); // we know current token is correct
+            // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
             return matchedSymbol;
         } else {
             return null;
@@ -530,7 +593,9 @@ export class DefaultErrorStrategy {
      * override this method to create the appropriate tokens.
      *
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getMissingSymbol(recognizer: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const currentSymbol = recognizer.getCurrentToken();
         const expecting = this.getExpectedTokens(recognizer);
         // @ts-expect-error TS(2339): Property 'INVALID_TYPE' does not exist on type 'ty... Remove this comment to see the full error message
@@ -544,23 +609,28 @@ export class DefaultErrorStrategy {
         if (expectedTokenType === Token.EOF) {
             tokenText = "<missing EOF>";
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             tokenText = "<missing " + recognizer.vocabulary.getDisplayName(expectedTokenType) + ">";
         }
 
         let current = currentSymbol;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const lookBack = recognizer.tokenStream.LT(-1);
         // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         if (current.type === Token.EOF && lookBack !== null) {
             current = lookBack;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
         return recognizer.getTokenFactory().create(current.source,
             // @ts-expect-error TS(2339): Property 'DEFAULT_CHANNEL' does not exist on type ... Remove this comment to see the full error message
             expectedTokenType, tokenText, Token.DEFAULT_CHANNEL,
             -1, -1, current.line, current.column);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getExpectedTokens(recognizer: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
         return recognizer.getExpectedTokens();
     }
 
@@ -573,6 +643,7 @@ export class DefaultErrorStrategy {
      * your token objects because you don't have to go modify your lexer
      * so that it creates a new Java type.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getTokenErrorDisplay(t: any) {
         if (t === null) {
             return "<no token>";
@@ -586,13 +657,19 @@ export class DefaultErrorStrategy {
                 s = "<" + t.type + ">";
             }
         }
+        // eslint-disable-next-line padding-line-between-statements
         return this.escapeWSAndQuote(s);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     escapeWSAndQuote(s: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         s = s.replace(/\n/g, "\\n");
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         s = s.replace(/\r/g, "\\r");
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         s = s.replace(/\t/g, "\\t");
+        // eslint-disable-next-line padding-line-between-statements
         return "'" + s + "'";
     }
 
@@ -689,8 +766,10 @@ export class DefaultErrorStrategy {
      * Like Grosch I implement context-sensitive FOLLOW sets that are combined
      * at run-time upon error to avoid overhead during parsing.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getErrorRecoverySet(recognizer: any) {
         const atn = recognizer.interpreter.atn;
+        // eslint-disable-next-line no-underscore-dangle
         let ctx = recognizer._ctx;
         // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         const recoverSet = new IntervalSet();
@@ -698,21 +777,28 @@ export class DefaultErrorStrategy {
             // compute what follows who invoked us
             const invokingState = atn.states[ctx.invokingState];
             const rt = invokingState.transitions[0];
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             const follow = atn.nextTokens(rt.followState);
             recoverSet.addSet(follow);
             ctx = ctx.parent;
         }
         // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
         recoverSet.removeOne(Token.EPSILON);
+        // eslint-disable-next-line padding-line-between-statements
         return recoverSet;
     }
 
     // Consume tokens until one matches the given token set.//
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     consumeUntil(recognizer: any, set: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         let ttype = recognizer.tokenStream.LA(1);
         // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         while (ttype !== Token.EOF && !set.contains(ttype)) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             recognizer.consume();
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             ttype = recognizer.tokenStream.LA(1);
         }
     }

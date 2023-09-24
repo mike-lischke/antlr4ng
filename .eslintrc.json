@@ -22,7 +22,8 @@
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "project": [
-            "tsconfig.json"
+            "tsconfig.json",
+            "tsconfig.declarations.json"
         ],
         "sourceType": "module",
         "implicitStrict": true,

@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/require-param */
+/* eslint-disable jsdoc/require-param, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -19,7 +19,9 @@ import { LexerAction } from "./LexerAction.js";
  * command argument could not be evaluated when the grammar was compiled.</p>
  */
 export class LexerCustomAction extends LexerAction {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     actionIndex: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     ruleIndex: any;
     /**
      * Constructs a custom lexer action with the specified rule and action
@@ -30,6 +32,7 @@ export class LexerCustomAction extends LexerAction {
      * @param actionIndex The action index to use for calls to
      * {@link Recognizer//action}.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(ruleIndex: any, actionIndex: any) {
         super(LexerActionType.CUSTOM);
         this.ruleIndex = ruleIndex;
@@ -41,14 +44,19 @@ export class LexerCustomAction extends LexerAction {
      * <p>Custom actions are implemented by calling {@link Lexer//action} with the
      * appropriate rule and action indexes.</p>
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     execute(lexer: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         lexer.action(null, this.ruleIndex, this.actionIndex);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     updateHashCode(hash: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         hash.update(this.actionType, this.ruleIndex, this.actionIndex);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     equals(other: any) {
         if (this === other) {
             return true;

@@ -1,21 +1,25 @@
-/* eslint-disable jsdoc/require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc, max-len, no-fallthrough */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const StringSeedHashCode = Math.round(Math.random() * Math.pow(2, 32));
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
 export function stringHashCode(value: any) {
     if (!value) {
         return 0;
     }
     const type = typeof value;
+    // eslint-disable-next-line @typescript-eslint/quotes, @typescript-eslint/no-unsafe-call
     const key = type === 'string' ? value : type === 'object' && value.toString ? value.toString() : false;
     if (!key) {
         return 0;
     }
+    // eslint-disable-next-line one-var
     let h1b, k1;
 
     const remainder = key.length & 3; // key.length % 4
@@ -27,9 +31,13 @@ export function stringHashCode(value: any) {
 
     while (i < bytes) {
         k1 =
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             ((key.charCodeAt(i) & 0xff)) |
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             ((key.charCodeAt(++i) & 0xff) << 8) |
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             ((key.charCodeAt(++i) & 0xff) << 16) |
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             ((key.charCodeAt(++i) & 0xff) << 24);
         ++i;
 
@@ -45,14 +53,18 @@ export function stringHashCode(value: any) {
 
     k1 = 0;
 
+    // eslint-disable-next-line default-case
     switch (remainder) {
         case 3:
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
         // no-break
         case 2:
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
         // no-break
         case 1:
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             k1 ^= (key.charCodeAt(i) & 0xff);
             k1 = (((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16)) & 0xffffffff;
             k1 = (k1 << 15) | (k1 >>> 17);

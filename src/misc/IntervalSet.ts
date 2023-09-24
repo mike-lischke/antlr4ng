@@ -1,9 +1,11 @@
+/* eslint-disable max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// eslint-disable-next-line @typescript-eslint/quotes
 import { Token } from '../Token.js';
 import { Interval } from "./Interval.js";
 import { Lexer } from "../Lexer.js";
@@ -11,8 +13,10 @@ import { Vocabulary } from "../Vocabulary.js";
 
 export class IntervalSet {
     // @ts-expect-error TS(2339): Property 'MIN_CHAR_VALUE' does not exist on type '... Remove this comment to see the full error message
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention
     static COMPLETE_CHAR_SET = IntervalSet.of(Lexer.MIN_CHAR_VALUE, Lexer.MAX_CHAR_VALUE);
     // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention
     static EMPTY_SET = new IntervalSet();
 
     static {
@@ -23,6 +27,7 @@ export class IntervalSet {
     }
 
     // @ts-expect-error TS(7006): Parameter 'set' implicitly has an 'any' type.
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types
     constructor(set) {
         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
         this.intervals = [];
@@ -35,6 +40,7 @@ export class IntervalSet {
     }
 
     // @ts-expect-error TS(7006): Parameter 'a' implicitly has an 'any' type.
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     static of(a, b) {
         // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         const s = new IntervalSet();
@@ -43,37 +49,46 @@ export class IntervalSet {
         return s;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get minElement() {
         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
         if (this.intervals.length === 0) {
             // @ts-expect-error TS(2339): Property 'INVALID_TYPE' does not exist on type 'ty... Remove this comment to see the full error message
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return Token.INVALID_TYPE;
         }
 
         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.intervals[0].start;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get maxElement() {
         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
         if (this.intervals.length === 0) {
             // @ts-expect-error TS(2339): Property 'INVALID_TYPE' does not exist on type 'ty... Remove this comment to see the full error message
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return Token.INVALID_TYPE;
         }
 
         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.intervals[this.intervals.length - 1].stop;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get isNil() {
         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
         return this.intervals.length === 0;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     clear() {
         // @ts-expect-error TS(2551): Property 'readOnly' does not exist on type 'Interv... Remove this comment to see the full error message
         if (this.readOnly) {
             // @ts-expect-error TS(2304): Cannot find name 'IllegalStateException'.
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             throw new IllegalStateException("can't alter readonly IntervalSet");
         }
 
@@ -82,26 +97,31 @@ export class IntervalSet {
     }
 
     // @ts-expect-error TS(7006): Parameter 'v' implicitly has an 'any' type.
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     addOne(v) {
         this.addInterval(new Interval(v, v));
     }
 
     // @ts-expect-error TS(7006): Parameter 'l' implicitly has an 'any' type.
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     addRange(l, h) {
         this.addInterval(new Interval(l, h));
     }
 
     // @ts-expect-error TS(7006): Parameter 'addition' implicitly has an 'any' type.
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     addInterval(addition) {
         // @ts-expect-error TS(2551): Property 'readOnly' does not exist on type 'Interv... Remove this comment to see the full error message
         if (this.readOnly) {
             // @ts-expect-error TS(2304): Cannot find name 'IllegalStateException'.
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             throw new IllegalStateException("can't alter readonly IntervalSet");
         }
 
         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
         if (this.intervals.length === 0) {
             // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.intervals.push(addition);
         } else {
             // find insert pos
@@ -110,12 +130,15 @@ export class IntervalSet {
                 // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
                 const existing = this.intervals[pos];
 
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 if (addition.equals(existing)) {
                     return;
                 }
 
                 // If both intervals are adjacent or overlap just at start or stop, merge them into a single interval.
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 if (addition.adjacent(existing) || !addition.disjoint(existing)) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     const bigger = addition.union(existing);
                     // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
                     this.intervals[pos] = bigger;
@@ -127,24 +150,29 @@ export class IntervalSet {
                         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
                         const next = this.intervals[sub];
 
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                         if (!bigger.adjacent(next) && bigger.disjoint(next)) {
                             break;
                         }
 
                         // If we bump up against or overlap next, merge.
                         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                         this.intervals.splice(sub, 1);
                         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                         this.intervals[pos] = bigger.union(next);
                     }
 
                     return;
                 }
 
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 if (addition.startsBeforeDisjoint(existing)) {
                     // Insert before current position. There can't be any overlap with the previous interval,
                     // as we checked that iin the previous loop.
                     // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     this.intervals.splice(pos, 0, addition);
 
                     return;
@@ -153,19 +181,23 @@ export class IntervalSet {
 
             // Addition starts after last interval. Just add it.
             // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.intervals.push(addition);
         }
     }
 
     // @ts-expect-error TS(7006): Parameter 'other' implicitly has an 'any' type.
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     addSet(other) {
         // @ts-expect-error TS(7006): Parameter 'toAdd' implicitly has an 'any' type.
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, arrow-parens, arrow-body-style
         other.intervals.forEach(toAdd => this.addInterval(toAdd), this);
 
         return this;
     }
 
     // @ts-expect-error TS(7006): Parameter 'vocabularyOrMinElement' implicitly has ... Remove this comment to see the full error message
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     complement(vocabularyOrMinElement, maxElement) {
         if (!vocabularyOrMinElement) {
             // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
@@ -189,17 +221,20 @@ export class IntervalSet {
     }
 
     // @ts-expect-error TS(7006): Parameter 'sets' implicitly has an 'any' type.
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     or(sets) {
         // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         const result = new IntervalSet();
         result.addSet(this);
         // @ts-expect-error TS(7006): Parameter 'set' implicitly has an 'any' type.
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, arrow-parens, arrow-body-style
         sets.forEach(set => result.addSet(set), this);
 
         return result;
     }
 
     // @ts-expect-error TS(7006): Parameter 'other' implicitly has an 'any' type.
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     and(other) {
         if (other.isNil) {
             // nothing in common with null set
@@ -208,25 +243,34 @@ export class IntervalSet {
         }
 
         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+        // eslint-disable-next-line prefer-const
         let myIntervals = this.intervals;
+        // eslint-disable-next-line prefer-const
         let theirIntervals = other.intervals;
         let intersection;
+        // eslint-disable-next-line prefer-const
         let mySize = myIntervals.length;
+        // eslint-disable-next-line prefer-const
         let theirSize = theirIntervals.length;
         let i = 0;
         let j = 0;
 
         // Iterate down both interval lists looking for non-disjoint intervals.
         while (i < mySize && j < theirSize) {
+            // eslint-disable-next-line prefer-const
             let mine = myIntervals[i];
+            // eslint-disable-next-line prefer-const
             let theirs = theirIntervals[j];
 
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             if (mine.startsBeforeDisjoint(theirs)) {
                 // Move this iterator looking for interval that might overlap.
                 i++;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             } else if (theirs.startsBeforeDisjoint(mine)) {
                 // Move other iterator looking for interval that might overlap.
                 j++;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             } else if (mine.properlyContains(theirs)) {
                 // Overlap, add intersection, get next theirs.
                 if (!intersection) {
@@ -234,8 +278,10 @@ export class IntervalSet {
                     intersection = new IntervalSet();
                 }
 
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 intersection.addInterval(mine.intersection(theirs));
                 j++;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             } else if (theirs.properlyContains(mine)) {
                 // Overlap, add intersection, get next mine.
                 if (!intersection) {
@@ -243,8 +289,10 @@ export class IntervalSet {
                     intersection = new IntervalSet();
                 }
 
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 intersection.addInterval(mine.intersection(theirs));
                 i++;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             } else if (!mine.disjoint(theirs)) {
                 // Overlap, add intersection.
                 if (!intersection) {
@@ -252,6 +300,7 @@ export class IntervalSet {
                     intersection = new IntervalSet();
                 }
 
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 intersection.addInterval(mine.intersection(theirs));
 
                 // Move the iterator of lower range [a..b], but not
@@ -261,9 +310,11 @@ export class IntervalSet {
                 // but not theirs as theirs may collide with the next range
                 // in thisIter.
                 // move both iterators to next ranges
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 if (mine.startsAfterNonDisjoint(theirs)) {
                     j++;
                 }
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 else if (theirs.startsAfterNonDisjoint(mine)) {
                     i++;
                 }
@@ -279,6 +330,7 @@ export class IntervalSet {
     }
 
     // @ts-expect-error TS(7006): Parameter 'other' implicitly has an 'any' type.
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     subtract(other) {
         if (this.isNil) {
             // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
@@ -327,6 +379,7 @@ export class IntervalSet {
                     // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
                     result.intervals[resultI] = beforeCurrent;
                     // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     result.intervals.splice(resultI + 1, 0, afterCurrent);
                     resultI++;
                     rightI++;
@@ -348,6 +401,7 @@ export class IntervalSet {
                 } else {
                     // remove the current interval (thus no need to increment resultI)
                     // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     result.intervals.splice(resultI, 1);
                     continue;
                 }
@@ -361,6 +415,7 @@ export class IntervalSet {
     }
 
     // @ts-expect-error TS(7006): Parameter 'el' implicitly has an 'any' type.
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     contains(el) {
         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
         if (this.intervals === null) {
@@ -390,10 +445,12 @@ export class IntervalSet {
     }
 
     // @ts-expect-error TS(7006): Parameter 'toRemove' implicitly has an 'any' type.
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     removeRange(toRemove) {
         // @ts-expect-error TS(2551): Property 'readOnly' does not exist on type 'Interv... Remove this comment to see the full error message
         if (this.readOnly) {
             // @ts-expect-error TS(2304): Cannot find name 'IllegalStateException'.
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             throw new IllegalStateException("can't alter readonly IntervalSet");
         }
 
@@ -403,6 +460,7 @@ export class IntervalSet {
         } else if (this.intervals !== null) {
             let pos = 0;
             // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let n = 0; n < this.intervals.length; n++) {
                 // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
                 const existing = this.intervals[pos];
@@ -416,12 +474,15 @@ export class IntervalSet {
                     this.intervals[pos] = new Interval(existing.start, toRemove.start);
                     const x = new Interval(toRemove.stop, existing.stop);
                     // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     this.intervals.splice(pos, 0, x);
+                    // eslint-disable-next-line padding-line-between-statements
                     return;
                 }
                 // check for included range, remove it
                 else if (toRemove.start <= existing.start && toRemove.stop >= existing.stop) {
                     // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     this.intervals.splice(pos, 1);
                     pos = pos - 1; // need another pass
                 }
@@ -441,10 +502,12 @@ export class IntervalSet {
     }
 
     // @ts-expect-error TS(7006): Parameter 'value' implicitly has an 'any' type.
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     removeOne(value) {
         // @ts-expect-error TS(2551): Property 'readOnly' does not exist on type 'Interv... Remove this comment to see the full error message
         if (this.readOnly) {
             // @ts-expect-error TS(2304): Cannot find name 'IllegalStateException'.
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             throw new IllegalStateException("can't alter readonly IntervalSet");
         }
 
@@ -461,19 +524,23 @@ export class IntervalSet {
                 // check for single value range
                 else if (value === existing.start && value === existing.stop) {
                     // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     this.intervals.splice(i, 1);
+                    // eslint-disable-next-line padding-line-between-statements
                     return;
                 }
                 // check for lower boundary
                 else if (value === existing.start) {
                     // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
                     this.intervals[i] = new Interval(existing.start + 1, existing.stop);
+                    // eslint-disable-next-line padding-line-between-statements
                     return;
                 }
                 // check for upper boundary
                 else if (value === existing.stop) {
                     // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
                     this.intervals[i] = new Interval(existing.start, existing.stop);
+                    // eslint-disable-next-line padding-line-between-statements
                     return;
                 }
                 // split existing range
@@ -481,7 +548,9 @@ export class IntervalSet {
                     const replace = new Interval(existing.start, value);
                     existing.start = value + 1;
                     // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     this.intervals.splice(i, 0, replace);
+                    // eslint-disable-next-line padding-line-between-statements
                     return;
                 }
             }
@@ -489,6 +558,7 @@ export class IntervalSet {
     }
 
     // @ts-expect-error TS(7006): Parameter 'elementsAreCharOrVocabulary' implicitly... Remove this comment to see the full error message
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     toString(elementsAreCharOrVocabulary) {
         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
         if (this.intervals.length === 0) {
@@ -518,9 +588,11 @@ export class IntervalSet {
             const stop = interval.stop;
             if (start === stop) {
                 // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
+                // eslint-disable-next-line eqeqeq
                 if (start == Token.EOF) {
                     result += "<EOF>";
                 } else if (elementsAreChar) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     result += "'" + String.fromCodePoint(start) + "'";
                 } else if (vocabulary) {
                     result += this.elementName(vocabulary, start);
@@ -529,6 +601,7 @@ export class IntervalSet {
                 }
             } else {
                 if (elementsAreChar) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     result += "'" + String.fromCodePoint(start) + "'..'" + String.fromCodePoint(stop) + "'";
                 } else if (vocabulary) {
                     for (let i = start; i <= stop; ++i) {
@@ -558,6 +631,7 @@ export class IntervalSet {
     }
 
     // @ts-expect-error TS(7006): Parameter 'vocabulary' implicitly has an 'any' typ... Remove this comment to see the full error message
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     elementName(vocabulary, token) {
         // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         if (token === Token.EOF) {
@@ -566,15 +640,18 @@ export class IntervalSet {
         } else if (token === Token.EPSILON) {
             return "<EPSILON>";
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
             return vocabulary.getDisplayName(token);
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     toArray() {
         const data = [];
         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
         if (this.intervals !== null) {
             // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let i = 0; i < this.intervals.length; i++) {
                 // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
                 const existing = this.intervals[i];
@@ -584,13 +661,17 @@ export class IntervalSet {
             }
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return data;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get length() {
         let result = 0;
         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+        // eslint-disable-next-line prefer-const
         let intervalCount = this.intervals.length;
+        // eslint-disable-next-line eqeqeq
         if (intervalCount == 1) {
             // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
             const firstInterval = this.intervals[0];
@@ -606,16 +687,20 @@ export class IntervalSet {
         return result;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     isReadonly() {
         // @ts-expect-error TS(2551): Property 'readOnly' does not exist on type 'Interv... Remove this comment to see the full error message
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.readOnly;
     }
 
     // @ts-expect-error TS(7006): Parameter 'readonly' implicitly has an 'any' type.
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     setReadonly(readonly) {
         // @ts-expect-error TS(2551): Property 'readOnly' does not exist on type 'Interv... Remove this comment to see the full error message
         if (this.readOnly && !readonly) {
             // @ts-expect-error TS(2304): Cannot find name 'IllegalStateException'.
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             throw new IllegalStateException("can't alter readonly IntervalSet");
         }
 
@@ -623,8 +708,10 @@ export class IntervalSet {
         this.readOnly = readonly;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     [Symbol.iterator]() {
         // @ts-expect-error TS(2339): Property 'intervals' does not exist on type 'Inter... Remove this comment to see the full error message
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
         return this.intervals[Symbol.iterator]();
     }
 }

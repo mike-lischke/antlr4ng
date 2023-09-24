@@ -15,6 +15,8 @@ import { IntervalSet } from "./misc/IntervalSet.js";
 
 export interface IExceptionParams {
     message: string;
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     recognizer: Recognizer<ATNSimulator> | null;
     input: CharStream | TokenStream | null;
     ctx: ParserRuleContext | null;

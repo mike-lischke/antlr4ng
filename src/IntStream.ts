@@ -5,6 +5,8 @@
  */
 
 export class IntStream {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention
     EOF = -1;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention
     UNKNOWN_SOURCE_NAME = "<unknown>";
 }

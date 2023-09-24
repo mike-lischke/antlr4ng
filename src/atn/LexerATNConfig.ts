@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -8,8 +9,11 @@ import { DecisionState } from "./DecisionState.js";
 import { ATNConfig } from "./ATNConfig.js";
 
 export class LexerATNConfig extends ATNConfig {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     lexerActionExecutor: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     passedThroughNonGreedyDecision: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(params: any, config: any) {
         super(params, config);
 
@@ -17,25 +21,36 @@ export class LexerATNConfig extends ATNConfig {
         const lexerActionExecutor = params.lexerActionExecutor || null;
         this.lexerActionExecutor = lexerActionExecutor || (config !== null ? config.lexerActionExecutor : null);
         this.passedThroughNonGreedyDecision = config !== null ? this.checkNonGreedyDecision(config, this.state) : false;
+        // eslint-disable-next-line @typescript-eslint/unbound-method
         this.hashCodeForConfigSet = LexerATNConfig.prototype.hashCode;
+        // eslint-disable-next-line @typescript-eslint/unbound-method
         this.equalsForConfigSet = LexerATNConfig.prototype.equals;
+        // eslint-disable-next-line padding-line-between-statements
         return this;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     updateHashCode(hash: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         hash.update(this.state.stateNumber, this.alt, this.context, this.semanticContext, this.passedThroughNonGreedyDecision, this.lexerActionExecutor);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     equals(other: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this === other ||
             (other instanceof LexerATNConfig &&
                 this.passedThroughNonGreedyDecision === other.passedThroughNonGreedyDecision &&
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 (this.lexerActionExecutor ? this.lexerActionExecutor.equals(other.lexerActionExecutor) : !other.lexerActionExecutor) &&
                 super.equals(other));
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     checkNonGreedyDecision(source: any, target: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, no-mixed-operators
         return source.passedThroughNonGreedyDecision ||
+            // eslint-disable-next-line no-mixed-operators
             (target instanceof DecisionState) && target.nonGreedy;
     }
 }

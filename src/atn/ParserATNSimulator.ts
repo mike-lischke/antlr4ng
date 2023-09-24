@@ -1,37 +1,59 @@
-/* eslint-disable jsdoc/no-undefined-types, jsdoc/require-param, jsdoc/require-returns, jsdoc/check-tag-names, jsdoc/valid-types, jsdoc/multiline-blocks, jsdoc/no-multi-asterisks */
+/* eslint-disable jsdoc/no-undefined-types, jsdoc/require-param, jsdoc/require-returns, jsdoc/check-tag-names, jsdoc/valid-types, jsdoc/multiline-blocks, jsdoc/no-multi-asterisks, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// eslint-disable-next-line @typescript-eslint/quotes
 import { NoViableAltException } from '../NoViableAltException.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { Token } from '../Token.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { DFAState } from '../dfa/DFAState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { PredPrediction } from '../dfa/PredPrediction.js';
 import { BitSet } from "../misc/BitSet.js";
 import { HashSet } from "../misc/HashSet.js";
+// eslint-disable-next-line @typescript-eslint/quotes
 import { Interval } from '../misc/Interval.js';
 import { DoubleDict } from "../utils/DoubleDict.js";
 import { arrayToString } from "../utils/arrayToString.js";
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATN } from './ATN.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATNConfig } from './ATNConfig.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATNConfigSet } from './ATNConfigSet.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ATNSimulator } from './ATNSimulator.js';
 import { ATNStateType } from "./ATNStateType.js";
+// eslint-disable-next-line @typescript-eslint/quotes
 import { ActionTransition } from './ActionTransition.js';
 import { AtomTransition } from "./AtomTransition.js";
+// eslint-disable-next-line @typescript-eslint/quotes
 import { NotSetTransition } from './NotSetTransition.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { PredictionContext } from './PredictionContext.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { predictionContextFromRuleContext } from './PredictionContextUtils.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { PredictionMode } from './PredictionMode.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { RuleContext } from './RuleContext.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { RuleStopState } from './RuleStopState.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { RuleTransition } from './RuleTransition.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { SemanticContext } from './SemanticContext.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { SetTransition } from './SetTransition.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { SingletonPredictionContext } from './SingletonPredictionContext.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { TransitionType } from './TransitionType.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { Vocabulary } from '../Vocabulary.js';
 
 /**
@@ -262,20 +284,35 @@ import { Vocabulary } from '../Vocabulary.js';
  * the input.</p>
  */
 export class ParserATNSimulator extends ATNSimulator {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     _dfa: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     _input: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     _outerContext: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     _startIndex: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     debug: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any
     debug_add: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any
     debug_closure: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     decisionToDFA: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any
     dfa_debug: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     mergeCache: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     parser: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     predictionMode: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any
     retry_debug: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any
     trace_atn_sim: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(parser: any, atn: any, decisionToDFA: any, sharedContextCache: any) {
         super(atn, sharedContextCache);
         this.parser = parser;
@@ -283,9 +320,13 @@ export class ParserATNSimulator extends ATNSimulator {
         // SLL, LL, or LL + exact ambig detection?//
         this.predictionMode = PredictionMode.LL;
         // LAME globals to avoid parameters!!!!! I need these down deep in predTransition
+        // eslint-disable-next-line no-underscore-dangle
         this._input = null;
+        // eslint-disable-next-line no-underscore-dangle
         this._startIndex = 0;
+        // eslint-disable-next-line no-underscore-dangle
         this._outerContext = null;
+        // eslint-disable-next-line no-underscore-dangle
         this._dfa = null;
         /**
          * Each prediction operation uses a cache for merge of prediction contexts.
@@ -305,21 +346,30 @@ export class ParserATNSimulator extends ATNSimulator {
         this.retry_debug = false;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     reset() { }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     adaptivePredict(input: any, decision: any, outerContext: any) {
         if (this.debug || this.trace_atn_sim) {
             console.log("adaptivePredict decision " + decision +
                 " exec LA(1)==" + this.getLookaheadName(input) +
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 " line " + input.LT(1).line + ":" +
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 input.LT(1).column);
         }
+        // eslint-disable-next-line no-underscore-dangle
         this._input = input;
+        // eslint-disable-next-line no-underscore-dangle
         this._startIndex = input.index;
+        // eslint-disable-next-line no-underscore-dangle
         this._outerContext = outerContext;
 
         const dfa = this.decisionToDFA[decision];
+        // eslint-disable-next-line no-underscore-dangle
         this._dfa = dfa;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const m = input.mark();
         const index = input.index;
 
@@ -330,6 +380,7 @@ export class ParserATNSimulator extends ATNSimulator {
             if (dfa.precedenceDfa) {
                 // the start state for a precedence DFA depends on the current
                 // parser precedence, and is provided by a DFA method.
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 s0 = dfa.getPrecedenceStartState(this.parser.getPrecedence());
             } else {
                 // the start state for a "regular" DFA is just s0
@@ -343,11 +394,13 @@ export class ParserATNSimulator extends ATNSimulator {
                 if (this.debug) {
                     console.log("predictATN decision " + dfa.decision +
                         " exec LA(1)==" + this.getLookaheadName(input) +
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                         ", outerContext=" + outerContext.toString(this.parser.ruleNames));
                 }
 
                 const fullCtx = false;
                 // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Ru... Remove this comment to see the full error message
+                // eslint-disable-next-line @typescript-eslint/naming-convention
                 let s0_closure = this.computeStartState(dfa.atnStartState, RuleContext.EMPTY, fullCtx);
 
                 if (dfa.precedenceDfa) {
@@ -360,6 +413,7 @@ export class ParserATNSimulator extends ATNSimulator {
                     dfa.s0.configs = s0_closure; // not used for prediction but useful to know start configs anyway
                     s0_closure = this.applyPrecedenceFilter(s0_closure);
                     s0 = this.addDFAState(dfa, new DFAState(null, s0_closure));
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     dfa.setPrecedenceStartState(this.parser.getPrecedence(), s0);
                 } else {
                     s0 = this.addDFAState(dfa, new DFAState(null, s0_closure));
@@ -368,13 +422,18 @@ export class ParserATNSimulator extends ATNSimulator {
             }
             const alt = this.execATN(dfa, s0, input, index, outerContext);
             if (this.debug) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 console.log("DFA after predictATN: " + dfa.toString(this.parser.vocabulary));
             }
+            // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
             return alt;
         } finally {
+            // eslint-disable-next-line no-underscore-dangle
             this._dfa = null;
             this.mergeCache = null; // wack cache after each prediction
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             input.seek(index);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             input.release(m);
         }
     }
@@ -411,11 +470,13 @@ export class ParserATNSimulator extends ATNSimulator {
      *    conflict + preds
      *
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     execATN(dfa: any, s0: any, input: any, startIndex: any, outerContext: any) {
         if (this.debug || this.trace_atn_sim) {
             console.log("execATN decision " + dfa.decision +
                 ", DFA state " + s0 +
                 ", LA(1)==" + this.getLookaheadName(input) +
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 " line " + input.LT(1).line + ":" + input.LT(1).column);
         }
         let alt;
@@ -424,8 +485,10 @@ export class ParserATNSimulator extends ATNSimulator {
         if (this.debug) {
             console.log("s0 = " + s0);
         }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         let t = input.LA(1);
         for (; ;) { // while more work
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             let D = this.getExistingTargetState(previousD, t);
             if (D === null) {
                 D = this.computeTargetState(dfa, previousD, t);
@@ -442,10 +505,12 @@ export class ParserATNSimulator extends ATNSimulator {
                 // If conflict in states that dip out, choose min since we
                 // will get error no matter what.
                 const e = this.noViableAlt(input, outerContext, previousD.configs, startIndex);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 input.seek(startIndex);
                 alt = this.getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule(previousD.configs, outerContext);
                 // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
                 if (alt !== ATN.INVALID_ALT_NUMBER) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
                     return alt;
                 } else {
                     throw e;
@@ -460,6 +525,7 @@ export class ParserATNSimulator extends ATNSimulator {
                     }
                     const conflictIndex = input.index;
                     if (conflictIndex !== startIndex) {
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                         input.seek(startIndex);
                     }
                     conflictingAlts = this.evalSemanticContext(D.predicates, outerContext, true);
@@ -467,11 +533,13 @@ export class ParserATNSimulator extends ATNSimulator {
                         if (this.debug) {
                             console.log("Full LL avoided");
                         }
+                        // eslint-disable-next-line padding-line-between-statements
                         return conflictingAlts.nextSetBit(0);
                     }
                     if (conflictIndex !== startIndex) {
                         // restore the index so reporting the fallback to full
                         // context occurs with the index at the correct spot
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                         input.seek(conflictIndex);
                     }
                 }
@@ -479,16 +547,20 @@ export class ParserATNSimulator extends ATNSimulator {
                     console.log("ctx sensitive state " + outerContext + " in " + D);
                 }
                 const fullCtx = true;
+                // eslint-disable-next-line @typescript-eslint/naming-convention
                 const s0_closure = this.computeStartState(dfa.atnStartState, outerContext, fullCtx);
                 this.reportAttemptingFullContext(dfa, conflictingAlts, D.configs, startIndex, input.index);
                 alt = this.execATNWithFullContext(dfa, D, s0_closure, input, startIndex, outerContext);
+                // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
                 return alt;
             }
             if (D.isAcceptState) {
                 if (D.predicates === null) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
                     return D.prediction;
                 }
                 const stopIndex = input.index;
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 input.seek(startIndex);
                 const alts = this.evalSemanticContext(D.predicates, outerContext, true);
                 if (alts.length === 0) {
@@ -498,6 +570,7 @@ export class ParserATNSimulator extends ATNSimulator {
                 } else {
                     // report ambiguity after predicate evaluation to make sure the correct set of ambig alts is reported.
                     this.reportAmbiguity(dfa, D, startIndex, stopIndex, false, alts, D.configs);
+                    // eslint-disable-next-line padding-line-between-statements
                     return alts.nextSetBit(0);
                 }
             }
@@ -505,7 +578,9 @@ export class ParserATNSimulator extends ATNSimulator {
 
             // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
             if (t !== Token.EOF) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 input.consume();
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 t = input.LA(1);
             }
         }
@@ -522,11 +597,13 @@ export class ParserATNSimulator extends ATNSimulator {
      * {@code t}, or {@code null} if the target state for this edge is not
      * already cached
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getExistingTargetState(previousD: any, t: any) {
         const edges = previousD.edges;
         if (edges === null) {
             return null;
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return edges[t + 1] || null;
         }
     }
@@ -543,15 +620,18 @@ export class ParserATNSimulator extends ATNSimulator {
      * {@code t}. If {@code t} does not lead to a valid DFA state, this method
      * returns {@link //ERROR
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     computeTargetState(dfa: any, previousD: any, t: any) {
         const reach = this.computeReachSet(previousD.configs, t, false);
         if (reach === null) {
             // @ts-expect-error TS(2339): Property 'ERROR' does not exist on type 'typeof AT... Remove this comment to see the full error message
             this.addDFAEdge(dfa, previousD, t, ATNSimulator.ERROR);
             // @ts-expect-error TS(2339): Property 'ERROR' does not exist on type 'typeof AT... Remove this comment to see the full error message
+            // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
             return ATNSimulator.ERROR;
         }
         // create new target state; we'll add to DFA after it's complete
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         let D = new DFAState(null, reach);
 
         const predictedAlt = this.getUniqueAlt(reach);
@@ -578,9 +658,11 @@ export class ParserATNSimulator extends ATNSimulator {
             D.requiresFullContext = true;
             // in SLL-only mode, we will stop at this state and return the minimum alt
             D.isAcceptState = true;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             D.prediction = D.configs.conflictingAlts.nextSetBit(0);
         }
         if (D.isAcceptState && D.configs.hasSemanticContext) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.predicateDFAState(D, this.atn.getDecisionState(dfa.decision));
             if (D.predicates !== null) {
                 // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
@@ -589,9 +671,11 @@ export class ParserATNSimulator extends ATNSimulator {
         }
         // all adds to dfa are done after we've created full D state
         D = this.addDFAEdge(dfa, previousD, t, D);
+        // eslint-disable-next-line padding-line-between-statements
         return D;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     predicateDFAState(dfaState: any, decisionState: any) {
         // We need to test all predicates, even in DFA states that
         // uniquely predict alternative.
@@ -608,15 +692,21 @@ export class ParserATNSimulator extends ATNSimulator {
             // There are preds in configs but they might go away
             // when OR'd together like {p}? || NONE == NONE. If neither
             // alt has preds, resolve to min alt
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             dfaState.prediction = altsToCollectPredsFrom.nextSetBit(0);
         }
     }
 
     // comes back with reach.uniqueAlt set to a valid alt
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any, @typescript-eslint/naming-convention
     execATNWithFullContext(dfa: any, D: any, // how far we got before failing over
+        // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
         s0: any,
+        // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
         input: any,
+        // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
         startIndex: any,
+        // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
         outerContext: any) {
         if (this.debug || this.trace_atn_sim) {
             console.log("execATNWithFullContext " + s0);
@@ -625,7 +715,9 @@ export class ParserATNSimulator extends ATNSimulator {
         let foundExactAmbig = false;
         let reach;
         let previous = s0;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         input.seek(startIndex);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         let t = input.LA(1);
         let predictedAlt = -1;
         for (; ;) { // while more work
@@ -641,10 +733,12 @@ export class ParserATNSimulator extends ATNSimulator {
                 // If conflict in states that dip out, choose min since we
                 // will get error no matter what.
                 const e = this.noViableAlt(input, outerContext, previous, startIndex);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 input.seek(startIndex);
                 const alt = this.getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule(previous, outerContext);
                 // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
                 if (alt !== ATN.INVALID_ALT_NUMBER) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
                     return alt;
                 } else {
                     throw e;
@@ -683,7 +777,9 @@ export class ParserATNSimulator extends ATNSimulator {
             previous = reach;
             // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
             if (t !== Token.EOF) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 input.consume();
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 t = input.LA(1);
             }
         }
@@ -693,6 +789,7 @@ export class ParserATNSimulator extends ATNSimulator {
         // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
         if (reach.uniqueAlt !== ATN.INVALID_ALT_NUMBER) {
             this.reportContextSensitivity(dfa, predictedAlt, reach, startIndex, input.index);
+            // eslint-disable-next-line padding-line-between-statements
             return predictedAlt;
         }
         // We do not check predicates here because we have checked them
@@ -727,6 +824,7 @@ export class ParserATNSimulator extends ATNSimulator {
         return predictedAlt;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     computeReachSet(closure: any, t: any, fullCtx: any) {
         if (this.debug) {
             console.log("in computeReachSet, starting closure: " + closure);
@@ -750,6 +848,7 @@ export class ParserATNSimulator extends ATNSimulator {
         let skippedStopStates = null;
 
         // First figure out where we can reach on input t
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < closure.items.length; i++) {
             const c = closure.items[i];
             if (this.debug) {
@@ -768,6 +867,7 @@ export class ParserATNSimulator extends ATNSimulator {
                 }
                 continue;
             }
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let j = 0; j < c.state.transitions.length; j++) {
                 const trans = c.state.transitions[j];
                 const target = this.getReachableTarget(trans, t);
@@ -816,6 +916,7 @@ export class ParserATNSimulator extends ATNSimulator {
             const closureBusy = new HashSet();
             // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
             const treatEofAsEpsilon = t === Token.EOF;
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let k = 0; k < intermediate.items.length; k++) {
                 this.closure(intermediate.items[k], reach, closureBusy, false, fullCtx, treatEofAsEpsilon);
             }
@@ -850,7 +951,9 @@ export class ParserATNSimulator extends ATNSimulator {
         // multiple alternatives are viable.
         //
         if (skippedStopStates !== null && ((!fullCtx) || (!PredictionMode.hasConfigInRuleStopState(reach)))) {
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let l = 0; l < skippedStopStates.length; l++) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 reach.add(skippedStopStates[l], this.mergeCache);
             }
         }
@@ -862,6 +965,7 @@ export class ParserATNSimulator extends ATNSimulator {
         if (reach.items.length === 0) {
             return null;
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return reach;
         }
     }
@@ -886,11 +990,14 @@ export class ParserATNSimulator extends ATNSimulator {
      * rule stop state, otherwise return a new configuration set containing only
      * the configurations from {@code configs} which are in a rule stop state
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     removeAllConfigsNotInRuleStopState(configs: any, lookToEndOfRule: any) {
         if (PredictionMode.allConfigsInRuleStopStates(configs)) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return configs;
         }
         const result = new ATNConfigSet(configs.fullCtx);
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < configs.items.length; i++) {
             const config = configs.items[i];
             if (config.state instanceof RuleStopState) {
@@ -898,23 +1005,28 @@ export class ParserATNSimulator extends ATNSimulator {
                 continue;
             }
             if (lookToEndOfRule && config.state.epsilonOnlyTransitions) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const nextTokens = this.atn.nextTokens(config.state);
                 // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 if (nextTokens.contains(Token.EPSILON)) {
                     const endOfRuleState = this.atn.ruleToStopState[config.state.ruleIndex];
                     result.add(new ATNConfig({ state: endOfRuleState }, config), this.mergeCache);
                 }
             }
         }
+        // eslint-disable-next-line padding-line-between-statements
         return result;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     computeStartState(p: any, ctx: any, fullCtx: any) {
         // always at least the implicit call to start rule
         const initialContext = predictionContextFromRuleContext(this.atn, ctx);
         const configs = new ATNConfigSet(fullCtx);
 
         if (this.trace_atn_sim) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             console.log("computeStartState from ATN state " + p + " initialContext=" + initialContext.toString(this.parser));
         }
 
@@ -925,6 +1037,7 @@ export class ParserATNSimulator extends ATNSimulator {
             const closureBusy = new HashSet();
             this.closure(c, configs, closureBusy, true, fullCtx, false);
         }
+        // eslint-disable-next-line padding-line-between-statements
         return configs;
     }
 
@@ -984,16 +1097,19 @@ export class ParserATNSimulator extends ATNSimulator {
      * for a precedence DFA at a particular precedence level (determined by
      * calling {@link Parser//getPrecedence})
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     applyPrecedenceFilter(configs: any) {
         let config;
         const statesFromAlt1 = [];
         const configSet = new ATNConfigSet(configs.fullCtx);
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < configs.items.length; i++) {
             config = configs.items[i];
             // handle alt 1 first
             if (config.alt !== 1) {
                 continue;
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call, no-underscore-dangle
             const updatedContext = config.semanticContext.evalPrecedence(this.parser, this._outerContext);
             if (updatedContext === null) {
                 // the configuration was eliminated
@@ -1006,6 +1122,7 @@ export class ParserATNSimulator extends ATNSimulator {
                 configSet.add(config, this.mergeCache);
             }
         }
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < configs.items.length; i++) {
             config = configs.items[i];
             if (config.alt === 1) {
@@ -1017,6 +1134,7 @@ export class ParserATNSimulator extends ATNSimulator {
             // (basically a graph subtraction algorithm).
             if (!config.precedenceFilterSuppressed) {
                 const context = statesFromAlt1[config.state.stateNumber] || null;
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 if (context !== null && context.equals(config.context)) {
                     // eliminated
                     continue;
@@ -1024,17 +1142,22 @@ export class ParserATNSimulator extends ATNSimulator {
             }
             configSet.add(config, this.mergeCache);
         }
+        // eslint-disable-next-line padding-line-between-statements
         return configSet;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getReachableTarget(trans: any, ttype: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (trans.matches(ttype, 0, this.atn.maxTokenType)) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return trans.target;
         } else {
             return null;
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getPredsForAmbigAlts(ambigAlts: any, configs: any, nalts: any) {
         // REACH=[1|1|[]|0:0, 1|2|[]|0:1]
         // altToPred starts as an array of all null contexts. The entry at index i
@@ -1048,9 +1171,12 @@ export class ParserATNSimulator extends ATNSimulator {
         //
         // From this, it is clear that NONE||anything==NONE.
         //
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let altToPred: any = [];
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < configs.items.length; i++) {
             const c = configs.items[i];
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             if (ambigAlts.get(c.alt)) {
                 altToPred[c.alt] = SemanticContext.orContext(altToPred[c.alt] || null, c.semanticContext);
             }
@@ -1073,15 +1199,18 @@ export class ParserATNSimulator extends ATNSimulator {
         if (this.debug) {
             console.log("getPredsForAmbigAlts result " + arrayToString(altToPred));
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return altToPred;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getPredicatePredictions(ambigAlts: any, altToPred: any) {
         const pairs = [];
         let containsPredicate = false;
         for (let i = 1; i < altToPred.length; i++) {
             const pred = altToPred[i];
             // unpredicated is indicated by SemanticContext.NONE
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             if (ambigAlts !== null && ambigAlts.get(i)) {
                 pairs.push(new PredPrediction(pred, i));
             }
@@ -1093,6 +1222,7 @@ export class ParserATNSimulator extends ATNSimulator {
         if (!containsPredicate) {
             return null;
         }
+        // eslint-disable-next-line padding-line-between-statements
         return pairs;
     }
 
@@ -1142,6 +1272,7 @@ export class ParserATNSimulator extends ATNSimulator {
      * {@link ATN//INVALID_ALT_NUMBER} if a suitable alternative was not
      * identified and {@link //adaptivePredict} should report an error instead
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule(configs: any, outerContext: any) {
         const cfgs = this.splitAccordingToSemanticValidity(configs, outerContext);
         const semValidConfigs = cfgs[0];
@@ -1149,6 +1280,7 @@ export class ParserATNSimulator extends ATNSimulator {
         let alt = this.getAltThatFinishedDecisionEntryRule(semValidConfigs);
         // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
         if (alt !== ATN.INVALID_ALT_NUMBER) { // semantically/syntactically viable path exists
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return alt;
         }
         // Is there a syntactically valid path with a failed pred?
@@ -1156,17 +1288,22 @@ export class ParserATNSimulator extends ATNSimulator {
             alt = this.getAltThatFinishedDecisionEntryRule(semInvalidConfigs);
             // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
             if (alt !== ATN.INVALID_ALT_NUMBER) { // syntactically viable path exists
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-return
                 return alt;
             }
         }
         // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return ATN.INVALID_ALT_NUMBER;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getAltThatFinishedDecisionEntryRule(configs: any) {
         const alts = [];
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < configs.items.length; i++) {
             const c = configs.items[i];
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             if (c.reachesIntoOuterContext > 0 || ((c.state instanceof RuleStopState) && c.context.hasEmptyPath())) {
                 if (alts.indexOf(c.alt) < 0) {
                     alts.push(c.alt);
@@ -1175,8 +1312,10 @@ export class ParserATNSimulator extends ATNSimulator {
         }
         if (alts.length === 0) {
             // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return ATN.INVALID_ALT_NUMBER;
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return Math.min.apply(null, alts);
         }
     }
@@ -1190,13 +1329,16 @@ export class ParserATNSimulator extends ATNSimulator {
      *
      * Assumption: the input stream has been restored to the starting point
      * prediction, which is where predicates need to evaluate.*/
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     splitAccordingToSemanticValidity(configs: any, outerContext: any) {
         const succeeded = new ATNConfigSet(configs.fullCtx);
         const failed = new ATNConfigSet(configs.fullCtx);
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < configs.items.length; i++) {
             const c = configs.items[i];
             // @ts-expect-error TS(2339): Property 'NONE' does not exist on type 'typeof Sem... Remove this comment to see the full error message
             if (c.semanticContext !== SemanticContext.NONE) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const predicateEvaluationResult = c.semanticContext.evaluate(this.parser, outerContext);
                 if (predicateEvaluationResult) {
                     // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
@@ -1210,6 +1352,7 @@ export class ParserATNSimulator extends ATNSimulator {
                 succeeded.add(c);
             }
         }
+        // eslint-disable-next-line padding-line-between-statements
         return [succeeded, failed];
     }
 
@@ -1220,8 +1363,10 @@ export class ParserATNSimulator extends ATNSimulator {
      * then we stop at the first predicate that evaluates to true. This
      * includes pairs with null predicates.
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     evalSemanticContext(predPredictions: any, outerContext: any, complete: any) {
         const predictions = new BitSet();
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < predPredictions.length; i++) {
             const pair = predPredictions[i];
             // @ts-expect-error TS(2339): Property 'NONE' does not exist on type 'typeof Sem... Remove this comment to see the full error message
@@ -1232,6 +1377,7 @@ export class ParserATNSimulator extends ATNSimulator {
                 }
                 continue;
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             const predicateEvaluationResult = pair.pred.evaluate(this.parser, outerContext);
             if (this.debug || this.dfa_debug) {
                 console.log("eval pred " + pair + "=" + predicateEvaluationResult);
@@ -1246,6 +1392,7 @@ export class ParserATNSimulator extends ATNSimulator {
                 }
             }
         }
+        // eslint-disable-next-line padding-line-between-statements
         return predictions;
     }
 
@@ -1255,25 +1402,31 @@ export class ParserATNSimulator extends ATNSimulator {
     //     waste to pursue the closure. Might have to advance when we do
     //     ambig detection thought :(
     //
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     closure(config: any, configs: any, closureBusy: any, collectPredicates: any, fullCtx: any, treatEofAsEpsilon: any) {
         const initialDepth = 0;
         this.closureCheckingStopState(config, configs, closureBusy, collectPredicates,
             fullCtx, initialDepth, treatEofAsEpsilon);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     closureCheckingStopState(config: any, configs: any, closureBusy: any, collectPredicates: any, fullCtx: any, depth: any, treatEofAsEpsilon: any) {
         if (this.trace_atn_sim || this.debug_closure) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             console.log("closure(" + config.toString(this.parser, true) + ")");
         }
         if (config.state instanceof RuleStopState) {
             // We hit rule end. If we have context info, use it
             // run thru all possible stack tops in ctx
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             if (!config.context.isEmpty()) {
                 for (let i = 0; i < config.context.length; i++) {
                     // @ts-expect-error TS(2339): Property 'EMPTY_RETURN_STATE' does not exist on ty... Remove this comment to see the full error message
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     if (config.context.getReturnState(i) === PredictionContext.EMPTY_RETURN_STATE) {
                         if (fullCtx) {
                             // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                             configs.add(new ATNConfig({ state: config.state, context: PredictionContext.EMPTY }, config), this.mergeCache);
                             continue;
                         } else {
@@ -1281,12 +1434,15 @@ export class ParserATNSimulator extends ATNSimulator {
                             if (this.debug) {
                                 console.log("FALLING off rule " + this.getRuleName(config.state.ruleIndex));
                             }
+                            // eslint-disable-next-line no-underscore-dangle
                             this.closure_(config, configs, closureBusy, collectPredicates,
                                 fullCtx, depth, treatEofAsEpsilon);
                         }
                         continue;
                     }
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     const returnState = this.atn.states[config.context.getReturnState(i)];
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     const newContext = config.context.getParent(i); // "pop" return state
                     const parms = { state: returnState, alt: config.alt, context: newContext, semanticContext: config.semanticContext };
                     const c = new ATNConfig(parms, null);
@@ -1296,10 +1452,13 @@ export class ParserATNSimulator extends ATNSimulator {
                     c.reachesIntoOuterContext = config.reachesIntoOuterContext;
                     this.closureCheckingStopState(c, configs, closureBusy, collectPredicates, fullCtx, depth - 1, treatEofAsEpsilon);
                 }
+                // eslint-disable-next-line padding-line-between-statements
                 return;
             } else if (fullCtx) {
                 // reached end of start rule
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 configs.add(config, this.mergeCache);
+                // eslint-disable-next-line padding-line-between-statements
                 return;
             } else {
                 // else if we have no context info, just chase follow links (if greedy)
@@ -1308,20 +1467,24 @@ export class ParserATNSimulator extends ATNSimulator {
                 }
             }
         }
+        // eslint-disable-next-line no-underscore-dangle
         this.closure_(config, configs, closureBusy, collectPredicates, fullCtx, depth, treatEofAsEpsilon);
     }
 
     // Do the actual work of walking epsilon edges//
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/naming-convention, @typescript-eslint/no-explicit-any
     closure_(config: any, configs: any, closureBusy: any, collectPredicates: any, fullCtx: any, depth: any, treatEofAsEpsilon: any) {
         const p = config.state;
         // optimization
         if (!p.epsilonOnlyTransitions) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             configs.add(config, this.mergeCache);
             // make sure to not return here, because EOF transitions can act as
             // both epsilon transitions and non-epsilon transitions.
         }
         for (let i = 0; i < p.transitions.length; i++) {
             if (i === 0 && this.canDropLoopEntryEdgeInLeftRecursiveRule(config))
+                // eslint-disable-next-line curly
                 continue;
 
             const t = p.transitions[i];
@@ -1335,13 +1498,16 @@ export class ParserATNSimulator extends ATNSimulator {
                     // track how far we dip into outer context.  Might
                     // come in handy and we avoid evaluating context dependent
                     // preds if this is > 0.
+                    // eslint-disable-next-line no-underscore-dangle
                     if (this._dfa !== null && this._dfa.precedenceDfa) {
+                        // eslint-disable-next-line no-underscore-dangle
                         if (t.outermostPrecedenceReturn === this._dfa.atnStartState.ruleIndex) {
                             c.precedenceFilterSuppressed = true;
                         }
                     }
 
                     c.reachesIntoOuterContext += 1;
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     if (closureBusy.add(c) !== c) {
                         // avoid infinite recursion for right-recursive rules
                         continue;
@@ -1352,6 +1518,7 @@ export class ParserATNSimulator extends ATNSimulator {
                         console.log("dips into outer ctx: " + c);
                     }
                 } else {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     if (!t.isEpsilon && closureBusy.add(c) !== c) {
                         // avoid infinite recursion for EOF* and EOF+
                         continue;
@@ -1368,6 +1535,7 @@ export class ParserATNSimulator extends ATNSimulator {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     canDropLoopEntryEdgeInLeftRecursiveRule(config: any) {
         // return False
         const p = config.state;
@@ -1377,16 +1545,21 @@ export class ParserATNSimulator extends ATNSimulator {
         // global FOLLOW so we can't perform optimization
         // Are we the special loop entry/exit state? or SLL wildcard
         if (p.stateType !== ATNStateType.STAR_LOOP_ENTRY)
+            // eslint-disable-next-line curly
             return false;
         if (p.stateType !== ATNStateType.STAR_LOOP_ENTRY || !p.precedenceRuleDecision ||
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             config.context.isEmpty() || config.context.hasEmptyPath())
+            // eslint-disable-next-line curly
             return false;
 
         // Require all return states to return back to the same rule that p is in.
         const numCtxs = config.context.length;
         for (let i = 0; i < numCtxs; i++) { // for each stack context
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             const returnState = this.atn.states[config.context.getReturnState(i)];
             if (returnState.ruleIndex !== p.ruleIndex)
+                // eslint-disable-next-line curly
                 return false;
         }
 
@@ -1397,48 +1570,58 @@ export class ParserATNSimulator extends ATNSimulator {
         // Verify that the top of each stack context leads to loop entry/exit
         // state through epsilon edges and w/o leaving rule.
         for (let i = 0; i < numCtxs; i++) { // for each stack context
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             const returnStateNumber = config.context.getReturnState(i);
             const returnState = this.atn.states[returnStateNumber];
             // all states must have single outgoing epsilon edge
             if (returnState.transitions.length !== 1 || !returnState.transitions[0].isEpsilon)
+                // eslint-disable-next-line curly
                 return false;
 
             // Look for prefix op case like 'not expr', (' type ')' expr
             const returnStateTarget = returnState.transitions[0].target;
             if (returnState.stateType === ATNStateType.BLOCK_END && returnStateTarget === p)
+                // eslint-disable-next-line curly
                 continue;
 
             // Look for 'expr op expr' or case where expr's return state is block end
             // of (...)* internal block; the block end points to loop back
             // which points to p but we don't need to check that
             if (returnState === blockEndState)
+                // eslint-disable-next-line curly
                 continue;
 
             // Look for ternary expr ? expr : expr. The return state points at block end,
             // which points at loop entry state
             if (returnStateTarget === blockEndState)
+                // eslint-disable-next-line curly
                 continue;
 
             // Look for complex prefix 'between expr and expr' case where 2nd expr's
             // return state points at block end state of (...)* internal block
             if (returnStateTarget.stateType === ATNStateType.BLOCK_END && returnStateTarget.transitions.length === 1
                 && returnStateTarget.transitions[0].isEpsilon && returnStateTarget.transitions[0].target === p)
+                // eslint-disable-next-line curly
                 continue;
 
             // anything else ain't conforming
             return false;
         }
+        // eslint-disable-next-line padding-line-between-statements
         return true;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getRuleName(index: any) {
         if (this.parser !== null && index >= 0) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return this.parser.ruleNames[index];
         } else {
             return "<rule " + index + ">";
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getEpsilonTarget(config: any, t: any, collectPredicates: any, inContext: any, fullCtx: any, treatEofAsEpsilon: any) {
         switch (t.serializationType) {
             case TransitionType.RULE:
@@ -1458,29 +1641,35 @@ export class ParserATNSimulator extends ATNSimulator {
                 // transition is traversed
                 if (treatEofAsEpsilon) {
                     // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     if (t.matches(Token.EOF, 0, 1)) {
                         return new ATNConfig({ state: t.target }, config);
                     }
                 }
+                // eslint-disable-next-line padding-line-between-statements
                 return null;
             default:
                 return null;
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     actionTransition(config: any, t: any) {
         if (this.debug) {
             const index = t.actionIndex === -1 ? 65535 : t.actionIndex;
             console.log("ACTION edge " + t.ruleIndex + ":" + index);
         }
+        // eslint-disable-next-line padding-line-between-statements
         return new ATNConfig({ state: t.target }, config);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     precedenceTransition(config: any, pt: any, collectPredicates: any, inContext: any, fullCtx: any) {
         if (this.debug) {
             console.log("PRED (collectPredicates=" + collectPredicates + ") " +
                 pt.precedence + ">=_p, ctx dependent=true");
             if (this.parser !== null) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 console.log("context surrounding pred is " + arrayToString(this.parser.getRuleInvocationStack()));
             }
         }
@@ -1491,14 +1680,19 @@ export class ParserATNSimulator extends ATNSimulator {
                 // during closure, which dramatically reduces the size of
                 // the config sets. It also obviates the need to test predicates
                 // later during conflict resolution.
+                // eslint-disable-next-line no-underscore-dangle
                 const currentPosition = this._input.index;
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, no-underscore-dangle
                 this._input.seek(this._startIndex);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, no-underscore-dangle
                 const predSucceeds = pt.getPredicate().evaluate(this.parser, this._outerContext);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, no-underscore-dangle
                 this._input.seek(currentPosition);
                 if (predSucceeds) {
                     c = new ATNConfig({ state: pt.target }, config); // no pred context
                 }
             } else {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const newSemCtx = SemanticContext.andContext(config.semanticContext, pt.getPredicate());
                 c = new ATNConfig({ state: pt.target, semanticContext: newSemCtx }, config);
             }
@@ -1508,14 +1702,17 @@ export class ParserATNSimulator extends ATNSimulator {
         if (this.debug) {
             console.log("config from pred transition=" + c);
         }
+        // eslint-disable-next-line padding-line-between-statements
         return c;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     predTransition(config: any, pt: any, collectPredicates: any, inContext: any, fullCtx: any) {
         if (this.debug) {
             console.log("PRED (collectPredicates=" + collectPredicates + ") " + pt.ruleIndex +
                 ":" + pt.predIndex + ", ctx dependent=" + pt.isCtxDependent);
             if (this.parser !== null) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 console.log("context surrounding pred is " + arrayToString(this.parser.getRuleInvocationStack()));
             }
         }
@@ -1526,14 +1723,19 @@ export class ParserATNSimulator extends ATNSimulator {
                 // during closure, which dramatically reduces the size of
                 // the config sets. It also obviates the need to test predicates
                 // later during conflict resolution.
+                // eslint-disable-next-line no-underscore-dangle
                 const currentPosition = this._input.index;
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, no-underscore-dangle
                 this._input.seek(this._startIndex);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, no-underscore-dangle
                 const predSucceeds = pt.getPredicate().evaluate(this.parser, this._outerContext);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call, no-underscore-dangle
                 this._input.seek(currentPosition);
                 if (predSucceeds) {
                     c = new ATNConfig({ state: pt.target }, config); // no pred context
                 }
             } else {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const newSemCtx = SemanticContext.andContext(config.semanticContext, pt.getPredicate());
                 c = new ATNConfig({ state: pt.target, semanticContext: newSemCtx }, config);
             }
@@ -1543,20 +1745,25 @@ export class ParserATNSimulator extends ATNSimulator {
         if (this.debug) {
             console.log("config from pred transition=" + c);
         }
+        // eslint-disable-next-line padding-line-between-statements
         return c;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     ruleTransition(config: any, t: any) {
         if (this.debug) {
             console.log("CALL rule " + this.getRuleName(t.target.ruleIndex) + ", ctx=" + config.context);
         }
         const returnState = t.followState;
         const newContext = SingletonPredictionContext.create(config.context, returnState.stateNumber);
+        // eslint-disable-next-line padding-line-between-statements
         return new ATNConfig({ state: t.target, context: newContext }, config);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getConflictingAlts(configs: any) {
         const altsets = PredictionMode.getConflictingAltSubsets(configs);
+        // eslint-disable-next-line padding-line-between-statements
         return PredictionMode.getAlts(altsets);
     }
 
@@ -1596,6 +1803,7 @@ export class ParserATNSimulator extends ATNSimulator {
      * ignore a set of conflicting alts when we have an alternative
      * that we still need to pursue
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getConflictingAltsOrUniqueAlt(configs: any) {
         let conflictingAlts = null;
         // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
@@ -1605,9 +1813,11 @@ export class ParserATNSimulator extends ATNSimulator {
         } else {
             conflictingAlts = configs.conflictingAlts;
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return conflictingAlts;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getTokenName(t: any) {
         // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
         if (t === Token.EOF) {
@@ -1616,15 +1826,20 @@ export class ParserATNSimulator extends ATNSimulator {
 
         // @ts-expect-error TS(2339): Property 'EMPTY_VOCABULARY' does not exist on type... Remove this comment to see the full error message
         const vocabulary = this.parser != null ? this.parser.vocabulary : Vocabulary.EMPTY_VOCABULARY;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const displayName = vocabulary.getDisplayName(t);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (displayName.equals(t.toString())) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return displayName;
         }
 
         return displayName + "<" + t + ">";
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getLookaheadName(input: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
         return this.getTokenName(input.LA(1));
     }
 
@@ -1633,9 +1848,12 @@ export class ParserATNSimulator extends ATNSimulator {
      * it out for clarity now that alg. works well. We can leave this
      * "dead" code for a bit
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     dumpDeadEndConfigs(nvae: any) {
         console.log("dead end configs: ");
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const decs = nvae.getDeadEndConfigs();
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < decs.length; i++) {
             const c = decs[i];
             let trans = "no edges";
@@ -1649,17 +1867,22 @@ export class ParserATNSimulator extends ATNSimulator {
                     trans = (neg ? "~" : "") + "Set " + t.set;
                 }
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             console.error(c.toString(this.parser, true) + ":" + trans);
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     noViableAlt(input: any, outerContext: any, configs: any, startIndex: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         return new NoViableAltException(this.parser, input, input.get(startIndex), input.LT(1), configs, outerContext);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getUniqueAlt(configs: any) {
         // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
         let alt = ATN.INVALID_ALT_NUMBER;
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < configs.items.length; i++) {
             const c = configs.items[i];
             // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
@@ -1667,9 +1890,11 @@ export class ParserATNSimulator extends ATNSimulator {
                 alt = c.alt; // found first alt
             } else if (c.alt !== alt) {
                 // @ts-expect-error TS(2339): Property 'INVALID_ALT_NUMBER' does not exist on ty... Remove this comment to see the full error message
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-return
                 return ATN.INVALID_ALT_NUMBER;
             }
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return alt;
     }
 
@@ -1693,6 +1918,7 @@ export class ParserATNSimulator extends ATNSimulator {
      * otherwise this method returns the result of calling {@link //addDFAState}
      * on {@code to}
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any, @typescript-eslint/naming-convention
     addDFAEdge(dfa: any, from_: any, t: any, to: any) {
         if (this.debug) {
             console.log("EDGE " + from_ + " -> " + to + " upon " + this.getTokenName(t));
@@ -1702,6 +1928,7 @@ export class ParserATNSimulator extends ATNSimulator {
         }
         to = this.addDFAState(dfa, to); // used existing if possible not incoming
         if (from_ === null || t < -1 || t > this.atn.maxTokenType) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return to;
         }
         if (from_.edges === null) {
@@ -1711,9 +1938,11 @@ export class ParserATNSimulator extends ATNSimulator {
 
         if (this.debug) {
             // @ts-expect-error TS(2663): Cannot find name 'parser'. Did you mean the instan... Remove this comment to see the full error message
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             console.log("DFA=\n" + dfa.toString(this.parser != null ? parser.vocabulary : Vocabulary.EMPTY_VOCABULARY));
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return to;
     }
 
@@ -1732,62 +1961,82 @@ export class ParserATNSimulator extends ATNSimulator {
      * state if {@code D} is already in the DFA, or {@code D} itself if the
      * state was not already present
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any, @typescript-eslint/naming-convention
     addDFAState(dfa: any, D: any) {
         // @ts-expect-error TS(2339): Property 'ERROR' does not exist on type 'typeof AT... Remove this comment to see the full error message
         if (D === ATNSimulator.ERROR) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return D;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const existing = dfa.states.get(D);
         if (existing !== null) {
+            // eslint-disable-next-line curly
             if (this.trace_atn_sim) console.log("addDFAState " + D + " exists");
+            // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
             return existing;
         }
         D.stateNumber = dfa.states.length;
         if (!D.configs.readOnly) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             D.configs.optimizeConfigs(this);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             D.configs.setReadonly(true);
         }
 
+        // eslint-disable-next-line curly
         if (this.trace_atn_sim) console.log("addDFAState new " + D);
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         dfa.states.add(D);
         if (this.debug) {
             console.log("adding new DFA state: " + D);
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return D;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     reportAttemptingFullContext(dfa: any, conflictingAlts: any, configs: any, startIndex: any, stopIndex: any) {
         if (this.debug || this.retry_debug) {
             const interval = new Interval(startIndex, stopIndex + 1);
             console.log("reportAttemptingFullContext decision=" + dfa.decision + ":" + configs +
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 ", input=" + this.parser.tokenStream.getText(interval));
         }
         if (this.parser !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.parser.getErrorListenerDispatch().reportAttemptingFullContext(this.parser, dfa, startIndex, stopIndex, conflictingAlts, configs);
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     reportContextSensitivity(dfa: any, prediction: any, configs: any, startIndex: any, stopIndex: any) {
         if (this.debug || this.retry_debug) {
             const interval = new Interval(startIndex, stopIndex + 1);
             console.log("reportContextSensitivity decision=" + dfa.decision + ":" + configs +
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 ", input=" + this.parser.tokenStream.getText(interval));
         }
         if (this.parser !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.parser.getErrorListenerDispatch().reportContextSensitivity(this.parser, dfa, startIndex, stopIndex, prediction, configs);
         }
     }
 
     // If context sensitive parsing, we know it's ambiguity not conflict//
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any, @typescript-eslint/naming-convention
     reportAmbiguity(dfa: any, D: any, startIndex: any, stopIndex: any,
+        // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
         exact: any, ambigAlts: any, configs: any) {
         if (this.debug || this.retry_debug) {
             const interval = new Interval(startIndex, stopIndex + 1);
             console.log("reportAmbiguity " + ambigAlts + ":" + configs +
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 ", input=" + this.parser.tokenStream.getText(interval));
         }
         if (this.parser !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.parser.getErrorListenerDispatch().reportAmbiguity(this.parser, dfa, startIndex, stopIndex, exact, ambigAlts, configs);
         }
     }

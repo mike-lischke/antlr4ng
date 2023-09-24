@@ -1,25 +1,39 @@
-/* eslint-disable jsdoc/check-alignment, jsdoc/no-undefined-types, jsdoc/require-param, jsdoc/require-returns, jsdoc/check-tag-names */
+/* eslint-disable jsdoc/check-alignment, jsdoc/no-undefined-types, jsdoc/require-param, jsdoc/require-returns, jsdoc/check-tag-names, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// eslint-disable-next-line @typescript-eslint/quotes
 import { LL1Analyzer } from './LL1Analyzer.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { IntervalSet } from '../misc/IntervalSet.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 import { Token } from '../Token.js';
 
 export class ATN {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     decisionToState: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     grammarType: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     lexerActions: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     maxTokenType: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     modeNameToStartState: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     modeToStartState: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     ruleToStartState: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     ruleToStopState: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     ruleToTokenType: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     states: any;
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(grammarType: any, maxTokenType: any) {
         /**
          * Used for runtime deserialization of ATNs from strings
@@ -61,8 +75,10 @@ export class ATN {
      * the rule surrounding {@code s}. In other words, the set will be
      * restricted to tokens reachable staying within {@code s}'s rule
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     nextTokensInContext(s: any, ctx: any) {
         const anal = new LL1Analyzer(this);
+        // eslint-disable-next-line padding-line-between-statements
         return anal.LOOK(s, null, ctx);
     }
 
@@ -71,45 +87,58 @@ export class ATN {
      * staying in same rule. {@link Token//EPSILON} is in set if we reach end of
      * rule
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     nextTokensNoContext(s: any) {
         if (s.nextTokenWithinRule !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return s.nextTokenWithinRule;
         }
         s.nextTokenWithinRule = this.nextTokensInContext(s, null);
         s.nextTokenWithinRule.readOnly = true;
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return s.nextTokenWithinRule;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     nextTokens(s: any, ctx: any) {
         if (ctx === undefined) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return this.nextTokensNoContext(s);
         } else {
             return this.nextTokensInContext(s, ctx);
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     addState(state: any) {
         if (state !== null) {
             state.atn = this;
             state.stateNumber = this.states.length;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.states.push(state);
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     removeState(state: any) {
         this.states[state.stateNumber] = null; // just free mem, don't shift states in list
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     defineDecisionState(s: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.decisionToState.push(s);
         s.decision = this.decisionToState.length - 1;
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return s.decision;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getDecisionState(decision: any) {
         if (this.decisionToState.length === 0) {
             return null;
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return this.decisionToState[decision];
         }
     }
@@ -135,8 +164,10 @@ export class ATN {
      * @throws IllegalArgumentException if the ATN does not contain a state with
      * number {@code stateNumber}
      */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility, @typescript-eslint/no-explicit-any
     getExpectedTokens(stateNumber: any, ctx: any) {
         if (stateNumber < 0 || stateNumber >= this.states.length) {
+            // eslint-disable-next-line no-throw-literal
             throw ("Invalid state number.");
         }
 
@@ -144,7 +175,9 @@ export class ATN {
         // @ts-expect-error TS(2554): Expected 2 arguments, but got 1.
         let following = this.nextTokens(s);
         // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (!following.contains(Token.EPSILON)) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return following;
         }
 
@@ -154,6 +187,7 @@ export class ATN {
         // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
         expected.removeOne(Token.EPSILON);
         // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         while (ctx !== null && ctx.invokingState >= 0 && following.contains(Token.EPSILON)) {
             const invokingState = this.states[ctx.invokingState];
             const rt = invokingState.transitions[0];
@@ -166,6 +200,7 @@ export class ATN {
         }
 
         // @ts-expect-error TS(2339): Property 'EPSILON' does not exist on type 'typeof ... Remove this comment to see the full error message
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (following.contains(Token.EPSILON)) {
             // @ts-expect-error TS(2339): Property 'EOF' does not exist on type 'typeof Toke... Remove this comment to see the full error message
             expected.addOne(Token.EOF);

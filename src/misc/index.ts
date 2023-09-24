@@ -4,5 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+// eslint-disable-next-line @typescript-eslint/quotes
 export { Interval } from './Interval.js';
+// eslint-disable-next-line @typescript-eslint/quotes
 export { IntervalSet } from './IntervalSet.js';

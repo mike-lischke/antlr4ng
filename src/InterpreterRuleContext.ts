@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -7,8 +8,10 @@
 import { ParserRuleContext } from "./ParserRuleContext.js";
 
 export class InterpreterRuleContext extends ParserRuleContext {
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
     _ruleIndex;
 
+    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility, @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     constructor(ruleIndex: any, parent: any, invokingStateNumber: any) {
         if (invokingStateNumber !== undefined) {
             super(parent, invokingStateNumber);
@@ -17,10 +20,13 @@ export class InterpreterRuleContext extends ParserRuleContext {
             super();
         }
 
+        // eslint-disable-next-line no-underscore-dangle
         this._ruleIndex = ruleIndex;
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/explicit-member-accessibility
     get ruleIndex() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, no-underscore-dangle
         return this._ruleIndex;
     }
 }

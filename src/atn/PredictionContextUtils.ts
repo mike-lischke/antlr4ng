@@ -1,4 +1,4 @@
-/* eslint-disable jsdoc/require-param, jsdoc/require-returns, jsdoc/require-jsdoc, jsdoc/require-param-description */
+/* eslint-disable jsdoc/require-param, jsdoc/require-returns, jsdoc/require-jsdoc, jsdoc/require-param-description, max-len */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -17,6 +17,7 @@ import { HashMap } from "../misc/HashMap.js";
  * Return {@link //EMPTY} if {@code outerContext} is empty or null.
  */
 // @ts-expect-error TS(7023): 'predictionContextFromRuleContext' implicitly has ... Remove this comment to see the full error message
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
 export function predictionContextFromRuleContext(atn: any, outerContext: any) {
     if (outerContext === undefined || outerContext === null) {
         // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Ru... Remove this comment to see the full error message
@@ -27,6 +28,7 @@ export function predictionContextFromRuleContext(atn: any, outerContext: any) {
     // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Ru... Remove this comment to see the full error message
     if (outerContext.parent === null || outerContext === RuleContext.EMPTY) {
         // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return PredictionContext.EMPTY;
     }
     // If we have a parent, convert it to a PredictionContext graph
@@ -34,32 +36,44 @@ export function predictionContextFromRuleContext(atn: any, outerContext: any) {
     const parent = predictionContextFromRuleContext(atn, outerContext.parent);
     const state = atn.states[outerContext.invokingState];
     const transition = state.transitions[0];
+    // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
     return SingletonPredictionContext.create(parent, transition.followState.stateNumber);
 }
 
 // @ts-expect-error TS(7023): 'getCachedPredictionContext' implicitly has return... Remove this comment to see the full error message
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
 export function getCachedPredictionContext(context: any, contextCache: any, visited: any) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     if (context.isEmpty()) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return context;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     let existing = visited.get(context) || null;
     if (existing !== null) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return existing;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     existing = contextCache.get(context);
     if (existing !== null) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         visited.set(context, existing);
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return existing;
     }
     let changed = false;
     let parents = [];
     for (let i = 0; i < parents.length; i++) {
         // @ts-expect-error TS(7022): 'parent' implicitly has type 'any' because it does... Remove this comment to see the full error message
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const parent = getCachedPredictionContext(context.getParent(i), contextCache, visited);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (changed || parent !== context.getParent(i)) {
             if (!changed) {
                 parents = [];
                 for (let j = 0; j < context.length; j++) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     parents[j] = context.getParent(j);
                 }
                 changed = true;
@@ -68,8 +82,11 @@ export function getCachedPredictionContext(context: any, contextCache: any, visi
         }
     }
     if (!changed) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         contextCache.add(context);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         visited.set(context, context);
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return context;
     }
     let updated = null;
@@ -77,24 +94,32 @@ export function getCachedPredictionContext(context: any, contextCache: any, visi
         // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         updated = PredictionContext.EMPTY;
     } else if (parents.length === 1) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         updated = SingletonPredictionContext.create(parents[0], context
             .getReturnState(0));
     } else {
         updated = new ArrayPredictionContext(parents, context.returnStates);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     contextCache.add(updated);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     visited.set(updated, updated);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     visited.set(context, updated);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return updated;
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
 export function merge(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
     // share same graph if both same
     if (a === b) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return a;
     }
     if (a instanceof SingletonPredictionContext && b instanceof SingletonPredictionContext) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-use-before-define
         return mergeSingletons(a, b, rootIsWildcard, mergeCache);
     }
     // At least one of a or b is array
@@ -116,6 +141,7 @@ export function merge(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
         // @ts-expect-error TS(2554): Expected 1 arguments, but got 0.
         b = new ArrayPredictionContext([b.getParent()], [b.returnState]);
     }
+    // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-use-before-define
     return mergeArrays(a, b, rootIsWildcard, mergeCache);
 }
 
@@ -139,18 +165,25 @@ export function merge(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
  * {@link SingletonPredictionContext}.<br>
  * <embed src="images/ArrayMerge_EqualTop.svg" type="image/svg+xml"/></p>
  */
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
 function mergeArrays(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
     if (mergeCache !== null) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         let previous = mergeCache.get(a, b);
         if (previous !== null) {
             // @ts-expect-error TS(2339): Property 'trace_atn_sim' does not exist on type 't... Remove this comment to see the full error message
+            // eslint-disable-next-line curly
             if (PredictionContext.trace_atn_sim) console.log("mergeArrays a=" + a + ",b=" + b + " -> previous");
+            // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
             return previous;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         previous = mergeCache.get(b, a);
         if (previous !== null) {
             // @ts-expect-error TS(2339): Property 'trace_atn_sim' does not exist on type 't... Remove this comment to see the full error message
+            // eslint-disable-next-line curly
             if (PredictionContext.trace_atn_sim) console.log("mergeArrays a=" + a + ",b=" + b + " -> previous");
+            // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
             return previous;
         }
     }
@@ -163,7 +196,9 @@ function mergeArrays(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
     let mergedParents = new Array(a.returnStates.length + b.returnStates.length).fill(null);
     // walk and merge to yield mergedParents, mergedReturnStates
     while (i < a.returnStates.length && j < b.returnStates.length) {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         const a_parent = a.parents[i];
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         const b_parent = b.parents[j];
         if (a.returnStates[i] === b.returnStates[j]) {
             // same payload (stack tops are equal), must yield merged singleton
@@ -172,6 +207,7 @@ function mergeArrays(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
             // @ts-expect-error TS(2339): Property 'EMPTY_RETURN_STATE' does not exist on ty... Remove this comment to see the full error message
             const bothDollars = payload === PredictionContext.EMPTY_RETURN_STATE &&
                 a_parent === null && b_parent === null;
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             const ax_ax = (a_parent !== null && b_parent !== null && a_parent === b_parent); // ax+ax
             // ->
             // ax
@@ -212,44 +248,57 @@ function mergeArrays(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
     // trim merged if we combined a few that had same stack tops
     if (k < mergedParents.length) { // write index < last position; trim
         if (k === 1) { // for just one merged element, return singleton top
+            // eslint-disable-next-line no-underscore-dangle, @typescript-eslint/naming-convention
             const a_ = SingletonPredictionContext.create(mergedParents[0],
                 mergedReturnStates[0]);
             if (mergeCache !== null) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 mergeCache.set(a, b, a_);
             }
+            // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
             return a_;
         }
         mergedParents = mergedParents.slice(0, k);
         mergedReturnStates = mergedReturnStates.slice(0, k);
     }
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const M = new ArrayPredictionContext(mergedParents, mergedReturnStates);
 
     // if we created same array as a or b, return that instead
     // TODO: track whether this is possible above during merge sort for speed
     if (M.equals(a)) {
         if (mergeCache !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             mergeCache.set(a, b, a);
         }
         // @ts-expect-error TS(2339): Property 'trace_atn_sim' does not exist on type 't... Remove this comment to see the full error message
+        // eslint-disable-next-line curly
         if (PredictionContext.trace_atn_sim) console.log("mergeArrays a=" + a + ",b=" + b + " -> a");
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return a;
     }
     if (M.equals(b)) {
         if (mergeCache !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             mergeCache.set(a, b, b);
         }
         // @ts-expect-error TS(2339): Property 'trace_atn_sim' does not exist on type 't... Remove this comment to see the full error message
+        // eslint-disable-next-line curly
         if (PredictionContext.trace_atn_sim) console.log("mergeArrays a=" + a + ",b=" + b + " -> b");
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return b;
     }
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     combineCommonParents(mergedParents);
 
     if (mergeCache !== null) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         mergeCache.set(a, b, M);
     }
 
     // @ts-expect-error TS(2339): Property 'trace_atn_sim' does not exist on type 't... Remove this comment to see the full error message
+    // eslint-disable-next-line curly
     if (PredictionContext.trace_atn_sim) console.log("mergeArrays a=" + a + ",b=" + b + " -> " + M);
 
     return M;
@@ -259,10 +308,12 @@ function mergeArrays(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
  * Make pass over all <em>M</em> {@code parents}; merge any {@code equals()}
  * ones.
  */
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
 function combineCommonParents(parents: any) {
     // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
     const uniqueParents = new HashMap();
 
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let p = 0; p < parents.length; p++) {
         const parent = parents[p];
         if (!(uniqueParents.containsKey(parent))) {
@@ -305,23 +356,31 @@ function combineCommonParents(parents: any) {
  * otherwise false to indicate a full-context merge
  * @param mergeCache
  */
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
 function mergeSingletons(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
     if (mergeCache !== null) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         let previous = mergeCache.get(a, b);
         if (previous !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return previous;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         previous = mergeCache.get(b, a);
         if (previous !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return previous;
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const rootMerge = mergeRoot(a, b, rootIsWildcard);
     if (rootMerge !== null) {
         if (mergeCache !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             mergeCache.set(a, b, rootMerge);
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return rootMerge;
     }
     if (a.returnState === b.returnState) {
@@ -329,9 +388,11 @@ function mergeSingletons(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
         // if parent is same as existing a or b parent or reduced to a parent,
         // return it
         if (parent === a.parent) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return a; // ax + bx = ax, if a=b
         }
         if (parent === b.parent) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return b; // ax + bx = bx, if a=b
         }
         // else: ax + ay = a'[x,y]
@@ -340,8 +401,10 @@ function mergeSingletons(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
         // new joined parent so create new singleton pointing to it, a'
         const spc = SingletonPredictionContext.create(parent, a.returnState);
         if (mergeCache !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             mergeCache.set(a, b, spc);
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return spc;
     } else { // a != b payloads differ
         // see if we can collapse parents due to $+x parents if local ctx
@@ -361,8 +424,10 @@ function mergeSingletons(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
             const parents = [singleParent, singleParent];
             const apc = new ArrayPredictionContext(parents, payloads);
             if (mergeCache !== null) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 mergeCache.set(a, b, apc);
             }
+            // eslint-disable-next-line padding-line-between-statements
             return apc;
         }
         // parents differ and can't merge them. Just pack together
@@ -375,10 +440,13 @@ function mergeSingletons(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
             payloads[1] = a.returnState;
             parents = [b.parent, a.parent];
         }
+        // eslint-disable-next-line no-underscore-dangle, @typescript-eslint/naming-convention
         const a_ = new ArrayPredictionContext(parents, payloads);
         if (mergeCache !== null) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             mergeCache.set(a, b, a_);
         }
+        // eslint-disable-next-line padding-line-between-statements
         return a_;
     }
 }
@@ -421,22 +489,26 @@ function mergeSingletons(a: any, b: any, rootIsWildcard: any, mergeCache: any) {
  * @param rootIsWildcard {@code true} if this is a local-context merge,
  * otherwise false to indicate a full-context merge
  */
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
 function mergeRoot(a: any, b: any, rootIsWildcard: any) {
     if (rootIsWildcard) {
         // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         if (a === PredictionContext.EMPTY) {
             // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return PredictionContext.EMPTY; // // + b =//
         }
         // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         if (b === PredictionContext.EMPTY) {
             // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return PredictionContext.EMPTY; // a +// =//
         }
     } else {
         // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         if (a === PredictionContext.EMPTY && b === PredictionContext.EMPTY) {
             // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return PredictionContext.EMPTY; // $ + $ = $
         // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         } else if (a === PredictionContext.EMPTY) { // $ + x = [$,x]
@@ -444,37 +516,49 @@ function mergeRoot(a: any, b: any, rootIsWildcard: any) {
             // @ts-expect-error TS(2339): Property 'EMPTY_RETURN_STATE' does not exist on ty... Remove this comment to see the full error message
             PredictionContext.EMPTY_RETURN_STATE];
             const parents = [b.parent, null];
+            // eslint-disable-next-line padding-line-between-statements
             return new ArrayPredictionContext(parents, payloads);
         // @ts-expect-error TS(2339): Property 'EMPTY' does not exist on type 'typeof Pr... Remove this comment to see the full error message
         } else if (b === PredictionContext.EMPTY) { // x + $ = [$,x] ($ is always first if present)
             // @ts-expect-error TS(2339): Property 'EMPTY_RETURN_STATE' does not exist on ty... Remove this comment to see the full error message
             const payloads = [a.returnState, PredictionContext.EMPTY_RETURN_STATE];
             const parents = [a.parent, null];
+            // eslint-disable-next-line padding-line-between-statements
             return new ArrayPredictionContext(parents, payloads);
         }
     }
+    // eslint-disable-next-line padding-line-between-statements
     return null;
 }
 
 // ter's recursive version of Sam's getAllNodes()
 // @ts-expect-error TS(7023): 'getAllContextNodes' implicitly has return type 'a... Remove this comment to see the full error message
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, prefer-arrow/prefer-arrow-functions, @typescript-eslint/no-explicit-any
 export function getAllContextNodes(context: any, nodes: any, visited: any) {
     if (nodes === null) {
         nodes = [];
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return getAllContextNodes(context, nodes, visited);
     } else if (visited === null) {
         // @ts-expect-error TS(2554): Expected 2 arguments, but got 0.
         visited = new HashMap();
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return getAllContextNodes(context, nodes, visited);
     } else {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (context === null || visited.containsKey(context)) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return nodes;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         visited.set(context, context);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         nodes.push(context);
         for (let i = 0; i < context.length; i++) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             getAllContextNodes(context.getParent(i), nodes, visited);
         }
+        // eslint-disable-next-line padding-line-between-statements, @typescript-eslint/no-unsafe-return
         return nodes;
     }
 }
