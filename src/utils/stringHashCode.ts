@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-export const stringSeedHashCode = Math.round(Math.random() * Math.pow(2, 32));
+const stringSeedHashCode = Math.round(Math.random() * Math.pow(2, 32));
 
 export const stringHashCode = (value: string): number =>  {
     if (!value) {
