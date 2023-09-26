@@ -5,27 +5,43 @@
  */
 
 export class ParseTreeVisitor {
-    visit(ctx) {
-        if (Array.isArray(ctx)) {
-            return ctx.map(function (child) {
-                return child.accept(this);
-            }, this);
-        } else {
-            return ctx.accept(this);
-        }
+    visit(tree) {
+        return tree.accept(this);
     }
 
-    visitChildren(ctx) {
-        if (ctx.children) {
-            return this.visit(ctx.children);
-        } else {
-            return null;
+    visitChildren(node) {
+        let result = this.defaultResult();
+        const n = node.getChildCount();
+        for (let i = 0; i < n; i++) {
+            if (!this.shouldVisitNextChild(node, result)) {
+                break;
+            }
+
+            const c = node.getChild(i);
+            const childResult = c.accept(this);
+            result = this.aggregateResult(result, childResult);
         }
+
+        return result;
     }
 
     visitTerminal(node) {
+        return this.defaultResult();
     }
 
     visitErrorNode(node) {
+        return this.defaultResult();
+    }
+
+    defaultResult() {
+        return null;
+    }
+
+    shouldVisitNextChild(node, currentResult) {
+        return true;
+    }
+
+    aggregateResult(aggregate, nextResult) {
+        return nextResult;
     }
 }
