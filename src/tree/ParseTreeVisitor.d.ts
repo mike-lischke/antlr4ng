@@ -14,4 +14,7 @@ export declare class ParseTreeVisitor<Result> {
     public visitTerminal(node: TerminalNode): Result;
     public visitErrorNode(node: ErrorNode): Result;
 
+    protected defaultResult(): Result;
+    protected shouldVisitNextChild(node: ParseTree, currentResult: Result): boolean;
+    protected aggregateResult(aggregate: Result, nextResult: Result): Result;
 }
