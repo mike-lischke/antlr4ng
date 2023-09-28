@@ -360,7 +360,7 @@ export class XPathLexer extends Lexer {
 
     static vocabulary = new Vocabulary(XPathLexer.literalNames, XPathLexer.symbolicNames, []);
 
-    getVocabulary() {
+    get vocabulary() {
         return XPathLexer.vocabulary;
     }
 

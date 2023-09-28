@@ -35,7 +35,7 @@ export class Recognizer {
     }
 
     getTokenTypeMap() {
-        const vocabulary = this.getVocabulary();
+        const vocabulary = this.vocabulary;
 
         let result = Recognizer.tokenTypeMapCache.get(vocabulary);
         if (!result) {
