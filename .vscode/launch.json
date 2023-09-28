@@ -7,17 +7,6 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Jasmine Current File",
-            "program": "${workspaceFolder}/node_modules/jasmine/bin/jasmine.js",
-            "args": [
-                "${file}"
-            ],
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
-        },
-        {
-            "type": "node",
-            "request": "launch",
             "name": "Run current Jest test",
             "runtimeExecutable": null,
             "runtimeArgs": [
@@ -47,7 +36,7 @@
                 "--no-warnings=ExperimentalWarning",
                 "--loader",
                 "ts-node/esm",
-                "spec/benchmarks/run-benchmarks.ts",
+                "tests/benchmarks/run-benchmarks.ts",
             ],
         }
     ]
