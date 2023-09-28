@@ -42,14 +42,24 @@ This runtime is constantly monitored for performance regressions. The following 
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
-| Query Collection| 8787 ms | 234 ms |
-| Example File | 1065 ms | 113 ms |
-| Large Inserts | 11318 ms | 10885 ms |
-| Total | 21257 ms | 11259 ms |
+| Query Collection| 8569 ms | 232 ms |
+| Example File | 1080 ms | 114 ms |
+| Large Inserts | 10533 ms | 10537 ms |
+| Total | 20220 ms | 10903 ms |
 
-The benchmarks consist of a set of query files, which are parsed by a MySQL parser.
+The benchmarks consist of a set of query files, which are parsed by a MySQL parser. The query collection file contains more than 900 MySQL queries of all kinds, from very simple to complex stored procedures, including some deeply nested select queries that can easily exhaust available stack space. The minimum MySQL server version used was 8.0.0.
+
+The large binary inserts file contains only a few dozen queries, but they are really large with deep recursions, stressing so the prediction engine of the parser. Additionally, one query contains binary (image) data which contains input characters from the whole UTF-8 range.
+
+The example file is a copy of the largest test file in [this repository](https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples), and is known to be very slow to parse with other parsers, but the one used here.
 
 ## Release Notes
+
+### 1.1.3 - 1.1.4
+
+These 2 releases contain mostly internal changes. The antlr4ng-cli tool dependency has been updated to the latest version and build + test processes has been improved (esbuild instead of webpack, Jest instead of Jasmine).
+
+There are also some smaller fixes in `Interval` and `ParseTreeVisitor`. The latter now has the same implementation as the Java runtime.
 
 ### 1.1.1 - 1.1.2
 

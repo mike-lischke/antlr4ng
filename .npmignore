@@ -2,13 +2,12 @@
 .github
 .vscode
 cli/
-spec/
+tests/
 coverage/
 src/**/*.js
 dist/*.map
 
-.babelrc
-.c8rc.json
+jest.config.ts
 .eslintignore
 .eslintrc.json
 .project
