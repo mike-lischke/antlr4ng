@@ -2,7 +2,9 @@
 [![Weekly Downloads](https://img.shields.io/npm/dw/antlr4ng?style=for-the-badge&color=blue)](https://www.npmjs.com/package/antlr4ng)
 [![npm version](https://img.shields.io/npm/v/antlr4ng?style=for-the-badge&color=yellow)](https://www.npmjs.com/package/antlr4ng)
 
-# TypeScript Target Runtime for ANTLR 4
+<img src="https://raw.githubusercontent.com/mike-lischke/mike-lischke/master/images/ANTLRng.png" title="ANTLR Next Generation" alt="ANTLRng" width="96" height="96"/><label style="font-size: 70%">Part of the Next Generation ANTLR Project</label>
+
+# TypeScript Runtime for ANTLR 4
 
 This package is a fork of the official ANTLR4 JavaScript runtime (with its TypeScript additions), with the following changes:
 
