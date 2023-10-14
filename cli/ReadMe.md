@@ -1,6 +1,8 @@
 [![Weekly Downloads](https://img.shields.io/npm/dw/antlr4ng-cli?style=for-the-badge&color=blue)](https://www.npmjs.com/package/antlr4ng-cli)
 [![npm version](https://img.shields.io/npm/v/antlr4ng-cli?style=for-the-badge&color=yellow)](https://www.npmjs.com/package/antlr4ng-cli)
 
+<img src="https://raw.githubusercontent.com/mike-lischke/mike-lischke/master/images/ANTLRng2.svg" title="ANTLR Next Generation" alt="ANTLRng" width="96" height="96"/><label style="font-size: 70%">Part of the Next Generation ANTLR Project</label>
+
 # Custom ANTLR4 Code Generator
 
 This package contains a custom code generator for ANTLR4 grammars. It is based on the official ANTLR4 code generator, but includes support for the [`antlr4ng`](https://github.com/mike-lischke/antlr4ng) runtime, so the TypeScript output is different. Other than that it is a drop-in replacement for the official generator and can also be used with the official runtimes (C++, Java, etc.).
