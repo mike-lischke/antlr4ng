@@ -33,6 +33,11 @@ in the root of your project, where you installed the package.
 
 ## Release Notes
 
+### 1.0.3
+
+- Non-optional token members of a rule context no longer return null, which makes explicit non-null assertions in user code unnecessary.
+- Added `override` keyword for generated `copyFrom` methods.
+
 ### 1.0.2
 
 Updated the ANTLR4 jar.
