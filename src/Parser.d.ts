@@ -50,7 +50,7 @@ export declare abstract class Parser extends Recognizer<ParserATNSimulator> {
     public override get inputStream(): TokenStream;
     public override set inputStream(input: TokenStream);
 
-    public get syntaxErrorCount(): number;
+    public get numberOfSyntaxErrors(): number;
 
     public getCurrentToken(): Token;
     public notifyErrorListeners(msg: string, offendingToken: Token | null, err: RecognitionException | null): void;

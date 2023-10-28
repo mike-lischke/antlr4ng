@@ -13,6 +13,7 @@ This package is a fork of the official ANTLR4 JavaScript runtime (with its TypeS
 - Vocabulary implementation.
 - Complete Interval implementation.
 - Parser and lexer interpreters.
+- A couple of bug fixes.
 - Consistent formatting (indentation, semicolons, spaces, etc.).
 - Project folder structure is now similar to the Java runtime.
 - Numerous smaller fixes (`null` instead of `undefined` and others).
@@ -44,10 +45,10 @@ This runtime is constantly monitored for performance regressions. The following 
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
-| Query Collection| 8569 ms | 232 ms |
-| Example File | 1080 ms | 114 ms |
-| Large Inserts | 10533 ms | 10537 ms |
-| Total | 20220 ms | 10903 ms |
+| Query Collection| 8464 ms | 230 ms |
+| Example File | 1043 ms | 112 ms |
+| Large Inserts | 11022 ms | 10616 ms |
+| Total | 20599 ms | 10978 ms |
 
 The benchmarks consist of a set of query files, which are parsed by a MySQL parser. The query collection file contains more than 900 MySQL queries of all kinds, from very simple to complex stored procedures, including some deeply nested select queries that can easily exhaust available stack space. The minimum MySQL server version used was 8.0.0.
 
@@ -57,11 +58,13 @@ The example file is a copy of the largest test file in [this repository](https:/
 
 ## Release Notes
 
-### 1.1.3 - 1.1.4
+### 1.1.3 - 1.1.7
 
-These 2 releases contain mostly internal changes. The antlr4ng-cli tool dependency has been updated to the latest version and build + test processes has been improved (esbuild instead of webpack, Jest instead of Jasmine).
+These releases contain mostly internal changes and bug fixes. The antlr4ng-cli tool dependency has been updated to the latest version and build + test processes has been improved (esbuild instead of webpack, Jest instead of Jasmine).
 
 There are also some smaller fixes in `Interval` and `ParseTreeVisitor`. The latter now has the same implementation as the Java runtime.
+
+- Fixed Bug #8 Wrong property name, using `numberOfSyntaxErrors` now.
 
 ### 1.1.1 - 1.1.2
 
