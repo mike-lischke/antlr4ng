@@ -16,7 +16,7 @@ export interface TextSpan {
 }
 
 /** Indicates how a statement ends. */
-export enum StatementFinishState {
+export const enum StatementFinishState {
     /** Ends with a delimiter. */
     Complete,
 
@@ -33,7 +33,7 @@ export enum StatementFinishState {
     DelimiterChange,
 }
 
-export enum MySQLParseUnit {
+export const enum MySQLParseUnit {
     Generic,
     CreateSchema,
     CreateTable,

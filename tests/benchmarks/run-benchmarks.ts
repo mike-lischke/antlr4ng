@@ -185,14 +185,14 @@ const parseFiles = () => {
     });
 };
 
-const parserRun = () => {
+const parserRun = (index: number) => {
     const timestamp = performance.now();
     try {
         parseFiles();
     } catch (e) {
         console.error(e);
     } finally {
-        console.log("Parse run took " + (performance.now() - timestamp) + " ms");
+        console.log(`Parse run ${index} took ${(performance.now() - timestamp)} ms`);
     }
 };
 
@@ -205,9 +205,13 @@ splitterTest();
 console.log("Splitter tests took " + (performance.now() - timestamp) + " ms");
 
 console.log("Running antlr4ng parser (cold) ...");
-parserRun();
+parserRun(0);
 
 console.log("Running antlr4ng parser (warm) ...");
-parserRun();
+parserRun(1);
+//parserRun(2);
+//parserRun(3);
+//parserRun(4);
+//parserRun(5);
 
 console.log("Done");

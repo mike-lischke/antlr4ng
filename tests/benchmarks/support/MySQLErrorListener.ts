@@ -32,9 +32,9 @@ import { MySQLLexer } from "../generated/MySQLLexer.js";
 
 import { ErrorReportCallback } from "../support/helpers.js";
 import {
-    BaseErrorListener, FailedPredicateException, IntervalSet, ATNSimulator,
-    NoViableAltException, RecognitionException, Recognizer, Token,
-} from "antlr4ng";
+    ATNSimulator, BaseErrorListener, FailedPredicateException, IntervalSet, NoViableAltException,
+    RecognitionException, Recognizer, Token,
+} from "../../../src/index.js";
 
 class Vocabulary {
     public getDisplayName(_symbol: number): string {
@@ -48,7 +48,7 @@ class LexerNoViableAltException extends RecognitionException {
 class InputMismatchException extends RecognitionException {
 }
 
-export class MySQLErrorListener extends BaseErrorListener<ATNSimulator> {
+export class MySQLErrorListener extends BaseErrorListener {
 
     private static simpleRules: Set<number> = new Set([
         MySQLParser.RULE_identifier,
@@ -99,8 +99,8 @@ export class MySQLErrorListener extends BaseErrorListener<ATNSimulator> {
         super();
     }
 
-    public override syntaxError<T>(recognizer: Recognizer<ATNSimulator>, offendingSymbol: T | null,
-        line: number, charPositionInLine: number, msg: string, e: RecognitionException | null): void {
+    public override syntaxError = <T>(recognizer: Recognizer<ATNSimulator>, offendingSymbol: T | null,
+        line: number, charPositionInLine: number, msg: string, e: RecognitionException | null): void => {
 
         let message = "";
 
@@ -149,11 +149,11 @@ export class MySQLErrorListener extends BaseErrorListener<ATNSimulator> {
 
             // Walk up from generic rules to reach something that gives us more context, if needed.
             let context = parser.context;
-            while (MySQLErrorListener.simpleRules.has(context.ruleIndex) && context.parent) {
+            while (context?.parent && MySQLErrorListener.simpleRules.has(context.ruleIndex)) {
                 context = context.parent;
             }
 
-            switch (context.ruleIndex) {
+            switch (context?.ruleIndex) {
                 case MySQLParser.RULE_functionCall:
                     expectedText = "a complete function call or other expression";
                     break;
@@ -329,7 +329,7 @@ export class MySQLErrorListener extends BaseErrorListener<ATNSimulator> {
 
             }
         }
-    }
+    };
 
     private intervalToString(set: IntervalSet, maxCount: number, vocabulary: Vocabulary): string {
         //const symbols = set.toList();

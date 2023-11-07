@@ -6,23 +6,18 @@
 
 # TypeScript Runtime for ANTLR 4
 
-This package is a fork of the official ANTLR4 JavaScript runtime (with its TypeScript additions), with the following changes:
+This package is a fork of the official ANTLR4 JavaScript runtime and has been fully transformed to TypeScript. Other improvements are:
 
-- Much improved TypeScript type definitions.
 - XPath implementation.
 - Vocabulary implementation.
 - Complete Interval implementation.
 - Parser and lexer interpreters.
-- A couple of bug fixes.
-- Consistent formatting (indentation, semicolons, spaces, etc.).
-- Project folder structure is now similar to the Java runtime.
-- Numerous smaller fixes (`null` instead of `undefined` and others).
+- Numerous bug fixes and other changes.
 - Smaller node package (no test specs or other unnecessary files).
 - No CommonJS support anymore (ESM only). No differentiation between node and browser environments.
-- Build is now based on esbuild.
 - Includes the `antlr4ng-cli` tool to generate parser files compatible with this runtime. This tool uses a custom build of the ANTLR4 tool.
 
-It is (mostly) a drop-in replacement of the `antlr4` package, and can be used as such. For more information about ANTLR see www.antlr.org. Read more details about the [JavaScript](https://github.com/antlr/antlr4/blob/master/doc/javascript-target.md) and [TypeScript](https://github.com/antlr/antlr4/blob/master/doc/typescript-target.md) targets at the provided links, but keep in mind that this documentation applies to the original JS/TS target.
+This package is a blend of the original JS implementation and antlr4ts, which is a TypeScript implementation of the ANTLR4 runtime, but was abandoned. It tries to keep the best of both worlds, while following the Java runtime as close as possible. It's a bit slower than the JS runtime, but faster than antlr4ts.
 
 ## Installation
 
@@ -39,9 +34,22 @@ npm install --save-dev antlr4ng-cli
 ```
 See [its readme](./cli/ReadMe.md) for more information.
 
+If you come from one of the other JS/TS runtimes, you may have to adjust your code a bit. The antlr4ng package more strictly exposes the Java nullability for certain members. This will require that you either use the non-null assertion operator to force the compiler to accept your code, or you have to check for nullability before accessing a member. The latter is the recommended way, as it is safer.
+
+Additionally, some members have been renamed to more TypeScript like names (e.g. Parser._ctx is now Parser.context). The following table shows the most important changes:
+
+| Old Name | New Name |
+| -------- | -------- |
+| Parser._ctx | Parser.context |
+| Parser._errHandler | Parser.errorHandler |
+| Parser._input | Parser.inputStream |
+| Parser._interp | Parser.interpreter |
+
+The package requires ES2022 or newer, for features like static initialization blocks in classes and private fields (`#field`). It is recommended to use the latest TypeScript version.
+
 ## Benchmarks
 
-This runtime is constantly monitored for performance regressions. The following table shows the results of the benchmarks run on last release:
+This runtime is monitored for performance regressions. The following table shows the results of the benchmarks run on last release:
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
@@ -50,11 +58,11 @@ This runtime is constantly monitored for performance regressions. The following 
 | Large Inserts | 11022 ms | 10616 ms |
 | Total | 20599 ms | 10978 ms |
 
-The benchmarks consist of a set of query files, which are parsed by a MySQL parser. The query collection file contains more than 900 MySQL queries of all kinds, from very simple to complex stored procedures, including some deeply nested select queries that can easily exhaust available stack space. The minimum MySQL server version used was 8.0.0.
+The benchmarks consist of a set of query files, which are parsed by a MySQL parser. The query collection file contains more than 900 MySQL queries of all kinds, from very simple to complex stored procedures, including some deeply nested select queries that can easily exhaust the available stack space (in certain situations, such as parsing in a thread with default stack size). The minimum MySQL server version used was 8.0.0.
 
-The large binary inserts file contains only a few dozen queries, but they are really large with deep recursions, stressing so the prediction engine of the parser. Additionally, one query contains binary (image) data which contains input characters from the whole UTF-8 range.
+The large binary inserts file contains only a few dozen queries, but they are really large with deep recursions, so they stress the prediction engine of the parser. In addition, one query contains binary (image) data containing input characters from the entire UTF-8 range.
 
-The example file is a copy of the largest test file in [this repository](https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples), and is known to be very slow to parse with other parsers, but the one used here.
+The example file is a copy of the largest test file in [this repository](https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples), and is known to be very slow to parse with other MySQL grammars. The one used here, however, is fast.
 
 ## Release Notes
 

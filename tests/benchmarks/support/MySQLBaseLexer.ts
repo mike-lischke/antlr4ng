@@ -24,8 +24,7 @@
 /* eslint-disable no-underscore-dangle */
 /* cspell: ignore ULONGLONG, MULT, MAXDB */
 
-import { Lexer, Token } from "antlr4ng";
-
+import { Lexer, Token } from "../../../src/index.js";
 import { MySQLLexer } from "../generated/MySQLLexer.js";
 
 import { IMySQLRecognizerCommon, SqlMode } from "./MySQLRecognizerCommon.js";

@@ -13,6 +13,7 @@
     ],
     "ignorePatterns": [
         "src/**/*.js",
+        "src/tree/xpath/XPathLexer.ts",
         "spec/**/*.*js",
         "dist/**/*",
         "cli/index.js",
@@ -536,7 +537,7 @@
         ],
         "@typescript-eslint/no-explicit-any": "error",
         "@typescript-eslint/no-parameter-properties": "off",
-        "@typescript-eslint/no-use-before-define": "error",
+        "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/no-unsafe-assignment": "off", // TODO: enable
         "@typescript-eslint/no-unsafe-member-access": "off", // TODO: enable
         "@typescript-eslint/no-unsafe-call": "error", // TODO: enable
@@ -610,6 +611,7 @@
         ],
         "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/restrict-plus-operands": "off",
+        "@typescript-eslint/no-base-to-string": "off",
         "jsdoc/check-alignment": "error",
         "jsdoc/check-indentation": "off",
         "jsdoc/require-param-type": "off",
@@ -620,6 +622,7 @@
             {
                 "startLines": 1
             }
-        ]
+        ],
+        "jsdoc/no-undefined-types": "off"
     }
 }

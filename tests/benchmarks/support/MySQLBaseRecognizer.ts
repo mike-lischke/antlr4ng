@@ -21,8 +21,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-import { Parser } from "antlr4ng";
-
+import { Parser } from "../../../src/Parser.js";
 import { IMySQLRecognizerCommon, SqlMode } from "./MySQLRecognizerCommon.js";
 
 export abstract class MySQLBaseRecognizer extends Parser implements IMySQLRecognizerCommon {

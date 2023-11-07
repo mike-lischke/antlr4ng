@@ -12,7 +12,6 @@ const atn = new antlr4.ATNDeserializer().deserialize(serializedATN);
 const decisionsToDFA = atn.decisionToState.map((ds, index) => { return new antlr4.DFA(ds, index); });
 
 export class ABC extends antlr4.Lexer {
-    public static readonly EOF = antlr4.Token.EOF;
     public static readonly A = 1;
     public static readonly B = 2;
     public static readonly C = 3;

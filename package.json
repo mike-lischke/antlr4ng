@@ -37,22 +37,20 @@
         "typescript": "5.2.2"
     },
     "scripts": {
-        "prepublishOnly": "npm run build && npm run test",
-        "build": "npm run generate-test-parser && esbuild ./src/index.js --bundle --outfile=dist/antlr4.mjs --format=esm --sourcemap=external --minify",
+        "prepublishOnly": "npm run build-minified && npm run test",
+        "tsc": "tsc --watch",
+        "build": "npm run generate-test-parser && esbuild ./src/index.js --bundle --outfile=dist/antlr4.mjs --format=esm --sourcemap",
+        "build-minified": "npm run generate-test-parser && esbuild ./src/index.js --bundle --outfile=dist/antlr4.mjs --format=esm --sourcemap --minify",
         "full-test": "npm run test && npm run run-benchmarks",
         "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --no-coverage",
-        "lint": "eslint src/",
         "generate-test-parser": "cli/index.js -Dlanguage=TypeScript -o tests/benchmarks/generated -visitor -listener -Xexact-output-dir tests/benchmarks/MySQLLexer.g4 tests/benchmarks/MySQLParser.g4",
-        "run-benchmarks": "node --no-warnings --experimental-vm-modules --loader ts-node/esm tests/benchmarks/run-benchmarks.ts"
+        "generate-xpath-lexer": "cli/index.js -Dlanguage=TypeScript -o src/tree/xpath/generated -no-visitor -no-listener -Xexact-output-dir src/tree/xpath/XPathLexer.g4",
+        "run-benchmarks": "node --no-warnings --experimental-vm-modules  --loader ts-node/esm tests/benchmarks/run-benchmarks.ts",
+        "profile benchmarks": "node --no-warnings --experimental-vm-modules --prof --loader ts-node/esm tests/benchmarks/run-benchmarks.ts",
+        "process profile tick file": " node --prof-process isolate-0x130008000-75033-v8.log > processed.txt"
     },
     "exports": {
-        "types": "./src/index.d.ts",
+        "types": "./src/index.ts",
         "default": "./dist/antlr4.mjs"
-    },
-    "babel": {
-        "presets": [
-            "@babel/preset-env"
-        ],
-        "targets": "defaults"
     }
 }

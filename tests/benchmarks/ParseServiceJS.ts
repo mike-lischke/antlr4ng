@@ -5,10 +5,12 @@
 
 /* eslint-disable no-underscore-dangle */
 
-import {
-    CommonTokenStream, CharStreams, ParseTree, BailErrorStrategy, PredictionMode, ParseCancellationException,
-} from "antlr4ng";
-
+import { PredictionMode } from "../../src/atn/PredictionMode.js";
+import { BailErrorStrategy } from "../../src/BailErrorStrategy.js";
+import { CharStreams } from "../../src/CharStreams.js";
+import { CommonTokenStream } from "../../src/CommonTokenStream.js";
+import { ParseCancellationException } from "../../src/misc/ParseCancellationException.js";
+import { ParseTree } from "../../src/tree/ParseTree.js";
 import { MySQLLexer } from "./generated/MySQLLexer.js";
 import { MySQLParser } from "./generated/MySQLParser.js";
 import { IParserErrorInfo, MySQLParseUnit } from "./support/helpers.js";

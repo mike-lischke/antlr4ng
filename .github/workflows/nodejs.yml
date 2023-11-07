@@ -5,7 +5,7 @@ name: Build & Test
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, ts-migration ]
   pull_request:
     branches: [ master ]
 

@@ -1,17 +1,23 @@
 {
     "compilerOptions": {
-        "target": "ES6",
+        "target": "ESNext",
         "module": "Node16",
         "moduleResolution": "Node16",
         "sourceMap": true,
         "esModuleInterop": true,
         "noEmit": true,
         "lib": [
-            "ES2020"
+            "ESNext",
+            "DOM"
         ],
         "noImplicitAny": true,
         "strictNullChecks": true,
-        "preserveConstEnums": true
+        "preserveConstEnums": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noFallthroughCasesInSwitch": false, // Switch to true when string hash in helpers.ts is no longer needed.
+        "forceConsistentCasingInFileNames": true,
     },
     "include": [
         "src/**/*.ts",

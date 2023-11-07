@@ -20,7 +20,6 @@ const atn = new antlr4.ATNDeserializer().deserialize(serializedATN);
 const decisionsToDFA = atn.decisionToState.map((ds, index) => { return new antlr4.DFA(ds, index); });
 
 export class Calc extends antlr4.Lexer {
-    public static readonly EOF = antlr4.Token.EOF;
     public static readonly ID = 1;
     public static readonly INT = 2;
     public static readonly SEMI = 3;
