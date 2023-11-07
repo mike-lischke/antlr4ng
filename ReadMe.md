@@ -34,22 +34,24 @@ npm install --save-dev antlr4ng-cli
 ```
 See [its readme](./cli/ReadMe.md) for more information.
 
-If you come from one of the other JS/TS runtimes, you may have to adjust your code a bit. The antlr4ng package more strictly exposes the Java nullability for certain members. This will require that you either use the non-null assertion operator to force the compiler to accept your code, or you have to check for nullability before accessing a member. The latter is the recommended way, as it is safer.
+If you come from one of the other JS/TS runtimes, you may have to adjust your code a bit. The antlr4ng package more strictly exposes the Java nullability for certain members. This will require that you either use the non-null assertion operator to force the compiler to accept your code, or you have to check for null values before accessing a member. The latter is the recommended way, as it is safer.
 
-Additionally, some members have been renamed to more TypeScript like names (e.g. Parser._ctx is now Parser.context). The following table shows the most important changes:
+Additionally, some members have been renamed to more TypeScript like names. The following table shows the most important changes:
 
 | Old Name | New Name |
 | -------- | -------- |
-| Parser._ctx | Parser.context |
-| Parser._errHandler | Parser.errorHandler |
-| Parser._input | Parser.inputStream |
-| Parser._interp | Parser.interpreter |
+| `Parser._ctx` | `Parser.context` |
+| `Parser._errHandler` | `Parser.errorHandler` |
+| `Parser._input` | `Parser.inputStream` |
+| `Recognizer._interp` | `Recognizer.interpreter` |
 
 The package requires ES2022 or newer, for features like static initialization blocks in classes and private fields (`#field`). It is recommended to use the latest TypeScript version.
 
 ## Benchmarks
 
 This runtime is monitored for performance regressions. The following table shows the results of the benchmarks run on last release:
+
+Pure JavaScript release (with type definitions):
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
@@ -58,13 +60,32 @@ This runtime is monitored for performance regressions. The following table shows
 | Large Inserts | 11022 ms | 10616 ms |
 | Total | 20599 ms | 10978 ms |
 
-The benchmarks consist of a set of query files, which are parsed by a MySQL parser. The query collection file contains more than 900 MySQL queries of all kinds, from very simple to complex stored procedures, including some deeply nested select queries that can easily exhaust the available stack space (in certain situations, such as parsing in a thread with default stack size). The minimum MySQL server version used was 8.0.0.
+Last release (pure TypeScript):
+
+| Test | Cold Run | Warm Run|
+| ---- | -------- | ------- |
+| Query Collection| 5958 ms | 331 ms |
+| Example File | 1046 ms | 186 ms |
+| Large Inserts | 14705 ms | 14138 ms |
+| Total | 21801 ms | 14675 ms |
+
+The numbers are interesting. While the cold run for the query collection is almost 3 seconds faster with pure TS, the overall numbers in warm state are worse. So it's not a pure JS vs. TS situation, but something else must have additional influence and this will be investigated. Overall the numbers in the pure TS runtime are pretty good, especially when comparing them with [antlr4ts](https://github.com/mike-lischke/antlr4wasm/tree/master/benchmarks/mysql).
+
+### About the Benchmarks
+
+The benchmarks consist of a set of query files, which are parsed by a MySQL parser. The MySQL grammar is one of the largest and most complex grammars you can find for ANTLR4, which, I think, makes it a perfect test case for parser tests.
+
+The query collection file contains more than 900 MySQL queries of all kinds, from very simple comments-only statements to complex stored procedures, including some deeply nested select queries that can easily exhaust the available stack space (in certain situations, such as parsing in a thread with default stack size). The minimum MySQL server version used was 8.0.0.
 
 The large binary inserts file contains only a few dozen queries, but they are really large with deep recursions, so they stress the prediction engine of the parser. In addition, one query contains binary (image) data containing input characters from the entire UTF-8 range.
 
 The example file is a copy of the largest test file in [this repository](https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples), and is known to be very slow to parse with other MySQL grammars. The one used here, however, is fast.
 
 ## Release Notes
+
+### 2.0.0
+
+The entire runtime now exclusively uses TypeScript. It was tested with the standard ANTLR4 runtime tests and completed the test suite successfully.
 
 ### 1.1.3 - 1.1.7
 
