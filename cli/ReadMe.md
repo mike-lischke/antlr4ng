@@ -33,6 +33,17 @@ in the root of your project, where you installed the package.
 
 ## Release Notes
 
+### 1.0.4
+
+**Compatible with antlr4ng 2.0.0**
+
+Code generation changes:
+
+- More locations where the `override` keyword is needed in generated classes.
+- `ParserRuleContext._ctx` was renamed to `ParserRuleContext.context` in the runtime.
+- Optional null result for listener/walker methods.
+- `TokenStream.getText` no longer needs a temporary interval as parameter, but can directly work with start and stop values.
+
 ### 1.0.3
 
 - Non-optional token members of a rule context no longer return null, which makes explicit non-null assertions in user code unnecessary.
