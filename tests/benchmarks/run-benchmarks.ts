@@ -5,7 +5,7 @@
 
 /* eslint-disable no-underscore-dangle */
 
-import fs from "fs";
+import * as fs from "fs";
 import path from "path";
 import assert from "assert";
 import { fileURLToPath } from "url";

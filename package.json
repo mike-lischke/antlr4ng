@@ -1,10 +1,10 @@
 {
     "name": "antlr4ng",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "type": "module",
     "description": "Alternative JavaScript/TypeScript runtime for ANTLR4",
     "main": "dist/antlr4.mjs",
-    "types": "src/index.d.ts",
+    "types": "dist/index.d.ts",
     "repository": "https://github.com/mike-lischke/antlr4ng",
     "keywords": [
         "lexer",
@@ -51,7 +51,7 @@
         "process profile tick file": " node --prof-process isolate-0x130008000-75033-v8.log > processed.txt"
     },
     "exports": {
-        "types": "./src/index.ts",
+        "types": "./dist/index.d.ts",
         "default": "./dist/antlr4.mjs"
     }
 }

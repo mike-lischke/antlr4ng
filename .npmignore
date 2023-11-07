@@ -4,8 +4,8 @@
 cli/
 tests/
 coverage/
-src/**/*.js
 dist/*.map
+src/
 
 jest.config.ts
 .eslintignore

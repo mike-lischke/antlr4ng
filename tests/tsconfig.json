@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "module": "Node16",
+        "target": "ESNext",
+        "moduleResolution": "Node16",
+        "noEmit": true,
+        "removeComments": false,
+        "noImplicitAny": true,
+        "noImplicitOverride": false,
+        "sourceMap": true,
+        "inlineSources": true,
+        "isolatedModules": false,
+        "allowSyntheticDefaultImports": true,
+        "strictNullChecks": true,
+    },
+    "include": [
+        "**/*.ts",
+    ],
+    "exclude": [
+        "node_modules",
+        "dist/**/*",
+        "src/**/*"
+    ]
+}
