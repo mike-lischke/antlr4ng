@@ -21,8 +21,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-import { ParseTree, ParserRuleContext, RuleContext, Token } from "../../../src/index.js";
-import { TerminalNode } from "../../../src/tree/TerminalNode.js";
+import { ParseTree, ParserRuleContext, RuleContext, Token, TerminalNode } from "antlr4ng";
+
 import { MySQLParser, TextLiteralContext } from "../generated/MySQLParser.js";
 
 // This interface describes functionality found in both, lexer and parser classes.

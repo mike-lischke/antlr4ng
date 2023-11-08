@@ -69,7 +69,9 @@ Last release (pure TypeScript):
 | Large Inserts | 14705 ms | 14138 ms |
 | Total | 21801 ms | 14675 ms |
 
-The numbers are interesting. While the cold run for the query collection is almost 3 seconds faster with pure TS, the overall numbers in warm state are worse. So it's not a pure JS vs. TS situation, but something else must have additional influence and this will be investigated. Overall the numbers in the pure TS runtime are pretty good, especially when comparing them with [antlr4ts](https://github.com/mike-lischke/antlr4wasm/tree/master/benchmarks/mysql).
+The numbers are interesting. While the cold run for the query collection is almost 3 seconds faster with pure TS, the overall numbers in warm state are worse. So it's not a pure JS vs. TS situation, but something else must have additional influence and this will be investigated. After all the TypeScript code is ultimately transpiled to JS, so it's probably a matter of how effective the TS code is translated to JS.
+
+Overall the numbers in the pure TS runtime are pretty good, especially when comparing them with [antlr4ts](https://github.com/mike-lischke/antlr4wasm/tree/master/benchmarks/mysql).
 
 ### About the Benchmarks
 

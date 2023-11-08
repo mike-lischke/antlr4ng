@@ -27,14 +27,13 @@
 // cspell: disable
 
 import { MySQLParser } from "../generated/MySQLParser.js";
-//import { MySQLBaseLexer } from "./MySQLBaseLexer.js";
 import { MySQLLexer } from "../generated/MySQLLexer.js";
 
 import { ErrorReportCallback } from "../support/helpers.js";
 import {
-    ATNSimulator, BaseErrorListener, FailedPredicateException, IntervalSet, NoViableAltException,
-    RecognitionException, Recognizer, Token,
-} from "../../../src/index.js";
+    ATNSimulator, BaseErrorListener, FailedPredicateException, IntervalSet, Lexer, NoViableAltException,
+    Parser, RecognitionException, Recognizer, Token,
+} from "antlr4ng";
 
 class Vocabulary {
     public getDisplayName(_symbol: number): string {
@@ -109,7 +108,7 @@ export class MySQLErrorListener extends BaseErrorListener {
             // Need to clone the symbol to avoid releasing the original token prematurely.
             let token = offendingSymbol as unknown as Token;
 
-            const parser = recognizer as MySQLParser;
+            const parser = recognizer as Parser;
             // const lexer = parser._input.getTokenSource() as MySQLBaseLexer;
             const isEof = token.type === Token.EOF;
             if (isEof) {
@@ -290,7 +289,7 @@ export class MySQLErrorListener extends BaseErrorListener {
         } else {
             // No offending symbol, which indicates this is a lexer error.
             if (e instanceof LexerNoViableAltException) {
-                const lexer = recognizer as MySQLLexer;
+                const lexer = recognizer as Lexer;
                 const input = lexer.inputStream;
                 let text = lexer.getErrorDisplay(input.getText(lexer._tokenStartCharIndex, input.index));
                 if (text === "") {

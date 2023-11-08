@@ -6,6 +6,7 @@
 
 export * from "./XPath.js";
 export * from "./XPathElement.js";
+export * from "./XPathLexer.js";
 export * from "./XPathLexerErrorListener.js";
 export * from "./XPathRuleAnywhereElement.js";
 export * from "./XPathRuleElement.js";
