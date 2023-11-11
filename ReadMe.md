@@ -64,10 +64,10 @@ Last release (pure TypeScript):
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
-| Query Collection| 5958 ms | 331 ms |
-| Example File | 1046 ms | 186 ms |
-| Large Inserts | 14705 ms | 14138 ms |
-| Total | 21801 ms | 14675 ms |
+| Query Collection| 5930 ms | 338 ms |
+| Example File | 1074 ms | 194 ms |
+| Large Inserts | 14226 ms | 14248 ms |
+| Total | 21290 ms | 14800 ms |
 
 The numbers are interesting. While the cold run for the query collection is almost 3 seconds faster with pure TS, the overall numbers in warm state are worse. So it's not a pure JS vs. TS situation, but something else must have additional influence and this will be investigated. After all the TypeScript code is ultimately transpiled to JS, so it's probably a matter of how effective the TS code is translated to JS.
 
@@ -84,6 +84,12 @@ The large binary inserts file contains only a few dozen queries, but they are re
 The example file is a copy of the largest test file in [this repository](https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples), and is known to be very slow to parse with other MySQL grammars. The one used here, however, is fast.
 
 ## Release Notes
+
+### 2.0.1 - 2.0.2
+
+- There are changes in the package content (typings are now in the dist folder too, instead of source).
+- There are now index.ts files in every folder and used for the final export index.ts. This makes it easier to see if something is missing and to include new or renamed files.
+- And there are some build changes/fixes as preparation for profiling the runtime.
 
 ### 2.0.0
 
