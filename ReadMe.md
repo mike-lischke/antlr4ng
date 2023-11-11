@@ -79,7 +79,7 @@ const inputStream = CharStreams.fromString(input);
 const lexer = new ExpressionLexer(inputStream);
 const tokenStream = new CommonTokenStream(lexer);
 const parser = new ExpressionParser(tokenStream);
-const tree = parser.expression();
+const tree = parser.start();
 ```
 
 You can then use the generated parser to walk the parse tree, for example with a visitor to evaluate the expression:
