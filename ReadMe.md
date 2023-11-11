@@ -47,6 +47,64 @@ Additionally, some members have been renamed to more TypeScript like names. The 
 
 The package requires ES2022 or newer, for features like static initialization blocks in classes and private fields (`#field`). It is recommended to use the latest TypeScript version.
 
+## Usage
+
+The following example shows how to use the runtime to parse a simple expression, assuming you have generated the lexer and parser files for the grammar and placed them in a subfolder folder called `generated`. The readme file of the [antlr4ng-cli](./cli/ReadMe.md) tool shows how to do that. Assume we have this expression grammar:
+
+```antlr
+grammar Expression;
+
+start: multiply | divide | add | subtract;
+
+expression: '(' expression ')' | number;
+
+multiply: expression '*' expression;
+divide: expression '/' expression;
+add: expression '+' expression;
+subtract: expression '-' expression;
+
+number: NUMBER;
+
+NUMBER: [0-9]+;
+WS: [ \t\r\n]+ -> skip;
+```
+
+```typescript
+import { ANTLRInputStream, CommonTokenStream } from "antlr4ng";
+import { ExpressionLexer } from "./generated/ExpressionLexer.js";
+import { ExpressionParser } from "./generated/ExpressionParser.js";
+
+const input = "1 + 2 * 3";
+const inputStream = CharStreams.fromString(input);
+const lexer = new ExpressionLexer(inputStream);
+const tokenStream = new CommonTokenStream(lexer);
+const parser = new ExpressionParser(tokenStream);
+const tree = parser.expression();
+```
+
+You can then use the generated parser to walk the parse tree, for example with a visitor to evaluate the expression:
+
+```typescript
+import { ExpressionVisitor } from "./generated/ExpressionVisitor.js";
+
+class MyVisitor extends ExpressionVisitor<number> {
+  visitAdd(ctx: AddContext): number {
+    return this.visit(ctx.expression(0)) + this.visit(ctx.expression(1));
+  }
+
+  visitMultiply(ctx: MultiplyContext): number {
+    return this.visit(ctx.expression(0)) * this.visit(ctx.expression(1));
+  }
+
+  visitNumber(ctx: NumberContext): number {
+    return Number.parseInt(ctx.NUMBER().text);
+  }
+}
+
+const visitor = new MyVisitor();
+const result = visitor.visit(tree);
+```
+
 ## Benchmarks
 
 This runtime is monitored for performance regressions. The following table shows the results of the benchmarks run on last release:
