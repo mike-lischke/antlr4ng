@@ -70,7 +70,7 @@ WS: [ \t\r\n]+ -> skip;
 ```
 
 ```typescript
-import { ANTLRInputStream, CommonTokenStream } from "antlr4ng";
+import { CharStreams, CommonTokenStream } from "antlr4ng";
 import { ExpressionLexer } from "./generated/ExpressionLexer.js";
 import { ExpressionParser } from "./generated/ExpressionParser.js";
 
