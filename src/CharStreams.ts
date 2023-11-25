@@ -21,7 +21,7 @@ import { CharStream } from "./CharStream.js";
 export class CharStreams {
     // Creates an CharStream from a string.
     public static fromString(str: string): CharStream {
-        return new CharStream(str, true);
+        return new CharStream(str);
     }
 
     /**
@@ -30,6 +30,6 @@ export class CharStreams {
      * encoding is null).
      */
     public static fromBuffer(buffer: Buffer, encoding?: BufferEncoding): CharStream {
-        return new CharStream(buffer.toString(encoding), true);
+        return new CharStream(buffer.toString(encoding));
     }
 }

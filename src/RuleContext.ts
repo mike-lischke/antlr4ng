@@ -53,8 +53,8 @@ export class RuleContext implements ParseTree {
         this.invokingState = invokingState ?? -1;
     }
 
-    public get parent(): this | null {
-        return this.#parent as this;
+    public get parent(): RuleContext | null {
+        return this.#parent;
     }
 
     public set parent(parent: RuleContext | null) {

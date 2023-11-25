@@ -10,39 +10,21 @@ import { Token } from "./Token.js";
 import { Interval } from "./misc/Interval.js";
 import { IntStream } from "./IntStream.js";
 
-/**
- * If decodeToUnicodeCodePoints is true, the input is treated
- * as a series of Unicode code points.
- *
- * Otherwise, the input is treated as a series of 16-bit UTF-16 code
- * units.
- */
 // TODO: CharStream should be an interface, not a class.
 export class CharStream implements IntStream {
     public name = "";
     public index = 0;
 
-    private stringData: string;
-    private data: number[];
-    private decodeToUnicodeCodePoints: boolean;
+    private data: Uint32Array;
 
-    public constructor(data: string, decodeToUnicodeCodePoints = false) {
-        this.stringData = data;
-        this.decodeToUnicodeCodePoints = decodeToUnicodeCodePoints;
-
-        this.data = [];
-        if (this.decodeToUnicodeCodePoints) {
-            for (let i = 0; i < this.stringData.length;) {
-                const codePoint = this.stringData.codePointAt(i)!;
-                this.data.push(codePoint);
-                i += codePoint <= 0xFFFF ? 1 : 2;
-            }
-        } else {
-            this.data = new Array(this.stringData.length);
-            for (let i = 0; i < this.stringData.length; i++) {
-                this.data[i] = this.stringData.charCodeAt(i);
-            }
+    public constructor(input: string) {
+        // Convert input to UTF-32 code points.
+        const codePoints: number[] = [];
+        for (const char of input) {
+            codePoints.push(char.codePointAt(0)!);
         }
+
+        this.data = new Uint32Array(codePoints);
     }
 
     /**
@@ -119,21 +101,12 @@ export class CharStream implements IntStream {
         if (begin >= this.data.length) {
             return "";
         } else {
-            if (this.decodeToUnicodeCodePoints) {
-                let result = "";
-                for (let i = begin; i <= end; i++) {
-                    result += String.fromCodePoint(this.data[i]);
-                }
-
-                return result;
-            } else {
-                return this.stringData.slice(begin, end + 1);
-            }
+            return this.#stringFromRange(begin, end + 1);
         }
     }
 
     public toString(): string {
-        return this.stringData;
+        return this.#stringFromRange(0);
     }
 
     public get size(): number {
@@ -146,5 +119,15 @@ export class CharStream implements IntStream {
         } else {
             return IntStream.UNKNOWN_SOURCE_NAME;
         }
+    }
+
+    #stringFromRange(start: number, stop?: number): string {
+        const data = this.data.slice(start, stop);
+        let result = "";
+        data.forEach((value) => {
+            result += String.fromCodePoint(value);
+        });
+
+        return result;
     }
 }

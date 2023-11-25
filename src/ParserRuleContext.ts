@@ -65,8 +65,8 @@ export class ParserRuleContext extends RuleContext {
         this.stop = null;
     }
 
-    public override get parent(): this | null {
-        return super.parent;
+    public override get parent(): ParserRuleContext | null {
+        return super.parent as ParserRuleContext;
     }
 
     public override set parent(parent: ParserRuleContext | null) {
