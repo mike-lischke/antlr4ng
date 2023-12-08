@@ -143,6 +143,11 @@ The example file is a copy of the largest test file in [this repository](https:/
 
 ## Release Notes
 
+### 2.0.3
+
+- Removed last reference to a Node.js specific type (Buffer), which avoids the automatic reference to the Node.js typings and an "resolution-mode" assertion for "require" (CommonJS).
+- Upgraded the ANTLR4 jar, which now produces optional attributes in rule contexts.
+
 ### 2.0.1 - 2.0.2
 
 - There are changes in the package content (typings are now in the dist folder too, instead of source).

@@ -23,13 +23,4 @@ export class CharStreams {
     public static fromString(str: string): CharStream {
         return new CharStream(str);
     }
-
-    /**
-     * Creates an CharStream from a Buffer given the
-     * encoding of the bytes in that buffer (defaults to 'utf8' if
-     * encoding is null).
-     */
-    public static fromBuffer(buffer: Buffer, encoding?: BufferEncoding): CharStream {
-        return new CharStream(buffer.toString(encoding));
-    }
 }

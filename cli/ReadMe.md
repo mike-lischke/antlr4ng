@@ -33,6 +33,12 @@ in the root of your project, where you installed the package.
 
 ## Release Notes
 
+### 1.0.5 - 1.0.6
+
+Code generation changes:
+
+- Local attributes in rule contexts are now made optional, to account for the fact that they are not always set.
+
 ### 1.0.4
 
 **Compatible with antlr4ng 2.0.0**
