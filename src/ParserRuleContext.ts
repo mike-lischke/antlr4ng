@@ -161,7 +161,10 @@ export class ParserRuleContext extends RuleContext {
     public override getChild<T extends ParseTree>(i: number,
         type: new (parent: ParserRuleContext | null, invokingStateNumber: number) => T): T | null;
     public override getChild<T extends ParseTree>(i: number,
-        type?: new (parent: ParserRuleContext | null, invokingStateNumber: number) => T): T | null {
+        type: new (symbol: Token) => T): T | null;
+    public override getChild<T extends ParseTree>(i: number,
+        type?: (new (parent: ParserRuleContext | null, invokingStateNumber: number) => T)
+            | (new (symbol: Token) => T)): T | null {
         if (this.children === null || i < 0 || i >= this.children.length) {
             return null;
         }
