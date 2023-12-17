@@ -33,6 +33,10 @@ in the root of your project, where you installed the package.
 
 ## Release Notes
 
+### 1.0.7
+
+Code generation improvements, especially for local rule attributes. Attributes in a rule (which are implemented as local variables in the generated code) can be unassigned and need extra null-safety checks (the ? operator) or non-null assertions. The code generator now adds these checks automatically.
+
 ### 1.0.5 - 1.0.6
 
 Code generation changes:
