@@ -143,6 +143,11 @@ The example file is a copy of the largest test file in [this repository](https:/
 
 ## Release Notes
 
+### 2.0.4
+
+- Code generation improvements, especially for local rule attributes. Attributes in a rule (which are implemented as local variables in the generated code) can be unassigned and need extra null-safety checks (the ? operator) or non-null assertions. The code generator now adds these checks automatically.
+- `ParserRuleContext.getChild` now accepts any constructor type.
+
 ### 2.0.3
 
 - Removed last reference to a Node.js specific type (Buffer), which avoids the automatic reference to the Node.js typings and an "resolution-mode" assertion for "require" (CommonJS).
