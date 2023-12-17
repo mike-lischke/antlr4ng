@@ -5,13 +5,25 @@
  */
 
 export class BitSet implements Iterable<number>{
-    private data: number[];
+    private data: BigUint64Array;
 
-    /** Creates a new bit set. All bits are initially `false`. */
-    public constructor() {
-        this.data = [];
+    /**
+     * Creates a new bit set. All bits are initially `false`.
+     *
+     * @param data Optional initial data.
+     */
+    public constructor(data?: bigint[]) {
+        if (data) {
+            // Only use the lower 64 bits.
+            this.data = new BigUint64Array(data.map((value) => { return BigInt.asUintN(64, value); }));
+        } else {
+            this.data = new BigUint64Array(1);
+        }
     }
 
+    /**
+     * @returns an iterator over all set bits.
+     */
     public [Symbol.iterator](): IterableIterator<number> {
         const length = this.data.length;
         let currentIndex = 0;
@@ -24,9 +36,9 @@ export class BitSet implements Iterable<number>{
             },
             next: (): IteratorResult<number> => {
                 while (currentIndex < length) {
-                    if (currentWord !== 0) {
+                    if (currentWord !== 0n) {
                         const t = currentWord & -currentWord;
-                        const value = (currentIndex << 5) + this.bitCount((t - 1) | 0);
+                        const value = (currentIndex << 6) + this.bitCount(t - 1n);
                         currentWord ^= t;
 
                         return { done: false, value };
@@ -50,10 +62,10 @@ export class BitSet implements Iterable<number>{
      */
     public clear(index?: number): void {
         if (index === undefined) {
-            this.data = [];
+            this.data = new BigUint64Array();
         } else {
             this.resize(index);
-            this.data[index >>> 5] &= ~(1 << index);
+            this.data[index >>> 6] &= ~BigInt(1 << index);
         }
     }
 
@@ -66,7 +78,7 @@ export class BitSet implements Iterable<number>{
      */
     public or(set: BitSet): void {
         const minCount = Math.min(this.data.length, set.data.length);
-        let k = 0 | 0;
+        let k = 0;
         for (; k + 7 < minCount; k += 8) {
             this.data[k] |= set.data[k];
             this.data[k + 1] |= set.data[k + 1];
@@ -83,7 +95,7 @@ export class BitSet implements Iterable<number>{
         }
 
         if (this.data.length < set.data.length) {
-            this.resize((set.data.length << 5) - 1);
+            this.resize((set.data.length << 6) - 1);
             const c = set.data.length;
             for (let k = minCount; k < c; ++k) {
                 this.data[k] = set.data[k];
@@ -100,7 +112,16 @@ export class BitSet implements Iterable<number>{
      * @returns the value of the bit with the specified index.
      */
     public get(index: number): boolean {
-        return (this.data[index >>> 5] & (1 << index)) !== 0;
+        if (index < 0) {
+            throw new RangeError("index cannot be negative");
+        }
+
+        const slot = index >>> 6;
+        if (slot >= this.data.length) {
+            return false;
+        }
+
+        return (this.data[slot] & (1n << BigInt(index % 64))) !== 0n;
     }
 
     /**
@@ -126,9 +147,9 @@ export class BitSet implements Iterable<number>{
         const length = this.data.length;
         for (let k = 0; k < length; ++k) {
             let w = this.data[k];
-            while (w !== 0) {
+            while (w !== 0n) {
                 const t = w & -w;
-                result[pos++] = (k << 5) + this.bitCount((t - 1) | 0);
+                result[pos++] = (k << 6) + this.bitCount((t - 1n) | 0n);
                 w ^= t;
             }
         }
@@ -143,6 +164,10 @@ export class BitSet implements Iterable<number>{
      * @param fromIndex the index to start checking from (inclusive)
      */
     public nextSetBit(fromIndex: number): number | undefined {
+        if (fromIndex < 0) {
+            throw new RangeError("index cannot be negative");
+        }
+
         // Iterate over all set bits.
         for (const index of this) {
             // Use the first index > than the specified value index.
@@ -157,11 +182,15 @@ export class BitSet implements Iterable<number>{
     /**
      * Sets the bit at the specified index to `true`.
      *
-     * @param bitIndex a bit index
+     * @param index a bit index
      */
-    public set(bitIndex: number): void {
-        this.resize(bitIndex);
-        this.data[bitIndex >>> 5] |= 1 << bitIndex;
+    public set(index: number): void {
+        if (index < 0) {
+            throw new RangeError("index cannot be negative");
+        }
+
+        this.resize(index);
+        this.data[index >>> 6] |= (1n << BigInt(index % 64));
     }
 
     /**
@@ -172,17 +201,27 @@ export class BitSet implements Iterable<number>{
     }
 
     private resize(index: number): void {
-        const count = (index + 32) >>> 5;
-        for (let i = this.data.length; i < count; i++) {
-            this.data[i] = 0;
+        const count = (index + 64) >>> 6;
+        if (count <= this.data.length) {
+            return;
         }
+
+        const data = new BigUint64Array(count);
+        data.set(this.data);
+        data.fill(0n, this.data.length);
+
+        this.data = data;
     };
 
-    private bitCount(v: number): number { // a.k.a. hamming weight
-        v -= (v >>> 1) & 0x55555555;
-        v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
+    private bitCount(v: bigint): number { // a.k.a. hamming weight
+        v = v - ((v >> 1n) & 0x5555555555555555n);
+        v = (v & 0x3333333333333333n) + ((v >> 2n) & 0x3333333333333333n);
+        v = (v + (v >> 4n)) & 0x0f0f0f0f0f0f0f0fn;
+        v = v + (v >> 8n);
+        v = v + (v >> 16n);
+        v = v + (v >> 32n);
 
-        return (((v + (v >>> 4)) & 0xf0f0f0f) * 0x1010101) >>> 24;
+        return Number(v) & 0x7f;
     };
 
 }

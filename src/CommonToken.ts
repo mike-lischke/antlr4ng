@@ -45,19 +45,17 @@ export class CommonToken implements WritableToken {
     public type = 0;
 
     /**
-     * This is the backing field for {@link #getLine} and {@link #setLine}.
+     * The (one-based) line number on which the 1st character of this token was.
      */
     public line = 0;
 
     /**
-     * This is the backing field for {@link #getCharPositionInLine} and
-     * {@link #setCharPositionInLine}.
+     * The zero-based index of the first character position in its line.
      */
     public column = -1; // set to invalid position
 
     /**
-     * This is the backing field for {@link #getChannel} and
-     * {@link #setChannel}.
+     * The token's channel.
      */
     public channel = Token.DEFAULT_CHANNEL;
 

@@ -14,7 +14,7 @@ export class LexerNoViableAltException extends RecognitionException {
     public startIndex: number;
     public deadEndConfigs: ATNConfigSet;
 
-    public constructor(lexer: Lexer, input: CharStream | TokenStream, startIndex: number,
+    public constructor(lexer: Lexer | null, input: CharStream | TokenStream, startIndex: number,
         deadEndConfigs: ATNConfigSet) {
         super({ message: "", recognizer: lexer, input, ctx: null });
         this.startIndex = startIndex;
