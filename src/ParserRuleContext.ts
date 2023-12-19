@@ -221,12 +221,11 @@ export class ParserRuleContext extends RuleContext {
     }
 
     public getRuleContext<T extends ParserRuleContext>(index: number,
-        ctxType: new (parent: ParserRuleContext | null, invokingStateNumber: number) => T): T | null {
+        ctxType: new (...args: unknown[]) => T): T | null {
         return this.getChild<T>(index, ctxType);
     }
 
-    public getRuleContexts<T extends ParserRuleContext>(
-        ctxType: new (parent: ParserRuleContext | null, invokingStateNumber: number) => T): T[] {
+    public getRuleContexts<T extends ParserRuleContext>(ctxType: new (...args: unknown[]) => T): T[] {
         if (this.children === null) {
             return [];
         } else {
