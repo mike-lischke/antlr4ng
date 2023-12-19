@@ -45,6 +45,19 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
         this.#listeners = [];
     }
 
+    public removeErrorListener(listener: ANTLRErrorListener): void {
+        for (let i = 0; i < this.#listeners.length; i++) {
+            if (this.#listeners[i] === listener) {
+                this.#listeners.splice(i, 1);
+                return;
+            }
+        }
+    }
+
+    public getErrorListeners(): ANTLRErrorListener[] {
+        return this.#listeners;
+    }
+
     public getTokenTypeMap(): Map<string, number> {
         const vocabulary = this.vocabulary;
 
