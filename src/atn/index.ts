@@ -64,3 +64,13 @@ export * from "./TokensStartState.js";
 export * from "./Transition.js";
 export * from "./TransitionType.js";
 export * from "./WildcardTransition.js";
+export * from "./ProfilingATNSimulator.js"
+export * from "./DecisionInfo.js"
+export * from "./ParseInfo.js"
+export * from "./AmbiguityInfo.js"
+export * from "./ContextSensitivityInfo.js"
+export * from "./DecisionEventInfo.js"
+export * from "./ErrorInfo.js"
+export * from "./LookaheadEventInfo.js"
+export * from "./ParseInfo.js"
+export * from "./PredicateEvalInfo.js"

@@ -261,4 +261,12 @@ export class ATNConfigSet {
     public get length(): number {
         return this.configs.length;
     }
+
+    public getAlts(): BitSet {
+        let alts = new BitSet();
+		for (let config of this.configs) {
+			alts.set(config.alt);
+		}
+		return alts;
+    }  
 }
