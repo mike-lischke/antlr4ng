@@ -11,6 +11,7 @@ import { Token } from "./Token.js";
 import { ConsoleErrorListener } from "./ConsoleErrorListener.js";
 import { ProxyErrorListener } from "./ProxyErrorListener.js";
 import { ATNSimulator } from "./atn/ATNSimulator.js";
+import { ParseInfo } from "./atn/ParseInfo.js"
 import { Vocabulary } from "./Vocabulary.js";
 import { ANTLRErrorListener } from "./ANTLRErrorListener.js";
 import { RecognitionException } from "./RecognitionException.js";
@@ -153,6 +154,10 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
 
     public getSerializedATN(): number[] {
         throw new Error("there is no serialized ATN");
+    }
+
+    public getParseInfo(): ParseInfo|null {
+        return null
     }
 
     // TODO: remove need for this: public abstract get literalNames(): Array<string | null>;

@@ -166,7 +166,7 @@ export class CommonToken implements WritableToken {
         }
     }
 
-    public set text(text: string) {
+    public set text(text: string|null) {
         this.#text = text;
     }
 

@@ -24,6 +24,7 @@ import { RuleTransition } from "./atn/RuleTransition.js";
 import { IntervalSet } from "./misc/IntervalSet.js";
 import { RuleContext } from "./RuleContext.js";
 import { TraceListener } from "./TraceListener.js";
+import { ProfilingATNSimulator } from "./atn/ProfilingATNSimulator.js";
 
 export interface IDebugPrinter {
     println(s: string): void;
@@ -679,6 +680,24 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
 
     public getSourceName(): string {
         return this._input!.getSourceName();
+    }
+
+    public setProfile(profile: boolean): void {
+        const interp = this.interpreter;
+        const saveMode = interp.predictionMode;
+      
+        if (profile) {
+          if (!(interp instanceof ProfilingATNSimulator)) {
+            this.interpreter = new ProfilingATNSimulator(this)
+          }
+        } else if (interp instanceof ProfilingATNSimulator) {
+            const sharedContextCache = interp.getSharedContextCache();
+            if (sharedContextCache) {
+                const sim = new ParserATNSimulator(this, this.atn, interp.decisionToDFA, sharedContextCache);
+                this.interpreter = sim
+            }
+        }
+        this.interpreter.predictionMode = saveMode;
     }
 
     /**

@@ -58,4 +58,9 @@ export class ATNSimulator {
 
         return getCachedPredictionContext(context, this.sharedContextCache, visited);
     }
+
+    public  getSharedContextCache(): PredictionContextCache | null {
+		return this.sharedContextCache;
+	}
+
 }
