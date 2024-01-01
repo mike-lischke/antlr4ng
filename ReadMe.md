@@ -123,10 +123,10 @@ Last release (pure TypeScript):
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
-| Query Collection| 5930 ms | 338 ms |
-| Example File | 1074 ms | 194 ms |
-| Large Inserts | 14226 ms | 14248 ms |
-| Total | 21290 ms | 14800 ms |
+| Query Collection| 6189 ms | 335 ms |
+| Example File | 1083 ms | 195 ms |
+| Large Inserts | 14510 ms | 14482 ms |
+| Total | 21904 ms | 15032 ms |
 
 The numbers are interesting. While the cold run for the query collection is almost 3 seconds faster with pure TS, the overall numbers in warm state are worse. So it's not a pure JS vs. TS situation, but something else must have additional influence and this will be investigated. After all the TypeScript code is ultimately transpiled to JS, so it's probably a matter of how effective the TS code is translated to JS.
 
