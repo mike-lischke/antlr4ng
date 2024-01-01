@@ -4,12 +4,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { ProfilingATNSimulator } from "../../src/atn/ProfilingATNSimulator.js";
-import { CommonTokenStream, Lexer, Parser, ParserATNSimulator } from "../../src/index.js";
-
-
 describe("ProfilingATNSimulator", () => {
-  it("Simple test, direct use", () => {
-    // TODO: move java test case to here, it will need lots of work
-  });
-})
+    it("Simple test, direct use", () => {
+        // TODO: move java test case to here, it will need lots of work
+    });
+});

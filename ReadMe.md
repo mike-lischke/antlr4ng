@@ -12,6 +12,7 @@ This package is a fork of the official ANTLR4 JavaScript runtime and has been fu
 - Vocabulary implementation.
 - Complete Interval implementation.
 - Parser and lexer interpreters.
+- Profiler implementation.
 - Numerous bug fixes and other changes.
 - Smaller node package (no test specs or other unnecessary files).
 - No CommonJS support anymore (ESM only). No differentiation between node and browser environments.
@@ -142,6 +143,11 @@ The large binary inserts file contains only a few dozen queries, but they are re
 The example file is a copy of the largest test file in [this repository](https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples), and is known to be very slow to parse with other MySQL grammars. The one used here, however, is fast.
 
 ## Release Notes
+
+### 2.0.5
+
+- Profiler port (from backspace <backspace@backblog.me>)
+- Changed context getters in `ParserRuleContext` for retrieving sub contexts to accept any constructor parameter, for more flexibility.
 
 ### 2.0.4
 

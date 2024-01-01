@@ -1,6 +1,6 @@
 {
     "name": "antlr4ng",
-    "version": "2.0.4",
+    "version": "2.0.5",
     "type": "module",
     "description": "Alternative JavaScript/TypeScript runtime for ANTLR4",
     "main": "dist/antlr4.mjs",
@@ -20,7 +20,7 @@
     },
     "homepage": "https://github.com/mike-lischke/antlr4ng",
     "peerDependencies": {
-        "antlr4ng-cli": "^1.0.0"
+        "antlr4ng-cli": "1.0.7"
     },
     "devDependencies": {
         "@types/jest": "29.5.11",
