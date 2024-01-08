@@ -19,7 +19,7 @@ import { Calc } from "./generatedCode/calc.js";
  * @returns A new TokenStreamRewriter instance.
  */
 const getRewriter = (lexerClass: typeof antlr4.Lexer, input: string) => {
-    const chars = new antlr4.CharStream(input);
+    const chars = antlr4.CharStreams.fromString(input);
 
     // @ts-ignore
     const lexer: antlr4.Lexer = new lexerClass(chars);
@@ -403,7 +403,7 @@ describe("TokenStreamRewriter", () => {
 
     it("throws an error if second replace operation overlaps the first one on the left", () => {
         // Arrange
-        const chars = new antlr4.CharStream("abcccba");
+        const chars = antlr4.CharStreams.fromString("abcccba");
         const lexer = new ABC(chars);
         const tokens = new antlr4.CommonTokenStream(lexer);
         tokens.fill();
