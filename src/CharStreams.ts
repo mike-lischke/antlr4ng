@@ -6,7 +6,7 @@
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns */
 
-import { CharStream } from "./CharStream.js";
+import { CharStream, CharStreamImpl } from "./CharStream.js";
 
 /**
  * Utility functions to create Character streams from various sources.
@@ -21,6 +21,6 @@ import { CharStream } from "./CharStream.js";
 export class CharStreams {
     // Creates an CharStream from a string.
     public static fromString(str: string): CharStream {
-        return new CharStream(str);
+        return new CharStreamImpl(str);
     }
 }

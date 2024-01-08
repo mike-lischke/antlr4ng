@@ -10,8 +10,27 @@ import { Token } from "./Token.js";
 import { Interval } from "./misc/Interval.js";
 import { IntStream } from "./IntStream.js";
 
-// TODO: CharStream should be an interface, not a class.
-export class CharStream implements IntStream {
+export interface CharStream extends IntStream {
+    /**
+     * Reset the stream so that it's in the same state it was
+     * when the object was created *except* the data array is not
+     * touched.
+     */
+    reset(): void;
+    /**
+     * get a substring from the stream at start to stop (inclusive).
+     * @param start Start index
+     * @param stop Stop index
+     */
+    getText(start: number, stop: number): string;
+    /**
+     * get a substring from the stream at specified interval (inclusive).
+     * @param interval
+     */
+    getText(interval: Interval): string;
+}
+
+export class CharStreamImpl implements CharStream {
     public name = "";
     public index = 0;
 
