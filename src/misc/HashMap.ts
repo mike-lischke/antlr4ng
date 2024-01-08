@@ -17,9 +17,10 @@ export class HashMap<TKey extends IComparable, TValue> {
      */
     public static LINEAR_SEARCH_THRESHOLD = 5;
 
-    private _values: TValue[] = [];
-    private _keys: TKey[] = [];
-    private data: Record<string, number[]> = {};
+    #values: TValue[] = [];
+    #keys: TKey[] = [];
+    #data: Record<string, number[]> = {};
+
     private hashFunction: HashFunction;
     private equalsFunction: EqualsFunction;
 
@@ -29,18 +30,18 @@ export class HashMap<TKey extends IComparable, TValue> {
     }
 
     public set(key: TKey, value: TValue): TValue {
-        if (this._values.length < HashMap.LINEAR_SEARCH_THRESHOLD) {
-            const existingIndex = this._values.findIndex((_, index) => this.equalsFunction(key, this._keys[index]));
+        if (this.#values.length < HashMap.LINEAR_SEARCH_THRESHOLD) {
+            const existingIndex = this.#values.findIndex((_, index) => this.equalsFunction(key, this.#keys[index]));
             if (existingIndex >= 0) {
                 return this.replaceEntry(existingIndex, value);
             }
         }
 
         const hashKey = this.hashFunction(key);
-        const entries = this.data[hashKey];
+        const entries = this.#data[hashKey];
 
-        if (entries && this._values.length >= HashMap.LINEAR_SEARCH_THRESHOLD) {
-            const existingIndex = entries.find((entryIndex) => this.equalsFunction(key, this._keys[entryIndex]));
+        if (entries && this.#values.length >= HashMap.LINEAR_SEARCH_THRESHOLD) {
+            const existingIndex = entries.find((entryIndex) => this.equalsFunction(key, this.#keys[entryIndex]));
             if (existingIndex !== undefined) {
                 return this.replaceEntry(existingIndex, value);
             }
@@ -48,32 +49,32 @@ export class HashMap<TKey extends IComparable, TValue> {
             return value;
         }
 
-        this.data[hashKey] = [ this.addEntry(key, value) ];
+        this.#data[hashKey] = [ this.addEntry(key, value) ];
         return value;
     }
 
     private addEntry(key: TKey, value: TValue): number {
-        const index = this._keys.push(key);
-        this._values.push(value);
+        const index = this.#keys.push(key);
+        this.#values.push(value);
         return index - 1;
     }
 
     private replaceEntry(index: number, value: TValue): TValue {
-        const oldValue = this._values[index];
-        this._values[index] = value;
+        const oldValue = this.#values[index];
+        this.#values[index] = value;
         return oldValue;
     }
 
     public containsKey(key: TKey): boolean {
-        if (this._keys.length) {
-            if (this._keys.length < HashMap.LINEAR_SEARCH_THRESHOLD) { 
-                return this._keys.some((k) => this.equalsFunction(key, k));
+        if (this.#keys.length) {
+            if (this.#keys.length < HashMap.LINEAR_SEARCH_THRESHOLD) { 
+                return this.#keys.some((k) => this.equalsFunction(key, k));
             }
 
             const hashKey = this.hashFunction(key);
-            const entries = this.data[hashKey];
+            const entries = this.#data[hashKey];
             if (entries) {
-                return entries.some((entryIndex) => this.equalsFunction(key, this._keys[entryIndex]));
+                return entries.some((entryIndex) => this.equalsFunction(key, this.#keys[entryIndex]));
             }
         }
 
@@ -81,42 +82,42 @@ export class HashMap<TKey extends IComparable, TValue> {
     }
 
     public get(key: TKey): TValue | null {
-        if (!this._keys.length) {
+        if (!this.#keys.length) {
             return null;
         }
 
-        if (this._values.length < HashMap.LINEAR_SEARCH_THRESHOLD) {
-            return this._values.find((_, index) => this.equalsFunction(key, this._keys[index])) ?? null;
+        if (this.#values.length < HashMap.LINEAR_SEARCH_THRESHOLD) {
+            return this.#values.find((_, index) => this.equalsFunction(key, this.#keys[index])) ?? null;
         }
 
         const hashKey = this.hashFunction(key);
-        const entries = this.data[hashKey];
+        const entries = this.#data[hashKey];
         if (entries) {
-            const index = entries.find((entryIndex) => this.equalsFunction(key, this._keys[entryIndex]));
+            const index = entries.find((entryIndex) => this.equalsFunction(key, this.#keys[entryIndex]));
             if (index !== undefined) {
-                return this._values[index];
+                return this.#values[index];
             }
         }
         return null;
     }
 
     public entries(): Array<Entry<TKey, TValue>> {
-        return this._values.map((value, index) => ({ key: this._keys[index], value }));
+        return this.#values.map((value, index) => ({ key: this.#keys[index], value }));
     }
 
     public getKeys(): TKey[] {
-        return this._keys;
+        return this.#keys;
     }
 
     public getValues(): TValue[] {
-        return this._values;
+        return this.#values;
     }
 
     public toString(): string {
-        return `${this._values.map((value, index) => `${this._keys[index]}: ${value}`).join(", ")}`;
+        return `${this.#values.map((value, index) => `${this.#keys[index]}: ${value}`).join(", ")}`;
     }
 
     public get length(): number {
-        return this._values.length;
+        return this.#values.length;
     }
 }

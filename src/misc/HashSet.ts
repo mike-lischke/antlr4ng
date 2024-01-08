@@ -17,8 +17,9 @@ export class HashSet<T extends IComparable> {
      */
     public static LINEAR_SEARCH_THRESHOLD = 5;
 
-    private _values: T[] = [];
-    private data: Record<string, number[]> = {};
+    #values: T[] = [];
+    #data: Record<string, number[]> = {};
+
     private hashFunction: HashFunction;
     private equalsFunction: EqualsFunction;
 
@@ -28,30 +29,30 @@ export class HashSet<T extends IComparable> {
     }
 
     public add(value: T): T {
-        if (this._values.length && this._values.length < HashSet.LINEAR_SEARCH_THRESHOLD) {
-            const existing = this._values.find((v) => this.equalsFunction(v, value));
+        if (this.#values.length && this.#values.length < HashSet.LINEAR_SEARCH_THRESHOLD) {
+            const existing = this.#values.find((v) => this.equalsFunction(v, value));
             if (existing !== undefined) {
                 return existing;
             }
         }
 
         const key = this.hashFunction(value);
-        const entries = this.data[key];
+        const entries = this.#data[key];
 
-        if (entries && this._values.length >= HashSet.LINEAR_SEARCH_THRESHOLD) {
-            const existingIndex = entries.find((entryIndex) => this.equalsFunction(value, this._values[entryIndex]));
+        if (entries && this.#values.length >= HashSet.LINEAR_SEARCH_THRESHOLD) {
+            const existingIndex = entries.find((entryIndex) => this.equalsFunction(value, this.#values[entryIndex]));
             if (existingIndex !== undefined) {
-                return this._values[existingIndex];
+                return this.#values[existingIndex];
             }
 
-            const index = this._values.push(value) - 1;
+            const index = this.#values.push(value) - 1;
             entries.push(index);
             return value;
         }
 
-        const index = this._values.push(value) - 1;
-        this.data[key] = [index];
-        this._values.push(value);
+        const index = this.#values.push(value) - 1;
+        this.#data[key] = [index];
+        this.#values.push(value);
         return value;
     }
 
@@ -60,34 +61,34 @@ export class HashSet<T extends IComparable> {
     }
 
     public get(value: T): T | null {
-        if (!this._values.length) {
+        if (!this.#values.length) {
             return null;
         }
 
-        if (this._values.length < HashSet.LINEAR_SEARCH_THRESHOLD) {
-            return this._values.find((v) => this.equalsFunction(v, value)) ?? null;
+        if (this.#values.length < HashSet.LINEAR_SEARCH_THRESHOLD) {
+            return this.#values.find((v) => this.equalsFunction(v, value)) ?? null;
         }
 
         const key = this.hashFunction(value);
-        const entries = this.data[key];
+        const entries = this.#data[key];
         if (entries) {
-            const index = entries.find((entryIndex) => this.equalsFunction(value, this._values[entryIndex]));
+            const index = entries.find((entryIndex) => this.equalsFunction(value, this.#values[entryIndex]));
             if (index !== undefined) {
-                return this._values[index];
+                return this.#values[index];
             }
         }
         return null;
     }
 
     public values(): T[] {
-        return this._values;
+        return this.#values;
     }
 
     public toString(): string {
-        return arrayToString(this._values);
+        return arrayToString(this.#values);
     }
 
     public get length(): number {
-        return this._values.length;
+        return this.#values.length;
     }
 }
