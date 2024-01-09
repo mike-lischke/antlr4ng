@@ -3,7 +3,8 @@
     "version": "2.0.5",
     "type": "module",
     "description": "Alternative JavaScript/TypeScript runtime for ANTLR4",
-    "main": "dist/antlr4.mjs",
+    "main": "dist/antlr4.cjs",
+    "module": "dist/antlr4.mjs",
     "types": "dist/index.d.ts",
     "repository": "https://github.com/mike-lischke/antlr4ng",
     "keywords": [
@@ -40,18 +41,24 @@
     "scripts": {
         "prepublishOnly": "npm run build-minified && npm run test",
         "tsc": "tsc --watch",
-        "build": "npm run generate-test-parser && tsc && esbuild ./src/index.js --main-fields=module,main --bundle --outfile=dist/antlr4.mjs --format=esm --sourcemap",
-        "build-minified": "tsc && npm run generate-test-parser && esbuild ./src/index.js --bundle --outfile=dist/antlr4.mjs --format=esm --sourcemap --minify",
+        "build": "npm run generate-test-parser && tsc && npm run build-cjs && npm run build-mjs",
+        "build-minified": "npm run generate-test-parser && tsc && npm run build-cjs-minified && npm run build-mjs-minified",
+        "build-bundle": "esbuild ./src/index.js --main-fields=module,main --bundle --sourcemap",
+        "build-mjs": "npm run build-bundle -- --outfile=dist/antlr4.mjs --format=esm",
+        "build-mjs-minified": "npm run build-mjs -- --minify",
+        "build-cjs": "npm run build-bundle -- --outfile=dist/antlr4.cjs --format=cjs",
+        "build-cjs-minified": "npm run build-cjs -- --minify",
         "full-test": "npm run test && npm run run-benchmarks",
         "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --no-coverage",
-        "generate-test-parser": "cli/index.js -Dlanguage=TypeScript -o tests/benchmarks/generated -visitor -listener -Xexact-output-dir tests/benchmarks/MySQLLexer.g4 tests/benchmarks/MySQLParser.g4",
-        "generate-xpath-lexer": "cli/index.js -Dlanguage=TypeScript -o src/tree/xpath/generated -no-visitor -no-listener -Xexact-output-dir src/tree/xpath/XPathLexer.g4",
+        "generate-test-parser": "node cli/index.js -Dlanguage=TypeScript -o tests/benchmarks/generated -visitor -listener -Xexact-output-dir tests/benchmarks/MySQLLexer.g4 tests/benchmarks/MySQLParser.g4",
+        "generate-xpath-lexer": "node cli/index.js -Dlanguage=TypeScript -o src/tree/xpath/generated -no-visitor -no-listener -Xexact-output-dir src/tree/xpath/XPathLexer.g4",
         "run-benchmarks": "node --no-warnings --experimental-vm-modules  --loader ts-node/esm tests/benchmarks/run-benchmarks.ts",
         "profile benchmarks": "node --no-warnings --experimental-vm-modules --prof --loader ts-node/esm tests/benchmarks/run-benchmarks.ts",
         "process profile tick file": " node --prof-process isolate-0x130008000-75033-v8.log > processed.txt"
     },
     "exports": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/antlr4.mjs"
+        "require": "./dist/antlr4.cjs",
+        "import": "./dist/antlr4.mjs"
     }
 }

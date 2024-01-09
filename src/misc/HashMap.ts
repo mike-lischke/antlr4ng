@@ -9,92 +9,115 @@ import { EqualsFunction, HashFunction } from "./HashSet.js";
 
 interface Entry<Key extends IComparable, Value> { key: Key, value: Value; }
 
-export class HashMap<Key extends IComparable, Value> {
-    private data: { [key: string]: Array<Entry<Key, Value>>; };
+export class HashMap<TKey extends IComparable, TValue> {
+
+    /**
+     * Threshold for using hashing amd searching the bucket instead of a linear search.
+     * Set to 0 to disable linear search and always use the hash function.
+     */
+    public static LINEAR_SEARCH_THRESHOLD = 5;
+
+    #values: TValue[] = [];
+    #keys: TKey[] = [];
+    #data: Record<string, number[]> = {};
+
     private hashFunction: HashFunction;
     private equalsFunction: EqualsFunction;
 
     public constructor(hashFunction?: HashFunction, equalsFunction?: EqualsFunction) {
-        this.data = {};
         this.hashFunction = hashFunction ?? standardHashCodeFunction;
         this.equalsFunction = equalsFunction ?? standardEqualsFunction;
     }
 
-    public set(key: Key, value: Value): Value {
-        const hashKey = this.hashFunction(key);
-        if (hashKey in this.data) {
-            const entries = this.data[hashKey];
-            for (const entry of entries) {
-                if (this.equalsFunction(key, entry.key)) {
-                    const oldValue = entry.value;
-                    entry.value = value;
-
-                    return oldValue;
-                }
+    public set(key: TKey, value: TValue): TValue {
+        if (this.#values.length < HashMap.LINEAR_SEARCH_THRESHOLD) {
+            const existingIndex = this.#values.findIndex((_, index) => this.equalsFunction(key, this.#keys[index]));
+            if (existingIndex >= 0) {
+                return this.replaceEntry(existingIndex, value);
             }
-            entries.push({ key, value });
+        }
 
-            return value;
-        } else {
-            this.data[hashKey] = [{ key, value }];
+        const hashKey = this.hashFunction(key);
+        const entries = this.#data[hashKey];
 
+        if (entries && this.#values.length >= HashMap.LINEAR_SEARCH_THRESHOLD) {
+            const existingIndex = entries.find((entryIndex) => this.equalsFunction(key, this.#keys[entryIndex]));
+            if (existingIndex !== undefined) {
+                return this.replaceEntry(existingIndex, value);
+            }
+            entries.push(this.addEntry(key, value));
             return value;
         }
+
+        this.#data[hashKey] = [ this.addEntry(key, value) ];
+        return value;
     }
 
-    public containsKey(key: Key): boolean {
-        const hashKey = this.hashFunction(key);
-        if (hashKey in this.data) {
-            const entries = this.data[hashKey];
-            for (const entry of entries) {
-                if (this.equalsFunction(key, entry.key)) {
-                    return true;
-                }
+    private addEntry(key: TKey, value: TValue): number {
+        const index = this.#keys.push(key);
+        this.#values.push(value);
+        return index - 1;
+    }
+
+    private replaceEntry(index: number, value: TValue): TValue {
+        const oldValue = this.#values[index];
+        this.#values[index] = value;
+        return oldValue;
+    }
+
+    public containsKey(key: TKey): boolean {
+        if (this.#keys.length) {
+            if (this.#keys.length < HashMap.LINEAR_SEARCH_THRESHOLD) { 
+                return this.#keys.some((k) => this.equalsFunction(key, k));
+            }
+
+            const hashKey = this.hashFunction(key);
+            const entries = this.#data[hashKey];
+            if (entries) {
+                return entries.some((entryIndex) => this.equalsFunction(key, this.#keys[entryIndex]));
             }
         }
 
         return false;
     }
 
-    public get(key: Key): Value | null {
-        const hashKey = this.hashFunction(key);
-        if (hashKey in this.data) {
-            const entries = this.data[hashKey];
-            for (const entry of entries) {
-                if (this.equalsFunction(key, entry.key)) {
-                    return entry.value;
-                }
-            }
+    public get(key: TKey): TValue | null {
+        if (!this.#keys.length) {
+            return null;
         }
 
+        if (this.#values.length < HashMap.LINEAR_SEARCH_THRESHOLD) {
+            return this.#values.find((_, index) => this.equalsFunction(key, this.#keys[index])) ?? null;
+        }
+
+        const hashKey = this.hashFunction(key);
+        const entries = this.#data[hashKey];
+        if (entries) {
+            const index = entries.find((entryIndex) => this.equalsFunction(key, this.#keys[entryIndex]));
+            if (index !== undefined) {
+                return this.#values[index];
+            }
+        }
         return null;
     }
 
-    public entries(): Array<Entry<Key, Value>> {
-        return Object.keys(this.data).flatMap((key) => {
-            return this.data[key];
-        }, this);
+    public entries(): Array<Entry<TKey, TValue>> {
+        return this.#values.map((value, index) => ({ key: this.#keys[index], value }));
     }
 
-    public getKeys(): Key[] {
-        return this.entries().map((e) => { return e.key; });
+    public getKeys(): TKey[] {
+        return this.#keys;
     }
 
-    public getValues(): Value[] {
-        return this.entries().map((e) => { return e.value; });
+    public getValues(): TValue[] {
+        return this.#values;
     }
 
     public toString(): string {
-        const ss = this.entries().map((e) => { return "{" + e.key + ":" + e.value + "}"; });
-
-        return "[" + ss.join(", ") + "]";
+        return `${this.#values.map((value, index) => `${this.#keys[index]}: ${value}`).join(", ")}`;
     }
 
     public get length(): number {
-        return Object.keys(this.data).map((key) => {
-            return this.data[key].length;
-        }, this).reduce((accumulator, item) => {
-            return accumulator + item;
-        }, 0);
+        return this.#values.length;
     }
 }
