@@ -270,6 +270,12 @@ export class DefaultErrorStrategy {
      * @param e the recognition exception
      */
     public reportNoViableAlternative(recognizer: Parser, e: NoViableAltException): void {
+        if (e.message.length > 0) {
+            recognizer.notifyErrorListeners(e.message, e.offendingToken, e);
+
+            return;
+        }
+
         const tokens = recognizer.tokenStream;
         let input;
         if (tokens !== null && e.startToken) {
@@ -295,6 +301,12 @@ export class DefaultErrorStrategy {
      * @param e the recognition exception
      */
     public reportInputMismatch(recognizer: Parser, e: RecognitionException): void {
+        if (e.message.length > 0) {
+            recognizer.notifyErrorListeners(e.message, e.offendingToken, e);
+
+            return;
+        }
+
         const msg = "mismatched input " + this.getTokenErrorDisplay(e.offendingToken) +
             " expecting " + e.getExpectedTokens()!.toString(recognizer.vocabulary);
         recognizer.notifyErrorListeners(msg, e.offendingToken, e);
@@ -310,6 +322,12 @@ export class DefaultErrorStrategy {
      * @param e the recognition exception
      */
     public reportFailedPredicate(recognizer: Parser, e: RecognitionException): void {
+        if (e.message.length > 0) {
+            recognizer.notifyErrorListeners(e.message, e.offendingToken, e);
+
+            return;
+        }
+
         const ruleName = recognizer.ruleNames[recognizer.context!.ruleIndex];
         const msg = "rule " + ruleName + " " + e.message;
         recognizer.notifyErrorListeners(msg, e.offendingToken, e);

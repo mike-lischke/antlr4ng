@@ -311,7 +311,7 @@ export class LexerATNSimulator extends ATNSimulator {
             if (t === Token.EOF && input.index === this.startIndex) {
                 return Token.EOF;
             }
-            throw new LexerNoViableAltException(this.recog!, input, this.startIndex, reach);
+            throw new LexerNoViableAltException(this.recog, input, this.startIndex, reach);
         }
     }
 

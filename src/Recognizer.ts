@@ -1,17 +1,18 @@
-/* eslint-disable jsdoc/require-param */
-/* eslint-disable jsdoc/require-returns */
-/* eslint-disable jsdoc/require-param-description */
 /*
  * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
+/* eslint-disable jsdoc/require-param */
+/* eslint-disable jsdoc/require-returns */
+/* eslint-disable jsdoc/require-param-description */
+
 import { Token } from "./Token.js";
 import { ConsoleErrorListener } from "./ConsoleErrorListener.js";
 import { ProxyErrorListener } from "./ProxyErrorListener.js";
 import { ATNSimulator } from "./atn/ATNSimulator.js";
-import { ParseInfo } from "./atn/ParseInfo.js"
+import { ParseInfo } from "./atn/ParseInfo.js";
 import { Vocabulary } from "./Vocabulary.js";
 import { ANTLRErrorListener } from "./ANTLRErrorListener.js";
 import { RecognitionException } from "./RecognitionException.js";
@@ -50,6 +51,7 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
         for (let i = 0; i < this.#listeners.length; i++) {
             if (this.#listeners[i] === listener) {
                 this.#listeners.splice(i, 1);
+
                 return;
             }
         }
@@ -156,8 +158,8 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
         throw new Error("there is no serialized ATN");
     }
 
-    public getParseInfo(): ParseInfo|null {
-        return null
+    public getParseInfo(): ParseInfo | null {
+        return null;
     }
 
     // TODO: remove need for this: public abstract get literalNames(): Array<string | null>;
