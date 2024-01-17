@@ -145,6 +145,12 @@ export class LexerATNSimulator extends ATNSimulator {
         }
     }
 
+    public override clearDFA(): void {
+        for (let d = 0; d < this.decisionToDFA.length; d++) {
+            this.decisionToDFA[d] = new DFA(this.atn.getDecisionState(d), d);
+        }
+    }
+
     protected matchATN(input: CharStream): number {
         const startState = this.atn.modeToStartState[this.mode];
 

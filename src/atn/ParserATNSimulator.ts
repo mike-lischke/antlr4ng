@@ -333,6 +333,12 @@ export class ParserATNSimulator extends ATNSimulator {
 
     public reset(): void { }
 
+    public override clearDFA(): void {
+        for (let d = 0; d < this.decisionToDFA.length; d++) {
+            this.decisionToDFA[d] = new DFA(this.atn.getDecisionState(d), d);
+        }
+    }
+
     public adaptivePredict(input: TokenStream, decision: number, outerContext: ParserRuleContext | null): number {
         if (ParserATNSimulator.debug || ParserATNSimulator.trace_atn_sim) {
             console.log("adaptivePredict decision " + decision +

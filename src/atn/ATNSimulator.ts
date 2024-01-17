@@ -50,6 +50,19 @@ export class ATNSimulator {
         return this;
     }
 
+    /**
+     * Clear the DFA cache used by the current instance. Since the DFA cache may
+     * be shared by multiple ATN simulators, this method may affect the
+     * performance (but not accuracy) of other parsers which are being used
+     * concurrently.
+     *
+     * @throws UnsupportedOperationException if the current instance does not
+     * support clearing the DFA.
+     */
+    public clearDFA(): void {
+        throw new Error("This ATN simulator does not support clearing the DFA.");
+    }
+
     public getCachedContext(context: PredictionContext): PredictionContext {
         if (this.sharedContextCache === null) {
             return context;
@@ -59,8 +72,8 @@ export class ATNSimulator {
         return getCachedPredictionContext(context, this.sharedContextCache, visited);
     }
 
-    public  getSharedContextCache(): PredictionContextCache | null {
-		return this.sharedContextCache;
-	}
+    public getSharedContextCache(): PredictionContextCache | null {
+        return this.sharedContextCache;
+    }
 
 }
