@@ -58,7 +58,7 @@
     },
     "exports": {
         "types": "./dist/index.d.ts",
-        "require": "./dist/antlr4.cjs",
-        "import": "./dist/antlr4.mjs"
+        "require": "./dist/index.cjs",
+        "import": "./dist/index.mjs"
     }
 }
