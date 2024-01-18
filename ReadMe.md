@@ -123,10 +123,10 @@ Last release (pure TypeScript):
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
-| Query Collection| 6189 ms | 335 ms |
-| Example File | 1083 ms | 195 ms |
-| Large Inserts | 14510 ms | 14482 ms |
-| Total | 21904 ms | 15032 ms |
+| Query Collection| 4823 ms | 372 ms |
+| Example File | 680 ms | 196 ms |
+| Large Inserts | 15176 ms | 15115 ms |
+| Total | 20738 ms | 15704 ms |
 
 The numbers are interesting. While the cold run for the query collection is almost 3 seconds faster with pure TS, the overall numbers in warm state are worse. So it's not a pure JS vs. TS situation, but something else must have additional influence and this will be investigated. After all the TypeScript code is ultimately transpiled to JS, so it's probably a matter of how effective the TS code is translated to JS.
 
@@ -143,6 +143,12 @@ The large binary inserts file contains only a few dozen queries, but they are re
 The example file is a copy of the largest test file in [this repository](https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples), and is known to be very slow to parse with other MySQL grammars. The one used here, however, is fast.
 
 ## Release Notes
+
+### 2.0.6
+
+- Optimizations in HashMap and HashSet (from Peter van Gulik). This can have dramatic speed improvements, depending on the grammar. In the unit tests this shows mostly by a faster cold start.
+- Added CommonJS builds back. Especially when running unit tests using Node.js a CommonJS variant is simpler to handle.
+- Added clearDFA() methods in the simulators.
 
 ### 2.0.5
 
