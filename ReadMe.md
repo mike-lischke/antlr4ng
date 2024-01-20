@@ -16,6 +16,7 @@ This package is a fork of the official ANTLR4 JavaScript runtime and has been fu
 - Numerous bug fixes and other changes.
 - Smaller node package (no test specs or other unnecessary files).
 - No differentiation between node and browser environments.
+- InterpreterDataReader implementation.
 - Includes the `antlr4ng-cli` tool to generate parser files compatible with this runtime. This tool uses a custom build of the ANTLR4 tool.
 
 This package is a blend of the original JS implementation and antlr4ts, which is a TypeScript implementation of the ANTLR4 runtime, but was abandoned. It tries to keep the best of both worlds, while following the Java runtime as close as possible. It's a bit slower than the JS runtime, but faster than antlr4ts.
@@ -108,7 +109,7 @@ const result = visitor.visit(tree);
 
 ## Benchmarks
 
-This runtime is monitored for performance regressions. The following table shows the results of the benchmarks run on last release:
+This runtime is monitored for performance regressions. The following tables show the results of the benchmarks previously run on the JS runtime and on last release of this one. Warm times were taken from 5 runs with the 2 slowest stripped off and averaged.
 
 Pure JavaScript release (with type definitions):
 
@@ -123,10 +124,10 @@ Last release (pure TypeScript):
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
-| Query Collection| 4823 ms | 372 ms |
-| Example File | 680 ms | 196 ms |
-| Large Inserts | 15176 ms | 15115 ms |
-| Total | 20738 ms | 15704 ms |
+| Query Collection| 4724 ms | 337 ms |
+| Example File | 672 ms | 192 ms |
+| Large Inserts | 15144 ms | 15039 ms |
+| Total | 20600 ms | 15592 ms |
 
 The numbers are interesting. While the cold run for the query collection is almost 3 seconds faster with pure TS, the overall numbers in warm state are worse. So it's not a pure JS vs. TS situation, but something else must have additional influence and this will be investigated. After all the TypeScript code is ultimately transpiled to JS, so it's probably a matter of how effective the TS code is translated to JS.
 
@@ -143,6 +144,12 @@ The large binary inserts file contains only a few dozen queries, but they are re
 The example file is a copy of the largest test file in [this repository](https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples), and is known to be very slow to parse with other MySQL grammars. The one used here, however, is fast.
 
 ## Release Notes
+
+### 2.0.7
+
+- Added an InterpreterDataReader implementation (copied from the vscode-antlr4 extension).
+- Benchmark values listed here are now computed from 5 runs, instead just one.
+
 
 ### 2.0.6
 

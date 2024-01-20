@@ -11,3 +11,4 @@ export * from "./HashSet.js";
 export * from "./Interval.js";
 export * from "./IntervalSet.js";
 export * from "./ParseCancellationException.js";
+export * from "./InterpreterDataReader.js";

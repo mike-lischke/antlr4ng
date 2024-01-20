@@ -134,7 +134,14 @@ const splitterTest = () => {
     assert(r4.delimiter === "$$");
 };
 
-const parseFiles = () => {
+/**
+ * Parses a number of files and returns the time it took to parse them.
+ *
+ * @param logResults If true, the number of statements found in each file and the duration is logged.
+ *
+ * @returns The time it took to parse each file.
+ */
+const parseFiles = (logResults: boolean): number[] => {
     const testFiles: ITestFile[] = [
         // Large set of all possible query types in different combinations and versions.
         { name: "./data/statements.txt", initialDelimiter: "$$" },
@@ -147,11 +154,15 @@ const parseFiles = () => {
         { name: "./data/sakila-db/sakila-data.sql", initialDelimiter: ";" },
     ];
 
-    testFiles.forEach((entry) => {
+    const result: number[] = [];
+    testFiles.forEach((entry, index) => {
         const sql = fs.readFileSync(path.join(path.dirname(__filename), entry.name), { encoding: "utf-8" });
 
         const ranges = determineStatementRanges(sql, entry.initialDelimiter);
-        console.log("    Found " + ranges.length + " statements in " + entry.name + ".");
+
+        if (logResults) {
+            console.log(`    Found ${ranges.length} statements in file ${index + 1} (${entry.name}).`);
+        }
 
         const timestamp = performance.now();
         ranges.forEach((range, index) => {
@@ -181,19 +192,33 @@ const parseFiles = () => {
             }
         });
 
-        console.log("    Parsing all statements took: " + (performance.now() - timestamp) + " ms");
+        const duration = performance.now() - timestamp;
+        if (logResults) {
+            console.log("    Parsing all statements took: " + duration + " ms");
+        }
+
+        result.push(duration);
     });
+
+    return result;
 };
 
-const parserRun = (index: number) => {
+const parserRun = (showOutput: boolean): number[] => {
+    let result: number[] = [];
     const timestamp = performance.now();
     try {
-        parseFiles();
+        result = parseFiles(showOutput);
     } catch (e) {
         console.error(e);
     } finally {
-        console.log(`Parse run ${index} took ${(performance.now() - timestamp)} ms`);
+        if (showOutput) {
+            console.log(`Overall parse run took ${(performance.now() - timestamp)} ms`);
+        }
     }
+
+    result.push(performance.now() - timestamp);
+
+    return result;
 };
 
 console.log("\n\nStarting MySQL JS/TS benchmarks");
@@ -204,14 +229,40 @@ splitterTest();
 
 console.log("Splitter tests took " + (performance.now() - timestamp) + " ms");
 
-console.log("Running antlr4ng parser (cold) ...");
-parserRun(0);
+console.log("Running antlr4ng parser once (cold) ");
+parserRun(true);
 
-console.log("Running antlr4ng parser (warm) ...");
-parserRun(1);
-//parserRun(2);
-//parserRun(3);
-//parserRun(4);
-//parserRun(5);
+process.stdout.write("Running antlr4ng parser 5 times (warm) ");
+
+const times: number[][] = [];
+
+// Run the parser a few times to get a better average.
+for (let i = 0; i < 5; ++i) {
+    times.push(parserRun(false));
+    process.stdout.write(".");
+}
+console.log();
+
+// Transpose the result matrix.
+const transposed: number[][] = [];
+for (let i = 0; i < times[0].length; ++i) {
+    transposed.push([]);
+    for (const row of times) {
+        transposed[i].push(row[i]);
+    }
+}
+
+// Remove the 2 slowest runs in each row and compute the average of the remaining 3.
+const averageTimes: number[] = [];
+for (const row of transposed) {
+    const values = row.sort().slice(0, 3);
+    averageTimes.push(values.reduce((sum, time) => { return sum + time; }, 0) / values.length);
+}
+
+for (let i = 0; i < averageTimes.length - 1; ++i) {
+    console.log(`    File ${i + 1} took ${averageTimes[i]} ms`);
+}
+
+console.log(`Overall parse run took ${averageTimes[averageTimes.length - 1]} ms`);
 
 console.log("Done");
