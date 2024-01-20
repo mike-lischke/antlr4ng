@@ -19,12 +19,14 @@ export interface CharStream extends IntStream {
     reset(): void;
     /**
      * get a substring from the stream at start to stop (inclusive).
+     *
      * @param start Start index
      * @param stop Stop index
      */
     getText(start: number, stop: number): string;
     /**
      * get a substring from the stream at specified interval (inclusive).
+     *
      * @param interval
      */
     getText(interval: Interval): string;

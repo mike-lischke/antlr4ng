@@ -155,8 +155,14 @@ export class RuleContext implements ParseTree {
      * Print out a whole tree, not just a node, in LISP format
      * (root child1 .. childN). Print just a node if this is a leaf.
      */
-    public toStringTree(ruleNames: string[], recog: Parser): string {
-        return Trees.toStringTree(this, ruleNames, recog);
+    public toStringTree(recog: Parser): string;
+    public toStringTree(ruleNames: string[], recog: Parser): string;
+    public toStringTree(...args: unknown[]): string {
+        if (args.length === 1) {
+            return Trees.toStringTree(this, null, args[0] as Parser);
+        }
+
+        return Trees.toStringTree(this, args[0] as string[], args[1] as Parser);
     }
 
     public toString(ruleNames?: string[] | null, stop?: RuleContext | null): string {

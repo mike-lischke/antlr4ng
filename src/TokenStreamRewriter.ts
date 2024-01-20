@@ -160,7 +160,7 @@ export class TokenStreamRewriter {
     }
 
     /**
-     * Replace the specified range of tokens with the supplied text
+     * Replace the specified range of tokens with the supplied text.
      */
     public replace(from: Token | number, to: Token | number, text: string | null,
         programName = TokenStreamRewriter.DEFAULT_PROGRAM_NAME): void {

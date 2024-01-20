@@ -19,8 +19,8 @@ import { Parser } from "../Parser.js";
 export class Trees {
     /**
      * Print out a whole tree in LISP form. {@link getNodeText} is used on the
-     *  node payloads to get the text for the nodes.  Detect
-     *  parse trees and extract data appropriately.
+     * node payloads to get the text for the nodes.  Detect
+     * parse trees and extract data appropriately.
      */
     public static toStringTree(tree: ParseTree, ruleNames: string[] | null, recog?: Parser | null): string {
         ruleNames = ruleNames ?? null;

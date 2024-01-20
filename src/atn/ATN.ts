@@ -115,7 +115,7 @@ export class ATN {
      * @throws IllegalArgumentException if the ATN does not contain a state with
      * number {@code stateNumber}
      */
-    public getExpectedTokens(stateNumber: number, context: RuleContext): IntervalSet {
+    public getExpectedTokens(stateNumber: number, context: RuleContext | null): IntervalSet {
         if (stateNumber < 0 || stateNumber >= this.states.length) {
             throw new Error("Invalid state number.");
         }
