@@ -145,11 +145,15 @@ The example file is a copy of the largest test file in [this repository](https:/
 
 ## Release Notes
 
+### 2.0.8
+
+- Fixed string construction with class names (which doesn't work when bundling the sources).
+
 ### 2.0.7
 
 - Added an InterpreterDataReader implementation (copied from the vscode-antlr4 extension).
 - Benchmark values listed here are now computed from 5 runs, instead just one.
-
+- Added `RuleContext.toStringTree()` overload.
 
 ### 2.0.6
 
