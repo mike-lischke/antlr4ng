@@ -429,11 +429,7 @@ class RewriteOperation {
     }
 
     public toString() {
-        let opName = this.constructor.name;
-        const $index = opName.indexOf("$");
-        opName = opName.substring($index + 1, opName.length);
-
-        return "<" + opName + "@" + this.tokens.get(this.index) +
+        return "<RewriteOperation@" + this.tokens.get(this.index) +
             ":\"" + this.text + "\">";
     }
 }
@@ -457,11 +453,21 @@ class InsertBeforeOp extends RewriteOperation {
 
         return this.index + 1;
     }
+
+    public override toString() {
+        return "<InsertBeforeOp@" + this.tokens.get(this.index) +
+            ":\"" + this.text + "\">";
+    }
 }
 
 class InsertAfterOp extends InsertBeforeOp {
     public constructor(tokens: TokenStream, index: number, instructionIndex: number, text?: string | null) {
         super(tokens, index + 1, instructionIndex, text); // insert after is insert before index+1
+    }
+
+    public override toString() {
+        return "<InsertAfterOp@" + this.tokens.get(this.index) +
+            ":\"" + this.text + "\">";
     }
 }
 

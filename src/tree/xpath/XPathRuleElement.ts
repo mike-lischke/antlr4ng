@@ -31,4 +31,11 @@ export class XPathRuleElement extends XPathElement {
 
         return nodes;
     }
+
+    public override toString(): string {
+        const inv: string = this.invert ? "!" : "";
+
+        return "XPathRuleElement[" + inv + this.nodeName + "]";
+    }
+
 }

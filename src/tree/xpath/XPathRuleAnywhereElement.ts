@@ -22,4 +22,11 @@ export class XPathRuleAnywhereElement extends XPathElement {
     public evaluate(t: ParseTree): ParseTree[] {
         return Trees.findAllRuleNodes(t, this.ruleIndex);
     }
+
+    public override toString(): string {
+        const inv: string = this.invert ? "!" : "";
+
+        return "XPathRuleAnywhereElement[" + inv + this.nodeName + "]";
+    }
+
 }

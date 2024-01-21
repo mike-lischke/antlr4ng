@@ -133,7 +133,6 @@ export class DefaultErrorStrategy {
         } else if (e instanceof FailedPredicateException) {
             this.reportFailedPredicate(recognizer, e);
         } else {
-            console.log("unknown recognition error type: " + e.constructor.name);
             recognizer.notifyErrorListeners(e.message, e.offendingToken, e);
         }
     }

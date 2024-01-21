@@ -26,4 +26,11 @@ export class XPathWildcardElement extends XPathElement {
 
         return kids;
     }
+
+    public override toString(): string {
+        const inv: string = this.invert ? "!" : "";
+
+        return "XPathWildcardElement[" + inv + this.nodeName + "]";
+    }
+
 }

@@ -19,4 +19,11 @@ export class XPathTokenAnywhereElement extends XPathElement {
     public evaluate(t: ParseTree): ParseTree[] {
         return Trees.findAllTokenNodes(t, this.tokenType);
     }
+
+    public override toString(): string {
+        const inv: string = this.invert ? "!" : "";
+
+        return "XPathTokenAnywhereElement[" + inv + this.nodeName + "]";
+    }
+
 }

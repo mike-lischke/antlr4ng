@@ -23,9 +23,8 @@ export abstract class XPathElement {
 
     public toString(): string {
         const inv: string = this.invert ? "!" : "";
-        const className: string = Object.constructor.name;
 
-        return className + "[" + inv + this.nodeName + "]";
+        return "XPathElement[" + inv + this.nodeName + "]";
     }
 
     /**

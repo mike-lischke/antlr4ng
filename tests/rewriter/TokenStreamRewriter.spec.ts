@@ -12,7 +12,6 @@ import { ABC } from "./generatedCode/abc.js";
 import { Calc } from "./generatedCode/calc.js";
 
 /**
- *
  * @param lexerClass The lexer class to use.
  * @param input The input to lex.
  *
@@ -213,7 +212,7 @@ describe("TokenStreamRewriter", () => {
         rewriter.insertBefore(1, "0");
 
         // Assert
-        expect(() => { return rewriter.getText(); }).toThrowError(
+        expect(() => { return rewriter.getText(); }).toThrow(
             "insert op <InsertBeforeOp@[@1,1:1='b',<2>,1:1]:\"0\"> within boundaries of previous " +
             "<ReplaceOp@[@0,0:0='a',<1>,1:0]..[@2,2:2='c',<3>,1:2]:\"x\">",
         );
@@ -228,7 +227,7 @@ describe("TokenStreamRewriter", () => {
         rewriter.insertBefore(1, "0");
 
         // Assert
-        expect(() => { return rewriter.getText(); }).toThrowError(
+        expect(() => { return rewriter.getText(); }).toThrow(
             "insert op <InsertBeforeOp@[@1,1:1='b',<2>,1:1]:\"0\"> within boundaries of previous " +
             "<DeleteOp@[@0,0:0='a',<1>,1:0]..[@2,2:2='c',<3>,1:2]>",
         );
@@ -316,7 +315,7 @@ describe("TokenStreamRewriter", () => {
         rewriter.insertBefore(4, "y");
 
         // Assert
-        expect(() => { return rewriter.getText(); }).toThrowError(
+        expect(() => { return rewriter.getText(); }).toThrow(
             "insert op <InsertBeforeOp@[@4,4:4='c',<3>,1:4]:\"y\"> within boundaries of previous " +
             "<ReplaceOp@[@2,2:2='c',<3>,1:2]..[@4,4:4='c',<3>,1:4]:\"x\">",
         );
@@ -395,7 +394,7 @@ describe("TokenStreamRewriter", () => {
         rewriter.replace(3, 5, "foo");
 
         // Assert
-        expect(() => { return rewriter.getText(); }).toThrowError(
+        expect(() => { return rewriter.getText(); }).toThrow(
             "replace op boundaries of <ReplaceOp@[@3,3:3='c',<3>,1:3]..[@5,5:5='b',<2>,1:5]:\"foo\"> " +
             "overlap with previous <ReplaceOp@[@2,2:2='c',<3>,1:2]..[@4,4:4='c',<3>,1:4]:\"xyz\">",
         );
@@ -414,7 +413,7 @@ describe("TokenStreamRewriter", () => {
         rewriter.replace(1, 3, "foo");
 
         // Assert
-        expect(() => { return rewriter.getText(); }).toThrowError(
+        expect(() => { return rewriter.getText(); }).toThrow(
             "replace op boundaries of <ReplaceOp@[@1,1:1='b',<2>,1:1]..[@3,3:3='c',<3>,1:3]:\"foo\"> " +
             "overlap with previous <ReplaceOp@[@2,2:2='c',<3>,1:2]..[@4,4:4='c',<3>,1:4]:\"xyz\">",
         );
@@ -503,7 +502,7 @@ describe("TokenStreamRewriter", () => {
         rewriter.replace(1, 2, "foo");
 
         // Assert
-        expect(() => { return rewriter.getText(); }).toThrowError(
+        expect(() => { return rewriter.getText(); }).toThrow(
             "replace op boundaries of <ReplaceOp@[@1,1:1='b',<2>,1:1]..[@2,2:2='c',<3>,1:2]:\"foo\"> overlap with " +
             "previous <ReplaceOp@[@0,0:0='a',<1>,1:0]..[@3,3:3='c',<3>,1:3]:\"bar\">",
         );
