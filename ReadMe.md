@@ -124,12 +124,12 @@ Last release (pure TypeScript):
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
-| Query Collection| 4724 ms | 337 ms |
-| Example File | 672 ms | 192 ms |
-| Large Inserts | 15144 ms | 15039 ms |
-| Total | 20600 ms | 15592 ms |
+| Query Collection| 6020 ms | 314 ms |
+| Example File | 1059 ms | 181 ms |
+| Large Inserts | 13722 ms | 13657 ms |
+| Total | 20933 ms | 13658 ms |
 
-The numbers are interesting. While the cold run for the query collection is almost 3 seconds faster with pure TS, the overall numbers in warm state are worse. So it's not a pure JS vs. TS situation, but something else must have additional influence and this will be investigated. After all the TypeScript code is ultimately transpiled to JS, so it's probably a matter of how effective the TS code is translated to JS.
+The numbers are interesting. While the cold run for the query collection is faster with pure TS, the overall numbers in warm state are worse. So it's not a pure JS vs. TS situation, but something else must have additional influence and this will be investigated. After all the TypeScript code is ultimately transpiled to JS, so it's probably a matter of how effective the TS code is translated to JS.
 
 Overall the numbers in the pure TS runtime are pretty good, especially when comparing them with [antlr4ts](https://github.com/mike-lischke/antlr4wasm/tree/master/benchmarks/mysql).
 
@@ -144,6 +144,11 @@ The large binary inserts file contains only a few dozen queries, but they are re
 The example file is a copy of the largest test file in [this repository](https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples), and is known to be very slow to parse with other MySQL grammars. The one used here, however, is fast.
 
 ## Release Notes
+
+### 2.0.9
+
+- Added exports for the profiling classes.
+- Reverted some changes that failed the Java runtime tests.
 
 ### 2.0.8
 
