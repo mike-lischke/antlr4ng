@@ -321,12 +321,6 @@ export class DefaultErrorStrategy {
      * @param e the recognition exception
      */
     public reportFailedPredicate(recognizer: Parser, e: RecognitionException): void {
-        if (e.message.length > 0) {
-            recognizer.notifyErrorListeners(e.message, e.offendingToken, e);
-
-            return;
-        }
-
         const ruleName = recognizer.ruleNames[recognizer.context!.ruleIndex];
         const msg = "rule " + ruleName + " " + e.message;
         recognizer.notifyErrorListeners(msg, e.offendingToken, e);
