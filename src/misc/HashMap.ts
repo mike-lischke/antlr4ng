@@ -9,18 +9,18 @@ import { EqualsFunction, HashFunction } from "./HashSet.js";
 
 interface Entry<Key extends IComparable, Value> { key: Key, value: Value; }
 
-export class HashMap<Key extends IComparable, Value> {
-    private data: { [key: string]: Array<Entry<Key, Value>>; };
-    private hashFunction: HashFunction;
-    private equalsFunction: EqualsFunction;
+export class HashMap<TKey extends IComparable, TValue> {
+    private data: Record<string, Entry<TKey, TValue>[]>;
+    private hashFunction: HashFunction<TKey>;
+    private equalsFunction: EqualsFunction<TKey>;
 
-    public constructor(hashFunction?: HashFunction, equalsFunction?: EqualsFunction) {
+    public constructor(hashFunction?: HashFunction<TKey>, equalsFunction?: EqualsFunction<TKey>) {
         this.data = {};
         this.hashFunction = hashFunction ?? standardHashCodeFunction;
         this.equalsFunction = equalsFunction ?? standardEqualsFunction;
     }
 
-    public set(key: Key, value: Value): Value {
+    public set(key: TKey, value: TValue): TValue {
         const hashKey = this.hashFunction(key);
         if (hashKey in this.data) {
             const entries = this.data[hashKey];
@@ -42,7 +42,7 @@ export class HashMap<Key extends IComparable, Value> {
         }
     }
 
-    public containsKey(key: Key): boolean {
+    public containsKey(key: TKey): boolean {
         const hashKey = this.hashFunction(key);
         if (hashKey in this.data) {
             const entries = this.data[hashKey];
@@ -56,7 +56,7 @@ export class HashMap<Key extends IComparable, Value> {
         return false;
     }
 
-    public get(key: Key): Value | null {
+    public get(key: TKey): TValue | null {
         const hashKey = this.hashFunction(key);
         if (hashKey in this.data) {
             const entries = this.data[hashKey];
@@ -70,17 +70,17 @@ export class HashMap<Key extends IComparable, Value> {
         return null;
     }
 
-    public entries(): Array<Entry<Key, Value>> {
+    public entries(): Array<Entry<TKey, TValue>> {
         return Object.keys(this.data).flatMap((key) => {
             return this.data[key];
         }, this);
     }
 
-    public getKeys(): Key[] {
+    public getKeys(): TKey[] {
         return this.entries().map((e) => { return e.key; });
     }
 
-    public getValues(): Value[] {
+    public getValues(): TValue[] {
         return this.entries().map((e) => { return e.value; });
     }
 
