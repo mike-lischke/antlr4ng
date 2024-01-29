@@ -5,26 +5,22 @@
  */
 
 /** Expresses the Java concept of object equality (equality based on the content of two objects). */
-export interface IComparable {
-    equals(obj: unknown): boolean;
+export interface IComparable<T = unknown> {
+    equals(obj: T | null): boolean;
     hashCode(): number;
 }
 
-const isComparable = (candidate: unknown): candidate is IComparable => {
+function isComparable(candidate: unknown): candidate is IComparable {
     return typeof (candidate as IComparable).equals === "function";
-};
-
-const valueToString = (v: null | string): string => {
-    return v === null ? "null" : v;
-};
+}
 
 /**
  * @param value The array to stringify.
  *
  * @returns a human readable string of an array (usually for debugging and testing).
  */
-export const arrayToString = (value: unknown[] | null): string => {
-    return Array.isArray(value) ? ("[" + value.map(valueToString).join(", ") + "]") : "null";
+export const arrayToString = (value: unknown): string => {
+    return Array.isArray(value) ? `[${value.map(v => String(v)).join(", ")}]` : String(value);
 };
 
 /**
@@ -85,7 +81,7 @@ export const escapeWhitespace = (s: string, escapeSpaces = false): string => {
  * @returns `true` if `a` and `b` are equal.
  */
 export const standardEqualsFunction = (a: IComparable | null, b: unknown): boolean => {
-    return a ? a.equals(b) : a === b;
+    return a === b || !!a?.equals(b);
 };
 
 const stringSeedHashCode = Math.round(Math.random() * Math.pow(2, 32));
