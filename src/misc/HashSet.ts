@@ -45,16 +45,11 @@ export class HashSet<T extends IComparable> {
     }
 
     public has(value: T): boolean {
-        return this.get(value) != null;
+        return this.get(value) !== null;
     }
 
     public get(value: T): T | null {
-        const key = this.hashFunction(value);
-        const entries = this.#data[key];
-        if (entries) {
-            return entries.find((entry) => this.equalsFunction(value, entry)) ?? null;
-        }
-        return null;
+        return this.#data[this.hashFunction(value)]?.find((entry) => this.equalsFunction(value, entry)) ?? null;
     }
 
     public values(): T[] {
