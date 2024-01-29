@@ -19,7 +19,7 @@ function isComparable(candidate: unknown): candidate is IComparable {
  *
  * @returns a human readable string of an array (usually for debugging and testing).
  */
-export const arrayToString = (value: unknown): string => {
+export function arrayToString(value: unknown): string {
     return Array.isArray(value) ? `[${value.map(v => String(v)).join(", ")}]` : String(value);
 };
 
@@ -31,7 +31,7 @@ export const arrayToString = (value: unknown): string => {
  *
  * @returns `true` if `a` and `b` are equal.
  */
-export const equalArrays = (a: unknown[], b: unknown[]): boolean => {
+export function equalArrays(a: unknown[], b: unknown[]): boolean {
     if (a === b) {
         return true;
     }
@@ -47,7 +47,7 @@ export const equalArrays = (a: unknown[], b: unknown[]): boolean => {
             continue;
         }
 
-        if (isComparable(left) && !left.equals(right)) {
+        if (!isComparable(left) || !left.equals(right)) {
             return false;
         }
     }
