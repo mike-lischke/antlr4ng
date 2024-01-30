@@ -1,6 +1,6 @@
 {
     "name": "antlr4ng",
-    "version": "2.0.9",
+    "version": "2.0.10",
     "type": "module",
     "description": "Alternative JavaScript/TypeScript runtime for ANTLR4",
     "main": "dist/index.cjs",

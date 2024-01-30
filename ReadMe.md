@@ -145,6 +145,10 @@ The example file is a copy of the largest test file in [this repository](https:/
 
 ## Release Notes
 
+### 2.0.10
+
+Fixed bug #26 getRuleContext is incompatible with generated code (2.0.5)
+
 ### 2.0.9
 
 - Added exports for the profiling classes.
