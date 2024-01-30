@@ -601,7 +601,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * @see ATN.getExpectedTokens(int, RuleContext)
      */
     public getExpectedTokens(): IntervalSet {
-        return this.interpreter.atn.getExpectedTokens(this.state, this.context!);
+        return this.interpreter.atn.getExpectedTokens(this.state, this.context);
     }
 
     public getExpectedTokensWithinCurrentRule(): IntervalSet {

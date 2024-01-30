@@ -312,7 +312,8 @@ export class ParserATNSimulator extends ATNSimulator {
     protected _outerContext: ParserRuleContext | null = null;
     protected _dfa: DFA | null = null;
 
-    public constructor(recog: Parser, atn: ATN, decisionToDFA: DFA[], sharedContextCache: PredictionContextCache) {
+    public constructor(recog: Parser, atn: ATN, decisionToDFA: DFA[],
+        sharedContextCache: PredictionContextCache | null) {
         super(atn, sharedContextCache);
         this.parser = recog;
         this.decisionToDFA = decisionToDFA;

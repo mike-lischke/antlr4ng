@@ -220,12 +220,13 @@ export class ParserRuleContext extends RuleContext {
         }
     }
 
-    public getRuleContext<T extends ParserRuleContext>(index: number,
-        ctxType: new (...args: unknown[]) => T): T | null {
+    public getRuleContext<T extends ParserRuleContext, Args extends unknown[]>(index: number,
+        ctxType: new (...args: Args) => T): T | null {
         return this.getChild<T>(index, ctxType);
     }
 
-    public getRuleContexts<T extends ParserRuleContext>(ctxType: new (...args: unknown[]) => T): T[] {
+    public getRuleContexts<T extends ParserRuleContext, Args extends unknown[]>(
+        ctxType: new (...args: Args) => T): T[] {
         if (this.children === null) {
             return [];
         } else {

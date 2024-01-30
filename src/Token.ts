@@ -78,15 +78,15 @@ export interface Token {
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Token {
-    export const INVALID_TYPE = 0;
+    export const INVALID_TYPE: number = 0;
 
     /**
      * During lookahead operations, this "token" signifies we hit rule end ATN state
      * and did not follow it despite needing to.
      */
-    export const EPSILON = -2;
+    export const EPSILON: number = -2;
 
-    export const MIN_USER_TOKEN_TYPE = 1;
+    export const MIN_USER_TOKEN_TYPE: number = 1;
 
     export const EOF = IntStream.EOF;
 
@@ -95,13 +95,13 @@ export namespace Token {
      * on a particular "channel". The parser tunes to a particular channel
      * so that whitespace etc... can go to the parser on a "hidden" channel.
      */
-    export const DEFAULT_CHANNEL = 0;
+    export const DEFAULT_CHANNEL: number = 0;
 
     /**
      * Anything on different channel than DEFAULT_CHANNEL is not parsed
      * by parser.
      */
-    export const HIDDEN_CHANNEL = 1;
+    export const HIDDEN_CHANNEL: number = 1;
 
     /**
      * This is the minimum constant value which can be assigned to a
@@ -114,7 +114,7 @@ export namespace Token {
      *
      * @see Token#getChannel()
      */
-    export const MIN_USER_CHANNEL_VALUE = 2;
+    export const MIN_USER_CHANNEL_VALUE: number = 2;
 }
 
 export const isToken = (candidate: unknown): candidate is Token => {
