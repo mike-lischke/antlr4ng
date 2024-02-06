@@ -19,6 +19,7 @@
         "noImplicitOverride": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
+        "isolatedModules": true,
         "noFallthroughCasesInSwitch": false, // Switch to true when string hash in helpers.ts is no longer needed.
         "forceConsistentCasingInFileNames": true,
     },

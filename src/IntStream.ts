@@ -208,7 +208,7 @@ export namespace IntStream {
      * reached.
      */
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    export const EOF = -1;
+    export const EOF: number = -1;
 
     /**
      * The value returned by {@link IntStream.getSourceName} when the actual name of the
