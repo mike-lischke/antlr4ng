@@ -1,0 +1,20 @@
+{
+    "language": "TypeScript",
+    "targetPath": "../generated",
+    "targetExtension": "ts",
+    "testFileName": "Test.spec",
+    "testAnnotations": [
+        "test",
+        "xit"
+    ],
+    "grammarTemplateFile": "./templates/TypeScript.grammar.stg",
+    "specTemplateFile": "./templates/TypeScript.spec.stg",
+    "groupIncludes": [],
+    "testIncludes": [],
+    "files": [
+        {
+            "sourcePattern": "./tsconfig.json",
+            "targetPath": "../generated/"
+        }
+    ]
+}

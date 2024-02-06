@@ -107,9 +107,38 @@ const visitor = new MyVisitor();
 const result = visitor.visit(tree);
 ```
 
-## Benchmarks
+## Tests and Benchmarks
 
-This runtime is monitored for performance regressions. The following tables show the results of the benchmarks previously run on the JS runtime and on last release of this one. Warm times were taken from 5 runs with the 2 slowest stripped off and averaged.
+This runtime is monitored for performance regressions. The times below were taken on a Mac Studio M1 Max with 32GB RAM (Sonoma 14.2).
+
+### Running the Tests
+
+There are a number NPM scripts in the project that are related to testing. The first step is the generation of the test parsers:
+
+```bash
+npm run generate-test-parsers
+```
+
+and the build of the package:
+
+```bash
+npm run build-minified
+```
+
+After that you can either execute different suites separately or as a whole.
+
+|Test|Script|
+|---|---|
+|Unit tests|`npm run test`|
+|Lexer speed test|`npm run time-lexer-speed`|
+|Real world example|`npm run run-benchmarks`|
+| All together|`npm run full-test`|
+
+The unit tests consist of tests for individual classes in the runtime (API tests) and the runtime test suite ported from Java. They execute in about 10s.
+
+### Real World Example
+
+The following tables show the results of the benchmarks previously run on the JS runtime and on last release of this one. Warm times were taken from 5 runs with the 2 slowest stripped off and averaged.
 
 Pure JavaScript release (with type definitions):
 
@@ -124,16 +153,10 @@ Last release (pure TypeScript):
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
-| Query Collection| 6020 ms | 314 ms |
-| Example File | 1059 ms | 181 ms |
-| Large Inserts | 13722 ms | 13657 ms |
-| Total | 20933 ms | 13658 ms |
-
-The numbers are interesting. While the cold run for the query collection is faster with pure TS, the overall numbers in warm state are worse. So it's not a pure JS vs. TS situation, but something else must have additional influence and this will be investigated. After all the TypeScript code is ultimately transpiled to JS, so it's probably a matter of how effective the TS code is translated to JS.
-
-Overall the numbers in the pure TS runtime are pretty good, especially when comparing them with [antlr4ts](https://github.com/mike-lischke/antlr4wasm/tree/master/benchmarks/mysql).
-
-### About the Benchmarks
+| Query Collection| 6089 ms | 331 ms |
+| Example File | 1064 ms | 191 ms |
+| Large Inserts | 14742 ms | 14326 ms |
+| Total | 21954 ms | 14869 ms |
 
 The benchmarks consist of a set of query files, which are parsed by a MySQL parser. The MySQL grammar is one of the largest and most complex grammars you can find for ANTLR4, which, I think, makes it a perfect test case for parser tests.
 
@@ -142,6 +165,46 @@ The query collection file contains more than 900 MySQL queries of all kinds, fro
 The large binary inserts file contains only a few dozen queries, but they are really large with deep recursions, so they stress the prediction engine of the parser. In addition, one query contains binary (image) data containing input characters from the entire UTF-8 range.
 
 The example file is a copy of the largest test file in [this repository](https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples), and is known to be very slow to parse with other MySQL grammars. The one used here, however, is fast.
+
+### Lexer Speed Test
+
+Since the Java runtime tests have been ported to TypeScript there's another set of benchmarks, the lexer speed test. This set of tests was created when Unicode support landed in ANTLR4 and measures the speed of lexing different Unicode lexems in a lexer generated from the Java grammar.
+
+The original Java execution times have been taken on OS X with a 4 GHz Intel Core i7 (Java VM args: `-Xms2G -Xmx8g`):
+
+```bash
+                load_new_utf8 average time   232µs size 131232b over 3500 loads of 29038 symbols from Parser.java
+                load_new_utf8 average time    69µs size  32928b over 3500 loads of  7625 symbols from RuleContext.java
+                load_new_utf8 average time   210µs size  65696b over 3500 loads of 13379 symbols from udhr_hin.txt
+
+            lex_new_java_utf8 average time   439µs over 2000 runs of 29038 symbols
+            lex_new_java_utf8 average time   969µs over 2000 runs of 29038 symbols DFA cleared
+
+        lex_new_grapheme_utf8 average time  4034µs over  400 runs of  6614 symbols from udhr_kor.txt
+        lex_new_grapheme_utf8 average time  4173µs over  400 runs of  6614 symbols from udhr_kor.txt DFA cleared
+        lex_new_grapheme_utf8 average time  7680µs over  400 runs of 13379 symbols from udhr_hin.txt
+        lex_new_grapheme_utf8 average time  7946µs over  400 runs of 13379 symbols from udhr_hin.txt DFA cleared
+        lex_new_grapheme_utf8 average time    70µs over  400 runs of    85 symbols from emoji.txt
+        lex_new_grapheme_utf8 average time    82µs over  400 runs of    85 symbols from emoji.txt DFA cleared
+```
+
+The execute times on last release of this runtime have been measured as:
+
+```bash
+                loadNewUTF8 average time   358µs size  29191b over 3500 loads of 29191 symbols from Parser.java
+                loadNewUTF8 average time    74µs size   7552b over 3500 loads of  7552 symbols from RuleContext.java
+                loadNewUTF8 average time   122µs size  31784b over 3500 loads of 13379 symbols from udhr_hin.txt
+
+             lexNewJavaUTF8 average time   610µs over 2000 runs of 29191 symbols
+             lexNewJavaUTF8 average time  4817µs over 2000 runs of 29191 symbols DFA cleared
+
+         lexNewGraphemeUTF8 average time 12973µs over  400 runs of  6614 symbols from udhr_kor.txt
+         lexNewGraphemeUTF8 average time 13151µs over  400 runs of  6614 symbols from udhr_kor.txt DFA cleared
+         lexNewGraphemeUTF8 average time 18051µs over  400 runs of 13379 symbols from udhr_hin.txt
+         lexNewGraphemeUTF8 average time 18228µs over  400 runs of 13379 symbols from udhr_hin.txt DFA cleared
+         lexNewGraphemeUTF8 average time   329µs over  400 runs of    85 symbols from emoji.txt
+         lexNewGraphemeUTF8 average time   387µs over  400 runs of    85 symbols from emoji.txt DFA cleared
+```
 
 ## Release Notes
 

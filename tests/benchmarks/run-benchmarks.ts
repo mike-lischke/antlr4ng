@@ -10,7 +10,7 @@ import path from "path";
 import assert from "assert";
 import { fileURLToPath } from "url";
 
-import { ParseServiceJS } from "./ParseServiceJS.js";
+import { ParseService } from "./ParseService.js";
 
 import { IParserErrorInfo, MySQLParseUnit, StatementFinishState, determineStatementRanges } from "./support/helpers.js";
 
@@ -23,7 +23,7 @@ Object.keys(rdbmsInfo.characterSets).forEach((set: string) => {
     charSets.add("_" + set.toLowerCase());
 });
 
-const jsService = new ParseServiceJS(charSets);
+const parsingService = new ParseService(charSets);
 
 interface ITestFile {
     name: string;
@@ -175,10 +175,10 @@ const parseFiles = (logResults: boolean): number[] => {
             const checkResult = checkMinStatementVersion(statement, 80031);
             if (checkResult.matched) {
                 let error: IParserErrorInfo | undefined;
-                const result = jsService.errorCheck(checkResult.statement, MySQLParseUnit.Generic,
+                const result = parsingService.errorCheck(checkResult.statement, MySQLParseUnit.Generic,
                     checkResult.version, "ANSI_QUOTES");
                 if (!result) {
-                    const errors = jsService.errorsWithOffset(0);
+                    const errors = parsingService.errorsWithOffset(0);
                     error = errors[0];
                 }
 
@@ -192,7 +192,7 @@ const parseFiles = (logResults: boolean): number[] => {
             }
         });
 
-        const duration = performance.now() - timestamp;
+        const duration = Math.round(performance.now() - timestamp);
         if (logResults) {
             console.log("    Parsing all statements took: " + duration + " ms");
         }
@@ -212,7 +212,7 @@ const parserRun = (showOutput: boolean): number[] => {
         console.error(e);
     } finally {
         if (showOutput) {
-            console.log(`Overall parse run took ${(performance.now() - timestamp)} ms`);
+            console.log(`Overall parse run took ${Math.round((performance.now() - timestamp))} ms`);
         }
     }
 
@@ -227,7 +227,7 @@ const timestamp = performance.now();
 // Must ensure splitting query files works as expected.
 splitterTest();
 
-console.log("Splitter tests took " + (performance.now() - timestamp) + " ms");
+console.log("Splitter tests took " + Math.round(performance.now() - timestamp) + " ms");
 
 console.log("Running antlr4ng parser once (cold) ");
 parserRun(true);
@@ -260,9 +260,9 @@ for (const row of transposed) {
 }
 
 for (let i = 0; i < averageTimes.length - 1; ++i) {
-    console.log(`    File ${i + 1} took ${averageTimes[i]} ms`);
+    console.log(`    File ${i + 1} took ${Math.round(averageTimes[i])} ms`);
 }
 
-console.log(`Overall parse run took ${averageTimes[averageTimes.length - 1]} ms`);
+console.log(`Overall parse run took ${Math.round(averageTimes[averageTimes.length - 1])} ms`);
 
 console.log("Done");

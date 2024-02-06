@@ -12,7 +12,7 @@
             "runtimeArgs": [
                 "--experimental-vm-modules",
                 "${workspaceRoot}/node_modules/.bin/jest",
-                "${fileBasenameNoExtension}.ts",
+                "${relativeFile}",
                 "--no-coverage",
                 "--runInBand"
             ],
@@ -40,6 +40,22 @@
                 "tests/benchmarks/run-benchmarks.ts",
             ],
             "sourceMaps": true,
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Lexer Benchmark",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "runtimeArgs": [
+                "--no-warnings=ExperimentalWarning",
+                "--loader",
+                "ts-node/esm",
+                "tests/api/perf/TimeLexerSpeed.ts",
+            ],
+            "sourceMaps": true,
+            "outputCapture": "std"
         }
     ]
 }

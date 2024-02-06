@@ -42,6 +42,7 @@
         "recog",
         "semctx",
         "sempred",
+        "tgen",
         "ttype"
     ],
     "import": []

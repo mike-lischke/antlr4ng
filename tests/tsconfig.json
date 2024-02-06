@@ -4,6 +4,7 @@
         "module": "Node16",
         "target": "ESNext",
         "moduleResolution": "Node16",
+        "resolveJsonModule": true,
         "noEmit": true,
         "removeComments": false,
         "noImplicitAny": true,
@@ -13,13 +14,13 @@
         "isolatedModules": false,
         "allowSyntheticDefaultImports": true,
         "strictNullChecks": true,
+        "skipLibCheck": true,
     },
     "include": [
         "**/*.ts",
+        "../jest.config.ts",
     ],
     "exclude": [
-        "node_modules",
-        "dist/**/*",
-        "src/**/*"
+        "generated/**/*.ts",
     ]
 }

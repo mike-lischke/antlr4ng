@@ -3,10 +3,8 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  */
 
-/* eslint-disable no-underscore-dangle */
-
 import {
-    BailErrorStrategy, CharStreams, CommonTokenStream, ParseCancellationException, ParseTree, PredictionMode,
+    BailErrorStrategy, CharStreams, CommonTokenStream, ParseTree, PredictionMode,
 } from "antlr4ng";
 
 import { MySQLLexer } from "./generated/MySQLLexer.js";
@@ -15,11 +13,16 @@ import { IParserErrorInfo, MySQLParseUnit } from "./support/helpers.js";
 
 import { MySQLErrorListener } from "./support/MySQLErrorListener.js";
 
-export class ParseServiceJS {
+export class ParseService {
+    private lexer = new MySQLLexer(CharStreams.fromString(""));
+    private tokenStream = new CommonTokenStream(this.lexer);
+    private parser = new MySQLParser(this.tokenStream);
+
     private errors: IParserErrorInfo[] = [];
 
     private tree: ParseTree | undefined;
 
+    private bailErrorStrategy = new BailErrorStrategy();
     private errorListener: MySQLErrorListener;
 
     public constructor(private charSets: Set<string>) {
@@ -35,6 +38,14 @@ export class ParseServiceJS {
             },
         );
 
+        this.lexer.charSets = this.charSets;
+        this.lexer.removeErrorListeners();
+        this.lexer.addErrorListener(this.errorListener);
+
+        this.parser.removeParseListeners();
+        this.parser.removeErrorListeners();
+        this.parser.addErrorListener(this.errorListener);
+        this.parser.interpreter.predictionMode = PredictionMode.SLL;
     }
 
     /**
@@ -83,58 +94,18 @@ export class ParseServiceJS {
      */
     private startParsing(text: string, fast: boolean, serverVersion: number, sqlMode: string): ParseTree | undefined {
         this.errors = [];
+        this.lexer.inputStream = CharStreams.fromString(text);
+        this.tokenStream.setTokenSource(this.lexer);
 
-        // This runtime is a big mess. We have to create everything from scratch for each run,
-        // because we cannot reset the token stream (which would be the easiest way to do it).
-        const stream = CharStreams.fromString(text);
-        const lexer = new MySQLLexer(stream);
-        const tokenStream = new CommonTokenStream(lexer);
-        lexer.removeErrorListeners();
-        lexer.addErrorListener(this.errorListener);
+        this.parser.reset();
+        this.parser.buildParseTrees = !fast;
 
-        const parser = new MySQLParser(tokenStream);
-        parser.removeParseListeners();
-        parser.removeErrorListeners();
-        parser.addErrorListener(this.errorListener);
+        this.lexer.serverVersion = serverVersion;
+        this.lexer.sqlModeFromString(sqlMode);
+        this.parser.serverVersion = serverVersion;
+        this.parser.sqlModes = this.lexer.sqlModes;
 
-        lexer.charSets = this.charSets;
-
-        parser.buildParseTrees = !fast;
-
-        lexer.serverVersion = serverVersion;
-        lexer.sqlModeFromString(sqlMode);
-        parser.serverVersion = serverVersion;
-        parser.sqlModes = lexer.sqlModes;
-
-        // First parse with the bail error strategy to get quick feedback for correct queries.
-        // Note: there's no need to delete the strategy instance. The error handler will take care.
-        parser.errorHandler = new BailErrorStrategy();
-        parser.interpreter.predictionMode = PredictionMode.SLL;
-
-        try {
-            this.tree = parser.query();
-        } catch (e) {
-            if (e instanceof ParseCancellationException) {
-                // Even in fast mode we have to do a second run if we got no error yet (BailErrorStrategy
-                // does not do full processing).
-                if (fast && this.errors.length > 0) {
-                    this.tree = undefined;
-                } else {
-                    // If parsing was canceled we either really have a syntax error or we need to do a second step,
-                    // now with the default strategy and LL parsing.
-
-                    // TODO: also here we would have to recreate everything.
-                    /*this.tokenStream.seek(0);
-                    this.parser.reset();
-                    this.errors = [];
-                    this.parser.errorHandler = defaultStrategy;
-                    this.parser.interpreter.predictionMode = PredictionMode.LL;
-                    this.tree = this.parseUnit(unit);*/
-                }
-            } else {
-                throw e;
-            }
-        }
+        this.tree = this.parser.query();
 
         return this.tree;
     }
