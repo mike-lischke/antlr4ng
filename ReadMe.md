@@ -119,6 +119,12 @@ There are a number NPM scripts in the project that are related to testing. The f
 npm run generate-test-parsers
 ```
 
+followed by the generation of the runtime tests:
+
+```bash
+npm run generate-runtime-tests
+```
+
 and the build of the package:
 
 ```bash
