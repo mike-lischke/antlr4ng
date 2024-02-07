@@ -96,7 +96,6 @@ export class TimeLexerSpeed {
     }
 
     public compilerWarmUp(n: number): void {
-        process.stdout.write("Warming up Java compiler");
         this.output = false;
         this.lexNewJavaUTF8(n, false);
         process.stdout.write(".");
