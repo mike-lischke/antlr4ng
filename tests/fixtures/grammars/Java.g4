@@ -45,7 +45,7 @@
 grammar Java;
 
 @lexer::header {
-import { Character } from "../../tool/src/org/antlr/v4/support/Character.js";
+import { Character } from "../fixtures/helpers/Character.js";
 }
 
 // starting point for parsing a java file

@@ -263,10 +263,11 @@ export class ATNConfigSet {
     }
 
     public getAlts(): BitSet {
-        let alts = new BitSet();
-		for (let config of this.configs) {
-			alts.set(config.alt);
-		}
-		return alts;
-    }  
+        const alts = new BitSet();
+        for (const config of this.configs) {
+            alts.set(config.alt);
+        }
+
+        return alts;
+    }
 }

@@ -16,7 +16,7 @@ import { HashCode } from "../misc/HashCode.js";
  * {@link Lexer//pushMode} with the assigned mode
  */
 export class LexerPushModeAction extends LexerAction {
-    private readonly mode: number;
+    public readonly mode: number;
 
     public constructor(mode: number) {
         super(LexerActionType.PUSH_MODE);

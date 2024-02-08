@@ -59,7 +59,7 @@ export class ParseService {
      * @returns True if no error was found, otherwise false.
      */
     public errorCheck(text: string, unit: MySQLParseUnit, serverVersion: number, sqlMode: string): boolean {
-        this.startParsing(text, true, serverVersion, sqlMode);
+        this.startParsing(text, serverVersion, sqlMode);
 
         return this.errors.length === 0;
     }
@@ -86,19 +86,18 @@ export class ParseService {
      * bails out if an error was found, asap.
      *
      * @param text The text to parse.
-     * @param fast If true use fast mode (no parse tree creation, fast bail out in case of errors).
      * @param serverVersion The version of MySQL to use for checking.
      * @param sqlMode The current SQL mode in the server.
      *
      * @returns A parse tree if enabled.
      */
-    private startParsing(text: string, fast: boolean, serverVersion: number, sqlMode: string): ParseTree | undefined {
+    private startParsing(text: string, serverVersion: number, sqlMode: string): ParseTree | undefined {
         this.errors = [];
         this.lexer.inputStream = CharStreams.fromString(text);
         this.tokenStream.setTokenSource(this.lexer);
 
         this.parser.reset();
-        this.parser.buildParseTrees = !fast;
+        this.parser.buildParseTrees = false;
 
         this.lexer.serverVersion = serverVersion;
         this.lexer.sqlModeFromString(sqlMode);

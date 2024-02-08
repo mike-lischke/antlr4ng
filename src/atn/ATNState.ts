@@ -18,16 +18,15 @@ export class ATNState implements IComparable {
     public ruleIndex: number;
     public epsilonOnlyTransitions: boolean;
     public nextTokenWithinRule: IntervalSet | null;
-    public transitions: Transition[];
+
+    // Track the transitions emanating from this ATN state.
+    public transitions: Transition[] = [];
 
     public constructor() {
         // Which ATN are we in?
         this.atn = null;
         this.ruleIndex = 0; // at runtime, we don't have Rule objects
         this.epsilonOnlyTransitions = false;
-
-        // Track the transitions emanating from this ATN state.
-        this.transitions = [];
 
         // Used to cache lookahead during parsing, not used during construction
         this.nextTokenWithinRule = null;

@@ -12,20 +12,11 @@ import { Transition } from "./Transition.js";
 import { TransitionType } from "./TransitionType.js";
 
 export class SetTransition extends Transition {
-    #label;
+    public readonly set: IntervalSet;
 
     public constructor(target: ATNState, set: IntervalSet) {
         super(target);
-        if (set !== undefined && set !== null) {
-            this.#label = set;
-        } else {
-            this.#label = new IntervalSet();
-            this.#label.addOne(Token.INVALID_TYPE);
-        }
-    }
-
-    public override get label(): IntervalSet {
-        return this.#label;
+        this.set = set ?? IntervalSet.of(Token.INVALID_TYPE, Token.INVALID_TYPE);
     }
 
     public get serializationType(): number {
@@ -33,10 +24,10 @@ export class SetTransition extends Transition {
     }
 
     public override matches(symbol: number, _minVocabSymbol: number, _maxVocabSymbol: number): boolean {
-        return this.label.contains(symbol);
+        return this.set.contains(symbol);
     }
 
     public override toString(): string {
-        return this.#label.toString();
+        return this.set.toString();
     }
 }

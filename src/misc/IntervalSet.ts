@@ -56,6 +56,10 @@ export class IntervalSet {
         return this.intervals[Symbol.iterator]();
     }
 
+    public get(index: number): Interval {
+        return this.intervals[index];
+    }
+
     /**
      * Returns the minimum value contained in the set if not isNil().
      *

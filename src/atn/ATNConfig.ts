@@ -86,7 +86,7 @@ export class ATNConfig {
      *  with this config.  We track only those contexts pushed during
      *  execution of the ATN simulator.
      */
-    public context: PredictionContext | null;
+    public context: PredictionContext | null = null;
 
     /**
      * We cannot execute predicates dependent upon local context unless
@@ -114,13 +114,17 @@ export class ATNConfig {
      * an ATN state
      */
     public constructor(params: IATNConfigParameters, config: ATNConfig | null) {
-        this.checkContext(params, config);
+        //this.checkContext(params, config);
         const checkedParams = checkParams(params);
         const checkedConfig = checkConfig(config);
 
         this.state = checkedParams.state ?? checkedConfig.state!;
         this.alt = checkedParams.alt ?? checkedConfig.alt ?? 0;
-        this.context = checkedParams.context ?? checkedConfig.context;
+
+        if (params.context != null || config?.context != null) {
+            this.context = checkedParams.context ?? checkedConfig.context;
+        }
+
         this.semanticContext = checkedParams.semanticContext ?? (checkedConfig.semanticContext ?? SemanticContext.NONE);
         this.reachesIntoOuterContext = checkedConfig.reachesIntoOuterContext ?? 0;
         this.precedenceFilterSuppressed = checkedConfig.precedenceFilterSuppressed ?? false;
@@ -190,12 +194,4 @@ export class ATNConfig {
                 (",up=" + this.reachesIntoOuterContext)
                 : "") + ")";
     }
-
-    private checkContext(params: IATNConfigParameters, config: ATNConfig | null) {
-        if ((params.context === null || params.context === undefined) &&
-            (config === null || config.context === null || config.context === undefined)) {
-            this.context = null;
-        }
-    }
-
 }

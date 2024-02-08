@@ -22,8 +22,8 @@ import { HashCode } from "../misc/HashCode.js";
  * command argument could not be evaluated when the grammar was compiled.</p>
  */
 export class LexerCustomAction extends LexerAction {
-    private ruleIndex: number;
-    private actionIndex: number;
+    public readonly ruleIndex: number;
+    public readonly actionIndex: number;
 
     /**
      * Constructs a custom lexer action with the specified rule and action
