@@ -12,11 +12,16 @@ import { Transition } from "./Transition.js";
 import { TransitionType } from "./TransitionType.js";
 
 export class SetTransition extends Transition {
-    public readonly set: IntervalSet;
+    public set: IntervalSet;
 
     public constructor(target: ATNState, set: IntervalSet) {
         super(target);
-        this.set = set ?? IntervalSet.of(Token.INVALID_TYPE, Token.INVALID_TYPE);
+        if (set !== undefined && set !== null) {
+            this.set = set;
+        } else {
+            this.set = new IntervalSet();
+            this.set.addOne(Token.INVALID_TYPE);
+        }
     }
 
     public get serializationType(): number {

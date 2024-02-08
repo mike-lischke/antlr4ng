@@ -37,8 +37,6 @@ import { TransitionType } from "./TransitionType.js";
  *  that can be converted back to and ATN. We compute the list of integers and then generate an array
  *  into the target language for a particular lexer or parser.  Java is a special case where we must
  *  generate strings instead of arrays, but that is handled outside of this class.
- *  See {@link ATNDeserializer#encodeIntsWith16BitWords(number[])} and
- *  {@link org.antlr.v4.codegen.model.SerializedJavaATN}.
  */
 export class ATNSerializer {
     public atn: ATN;
@@ -88,7 +86,7 @@ export class ATNSerializer {
     };
 
     /**
-     * Serialize state descriptors, edge descriptors, and decision&rarr;state map
+     * Serialize state descriptors, edge descriptors, and decision -> state map
      *  into list of ints.  Likely out of date, but keeping as it could be helpful:
      *
      *      SERIALIZED_VERSION
