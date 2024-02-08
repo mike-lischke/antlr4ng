@@ -195,7 +195,7 @@ export class PredictionMode {
             if (configs.hasSemanticContext) {
                 // dup configs, tossing out semantic predicates
                 const dup = new ATNConfigSet();
-                for (let c of configs.items) {
+                for (let c of configs) {
                     c = new ATNConfig({ semanticContext: SemanticContext.NONE }, c);
                     dup.add(c);
                 }
@@ -220,7 +220,7 @@ export class PredictionMode {
      * {@link RuleStopState}, otherwise {@code false}
      */
     public static hasConfigInRuleStopState(configs: ATNConfigSet): boolean {
-        for (const c of configs.items) {
+        for (const c of configs) {
             if (c.state instanceof RuleStopState) {
                 return true;
             }
@@ -240,7 +240,7 @@ export class PredictionMode {
      * {@link RuleStopState}, otherwise {@code false}
      */
     public static allConfigsInRuleStopStates(configs: ATNConfigSet): boolean {
-        for (const c of configs.items) {
+        for (const c of configs) {
             if (!(c.state instanceof RuleStopState)) {
                 return false;
             }
@@ -513,14 +513,14 @@ export class PredictionMode {
             },
         );
 
-        configs.items.forEach((cfg) => {
+        for (const cfg of configs) {
             let alts = configToAlts.get(cfg);
             if (alts === null) {
                 alts = new BitSet();
                 configToAlts.set(cfg, alts);
             }
             alts.set(cfg.alt);
-        });
+        }
 
         return configToAlts.getValues();
     };
@@ -535,14 +535,14 @@ export class PredictionMode {
      */
     public static getStateToAltMap(configs: ATNConfigSet): HashMap<ATNState, BitSet> {
         const m = new HashMap<ATNState, BitSet>();
-        configs.items.forEach((c) => {
+        for (const c of configs) {
             let alts = m.get(c.state);
             if (!alts) {
                 alts = new BitSet();
                 m.set(c.state, alts);
             }
             alts.set(c.alt);
-        });
+        }
 
         return m;
     };
@@ -550,13 +550,13 @@ export class PredictionMode {
     public static hasStateAssociatedWithOneAlt(configs: ATNConfigSet): boolean {
         // Count how many alts per state there are in the configs.
         const counts: { [key: number]: number; } = {};
-        configs.items.forEach((c) => {
+        for (const c of configs) {
             const stateNumber = c.state.stateNumber;
             if (!counts[stateNumber]) {
                 counts[stateNumber] = 0;
             }
             counts[stateNumber]++;
-        });
+        }
 
         return Object.values(counts).some((count) => { return count === 1; });
     };

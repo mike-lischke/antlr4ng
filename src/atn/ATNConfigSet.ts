@@ -38,8 +38,24 @@ const equalATNConfigs = (a: ATNConfig, b: ATNConfig): boolean => {
  * graph-structured stack
  */
 export class ATNConfigSet {
-    // Track the elements as they are added to the set; supports get(i)///
+    /**
+     * The reason that we need this is because we don't want the hash map to use
+     * the standard hash code and equals. We need all configurations with the
+     * same
+     * {@code (s,i,_,semctx)} to be equal. Unfortunately, this key effectively
+     * doubles
+     * the number of objects associated with ATNConfigs. The other solution is
+     * to
+     * use a hash table that lets us specify the equals/hashCode operation.
+     * All configs but hashed by (s, i, _, pi) not including context. Wiped out
+     * when we go readonly as this set becomes a DFA state
+     */
+    public configLookup: HashSet<ATNConfig> | null = new HashSet<ATNConfig>(hashATNConfig, equalATNConfigs);
+
+    // Track the elements as they are added to the set; supports get(i).
     public configs: ATNConfig[] = [];
+
+    public uniqueAlt = 0;
 
     /**
      * Used in parser and lexer. In lexer, it indicates we hit a pred
@@ -53,25 +69,7 @@ export class ATNConfigSet {
      * LL prediction. It will be used to determine how to merge $. With SLL
      * it's a wildcard whereas it is not for LL context merge
      */
-    public readonly fullCtx: boolean;
-
-    public uniqueAlt = 0;
-
-    /**
-     * The reason that we need this is because we don't want the hash map to use
-     * the standard hash code and equals. We need all configurations with the
-     * same
-     * {@code (s,i,_,semctx)} to be equal. Unfortunately, this key effectively
-     * doubles
-     * the number of objects associated with ATNConfigs. The other solution is
-     * to
-     * use a hash table that lets us specify the equals/hashCode operation.
-     * All configs but hashed by (s, i, _, pi) not including context. Wiped out
-     * when we go readonly as this set becomes a DFA state
-     */
-    public configLookup = new HashSet<ATNConfig>(hashATNConfig, equalATNConfigs);
-
-    public conflictingAlts: BitSet | null = null;
+    public readonly fullCtx: boolean = false;
 
     /**
      * Indicates that the set of configurations is read-only. Do not
@@ -82,11 +80,26 @@ export class ATNConfigSet {
      */
     public readOnly = false;
 
+    public conflictingAlts: BitSet | null = null;
+
     private cachedHashCode = -1;
 
-    // TODO: add iterator for configs.
-    public constructor(fullCtx?: boolean) {
-        this.fullCtx = fullCtx ?? true;
+    public constructor(fullCtxOrOldSet?: boolean | ATNConfigSet) {
+        if (fullCtxOrOldSet instanceof ATNConfigSet) {
+            const old = fullCtxOrOldSet;
+
+            this.addAll(old.configs);
+            this.uniqueAlt = old.uniqueAlt;
+            this.conflictingAlts = old.conflictingAlts;
+            this.hasSemanticContext = old.hasSemanticContext;
+            this.dipsIntoOuterContext = old.dipsIntoOuterContext;
+        } else {
+            this.fullCtx = fullCtxOrOldSet ?? true;
+        }
+    }
+
+    public [Symbol.iterator](): IterableIterator<ATNConfig> {
+        return this.configs[Symbol.iterator]();
     }
 
     /**
@@ -100,52 +113,69 @@ export class ATNConfigSet {
      * {@link hasSemanticContext} when necessary.</p>
      */
     public add(config: ATNConfig,
-        mergeCache?: DoubleDict<PredictionContext, PredictionContext, PredictionContext> | null): boolean {
-        if (mergeCache === undefined) {
-            mergeCache = null;
-        }
-
+        mergeCache: DoubleDict<PredictionContext, PredictionContext, PredictionContext> | null = null): boolean {
         if (this.readOnly) {
             throw new Error("This set is readonly");
         }
+
         if (config.semanticContext !== SemanticContext.NONE) {
             this.hasSemanticContext = true;
         }
+
         if (config.reachesIntoOuterContext > 0) {
             this.dipsIntoOuterContext = true;
         }
-        const existing = this.configLookup.add(config);
+
+        const existing = this.configLookup!.add(config);
         if (existing === config) {
             this.cachedHashCode = -1;
             this.configs.push(config); // track order here
 
             return true;
         }
+
         // a previous (s,i,pi,_), merge with it and save result
         const rootIsWildcard = !this.fullCtx;
         const merged = merge(existing.context!, config.context!, rootIsWildcard, mergeCache);
+
         /**
          * no need to check for existing.context, config.context in cache
          * since only way to create new graphs is "call rule" and here. We
          * cache at both places
          */
         existing.reachesIntoOuterContext = Math.max(existing.reachesIntoOuterContext, config.reachesIntoOuterContext);
+
         // make sure to preserve the precedence filter suppression during the merge
         if (config.precedenceFilterSuppressed) {
             existing.precedenceFilterSuppressed = true;
         }
+
         existing.context = merged; // replace context; no need to alt mapping
 
         return true;
     }
 
-    public getStates(): HashSet<ATNState> {
-        const states = new HashSet<ATNState>();
+    /** Return a List holding list of configs */
+    public get elements(): ATNConfig[] {
+        return this.configs;
+    }
+
+    /**
+     * Gets the complete set of represented alternatives for the configuration set.
+     *
+     * @returns the set of represented alternatives in this configuration set
+     */
+    public getAlts(): BitSet {
+        const alts = new BitSet();
         for (const config of this.configs) {
-            states.add(config.state);
+            alts.set(config.alt);
         }
 
-        return states;
+        return alts;
+    }
+
+    public get(i: number): ATNConfig {
+        return this.configs[i];
     }
 
     public getPredicates(): SemanticContext[] {
@@ -159,12 +189,21 @@ export class ATNConfigSet {
         return preds;
     }
 
+    public getStates(): HashSet<ATNState> {
+        const states = new HashSet<ATNState>();
+        for (const config of this.configs) {
+            states.add(config.state);
+        }
+
+        return states;
+    }
+
     public optimizeConfigs(interpreter: ATNSimulator): void {
         if (this.readOnly) {
             throw new Error("This set is readonly");
         }
 
-        if (this.configLookup.length === 0) {
+        if (this.configLookup!.length === 0) {
             return;
         }
 
@@ -175,7 +214,7 @@ export class ATNConfigSet {
 
     public addAll(coll: ATNConfig[]): boolean {
         for (const config of coll) {
-            this.add(config, null);
+            this.add(config);
         }
 
         return false;
@@ -210,6 +249,10 @@ export class ATNConfigSet {
         }
     }
 
+    public get length(): number {
+        return this.configs.length;
+    }
+
     public isEmpty(): boolean {
         return this.configs.length === 0;
     }
@@ -242,7 +285,7 @@ export class ATNConfigSet {
     public setReadonly(readOnly: boolean): void {
         this.readOnly = readOnly;
         if (readOnly) {
-            this.configLookup = new HashSet(); // can't mod, no need for lookup cache
+            this.configLookup = null; // can't mod, no need for lookup cache
         }
     }
 
@@ -254,20 +297,4 @@ export class ATNConfigSet {
             (this.dipsIntoOuterContext ? ",dipsIntoOuterContext" : "");
     }
 
-    public get items(): ATNConfig[] {
-        return this.configs;
-    }
-
-    public get length(): number {
-        return this.configs.length;
-    }
-
-    public getAlts(): BitSet {
-        const alts = new BitSet();
-        for (const config of this.configs) {
-            alts.set(config.alt);
-        }
-
-        return alts;
-    }
 }

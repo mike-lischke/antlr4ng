@@ -321,7 +321,7 @@ export class ParserATNSimulator extends ATNSimulator {
 
     protected static getUniqueAlt(configs: ATNConfigSet): number {
         let alt = ATN.INVALID_ALT_NUMBER;
-        for (const c of configs.items) {
+        for (const c of configs) {
             if (alt === ATN.INVALID_ALT_NUMBER) {
                 alt = c.alt; // found first alt
             } else if (c.alt !== alt) {
@@ -662,7 +662,7 @@ export class ParserATNSimulator extends ATNSimulator {
      */
     public dumpDeadEndConfigs(e: NoViableAltException): void {
         console.log("dead end configs: ");
-        const decs = e.deadEndConfigs!.items;
+        const decs = e.deadEndConfigs!;
         for (const c of decs) {
             let trans = "no edges";
             if (c.state.transitions.length > 0) {
@@ -828,7 +828,7 @@ export class ParserATNSimulator extends ATNSimulator {
         let skippedStopStates = null;
 
         // First figure out where we can reach on input t
-        for (const c of closure.items) {
+        for (const c of closure) {
             if (ParserATNSimulator.debug) {
                 console.log("testing " + this.getTokenName(t) + " at " + c);
             }
@@ -869,7 +869,7 @@ export class ParserATNSimulator extends ATNSimulator {
         // withheld in skippedStopStates, or when the current symbol is EOF.
         //
         if (skippedStopStates === null && t !== Token.EOF) {
-            if (intermediate.items.length === 1) {
+            if (intermediate.length === 1) {
                 // Don't pursue the closure if there is just one state.
                 // It can only have one alternative; just add to result
                 // Also don't pursue the closure if there is unique alternative
@@ -888,7 +888,7 @@ export class ParserATNSimulator extends ATNSimulator {
             reach = new ATNConfigSet(fullCtx);
             const closureBusy = new HashSet<ATNConfig>();
             const treatEofAsEpsilon = t === Token.EOF;
-            for (const config of intermediate.items) {
+            for (const config of intermediate) {
                 this.closure(config, reach, closureBusy, false, fullCtx, treatEofAsEpsilon);
             }
         }
@@ -931,7 +931,7 @@ export class ParserATNSimulator extends ATNSimulator {
             console.log("computeReachSet " + closure + " -> " + reach);
         }
 
-        if (reach.items.length === 0) {
+        if (reach.length === 0) {
             return null;
         } else {
             return reach;
@@ -964,7 +964,7 @@ export class ParserATNSimulator extends ATNSimulator {
         }
 
         const result = new ATNConfigSet(configs.fullCtx);
-        for (const config of configs.items) {
+        for (const config of configs) {
             if (config.state instanceof RuleStopState) {
                 result.add(config, this.mergeCache);
                 continue;
@@ -1061,7 +1061,7 @@ export class ParserATNSimulator extends ATNSimulator {
     protected applyPrecedenceFilter(configs: ATNConfigSet): ATNConfigSet {
         const statesFromAlt1 = [];
         const configSet = new ATNConfigSet(configs.fullCtx);
-        for (const config of configs.items) {
+        for (const config of configs) {
             // handle alt 1 first
             if (config.alt !== 1) {
                 continue;
@@ -1079,7 +1079,7 @@ export class ParserATNSimulator extends ATNSimulator {
             }
         }
 
-        for (const config of configs.items) {
+        for (const config of configs) {
             if (config.alt === 1) {
                 // already handled
                 continue;
@@ -1123,7 +1123,7 @@ export class ParserATNSimulator extends ATNSimulator {
         // From this, it is clear that NONE||anything==NONE.
         //
         let altToPred: Array<SemanticContext | null> | null = [];
-        for (const c of configs.items) {
+        for (const c of configs) {
             if (ambigAlts.get(c.alt)) {
                 altToPred[c.alt] = SemanticContext.orContext(altToPred[c.alt] ?? null, c.semanticContext);
             }
@@ -1229,7 +1229,7 @@ export class ParserATNSimulator extends ATNSimulator {
         }
 
         // Is there a syntactically valid path with a failed pred?
-        if (semInvalidConfigs.items.length > 0) {
+        if (semInvalidConfigs.length > 0) {
             alt = this.getAltThatFinishedDecisionEntryRule(semInvalidConfigs);
             if (alt !== ATN.INVALID_ALT_NUMBER) { // syntactically viable path exists
                 return alt;
@@ -1241,7 +1241,7 @@ export class ParserATNSimulator extends ATNSimulator {
 
     protected getAltThatFinishedDecisionEntryRule(configs: ATNConfigSet): number {
         const alts = [];
-        for (const c of configs.items) {
+        for (const c of configs) {
             if (c.reachesIntoOuterContext > 0 || ((c.state instanceof RuleStopState) && c.context!.hasEmptyPath())) {
                 if (alts.indexOf(c.alt) < 0) {
                     alts.push(c.alt);
@@ -1270,7 +1270,7 @@ export class ParserATNSimulator extends ATNSimulator {
         const succeeded = new ATNConfigSet(configs.fullCtx);
         const failed = new ATNConfigSet(configs.fullCtx);
 
-        for (const c of configs.items) {
+        for (const c of configs) {
             if (c.semanticContext !== SemanticContext.NONE) {
                 const predicateEvaluationResult = c.semanticContext.evaluate(this.parser, outerContext);
                 if (predicateEvaluationResult) {

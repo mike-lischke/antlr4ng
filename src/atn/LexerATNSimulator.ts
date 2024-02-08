@@ -289,7 +289,7 @@ export class LexerATNSimulator extends ATNSimulator {
         // Fill reach starting from closure, following t transitions
         this.getReachableConfigSet(input, s.configs, reach, t);
 
-        if (reach.items.length === 0) { // we got nowhere on t from s
+        if (reach.length === 0) { // we got nowhere on t from s
             if (!reach.hasSemanticContext) {
                 // we got nowhere on t, don't throw out this knowledge; it'd
                 // cause a failover from DFA later.
@@ -330,7 +330,7 @@ export class LexerATNSimulator extends ATNSimulator {
         // this is used to skip processing for configs which have a lower priority
         // than a config that already reached an accept state for the same rule
         let skipAlt = ATN.INVALID_ALT_NUMBER;
-        for (const cfg of closure.items) {
+        for (const cfg of closure) {
             const currentAltReachedAcceptState = (cfg.alt === skipAlt);
             if (currentAltReachedAcceptState && (cfg as LexerATNConfig).passedThroughNonGreedyDecision) {
                 continue;
@@ -650,7 +650,7 @@ export class LexerATNSimulator extends ATNSimulator {
     protected addDFAState(configs: ATNConfigSet): DFAState {
         const proposed = new DFAState(configs);
         let firstConfigWithRuleStopState = null;
-        for (const cfg of configs.items) {
+        for (const cfg of configs) {
             if (cfg.state instanceof RuleStopState) {
                 firstConfigWithRuleStopState = cfg;
                 break;
