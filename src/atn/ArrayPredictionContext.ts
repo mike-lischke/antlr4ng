@@ -36,6 +36,10 @@ export class ArrayPredictionContext extends PredictionContext {
         return this.returnStates[0] === PredictionContext.EMPTY_RETURN_STATE;
     }
 
+    public get length(): number {
+        return this.returnStates.length;
+    }
+
     public getParent(index: number): PredictionContext | null {
         return this.parents[index];
     }
@@ -85,9 +89,5 @@ export class ArrayPredictionContext extends PredictionContext {
 
             return s + "]";
         }
-    }
-
-    public get length(): number {
-        return this.returnStates.length;
     }
 }

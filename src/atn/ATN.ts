@@ -67,6 +67,37 @@ export class ATN {
         this.maxTokenType = maxTokenType;
     }
 
+    /**
+     * Compute the set of valid tokens that can occur starting in state {@code s}.
+     * If {@code ctx} is null, the set of tokens will not include what can follow
+     * the rule surrounding {@code s}. In other words, the set will be
+     * restricted to tokens reachable staying within {@code s}'s rule.
+     *
+     * @param atnState tbd
+     * @param ctx tbd
+     *
+     * @returns tbd
+     */
+    public nextTokens(atnState: ATNState): IntervalSet;
+    public nextTokens(atnState: ATNState, ctx: RuleContext | null): IntervalSet;
+    public nextTokens(atnState: ATNState, ctx?: RuleContext | null): IntervalSet {
+        if (ctx === undefined) {
+            if (atnState.nextTokenWithinRule !== null) {
+                return atnState.nextTokenWithinRule;
+            }
+
+            atnState.nextTokenWithinRule = this.nextTokens(atnState, null);
+            atnState.nextTokenWithinRule.setReadonly(true);
+
+            return atnState.nextTokenWithinRule;
+
+        }
+
+        const analyzer = new LL1Analyzer(this);
+
+        return analyzer.LOOK(atnState, null, ctx);
+    }
+
     public addState(state: ATNState | null): void {
         if (state !== null) {
             state.atn = this;
@@ -92,6 +123,10 @@ export class ATN {
         } else {
             return this.decisionToState[decision];
         }
+    }
+
+    public getNumberOfDecisions(): number {
+        return this.decisionToState.length;
     }
 
     /**
@@ -144,37 +179,6 @@ export class ATN {
         }
 
         return expected;
-    }
-
-    /**
-     * Compute the set of valid tokens that can occur starting in state {@code s}.
-     * If {@code ctx} is null, the set of tokens will not include what can follow
-     * the rule surrounding {@code s}. In other words, the set will be
-     * restricted to tokens reachable staying within {@code s}'s rule.
-     *
-     * @param atnState tbd
-     * @param ctx tbd
-     *
-     * @returns tbd
-     */
-    public nextTokens(atnState: ATNState): IntervalSet;
-    public nextTokens(atnState: ATNState, ctx: RuleContext | null): IntervalSet;
-    public nextTokens(atnState: ATNState, ctx?: RuleContext | null): IntervalSet {
-        if (ctx === undefined) {
-            if (atnState.nextTokenWithinRule !== null) {
-                return atnState.nextTokenWithinRule;
-            }
-
-            atnState.nextTokenWithinRule = this.nextTokens(atnState, null);
-            atnState.nextTokenWithinRule.setReadonly(true);
-
-            return atnState.nextTokenWithinRule;
-
-        }
-
-        const analyzer = new LL1Analyzer(this);
-
-        return analyzer.LOOK(atnState, null, ctx);
     }
 
 }

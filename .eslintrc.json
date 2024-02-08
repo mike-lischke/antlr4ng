@@ -608,6 +608,13 @@
                 "format": [
                     "PascalCase"
                 ]
+            },
+            {
+                "selector": "property",
+                "format": [
+                    "camelCase",
+                    "UPPER_CASE"
+                ]
             }
         ],
         "@typescript-eslint/restrict-template-expressions": "off",
