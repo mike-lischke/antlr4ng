@@ -34,41 +34,39 @@ import { DecisionEventInfo } from "./DecisionEventInfo.js";
  *
  * @see ParserATNSimulator#reportAmbiguity
  * @see ANTLRErrorListener#reportAmbiguity
- *
- * @since 4.3
  */
 
 export class AmbiguityInfo extends DecisionEventInfo {
-  /** The set of alternative numbers for this decision event that lead to a valid parse. */
-  public ambigAlts: BitSet | null;
+    /** The set of alternative numbers for this decision event that lead to a valid parse. */
+    public ambigAlts: BitSet | null;
 
-  /**
-   * Constructs a new instance of the {@link AmbiguityInfo} class with the
-   * specified detailed ambiguity information.
-   *
-   * @param decision The decision number
-   * @param configs The final configuration set identifying the ambiguous
-   * alternatives for the current input
-   * @param ambigAlts The set of alternatives in the decision that lead to a valid parse.
-   *                  The predicted alt is the min(ambigAlts)
-   * @param input The input token stream
-   * @param startIndex The start index for the current prediction
-   * @param stopIndex The index at which the ambiguity was identified during
-   * prediction
-   * @param fullCtx {@code true} if the ambiguity was identified during LL
-   * prediction; otherwise, {@code false} if the ambiguity was identified
-   * during SLL prediction
-   */
-  constructor(
-    decision: number,
-    configs: ATNConfigSet,
-    ambigAlts: BitSet | null,
-    input: TokenStream,
-    startIndex: number,
-    stopIndex: number,
-    fullCtx: boolean
-  ) {
-    super(decision, configs, input, startIndex, stopIndex, fullCtx);
-    this.ambigAlts = ambigAlts;
-  }
+    /**
+     * Constructs a new instance of the {@link AmbiguityInfo} class with the
+     * specified detailed ambiguity information.
+     *
+     * @param decision The decision number
+     * @param configs The final configuration set identifying the ambiguous
+     * alternatives for the current input
+     * @param ambigAlts The set of alternatives in the decision that lead to a valid parse.
+     *                  The predicted alt is the min(ambigAlts)
+     * @param input The input token stream
+     * @param startIndex The start index for the current prediction
+     * @param stopIndex The index at which the ambiguity was identified during
+     * prediction
+     * @param fullCtx {@code true} if the ambiguity was identified during LL
+     * prediction; otherwise, {@code false} if the ambiguity was identified
+     * during SLL prediction
+     */
+    public constructor(
+        decision: number,
+        configs: ATNConfigSet,
+        ambigAlts: BitSet | null,
+        input: TokenStream,
+        startIndex: number,
+        stopIndex: number,
+        fullCtx: boolean,
+    ) {
+        super(decision, configs, input, startIndex, stopIndex, fullCtx);
+        this.ambigAlts = ambigAlts;
+    }
 }

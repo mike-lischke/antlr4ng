@@ -23,6 +23,9 @@
     "peerDependencies": {
         "antlr4ng-cli": "1.0.7"
     },
+    "dependencies": {
+        "immutable": "5.0.0-beta.5"
+    },
     "devDependencies": {
         "@mike-lischke/antlr-tgen": "1.0.7",
         "@types/jest": "29.5.11",

@@ -45,7 +45,7 @@ export class ATNSerializer {
 
     // Note that we use a LinkedHashMap as a set to maintain insertion order while deduplicating entries with the
     // same key.
-    private readonly sets = OrderedMap<IntervalSet, boolean>();
+    private sets = OrderedMap<IntervalSet, boolean>();
     private readonly nonGreedyStates: number[] = [];
     private readonly precedenceStates: number[] = [];
 
@@ -256,7 +256,7 @@ export class ATNSerializer {
                         const edgeType = t.serializationType;
                         if (edgeType === TransitionType.SET || edgeType === TransitionType.NOT_SET) {
                             const st = t as SetTransition;
-                            this.sets.set(st.set, true);
+                            this.sets = this.sets.set(st.set, true);
                         }
                     }
                 }
