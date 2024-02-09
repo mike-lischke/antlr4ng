@@ -8,7 +8,6 @@ import { TokenStream } from "../TokenStream.js";
 import { ATNConfigSet } from "./ATNConfigSet.js";
 import { DecisionEventInfo } from "./DecisionEventInfo.js";
 
-
 /**
  * This class represents profiling event information for a context sensitivity.
  * Context sensitivities are decisions where a particular input resulted in an
@@ -24,30 +23,28 @@ import { DecisionEventInfo } from "./DecisionEventInfo.js";
  *
  * @see ParserATNSimulator#reportContextSensitivity
  * @see ANTLRErrorListener#reportContextSensitivity
- *
- * @since 4.3
  */
 
 export class ContextSensitivityInfo extends DecisionEventInfo {
-  /**
-   * Constructs a new instance of the {@link ContextSensitivityInfo} class
-   * with the specified detailed context sensitivity information.
-   *
-   * @param decision The decision number
-   * @param configs The final configuration set containing the unique
-   * alternative identified by full-context prediction
-   * @param input The input token stream
-   * @param startIndex The start index for the current prediction
-   * @param stopIndex The index at which the context sensitivity was
-   * identified during full-context prediction
-   */
-  constructor(
-    decision: number,
-    configs: ATNConfigSet,
-    input: TokenStream,
-    startIndex: number,
-    stopIndex: number
-  ) {
-    super(decision, configs, input, startIndex, stopIndex, true);
-  }
+    /**
+     * Constructs a new instance of the {@link ContextSensitivityInfo} class
+     * with the specified detailed context sensitivity information.
+     *
+     * @param decision The decision number
+     * @param configs The final configuration set containing the unique
+     * alternative identified by full-context prediction
+     * @param input The input token stream
+     * @param startIndex The start index for the current prediction
+     * @param stopIndex The index at which the context sensitivity was
+     * identified during full-context prediction
+     */
+    public constructor(
+        decision: number,
+        configs: ATNConfigSet,
+        input: TokenStream,
+        startIndex: number,
+        stopIndex: number,
+    ) {
+        super(decision, configs, input, startIndex, stopIndex, true);
+    }
 }

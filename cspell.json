@@ -19,6 +19,7 @@
     "ignoreWords": [
         "AMBIG",
         "Dlanguage",
+        "Evals",
         "Grosch",
         "Harwell",
         "Hashable",

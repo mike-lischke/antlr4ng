@@ -13,7 +13,8 @@ import { CharStream } from "../CharStream.js";
 import { Lexer } from "../Lexer.js";
 
 export class LexerActionExecutor /*implements*/ extends LexerAction {
-    private lexerActions: LexerAction[];
+    public readonly lexerActions: LexerAction[];
+
     private cachedHashCode: number;
 
     /**
@@ -24,17 +25,17 @@ export class LexerActionExecutor /*implements*/ extends LexerAction {
      * efficiently, ensuring that actions appearing only at the end of the rule do
      * not cause bloating of the {@link DFA} created for the lexer.</p>
      */
-    public constructor(lexerActions: LexerAction[]) {
+    public constructor(lexerActions: LexerAction[] | null) {
         super(-1);
 
-        this.lexerActions = lexerActions === null ? [] : lexerActions;
+        this.lexerActions = lexerActions ?? [];
+
         /**
          * Caches the result of {@link hashCode} since the hash code is an element
          * of the performance-critical {@link LexerATNConfig//hashCode} operation
          */
-        this.cachedHashCode = HashCode.hashStuff(lexerActions); // "".join([str(la) for la in
+        this.cachedHashCode = HashCode.hashStuff(lexerActions);
 
-        // lexerActions]))
         return this;
     }
 
@@ -53,10 +54,12 @@ export class LexerActionExecutor /*implements*/ extends LexerAction {
      * @returns {LexerActionExecutor} A {@link LexerActionExecutor} for executing the combine actions
      * of {@code lexerActionExecutor} and {@code lexerAction}.
      */
-    public static append(lexerActionExecutor: LexerActionExecutor, lexerAction: LexerAction): LexerActionExecutor {
+    public static append(lexerActionExecutor: LexerActionExecutor | null,
+        lexerAction: LexerAction): LexerActionExecutor {
         if (lexerActionExecutor === null) {
             return new LexerActionExecutor([lexerAction]);
         }
+
         const lexerActions = lexerActionExecutor.lexerActions.concat([lexerAction]);
 
         return new LexerActionExecutor(lexerActions);

@@ -10,35 +10,20 @@ import { ATN } from "./ATN.js";
 import { Transition } from "./Transition.js";
 
 export class ATNState implements IComparable {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     public static readonly INVALID_STATE_NUMBER = -1;
 
-    public atn: ATN | null;
-    public stateNumber: number;
-    public ruleIndex: number;
-    public epsilonOnlyTransitions: boolean;
-    public nextTokenWithinRule: IntervalSet | null;
+    /** Which ATN are we in? */
+    public atn: ATN | null = null;
 
-    // Track the transitions emanating from this ATN state.
+    public stateNumber: number = 0;
+    public ruleIndex: number = 0; // at runtime, we don't have Rule objects
+    public epsilonOnlyTransitions: boolean = false;
+
+    /** Used to cache lookahead during parsing, not used during construction */
+    public nextTokenWithinRule: IntervalSet | null = null;
+
+    /** Track the transitions emanating from this ATN state. */
     public transitions: Transition[] = [];
-
-    public constructor() {
-        // Which ATN are we in?
-        this.atn = null;
-        this.ruleIndex = 0; // at runtime, we don't have Rule objects
-        this.epsilonOnlyTransitions = false;
-
-        // Used to cache lookahead during parsing, not used during construction
-        this.nextTokenWithinRule = null;
-    }
-
-    public get stateType(): number {
-        return ATNState.INVALID_STATE_NUMBER;
-    }
-
-    public toString(): string {
-        return `${this.stateNumber}`;
-    }
 
     public hashCode(): number {
         return this.stateNumber;
@@ -56,21 +41,47 @@ export class ATNState implements IComparable {
         return false;
     }
 
-    public addTransition(trans: Transition, index?: number): void {
-        if (index === undefined) {
-            index = -1;
+    public toString(): string {
+        return `${this.stateNumber}`;
+    }
+
+    public addTransition(index: number, transition: Transition): void;
+    public addTransition(transition: Transition): void;
+    public addTransition(indexOrTransition: number | Transition, trans?: Transition): void {
+        let transition: Transition;
+        let index = -1;
+        if (typeof indexOrTransition === "number") {
+            index = indexOrTransition;
+            transition = trans!;
+        } else {
+            transition = indexOrTransition;
         }
 
         if (this.transitions.length === 0) {
-            this.epsilonOnlyTransitions = trans.isEpsilon;
-        } else if (this.epsilonOnlyTransitions !== trans.isEpsilon) {
+            this.epsilonOnlyTransitions = transition.isEpsilon;
+        } else if (this.epsilonOnlyTransitions !== transition.isEpsilon) {
             this.epsilonOnlyTransitions = false;
         }
 
         if (index === -1) {
-            this.transitions.push(trans);
+            this.transitions.push(transition);
         } else {
-            this.transitions.splice(index, 1, trans);
+            this.transitions.splice(index, 1, transition);
         }
     }
+
+    public get stateType(): number {
+        return ATNState.INVALID_STATE_NUMBER;
+    }
+
+    public setTransition(i: number, e: Transition): void {
+        this.transitions.splice(i, 1, e);
+    }
+
+    public removeTransition(index: number): Transition {
+        const t = this.transitions.splice(index, 1);
+
+        return t[0];
+    }
+
 }

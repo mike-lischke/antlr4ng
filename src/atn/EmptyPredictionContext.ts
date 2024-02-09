@@ -23,16 +23,15 @@ export class EmptyPredictionContext extends SingletonPredictionContext {
         return true;
     }
 
-    public override getParent(_index: number): PredictionContext | null {
+    public override getParent(): PredictionContext | null {
         return null;
     }
 
-    public override getReturnState(_index: number): number {
+    public override getReturnState(): number {
         return this.returnState;
     }
 
     public override equals(other: unknown): boolean {
-
         return this === other;
     }
 

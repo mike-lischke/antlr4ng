@@ -11,10 +11,8 @@ import { ATN } from "./ATN.js";
 import { PredictionContextCache } from "./PredictionContextCache.js";
 import { PredictionContext } from "./PredictionContext.js";
 
-export class ATNSimulator {
+export abstract class ATNSimulator {
     /** Must distinguish between missing edge and edge we know leads nowhere */
-
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     public static readonly ERROR = new DFAState(0x7FFFFFFF);
 
     public readonly atn: ATN;
@@ -43,7 +41,6 @@ export class ATNSimulator {
     protected readonly sharedContextCache: PredictionContextCache | null = null;
 
     public constructor(atn: ATN, sharedContextCache: PredictionContextCache | null) {
-
         this.atn = atn;
         this.sharedContextCache = sharedContextCache;
 
@@ -63,6 +60,10 @@ export class ATNSimulator {
         throw new Error("This ATN simulator does not support clearing the DFA.");
     }
 
+    public getSharedContextCache(): PredictionContextCache | null {
+        return this.sharedContextCache;
+    }
+
     public getCachedContext(context: PredictionContext): PredictionContext {
         if (this.sharedContextCache === null) {
             return context;
@@ -72,8 +73,6 @@ export class ATNSimulator {
         return getCachedPredictionContext(context, this.sharedContextCache, visited);
     }
 
-    public getSharedContextCache(): PredictionContextCache | null {
-        return this.sharedContextCache;
-    }
+    public abstract reset(): void;
 
 }

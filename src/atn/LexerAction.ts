@@ -7,6 +7,11 @@
 import { Lexer } from "../Lexer.js";
 import { HashCode } from "../misc/HashCode.js";
 
+/**
+ * Represents a single action which can be executed following the successful
+ * match of a lexer rule. Lexer actions are used for both embedded action syntax
+ * and ANTLR 4's new lexer command syntax.
+ */
 // TODO: make LexerAction an interface
 export abstract class LexerAction {
     public readonly actionType: number;
