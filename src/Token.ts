@@ -76,7 +76,6 @@ export interface Token {
     get inputStream(): CharStream | null;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Token {
     export const INVALID_TYPE: number = 0;
 

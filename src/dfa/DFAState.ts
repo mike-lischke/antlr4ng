@@ -159,7 +159,6 @@ export class DFAState {
     };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace, no-redeclare
 export namespace DFAState {
     /** Map a predicate to a predicted alternative. */
     export class PredPrediction {

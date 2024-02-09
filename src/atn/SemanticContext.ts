@@ -331,7 +331,6 @@ class OR extends SemanticContext {
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace SemanticContext {
     export class Predicate extends SemanticContext {
         public readonly ruleIndex: number;

@@ -201,7 +201,6 @@ export interface IntStream {
     getSourceName(): string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace IntStream {
     /**
      * The value returned by {@link IntStream.LA} when the end of the stream is

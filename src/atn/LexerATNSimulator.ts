@@ -678,7 +678,6 @@ export class LexerATNSimulator extends ATNSimulator {
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace LexerATNSimulator {
     /**
      * When we hit an accept state in either the DFA or the ATN, we
