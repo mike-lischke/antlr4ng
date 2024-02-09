@@ -54,7 +54,7 @@ export class LexerIndexedCustomAction extends LexerAction {
     }
 
     public override updateHashCode(hash: HashCode): void {
-        hash.update(this.actionType, this.offset, this.action);
+        hash.update(this.offset, this.action);
     }
 
     public override equals(other: unknown): boolean {

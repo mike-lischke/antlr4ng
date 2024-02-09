@@ -31,9 +31,16 @@ export class LexerATNConfig extends ATNConfig {
 
         // This is the backing field for {@link getLexerActionExecutor}.
         this.lexerActionExecutor = params.lexerActionExecutor ?? config?.lexerActionExecutor ?? null;
-        this.passedThroughNonGreedyDecision = config !== null ? this.checkNonGreedyDecision(config, this.state) : false;
+        this.passedThroughNonGreedyDecision = config !== null
+            ? LexerATNConfig.checkNonGreedyDecision(config, this.state)
+            : false;
 
         return this;
+    }
+
+    private static checkNonGreedyDecision(source: LexerATNConfig, target: ATNState): boolean {
+        return source.passedThroughNonGreedyDecision ||
+            ((target instanceof DecisionState) && target.nonGreedy);
     }
 
     public override updateHashCode(hash: HashCode): void {
@@ -52,6 +59,18 @@ export class LexerATNConfig extends ATNConfig {
             );
     }
 
+    /*public override hashCode(): number {
+        let hashCode = MurmurHash.initialize(7);
+        hashCode = MurmurHash.update(hashCode, java.security.Signature.state.stateNumber);
+        hashCode = MurmurHash.update(hashCode, alt);
+        hashCode = MurmurHash.update(hashCode, java.nio.file.WatchEvent.context);
+        hashCode = MurmurHash.update(hashCode, semanticContext);
+        hashCode = MurmurHash.update(hashCode, this.passedThroughNonGreedyDecision ? 1 : 0);
+        hashCode = MurmurHash.update(hashCode, this.lexerActionExecutor);
+        hashCode = MurmurHash.finish(hashCode, 6);
+        return hashCode;
+    }*/
+
     public override hashCodeForConfigSet(): number {
         return this.hashCode();
     }
@@ -60,8 +79,26 @@ export class LexerATNConfig extends ATNConfig {
         return this.equals(other);
     }
 
-    public checkNonGreedyDecision(source: LexerATNConfig, target: ATNState): boolean {
-        return source.passedThroughNonGreedyDecision ||
-            ((target instanceof DecisionState) && target.nonGreedy);
-    }
+    /*public equals(other: ATNConfig): boolean {
+        if (this === other) {
+            return true;
+        }
+        else {
+            if (!(other instanceof LexerATNConfig)) {
+                return false;
+            }
+        }
+
+        const lexerOther = other;
+        if (this.passedThroughNonGreedyDecision !== lexerOther.passedThroughNonGreedyDecision) {
+            return false;
+        }
+
+        if (!ObjectEqualityComparator.INSTANCE.equals(this.lexerActionExecutor, lexerOther.lexerActionExecutor)) {
+            return false;
+        }
+
+        return super.equals(other);
+    }*/
+
 }
