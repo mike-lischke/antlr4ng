@@ -107,7 +107,7 @@ export class LL1Analyzer {
      * <p>If {@code ctx} is {@code null} and {@code stopState} or the end of the
      * rule containing {@code s} is reached, {@link Token//EPSILON} is added to
      * the result set. If {@code ctx} is not {@code null} and {@code addEOF} is
-     * {@code true} and {@code stopState} or the end of the outermost rule is
+     * `true` and {@code stopState} or the end of the outermost rule is
      * reached, {@link Token//EOF} is added to the result set.</p>
      *
      * @param s the ATN state.
@@ -122,8 +122,8 @@ export class LL1Analyzer {
      * @param calledRuleStack A set used for preventing left recursion in the
      * ATN from causing a stack overflow. Outside code should pass
      * {@code new BitSet()} for this argument.
-     * @param seeThruPreds {@code true} to true semantic predicates as
-     * implicitly {@code true} and "see through them", otherwise {@code false}
+     * @param seeThruPreds `true` to true semantic predicates as
+     * implicitly `true` and "see through them", otherwise `false`
      * to treat semantic predicates as opaque and add {@link HIT_PRED} to the
      * result if one is encountered.
      * @param addEOF Add {@link Token//EOF} to the result if the end of the

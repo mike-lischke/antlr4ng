@@ -24,7 +24,7 @@ import { HashCode } from "../misc/HashCode.js";
  * with a {@link LexerAction}.
  *
  * <p>Note: This class is only required for lexer actions for which
- * {@link LexerAction//isPositionDependent} returns {@code true}.</p>
+ * {@link LexerAction//isPositionDependent} returns `true`.</p>
  *
  * @param offset The offset into the input {@link CharStream}, relative to
  * the token start index, at which the specified lexer action should be

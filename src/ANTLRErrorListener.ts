@@ -68,9 +68,9 @@ export interface ANTLRErrorListener {
      * {@code ambigAlts} is null, use {@link ATNConfigSet#getAlts} to obtain the
      * represented alternatives from the {@code configs} argument.</p>
      *
-     * <p>When {@code exact} is {@code true}, <em>all</em> of the potentially
+     * <p>When {@code exact} is `true`, <em>all</em> of the potentially
      * viable alternatives are truly viable, i.e. this is reporting an exact
-     * ambiguity. When {@code exact} is {@code false}, <em>at least two</em> of
+     * ambiguity. When {@code exact} is `false`, <em>at least two</em> of
      * the potentially viable alternatives are viable for the current input, but
      * the prediction algorithm terminated as soon as it determined that at
      * least the <em>minimum</em> potentially viable alternative is truly
@@ -78,7 +78,7 @@ export interface ANTLRErrorListener {
      *
      * <p>When the {@link PredictionMode#LL_EXACT_AMBIG_DETECTION} prediction
      * mode is used, the parser is required to identify exact ambiguities so
-     * {@code exact} will always be {@code true}.</p>
+     * {@code exact} will always be `true`.</p>
      *
      * <p>This method is not used by lexers.</p>
      *
@@ -86,8 +86,8 @@ export interface ANTLRErrorListener {
      * @param dfa the DFA for the current decision
      * @param startIndex the input index where the decision started
      * @param stopIndex the input input where the ambiguity was identified
-     * @param exact {@code true} if the ambiguity is exactly known, otherwise
-     * {@code false}. This is always {@code true} when
+     * @param exact `true` if the ambiguity is exactly known, otherwise
+     * `false`. This is always `true` when
      * {@link PredictionMode#LL_EXACT_AMBIG_DETECTION} is used.
      * @param ambigAlts the potentially ambiguous alternatives, or {@code null}
      * to indicate that the potentially ambiguous alternatives are the complete

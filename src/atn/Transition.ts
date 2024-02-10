@@ -45,10 +45,10 @@ export abstract class Transition {
     /**
      * Determines if the transition is an "epsilon" transition.
      *
-     * <p>The default implementation returns {@code false}.</p>
+     * <p>The default implementation returns `false`.</p>
      *
      * @returns `true` if traversing this transition in the ATN does not
-     * consume an input symbol; otherwise, {@code false} if traversing this
+     * consume an input symbol; otherwise, `false` if traversing this
      * transition consumes (matches) an input symbol.
      */
     public get isEpsilon(): boolean {

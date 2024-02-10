@@ -456,18 +456,18 @@ export class DefaultErrorStrategy {
      * This method implements the single-token insertion inline error recovery
      * strategy. It is called by {@link recoverInline} if the single-token
      * deletion strategy fails to recover from the mismatched input. If this
-     * method returns {@code true}, {@code recognizer} will be in error recovery
+     * method returns `true`, {@code recognizer} will be in error recovery
      * mode.
      *
      * <p>This method determines whether or not single-token insertion is viable by
      * checking if the {@code LA(1)} input symbol could be successfully matched
      * if it were instead the {@code LA(2)} symbol. If this method returns
-     * {@code true}, the caller is responsible for creating and inserting a
+     * `true`, the caller is responsible for creating and inserting a
      * token with the correct type to produce this behavior.</p>
      *
      * @param recognizer the parser instance
      * @returns `true` if single-token insertion is a viable recovery
-     * strategy for the current mismatched input, otherwise {@code false}
+     * strategy for the current mismatched input, otherwise `false`
      */
     public singleTokenInsertion(recognizer: Parser): boolean {
         const currentSymbolType = recognizer.tokenStream.LA(1);

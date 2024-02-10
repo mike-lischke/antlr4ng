@@ -29,8 +29,8 @@ export class DFA {
     public readonly atnStartState: DecisionState | null;
 
     /**
-     * {@code true} if this DFA is for a precedence decision; otherwise,
-     * {@code false}. This is the backing field for {@link #isPrecedenceDfa}.
+     * `true` if this DFA is for a precedence decision; otherwise,
+     * `false`. This is the backing field for {@link #isPrecedenceDfa}.
      */
     public readonly precedenceDfa: boolean;
 
@@ -61,7 +61,7 @@ export class DFA {
      * values.
      *
       @returns `true` if this is a precedence DFA; otherwise,
-     * {@code false}.
+     * `false`.
      * @see Parser#getPrecedence()
      */
     public readonly isPrecedenceDfa = (): boolean => {
@@ -125,8 +125,8 @@ export class DFA {
     /**
      * Sets whether this is a precedence DFA.
      *
-     * @param precedenceDfa {@code true} if this is a precedence DFA; otherwise,
-     * {@code false}
+     * @param precedenceDfa `true` if this is a precedence DFA; otherwise,
+     * `false`
      *
      * @throws UnsupportedOperationException if {@code precedenceDfa} does not
      * match the value of {@link #isPrecedenceDfa} for the current DFA.

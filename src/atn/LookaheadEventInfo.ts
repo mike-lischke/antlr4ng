@@ -29,8 +29,8 @@ export class LookaheadEventInfo extends DecisionEventInfo {
      * @param input The input token stream
      * @param startIndex The start index for the current prediction
      * @param stopIndex The index at which the prediction was finally made
-     * @param fullCtx {@code true} if the current lookahead is part of an LL
-     * prediction; otherwise, {@code false} if the current lookahead is part of
+     * @param fullCtx `true` if the current lookahead is part of an LL
+     * prediction; otherwise, `false` if the current lookahead is part of
      * an SLL prediction
      */
     public constructor(

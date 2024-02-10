@@ -303,7 +303,7 @@ export const combineCommonParents = (parents: Array<PredictionContext | null>): 
  *
  * @param a the first {@link SingletonPredictionContext}
  * @param b the second {@link SingletonPredictionContext}
- * @param rootIsWildcard {@code true} if this is a local-context merge,
+ * @param rootIsWildcard `true` if this is a local-context merge,
  * otherwise false to indicate a full-context merge
  * @param mergeCache tbd
  */
@@ -426,7 +426,7 @@ export const mergeSingletons = (a: SingletonPredictionContext, b: SingletonPredi
  *
  * @param a the first {@link SingletonPredictionContext}
  * @param b the second {@link SingletonPredictionContext}
- * @param rootIsWildcard {@code true} if this is a local-context merge,
+ * @param rootIsWildcard `true` if this is a local-context merge,
  * otherwise false to indicate a full-context merge
  */
 export const mergeRoot = (a: SingletonPredictionContext, b: SingletonPredictionContext,

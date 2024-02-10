@@ -399,8 +399,8 @@ export class LexerATNSimulator extends ATNSimulator {
      * search from {@code config}, all other (potentially reachable) states for
      * this rule would have a lower priority.
      *
-     * @returns {boolean} {@code true} if an accept state is reached, otherwise
-     * {@code false}.
+     * @returns {boolean} `true` if an accept state is reached, otherwise
+     * `false`.
      */
     private closure(input: CharStream, config: LexerATNConfig, configs: ATNConfigSet,
         currentAltReachedAcceptState: boolean, speculative: boolean, treatEofAsEpsilon: boolean): boolean {
@@ -537,7 +537,7 @@ export class LexerATNSimulator extends ATNSimulator {
     /**
      * Evaluate a predicate specified in the lexer.
      *
-     * <p>If {@code speculative} is {@code true}, this method was called before
+     * <p>If {@code speculative} is `true`, this method was called before
      * {@link consume} for the matched character. This method should call
      * {@link consume} before evaluating the predicate to ensure position
      * sensitive values, including {@link Lexer//getText}, {@link Lexer//getLine},
@@ -549,11 +549,11 @@ export class LexerATNSimulator extends ATNSimulator {
      * @param input The input stream.
      * @param ruleIndex The rule containing the predicate.
      * @param predIndex The index of the predicate within the rule.
-     * @param speculative {@code true} if the current index in {@code input} is
+     * @param speculative `true` if the current index in {@code input} is
      * one character before the predicate's location.
      *
      * @returns `true` if the specified predicate evaluates to
-     * {@code true}.
+     * `true`.
      */
     private evaluatePredicate(input: CharStream, ruleIndex: number, predIndex: number,
         speculative: boolean): boolean {

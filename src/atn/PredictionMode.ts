@@ -217,7 +217,7 @@ export class PredictionMode {
      *
      * @param configs the configuration set to test
      * @returns `true` if any configuration in {@code configs} is in a
-     * {@link RuleStopState}, otherwise {@code false}
+     * {@link RuleStopState}, otherwise `false`
      */
     public static hasConfigInRuleStopState(configs: ATNConfigSet): boolean {
         for (const c of configs) {
@@ -237,7 +237,7 @@ export class PredictionMode {
      *
      * @param configs the configuration set to test
      * @returns `true` if all configurations in {@code configs} are in a
-     * {@link RuleStopState}, otherwise {@code false}
+     * {@link RuleStopState}, otherwise `false`
      */
     public static allConfigsInRuleStopStates(configs: ATNConfigSet): boolean {
         for (const c of configs) {
@@ -401,7 +401,7 @@ export class PredictionMode {
      *
      * @param altSets a collection of alternative subsets
      * @returns `true` if every {@link BitSet} in {@code altSets} has
-     * {@link BitSet//cardinality cardinality} &gt; 1, otherwise {@code false}
+     * {@link BitSet//cardinality cardinality} &gt; 1, otherwise `false`
      */
     public static allSubsetsConflict(altSets: BitSet[]): boolean {
         return !PredictionMode.hasNonConflictingAltSet(altSets);
@@ -413,7 +413,7 @@ export class PredictionMode {
      *
      * @param altSets a collection of alternative subsets
      * @returns `true` if {@code altSets} contains a {@link BitSet} with
-     * {@link BitSet//cardinality cardinality} 1, otherwise {@code false}
+     * {@link BitSet//cardinality cardinality} 1, otherwise `false`
      */
     public static hasNonConflictingAltSet(altSets: BitSet[]): boolean {
         for (const alts of altSets) {
@@ -431,7 +431,7 @@ export class PredictionMode {
      *
      * @param altSets a collection of alternative subsets
      * @returns `true` if {@code altSets} contains a {@link BitSet} with
-     * {@link BitSet//cardinality cardinality} &gt; 1, otherwise {@code false}
+     * {@link BitSet//cardinality cardinality} &gt; 1, otherwise `false`
      */
     public static hasConflictingAltSet(altSets: BitSet[]): boolean {
         for (const alts of altSets) {
@@ -448,7 +448,7 @@ export class PredictionMode {
      *
      * @param altSets a collection of alternative subsets
      * @returns `true` if every member of {@code altSets} is equal to the
-     * others, otherwise {@code false}
+     * others, otherwise `false`
      */
     public static allSubsetsEqual(altSets: BitSet[]): boolean {
         let first = null;

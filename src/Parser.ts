@@ -37,7 +37,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
 
     /**
      * Specifies whether or not the parser should construct a parse tree during
-     * the parsing process. The default value is {@code true}.
+     * the parsing process. The default value is `true`.
      *
      * @see #getBuildParseTree
      * @see #setBuildParseTree
@@ -142,7 +142,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * <p>If the symbol type does not match,
      * {@link ANTLRErrorStrategy//recoverInline} is called on the current error
      * strategy to attempt recovery. If {@link buildParseTree} is
-     * {@code true} and the token index of the symbol returned by
+     * `true` and the token index of the symbol returned by
      * {@link ANTLRErrorStrategy//recoverInline} is -1, the symbol is added to
      * the parse tree by calling {@link ParserRuleContext//addErrorNode}.</p>
      *
@@ -178,7 +178,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * <p>If the symbol type does not match,
      * {@link ANTLRErrorStrategy//recoverInline} is called on the current error
      * strategy to attempt recovery. If {@link buildParseTree} is
-     * {@code true} and the token index of the symbol returned by
+     * `true` and the token index of the symbol returned by
      * {@link ANTLRErrorStrategy//recoverInline} is -1, the symbol is added to
      * the parse tree by calling {@link ParserRuleContext//addErrorNode}.</p>
      *
@@ -564,7 +564,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      *
      * @param symbol the symbol type to check
      * @returns `true` if {@code symbol} can follow the current state in
-     * the ATN, otherwise {@code false}.
+     * the ATN, otherwise `false`.
      */
     public isExpectedToken(symbol: number): boolean {
         const atn = this.interpreter.atn;

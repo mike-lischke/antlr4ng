@@ -52,8 +52,8 @@ export class DecisionEventInfo {
     public stopIndex: number;
 
     /**
-     * {@code true} if the current event occurred during LL prediction;
-     * otherwise, {@code false} if the input occurred during SLL prediction.
+     * `true` if the current event occurred during LL prediction;
+     * otherwise, `false` if the input occurred during SLL prediction.
      */
     public fullCtx: boolean;
 

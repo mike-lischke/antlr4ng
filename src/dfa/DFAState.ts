@@ -71,7 +71,7 @@ export class DFAState {
     /**
      * During SLL parsing, this is a list of predicates associated with the
      *  ATN configurations of the DFA state. When we have predicates,
-     *  {@link #requiresFullContext} is {@code false} since full context prediction evaluates predicates
+     *  {@link #requiresFullContext} is `false` since full context prediction evaluates predicates
      *  on-the-fly. If this is not null, then {@link #prediction} is
      *  {@link ATN#INVALID_ALT_NUMBER}.
      *

@@ -28,8 +28,8 @@ export class ErrorInfo extends DecisionEventInfo {
      * @param input The input token stream
      * @param startIndex The start index for the current prediction
      * @param stopIndex The index at which the syntax error was identified
-     * @param fullCtx {@code true} if the syntax error was identified during LL
-     * prediction; otherwise, {@code false} if the syntax error was identified
+     * @param fullCtx `true` if the syntax error was identified during LL
+     * prediction; otherwise, `false` if the syntax error was identified
      * during SLL prediction
      */
     public constructor(

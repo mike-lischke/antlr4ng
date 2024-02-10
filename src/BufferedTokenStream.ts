@@ -128,8 +128,8 @@ export class BufferedTokenStream implements TokenStream {
     /**
      * Make sure index {@code i} in tokens has a token.
      *
-     * @returns {boolean} {@code true} if a token is located at index {@code i}, otherwise
-     * {@code false}.
+     * @returns {boolean} `true` if a token is located at index {@code i}, otherwise
+     * `false`.
      * @see //get(int i)
      */
     public sync(i: number): boolean {

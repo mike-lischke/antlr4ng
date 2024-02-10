@@ -99,7 +99,7 @@ describe("TestVisitors", () => {
      * This test verifies that {@link AbstractParseTreeVisitor#visitChildren} does not call
      * {@link org.antlr.v4.runtime.tree.ParseTreeVisitor#visit} after
      * {@link org.antlr.v4.runtime.tree.AbstractParseTreeVisitor#shouldVisitNextChild} returns
-     * {@code false}.
+     * `false`.
      */
     it("testShouldNotVisitEOF", () => {
         const input = "A";

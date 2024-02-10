@@ -36,7 +36,7 @@ export class CommonTokenFactory implements TokenFactory<CommonToken> {
      * input stream implementation.
      *
      * <p>
-     * The default value is {@code false} to avoid the performance and memory
+     * The default value is `false` to avoid the performance and memory
      * overhead of copying text for every token unless explicitly requested.</p>
      */
     protected readonly copyText: boolean = false;
@@ -54,7 +54,7 @@ export class CommonTokenFactory implements TokenFactory<CommonToken> {
          * input stream implementation.
          *
          * <p>
-         * The default value is {@code false} to avoid the performance and memory
+         * The default value is `false` to avoid the performance and memory
          * overhead of copying text for every token unless explicitly requested.</p>
          */
         this.copyText = copyText ?? false;

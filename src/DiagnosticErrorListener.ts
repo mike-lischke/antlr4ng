@@ -48,7 +48,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
      * whether all ambiguities or only exact ambiguities are reported.
      *
      * @param exactOnly `true` to report only exact ambiguities, otherwise
-     * {@code false} to report all ambiguities.
+     * `false` to report all ambiguities.
      */
     public constructor(exactOnly: boolean);
     public constructor(exactOnly?: boolean) {

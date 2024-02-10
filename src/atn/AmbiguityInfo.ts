@@ -53,8 +53,8 @@ export class AmbiguityInfo extends DecisionEventInfo {
      * @param startIndex The start index for the current prediction
      * @param stopIndex The index at which the ambiguity was identified during
      * prediction
-     * @param fullCtx {@code true} if the ambiguity was identified during LL
-     * prediction; otherwise, {@code false} if the ambiguity was identified
+     * @param fullCtx `true` if the ambiguity was identified during LL
+     * prediction; otherwise, `false` if the ambiguity was identified
      * during SLL prediction
      */
     public constructor(

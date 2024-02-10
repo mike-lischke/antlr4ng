@@ -70,7 +70,7 @@ export class LexerActionExecutor /*implements*/ extends LexerAction {
      * for position-dependent lexer actions.
      *
      * <p>Normally, when the executor encounters lexer actions where
-     * {@link LexerAction//isPositionDependent} returns {@code true}, it calls
+     * {@link LexerAction//isPositionDependent} returns `true`, it calls
      * {@link IntStream//seek} on the input {@link CharStream} to set the input
      * position to the <em>end</em> of the current token. This behavior provides
      * for efficient DFA representation of lexer actions which appear at the end
