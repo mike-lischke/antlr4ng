@@ -301,12 +301,12 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     }
 
     public getTokenFactory(): TokenFactory<Token> {
-        return this._input!.getTokenSource().tokenFactory;
+        return this._input!.tokenSource.tokenFactory;
     }
 
     // Tell our token source and error strategy about a new way to create tokens.
     public setTokenFactory(factory: TokenFactory<Token>): void {
-        this._input!.getTokenSource().tokenFactory = factory;
+        this._input!.tokenSource.tokenFactory = factory;
     }
 
     /**

@@ -30,7 +30,7 @@ export class BufferedTokenStream implements TokenStream {
     /**
      * The {@link TokenSource} from which tokens for this stream are fetched.
      */
-    protected tokenSource: TokenSource;
+    public tokenSource: TokenSource;
 
     /**
      * A collection of all tokens fetched from the token source. The list is
@@ -276,10 +276,6 @@ export class BufferedTokenStream implements TokenStream {
         this.tokens = [];
         this.p = -1;
         this.fetchedEOF = false;
-    }
-
-    public getTokenSource(): TokenSource {
-        return this.tokenSource;
     }
 
     /**

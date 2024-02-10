@@ -50,7 +50,7 @@ export interface TokenStream extends IntStream {
      * Gets the underlying {@link TokenSource} which provides tokens for this
      * stream.
      */
-    getTokenSource(): TokenSource;
+    tokenSource: TokenSource;
 
     /**
      * Return the text of all tokens within the specified {@code interval}. This

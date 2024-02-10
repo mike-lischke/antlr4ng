@@ -22,14 +22,10 @@ export class CommonToken implements WritableToken {
     public static readonly EMPTY_SOURCE: [TokenSource | null, CharStream | null] = [null, null];
 
     /**
-     * This is the backing field for {@link #getTokenSource} and
-     * {@link #getInputStream}.
-     *
-     * <p>
      * These properties share a field to reduce the memory footprint of
      * {@link CommonToken}. Tokens created by a {@link CommonTokenFactory} from
      * the same source and input stream share a reference to the same
-     * {@link Pair} containing these values.</p>
+     * {@link Pair} containing these values.
      */
     public source: [TokenSource | null, CharStream | null];
 
