@@ -6,20 +6,11 @@
 
 # TypeScript Runtime for ANTLR 4
 
-This package is a fork of the official ANTLR4 JavaScript runtime and has been fully transformed to TypeScript. Other improvements are:
+This package started as a fork of the official ANTLR4 JavaScript runtime and has been fully implemented in TypeScript. It implements everything what the Java runtime does, except for the `UnbufferedCharStream` class, which requires a streaming source compatible with both Node.js and browsers. Other notable differences from the original JS source.
 
-- XPath implementation.
-- Vocabulary implementation.
-- Complete Interval implementation.
-- Parser and lexer interpreters.
-- Profiler implementation.
 - Numerous bug fixes and other changes.
-- Smaller node package (no test specs or other unnecessary files).
 - No differentiation between node and browser environments.
-- InterpreterDataReader implementation.
 - Includes the `antlr4ng-cli` tool to generate parser files compatible with this runtime. This tool uses a custom build of the ANTLR4 tool.
-
-This package is a blend of the original JS implementation and antlr4ts, which is a TypeScript implementation of the ANTLR4 runtime, but was abandoned. It tries to keep the best of both worlds, while following the Java runtime as close as possible. It's a bit slower than the JS runtime, but faster than antlr4ts.
 
 ## Installation
 
