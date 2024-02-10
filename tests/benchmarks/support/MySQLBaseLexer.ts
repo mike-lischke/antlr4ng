@@ -432,8 +432,8 @@ export abstract class MySQLBaseLexer extends Lexer implements IMySQLRecognizerCo
      */
     protected emitDot(): void {
         this.pendingTokens.push(this._factory.create([this, this.inputStream], MySQLLexer.DOT_SYMBOL,
-            null, this._channel, this._tokenStartCharIndex, this._tokenStartCharIndex, this._tokenStartLine,
-            this._tokenStartColumn,
+            null, this._channel, this._tokenStartCharIndex, this._tokenStartCharIndex, this.currentTokenStartLine,
+            this.currentTokenColumn,
         ));
 
         ++this._tokenStartCharIndex;

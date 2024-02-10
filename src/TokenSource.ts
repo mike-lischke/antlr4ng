@@ -48,8 +48,7 @@ export interface TokenSource {
       @returns The line number for the current position in the input stream, or
      * -1 if the current token source does not track character positions.
      */
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    _tokenStartColumn: number;
+    column: number;
 
     /**
      * Get the {@link CharStream} from which this token source is currently

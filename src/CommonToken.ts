@@ -77,7 +77,7 @@ export class CommonToken implements WritableToken {
         if (this.source[0] !== null) {
             this.line = source[0]!.line;
             // eslint-disable-next-line no-underscore-dangle
-            this.column = source[0]!._tokenStartColumn;
+            this.column = source[0]!.column;
         } else {
             this.column = -1;
         }
@@ -166,7 +166,7 @@ export class CommonToken implements WritableToken {
         }
     }
 
-    public set text(text: string|null) {
+    public set text(text: string | null) {
         this.#text = text;
     }
 

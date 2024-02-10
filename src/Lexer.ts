@@ -52,12 +52,6 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
      */
     public _tokenStartCharIndex = -1;
 
-    /** The line on which the first character of the token resides */
-    public _tokenStartLine = 0;
-
-    /** The character position of first character within the line */
-    public _tokenStartColumn = 0;
-
     /**
      * Once we see EOF on char stream, next token will be EOF.
      *  If you have DONE : EOF ; then you see DONE EOF.
@@ -81,6 +75,14 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
 
     protected _factory: TokenFactory<Token>;
 
+    /** The start column of the current token (the one that was last read by `nextToken`). */
+    protected currentTokenColumn = 0;
+
+    /**
+     * The line on which the first character of the current token (the one that was last read by `nextToken`) resides.
+     */
+    protected currentTokenStartLine = 0;
+
     public constructor(input: CharStream) {
         super();
         this._input = input;
@@ -96,8 +98,8 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
         this._type = Token.INVALID_TYPE;
         this._channel = Token.DEFAULT_CHANNEL;
         this._tokenStartCharIndex = -1;
-        this._tokenStartColumn = -1;
-        this._tokenStartLine = -1;
+        this.currentTokenColumn = -1;
+        this.currentTokenStartLine = -1;
         this._text = null;
 
         this._hitEOF = false;
@@ -128,8 +130,8 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
                 this._token = null;
                 this._channel = Token.DEFAULT_CHANNEL;
                 this._tokenStartCharIndex = this._input.index;
-                this._tokenStartColumn = this.interpreter.column;
-                this._tokenStartLine = this.interpreter.line;
+                this.currentTokenColumn = this.interpreter.column;
+                this.currentTokenStartLine = this.interpreter.line;
                 this._text = null;
                 let continueOuter = false;
                 for (; ;) {
@@ -234,8 +236,8 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
     public emit(): Token {
         const t = this._factory.create([this, this._input], this._type,
             this._text, this._channel, this._tokenStartCharIndex, this
-                .getCharIndex() - 1, this._tokenStartLine,
-            this._tokenStartColumn);
+                .getCharIndex() - 1, this.currentTokenStartLine,
+            this.currentTokenColumn);
         this.emitToken(t);
 
         return t;
@@ -278,8 +280,8 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
         const text = this._input.getText(start, stop);
         const msg = "token recognition error at: '" + this.getErrorDisplay(text) + "'";
         const listener = this.getErrorListenerDispatch();
-        listener.syntaxError(this, null, this._tokenStartLine,
-            this._tokenStartColumn, msg, e);
+        listener.syntaxError(this, null, this.currentTokenStartLine,
+            this.currentTokenColumn, msg, e);
     }
 
     public getErrorDisplay(s: string): string {
