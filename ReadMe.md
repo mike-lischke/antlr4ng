@@ -133,9 +133,18 @@ After that you can either execute different suites separately or as a whole.
 
 The unit tests consist of tests for individual classes in the runtime (API tests) and the runtime test suite ported from Java. They execute in about 10s.
 
+### Runtime and API Tests
+
+These are the original tests from ANTLR4, extracted and ported to TypeScript. The two parts are:
+
+- API tests: unit tests for individual classes
+- Runtime tests: integration tests that use descriptors for different grammars and specific input and expected output.
+
+These tests together comprise 530 tests and run in 12.1s.
+
 ### Real World Example
 
-The following tables show the results of the benchmarks previously run on the JS runtime and on last release of this one. Warm times were taken from 5 runs with the 2 slowest stripped off and averaged.
+The following tables show the results of the benchmarks previously run on the old JS runtime and on last release of this one. Warm times were taken from 5 runs with the 2 slowest stripped off and averaged.
 
 Pure JavaScript release (with type definitions):
 
@@ -150,10 +159,10 @@ Last release (pure TypeScript):
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
-| Query Collection| 6089 ms | 331 ms |
-| Example File | 1064 ms | 191 ms |
-| Large Inserts | 14742 ms | 14326 ms |
-| Total | 21954 ms | 14869 ms |
+| Query Collection| 6200 ms | 334 ms |
+| Example File | 1069 ms | 194 ms |
+| Large Inserts | 14472 ms | 14157 ms |
+| Total | 21800 ms | 14709 ms |
 
 The benchmarks consist of a set of query files, which are parsed by a MySQL parser. The MySQL grammar is one of the largest and most complex grammars you can find for ANTLR4, which, I think, makes it a perfect test case for parser tests.
 
@@ -170,19 +179,19 @@ Since the Java runtime tests have been ported to TypeScript there's another set 
 The original Java execution times have been taken on OS X with a 4 GHz Intel Core i7 (Java VM args: `-Xms2G -Xmx8g`):
 
 ```bash
-                load_new_utf8 average time   232µs size 131232b over 3500 loads of 29038 symbols from Parser.java
-                load_new_utf8 average time    69µs size  32928b over 3500 loads of  7625 symbols from RuleContext.java
-                load_new_utf8 average time   210µs size  65696b over 3500 loads of 13379 symbols from udhr_hin.txt
+                loadNewUTF8 average time   356µs size  29191b over 3500 loads of 29191 symbols from Parser.java
+                loadNewUTF8 average time    75µs size   7552b over 3500 loads of  7552 symbols from RuleContext.java
+                loadNewUTF8 average time   122µs size  31784b over 3500 loads of 13379 symbols from udhr_hin.txt
 
-            lex_new_java_utf8 average time   439µs over 2000 runs of 29038 symbols
-            lex_new_java_utf8 average time   969µs over 2000 runs of 29038 symbols DFA cleared
+             lexNewJavaUTF8 average time   641µs over 2000 runs of 29191 symbols
+             lexNewJavaUTF8 average time  4987µs over 2000 runs of 29191 symbols DFA cleared
 
-        lex_new_grapheme_utf8 average time  4034µs over  400 runs of  6614 symbols from udhr_kor.txt
-        lex_new_grapheme_utf8 average time  4173µs over  400 runs of  6614 symbols from udhr_kor.txt DFA cleared
-        lex_new_grapheme_utf8 average time  7680µs over  400 runs of 13379 symbols from udhr_hin.txt
-        lex_new_grapheme_utf8 average time  7946µs over  400 runs of 13379 symbols from udhr_hin.txt DFA cleared
-        lex_new_grapheme_utf8 average time    70µs over  400 runs of    85 symbols from emoji.txt
-        lex_new_grapheme_utf8 average time    82µs over  400 runs of    85 symbols from emoji.txt DFA cleared
+         lexNewGraphemeUTF8 average time 13537µs over  400 runs of  6614 symbols from udhr_kor.txt
+         lexNewGraphemeUTF8 average time 13802µs over  400 runs of  6614 symbols from udhr_kor.txt DFA cleared
+         lexNewGraphemeUTF8 average time 18762µs over  400 runs of 13379 symbols from udhr_hin.txt
+         lexNewGraphemeUTF8 average time 18925µs over  400 runs of 13379 symbols from udhr_hin.txt DFA cleared
+         lexNewGraphemeUTF8 average time   340µs over  400 runs of    85 symbols from emoji.txt
+         lexNewGraphemeUTF8 average time   401µs over  400 runs of    85 symbols from emoji.txt DFA cleared
 ```
 
 The execute times on last release of this runtime have been measured as:
