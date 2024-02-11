@@ -30,7 +30,7 @@ export interface DecisionEventInfo {
 
     /**
      * The configuration set containing additional information relevant to the
-     * prediction state when the current event occurred, or {@code null} if no
+     * prediction state when the current event occurred, or `null` if no
      * additional information is relevant or available.
      */
     configs: ATNConfigSet | null;

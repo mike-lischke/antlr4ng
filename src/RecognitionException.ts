@@ -69,11 +69,11 @@ export class RecognitionException extends Error {
      * Gets the set of input symbols which could potentially follow the
      * previously matched symbol at the time this exception was thrown.
      *
-     * <p>If the set of expected tokens is not known and could not be computed,
-     * this method returns {@code null}.</p>
+     * If the set of expected tokens is not known and could not be computed,
+     * this method returns `null`.
      *
      * @returns The set of token types that could potentially follow the current
-     * state in the ATN, or {@code null} if the information is not available.
+     * state in the ATN, or `null` if the information is not available.
      */
     public getExpectedTokens(): IntervalSet | null {
         if (this.recognizer !== null && this.ctx !== null) {
@@ -83,7 +83,7 @@ export class RecognitionException extends Error {
         }
     }
 
-    // <p>If the state number is not known, this method returns -1.</p>
+    // If the state number is not known, this method returns -1.
     public override toString(): string {
         return this.message;
     }

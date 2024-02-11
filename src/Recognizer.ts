@@ -89,7 +89,7 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
 
     /**
      * Get a map from rule names to rule indexes.
-     * <p>Used for XPath and tree pattern compilation.</p>
+     * Used for XPath and tree pattern compilation.
      */
     public getRuleIndexMap(): Map<string, number> {
         const ruleNames = this.ruleNames;

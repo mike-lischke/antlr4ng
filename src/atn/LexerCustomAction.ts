@@ -17,9 +17,9 @@ import { HashCode } from "../misc/HashCode.js";
  * a custom action is added to the generated code for the lexer in an override
  * of {@link Recognizer//action} when the grammar is compiled.
  *
- * <p>This class may represent embedded actions created with the <code>{...}</code>
+ * This class may represent embedded actions created with the `{...}`
  * syntax in ANTLR 4, as well as actions created for lexer commands where the
- * command argument could not be evaluated when the grammar was compiled.</p>
+ * command argument could not be evaluated when the grammar was compiled.
  */
 export class LexerCustomAction extends LexerAction {
     public readonly ruleIndex: number;
@@ -42,8 +42,8 @@ export class LexerCustomAction extends LexerAction {
     }
 
     /**
-     * <p>Custom actions are implemented by calling {@link Lexer//action} with the
-     * appropriate rule and action indexes.</p>
+     * Custom actions are implemented by calling {@link Lexer//action} with the
+     * appropriate rule and action indexes.
      */
     public override execute(lexer: Lexer): void {
         lexer.action(null, this.ruleIndex, this.actionIndex);

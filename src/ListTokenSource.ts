@@ -14,13 +14,13 @@ import type { TokenSource } from "./TokenSource.js";
  * Provides an implementation of {@link TokenSource} as a wrapper around a list
  * of {@link Token} objects.
  *
- * <p>If the final token in the list is an {@link Token#EOF} token, it will be used
+ * If the final token in the list is an {@link Token#EOF} token, it will be used
  * as the EOF token for every call to {@link #nextToken} after the end of the
- * list is reached. Otherwise, an EOF token will be created.</p>
+ * list is reached. Otherwise, an EOF token will be created.
  */
 export class ListTokenSource implements TokenSource {
     /**
-     * The name of the input source. If this value is {@code null}, a call to
+     * The name of the input source. If this value is `null`, a call to
      * {@link #getSourceName} should return the source name used to create the
      * the next token in {@link #tokens} (or the previous token if the end of
      * the input has been reached).
@@ -56,7 +56,7 @@ export class ListTokenSource implements TokenSource {
      *
      * @param tokens The collection of {@link Token} objects to provide as a
      * {@link TokenSource}.
-     * @throws NullPointerException if {@code tokens} is {@code null}
+     * @throws NullPointerException if `tokens` is `null`
      */
     public constructor(tokens: Token[]);
     /**
@@ -66,11 +66,11 @@ export class ListTokenSource implements TokenSource {
      * @param tokens The collection of {@link Token} objects to provide as a
      * {@link TokenSource}.
      * @param sourceName The name of the {@link TokenSource}. If this value is
-     * {@code null}, {@link #getSourceName} will attempt to infer the name from
+     * `null`, {@link #getSourceName} will attempt to infer the name from
      * the next {@link Token} (or the previous token if the end of the input has
      * been reached).
      *
-     * @throws NullPointerException if {@code tokens} is {@code null}
+     * @throws NullPointerException if `tokens` is `null`
      */
     public constructor(tokens: Token[], sourceName: string);
     public constructor(tokens: Token[], sourceName?: string) {

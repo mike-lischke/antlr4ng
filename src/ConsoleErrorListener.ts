@@ -12,14 +12,13 @@ import { ATNSimulator } from "./atn/ATNSimulator.js";
 /**
  * {@inheritDoc}
  *
- * <p>
  * This implementation prints messages to {@link System//err} containing the
- * values of {@code line}, {@code charPositionInLine}, and {@code msg} using
- * the following format.</p>
+ * values of `line`, `charPositionInLine`, and `msg` using
+ * the following format.
  *
- * <pre>
- * line <em>line</em>:<em>charPositionInLine</em> <em>msg</em>
- * </pre>
+ * ```
+ * line *line*:*charPositionInLine* *msg*
+ * ```
  *
  */
 export class ConsoleErrorListener extends BaseErrorListener {

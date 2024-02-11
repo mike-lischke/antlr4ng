@@ -17,10 +17,10 @@ import { ATNSimulator } from "./ATNSimulator.js";
 /**
  * A tree structure used to record the semantic context in which
  * an ATN configuration is valid.  It's either a single predicate,
- * a conjunction {@code p1&&p2}, or a sum of products {@code p1||p2}.
+ * a conjunction `p1&&p2`, or a sum of products `p1||p2`.
  *
- * <p>I have scoped the {@link AND}, {@link OR}, and {@link SemanticContext.Predicate} subclasses of
- * {@link SemanticContext} within the scope of this outer class.</p>
+ * I have scoped the {@link AND}, {@link OR}, and {@link SemanticContext.Predicate} subclasses of
+ * {@link SemanticContext} within the scope of this outer class.
  */
 export abstract class SemanticContext implements IComparable {
     public static andContext(a: SemanticContext | null, b: SemanticContext | null): SemanticContext | null {
@@ -81,16 +81,14 @@ export abstract class SemanticContext implements IComparable {
      * @param _parserCallStack The current parser context object.
      * @returns The simplified semantic context after precedence predicates are
      * evaluated, which will be one of the following values.
-     * <ul>
-     * <li>{@link NONE}: if the predicate simplifies to `true` after
-     * precedence predicates are evaluated.</li>
-     * <li>{@code null}: if the predicate simplifies to `false` after
-     * precedence predicates are evaluated.</li>
-     * <li>{@code this}: if the semantic context is not changed as a result of
-     * precedence predicate evaluation.</li>
-     * <li>A non-{@code null} {@link SemanticContext}: the new simplified
-     * semantic context after precedence predicates are evaluated.</li>
-     * </ul>
+     * - {@link NONE}: if the predicate simplifies to `true` after
+     * precedence predicates are evaluated.
+     * - `null`: if the predicate simplifies to `false` after
+     * precedence predicates are evaluated.
+     * - `this`: if the semantic context is not changed as a result of
+     * precedence predicate evaluation.
+     * - A non-`null` {@link SemanticContext}: the new simplified
+     * semantic context after precedence predicates are evaluated.
      */
     public evalPrecedence<T extends ATNSimulator>(_parser: Recognizer<T>,
         _parserCallStack: RuleContext | null): SemanticContext | null {
@@ -104,11 +102,11 @@ export abstract class SemanticContext implements IComparable {
      * opposed to the parser, which creates them naturally). In a practical
      * sense, this avoids a cast exception from RuleContext to myRuleContext.
      *
-     * <p>For context dependent predicates, we must pass in a local context so that
+     * For context dependent predicates, we must pass in a local context so that
      * references such as $arg evaluate properly as _localctx.arg. We only
      * capture context dependent predicates in the context in which we begin
      * prediction, so we passed in the outer context here in case of context
-     * dependent predicate evaluation.</p>
+     * dependent predicate evaluation.
      */
     public abstract evaluate<T extends ATNSimulator>(parser: Recognizer<T>, parserCallStack: RuleContext): boolean;
 
@@ -174,9 +172,9 @@ class AND extends SemanticContext {
     /**
      * {@inheritDoc}
      *
-     * <p>
+     *
      * The evaluation of predicates by this context is short-circuiting, but
-     * unordered.</p>
+     * unordered.
      */
     public evaluate<T extends ATNSimulator>(parser: Recognizer<T>,
         parserCallStack: RuleContext): boolean {
@@ -279,9 +277,9 @@ class OR extends SemanticContext {
     }
 
     /**
-     * <p>
+     *
      * The evaluation of predicates by this context is short-circuiting, but
-     * unordered.</p>
+     * unordered.
      */
     public evaluate<T extends ATNSimulator>(parser: Recognizer<T>,
         parserCallStack: RuleContext): boolean {
@@ -418,7 +416,7 @@ export namespace SemanticContext {
 
     /**
      * The default {@link SemanticContext}, which is semantically equivalent to
-     * a predicate of the form {@code {true}?}
+     * a predicate of the form `{true`?}
      */
     // eslint-disable-next-line @typescript-eslint/naming-convention
     export const NONE = new Predicate();

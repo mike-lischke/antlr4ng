@@ -12,9 +12,9 @@ import { Lexer } from "../Lexer.js";
 import { HashCode } from "../misc/HashCode.js";
 
 /**
- * Implements the {@code channel} lexer action by calling
+ * Implements the `channel` lexer action by calling
  * {@link Lexer//setChannel} with the assigned channel.
- * Constructs a new {@code channel} action with the specified channel value.
+ * Constructs a new `channel` action with the specified channel value.
  *
  * @param channel The channel value to pass to {@link Lexer//setChannel}
  */
@@ -27,8 +27,8 @@ export class LexerChannelAction extends LexerAction {
     }
 
     /**
-     * <p>This action is implemented by calling {@link Lexer//setChannel} with the
-     * value provided by {@link getChannel}.</p>
+     * This action is implemented by calling {@link Lexer//setChannel} with the
+     * value provided by {@link getChannel}.
      */
     public execute(lexer: Lexer): void {
         // eslint-disable-next-line no-underscore-dangle

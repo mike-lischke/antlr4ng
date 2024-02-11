@@ -20,31 +20,27 @@ import { ParserRuleContext } from "./ParserRuleContext.js";
  * {@link ParserRuleContext//exception} field is set for all parse tree nodes
  * that were not completed prior to encountering the error.
  *
- * <p>
- * This error strategy is useful in the following scenarios.</p>
+ * This error strategy is useful in the following scenarios.
  *
- * <ul>
- * <li><strong>Two-stage parsing:</strong> This error strategy allows the first
+ * - **Two-stage parsing:** This error strategy allows the first
  * stage of two-stage parsing to immediately terminate if an error is
  * encountered, and immediately fall back to the second stage. In addition to
  * avoiding wasted work by attempting to recover from errors here, the empty
  * implementation of {@link BailErrorStrategy//sync} improves the performance of
- * the first stage.</li>
- * <li><strong>Silent validation:</strong> When syntax errors are not being
+ * the first stage.
+ * - **Silent validation:** When syntax errors are not being
  * reported or logged, and the parse result is simply ignored if errors occur,
  * the {@link BailErrorStrategy} avoids wasting work on recovering from errors
- * when the result will be ignored either way.</li>
- * </ul>
+ * when the result will be ignored either way.
  *
- * <p>
- * {@code myParser.setErrorHandler(new BailErrorStrategy());}</p>
+ * `myParser.setErrorHandler(new BailErrorStrategy());`
  *
  * @see Parser#setErrorHandler(ANTLRErrorStrategy)
  */
 export class BailErrorStrategy extends DefaultErrorStrategy {
 
     /**
-     * Instead of recovering from exception {@code e}, re-throw it wrapped
+     * Instead of recovering from exception `e`, re-throw it wrapped
      * in a {@link ParseCancellationException} so it is not caught by the
      * rule function catches. Use {@link Exception//getCause()} to get the
      * original {@link RecognitionException}.

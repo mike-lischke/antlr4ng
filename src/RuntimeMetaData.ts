@@ -40,7 +40,7 @@ export class RuntimeMetaData {
      *
      * major.minor.patch.revision-suffix,
      *
-     * with the individual components defined as follows.</p>
+     * with the individual components defined as follows.
      *
      * - major is a required non-negative integer, and is equal to `4` for ANTLR 4.
      * - minor is a required non-negative integer.
@@ -50,7 +50,6 @@ export class RuntimeMetaData {
      *   When revision is omitted, the `.` (dot) appearing before it is also omitted.
      * - suffix is an optional string. When suffix is omitted, the `-` (hyphen-minus) appearing before it is also
      *   omitted.
-     * </ul>
      */
     public static readonly VERSION = "4.13.1";
 
@@ -75,29 +74,27 @@ export class RuntimeMetaData {
      * The version check is designed to detect the following two specific
      * scenarios.
      *
-     * <ul>
-     * <li>The ANTLR Tool version used for code generation does not match the
-     * currently executing runtime version.</li>
-     * <li>The ANTLR Runtime version referenced at the time a parser was
-     * compiled does not match the currently executing runtime version.</li>
-     * </ul>
+     * - The ANTLR Tool version used for code generation does not match the
+     * currently executing runtime version.
+     * - The ANTLR Runtime version referenced at the time a parser was
+     * compiled does not match the currently executing runtime version.
      *
-     * <p>
+     *
      * Starting with ANTLR 4.3, the code generator emits a call to this method
      * using two constants in each generated lexer and parser: a hard-coded
      * constant indicating the version of the tool used to generate the parser
      * and a reference to the compile-time constant {@link #VERSION}. At
      * runtime, this method is called during the initialization of the generated
      * parser to detect mismatched versions, and notify the registered listeners
-     * prior to creating instances of the parser.</p>
+     * prior to creating instances of the parser.
      *
-     * <p>
+     *
      * This method does not perform any detection or filtering of semantic
      * changes between tool and runtime versions. It simply checks for a
      * version match and emits an error to stderr if a difference
-     * is detected.</p>
+     * is detected.
      *
-     * <p>
+     *
      * Note that some breaking changes between releases could result in other
      * types of runtime exceptions, such as a {@link LinkageError}, prior to
      * calling this method. In these cases, the underlying version mismatch will
@@ -106,15 +103,15 @@ export class RuntimeMetaData {
      * result in binary compatibility problems which would be detected by the
      * class loader. As with semantic changes, changes that break binary
      * compatibility between releases are mentioned in the release notes
-     * accompanying the affected release.</p>
+     * accompanying the affected release.
      *
-     * <p>
-     * <strong>Additional note for target developers:</strong> The version check
+     *
+     * **Additional note for target developers:** The version check
      * implemented by this class is designed to address specific compatibility
      * concerns that may arise during the execution of Java applications. Other
      * targets should consider the implementation of this method in the context
      * of that target's known execution environment, which may or may not
-     * resemble the design provided for the Java target.</p>
+     * resemble the design provided for the Java target.
      *
      * @param generatingToolVersion The version of the tool used to generate a parser.
      * This value may be null when called from user code that was not generated
@@ -149,11 +146,11 @@ export class RuntimeMetaData {
 
     /**
      * Gets the major and minor version numbers from a version string. For
-     * details about the syntax of the input {@code version}.
+     * details about the syntax of the input `version`.
      * E.g., from x.y.z return x.y.
      *
      * @param version The complete version string.
-     * @returns A string of the form <em>major</em>.<em>minor</em> containing
+     * @returns A string of the form *major*.*minor* containing
      * only the major and minor components of the version string.
      */
     public static getMajorMinorVersion(version: string): string {

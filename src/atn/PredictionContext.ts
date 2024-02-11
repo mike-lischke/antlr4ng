@@ -14,9 +14,9 @@ import { ATNSimulator } from "./ATNSimulator.js";
 
 export abstract class PredictionContext {
     /**
-     * Represents {@code $} in an array in full context mode, when {@code $}
-     * doesn't mean wildcard: {@code $ + x = [$,x]}. Here,
-     * {@code $} = {@link EMPTY_RETURN_STATE}.
+     * Represents `$` in an array in full context mode, when `$`
+     * doesn't mean wildcard: `$ + x = [$,x]`. Here,
+     * `$` = {@link EMPTY_RETURN_STATE}.
      */
     public static readonly EMPTY_RETURN_STATE = 0x7FFFFFFF;
 

@@ -10,12 +10,10 @@ import { Chunk } from "./Chunk.js";
  * Represents a placeholder tag in a tree pattern. A tag can have any of the
  * following forms.
  *
- * <ul>
- * <li>{@code expr}: An unlabeled placeholder for a parser rule {@code expr}.</li>
- * <li>{@code ID}: An unlabeled placeholder for a token of type {@code ID}.</li>
- * <li>{@code e:expr}: A labeled placeholder for a parser rule {@code expr}.</li>
- * <li>{@code id:ID}: A labeled placeholder for a token of type {@code ID}.</li>
- * </ul>
+ * - `expr`: An unlabeled placeholder for a parser rule `expr`.
+ * - `ID`: An unlabeled placeholder for a token of type `ID`.
+ * - `e:expr`: A labeled placeholder for a parser rule `expr`.
+ * - `id:ID`: A labeled placeholder for a token of type `ID`.
  *
  * This class does not perform any validation on the tag or label names aside
  * from ensuring that the tag is a non-null, non-empty string.
@@ -32,7 +30,7 @@ export class TagChunk extends Chunk {
      * @param tag The tag, which should be the name of a parser rule or token
      * type.
      *
-     * @throws IllegalArgumentException if {@code tag} is {@code null} or
+     * @throws IllegalArgumentException if `tag` is `null` or
      * empty.
      */
     public constructor(tag: string | null);
@@ -40,12 +38,12 @@ export class TagChunk extends Chunk {
      * Construct a new instance of {@link TagChunk} using the specified label
      * and tag.
      *
-     * @param label The label for the tag. If this is {@code null}, the
+     * @param label The label for the tag. If this is `null`, the
      * {@link TagChunk} represents an unlabeled tag.
      * @param tag The tag, which should be the name of a parser rule or token
      * type.
      *
-     * @throws IllegalArgumentException if {@code tag} is {@code null} or
+     * @throws IllegalArgumentException if `tag` is `null` or
      * empty.
      */
     public constructor(label: string | null, tag: string);
@@ -73,7 +71,7 @@ export class TagChunk extends Chunk {
     // eslint-disable-next-line jsdoc/require-returns
     /**
      * This method returns a text representation of the tag chunk. Labeled tags
-     * are returned in the form {@code label:tag}, and unlabeled tags are
+     * are returned in the form `label:tag`, and unlabeled tags are
      * returned as just the tag name.
      */
     public override toString(): string {

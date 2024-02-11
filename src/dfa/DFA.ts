@@ -73,7 +73,7 @@ export class DFA {
      *
      * @param precedence The current precedence.
       @returns The start state corresponding to the specified precedence, or
-     * {@code null} if no start state exists for the specified precedence.
+     * `null` if no start state exists for the specified precedence.
      *
      * @throws IllegalStateException if this is not a precedence DFA.
      * @see #isPrecedenceDfa()
@@ -128,7 +128,7 @@ export class DFA {
      * @param precedenceDfa `true` if this is a precedence DFA; otherwise,
      * `false`
      *
-     * @throws UnsupportedOperationException if {@code precedenceDfa} does not
+     * @throws UnsupportedOperationException if `precedenceDfa` does not
      * match the value of {@link #isPrecedenceDfa} for the current DFA.
      *
      * @deprecated This method no longer performs any action.

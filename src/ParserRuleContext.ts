@@ -48,7 +48,7 @@ export class ParserRuleContext extends RuleContext {
 
     /**
      * The exception that forced this rule to return. If the rule successfully
-     * completed, this is {@code null}.
+     * completed, this is `null`.
      */
     // TODO: remove this field (needs a template change)
     public exception: RecognitionException | null = null;

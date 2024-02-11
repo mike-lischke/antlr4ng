@@ -31,7 +31,7 @@ export interface ParseTree {
      */
     getPayload(): unknown;
 
-    /** If there are children, get the {@code i}th value indexed from 0. */
+    /** If there are children, get the `i`th value indexed from 0. */
     getChild(i: number): ParseTree | null;
 
     /** The {@link ParseTreeVisitor} needs a double dispatch method. */
@@ -52,7 +52,7 @@ export interface ParseTree {
 
     /**
      * Print out a whole tree, not just a node, in LISP format
-     *  {@code (root child1 .. childN)}. Print just a node if this is a leaf.
+     *  `(root child1 .. childN)`. Print just a node if this is a leaf.
      */
     toStringTree(ruleNames: string[], recog: Parser): string;
 
@@ -62,15 +62,15 @@ export interface ParseTree {
      * subtree. If this node is a leaf, then the interval represents a single
      * token and has interval i..i for token index i.
      *
-     * <p>An interval of i..i-1 indicates an empty interval at position
-     * i in the input stream, where 0 &lt;= i &lt;= the size of the input
+     * An interval of i..i-1 indicates an empty interval at position
+     * i in the input stream, where 0 <= i <= the size of the input
      * token stream.  Currently, the code base can only have i=0..n-1 but
-     * in concept one could have an empty interval after EOF. </p>
+     * in concept one could have an empty interval after EOF.
      *
-     * <p>If source interval is unknown, this returns {@link Interval#INVALID}.</p>
+     * If source interval is unknown, this returns {@link Interval#INVALID}.
      *
-     * <p>As a weird special case, the source interval for rules matched after
-     * EOF is unspecified.</p>
+     * As a weird special case, the source interval for rules matched after
+     * EOF is unspecified.
      */
     getSourceInterval(): Interval;
 }

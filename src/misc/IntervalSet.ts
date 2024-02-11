@@ -282,8 +282,8 @@ export class IntervalSet {
 
     /**
      * Compute the set difference between two interval sets. The specific
-     * operation is {@code left - right}. If either of the input sets is
-     * {@code null}, it is treated as though it was an empty set.
+     * operation is `left - right`. If either of the input sets is
+     * `null`, it is treated as though it was an empty set.
      */
     public subtract(other: IntervalSet): IntervalSet {
         if (this.isNil) {

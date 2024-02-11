@@ -47,7 +47,6 @@ import { graphemesLexer } from "../../generated/graphemesLexer.js";
  *        lex_new_grapheme_utf8 average time    70us over  400 runs of    85 symbols from emoji.txt
  *        lex_new_grapheme_utf8 average time    82us over  400 runs of    85 symbols from emoji.txt DFA cleared
  *
- *
  *  The "DFA cleared" indicates that the lexer was returned to initial conditions
  *  before the tokenizing of each file.	 As the ALL(*) lexer encounters new input,
  *  it records how it tokenized the chars. The next time it sees that input,

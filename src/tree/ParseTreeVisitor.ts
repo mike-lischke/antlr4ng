@@ -11,8 +11,8 @@ import { RuleContext } from "../RuleContext.js";
 
 /**
  * This interface defines the basic notion of a parse tree visitor. Generated
- * visitors implement this interface and the {@code XVisitor} interface for
- * grammar {@code X}.
+ * visitors implement this interface and the `XVisitor` interface for
+ * grammar `X`.
  *
  * @param T The return type of the visit operation. Use {@link Void} for
  * operations with no return type.

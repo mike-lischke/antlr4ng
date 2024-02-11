@@ -10,7 +10,7 @@ import type { ParseTreeMatch } from "./ParseTreeMatch.js";
 import type { ParseTreePatternMatcher } from "./ParseTreePatternMatcher.js";
 
 /**
- * A pattern like {@code <ID> = <expr>;} converted to a {@link ParseTree} by
+ * A pattern like `<ID> = <expr>;` converted to a {@link ParseTree} by
  * {@link ParseTreePatternMatcher#compile(String, int)}.
  */
 export class ParseTreePattern {
@@ -72,7 +72,7 @@ export class ParseTreePattern {
      * Determine whether or not a parse tree matches this tree pattern.
      *
      * @param tree The parse tree to match against this tree pattern.
-     * @returns `true` if {@code tree} is a match for the current tree
+     * @returns `true` if `tree` is a match for the current tree
      * pattern; otherwise, `false`.
      */
     public matches(tree: ParseTree): boolean {

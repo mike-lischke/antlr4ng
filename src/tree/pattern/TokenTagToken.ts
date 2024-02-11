@@ -8,7 +8,7 @@ import { CommonToken } from "../../CommonToken.js";
 
 /**
  * A {@link Token} object representing a token of a particular type; e.g.,
- * {@code <ID>}. These tokens are created for {@link TagChunk} chunks where the
+ * `<ID>`. These tokens are created for {@link TagChunk} chunks where the
  * tag corresponds to a lexer rule or token type.
  */
 export class TokenTagToken extends CommonToken {
@@ -33,7 +33,7 @@ export class TokenTagToken extends CommonToken {
      *
      * @param tokenName The token name.
      * @param type The token type.
-     * @param label The label associated with the token tag, or {@code null} if
+     * @param label The label associated with the token tag, or `null` if
      * the token tag is unlabeled.
      */
     public constructor(tokenName: string, type: number, label: string | null);
@@ -45,7 +45,7 @@ export class TokenTagToken extends CommonToken {
 
     /**
      *
-     * @returns the token tag formatted with {@code <} and {@code >} delimiters.
+     * @returns the token tag formatted with `<` and `>` delimiters.
      */
     public override get text(): string {
         if (this.label !== null) {
@@ -56,7 +56,7 @@ export class TokenTagToken extends CommonToken {
     }
 
     /**
-     * @returns a string of the form {@code tokenName:type}.
+     * @returns a string of the form `tokenName:type`.
      */
     public override toString(): string {
         return this.tokenName + ":" + this.type;

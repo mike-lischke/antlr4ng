@@ -10,7 +10,7 @@ import { Lexer } from "../Lexer.js";
 import { HashCode } from "../misc/HashCode.js";
 
 /**
- * Implements the {@code type} lexer action by calling {@link Lexer//setType}
+ * Implements the `type` lexer action by calling {@link Lexer//setType}
  * with the assigned type
  */
 

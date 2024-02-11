@@ -19,12 +19,11 @@ import { RuleContext } from "./RuleContext.js";
  * {@link TokenSource} on-demand, and places the tokens in a buffer to provide
  * access to any previous token by index.
  *
- * <p>
  * This token stream ignores the value of {@link Token//getChannel}. If your
  * parser requires the token stream filter tokens to only those on a particular
  * channel, such as {@link Token//DEFAULT_CHANNEL} or
  * {@link Token//HIDDEN_CHANNEL}, use a filtering token stream such a
- * {@link CommonTokenStream}.</p>
+ * {@link CommonTokenStream}.
  */
 export class BufferedTokenStream implements TokenStream {
     /**
@@ -44,11 +43,11 @@ export class BufferedTokenStream implements TokenStream {
      * {@link consume}). {@link tokens}`[p]` should be
      * {@link LT LT(1)}.
      *
-     * <p>This field is set to -1 when the stream is first constructed or when
+     * This field is set to -1 when the stream is first constructed or when
      * {@link setTokenSource} is called, indicating that the first token has
      * not yet been fetched from the token source. For additional information,
      * see the documentation of {@link IntStream} for a description of
-     * Initializing Methods.</p>
+     * Initializing Methods.
      */
     protected p = -1;
 
@@ -57,13 +56,11 @@ export class BufferedTokenStream implements TokenStream {
      * {@link tokenSource} and added to {@link tokens}. This field improves
      * performance for the following cases:
      *
-     * <ul>
-     * <li>{@link consume}: The lookahead check in {@link consume} to prevent
+     * - {@link consume}: The lookahead check in {@link consume} to prevent
      * consuming the EOF symbol is optimized by checking the values of
-     * {@link fetchedEOF} and {@link p} instead of calling {@link LA}.</li>
-     * <li>{@link fetch}: The check to prevent adding multiple EOF symbols into
-     * {@link tokens} is trivial with this field.</li>
-     * <ul>
+     * {@link fetchedEOF} and {@link p} instead of calling {@link LA}.
+     * - {@link fetch}: The check to prevent adding multiple EOF symbols into
+     * {@link tokens} is trivial with this field.
      */
     protected fetchedEOF = false;
 
@@ -126,9 +123,9 @@ export class BufferedTokenStream implements TokenStream {
     }
 
     /**
-     * Make sure index {@code i} in tokens has a token.
+     * Make sure index `i` in tokens has a token.
      *
-     * @returns {boolean} `true` if a token is located at index {@code i}, otherwise
+     * @returns {boolean} `true` if a token is located at index `i`, otherwise
      * `false`.
      * @see //get(int i)
      */
@@ -144,7 +141,7 @@ export class BufferedTokenStream implements TokenStream {
     }
 
     /**
-     * Add {@code n} elements to buffer.
+     * Add `n` elements to buffer.
      *
      * @returns {number} The actual number of elements added to the buffer.
      */
@@ -244,13 +241,13 @@ export class BufferedTokenStream implements TokenStream {
     /**
      * Allowed derived classes to modify the behavior of operations which change
      * the current stream position by adjusting the target token index of a seek
-     * operation. The default implementation simply returns {@code i}. If an
+     * operation. The default implementation simply returns `i`. If an
      * exception is thrown in this method, the current stream index should not be
      * changed.
      *
-     * <p>For example, {@link CommonTokenStream} overrides this method to ensure
+     * For example, {@link CommonTokenStream} overrides this method to ensure
      * that
-     * the seek target is always an on-channel token.</p>
+     * the seek target is always an on-channel token.
      *
      * @param {number} i The target token index.
      * @returns {number} The adjusted target token index.

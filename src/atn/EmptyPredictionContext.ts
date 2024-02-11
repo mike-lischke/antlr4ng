@@ -9,8 +9,8 @@ import { SingletonPredictionContext } from "./SingletonPredictionContext.js";
 
 export class EmptyPredictionContext extends SingletonPredictionContext {
     /**
-     * Represents {@code $} in local context prediction, which means wildcard.
-     * {@code *+x = *}.
+     * Represents `$` in local context prediction, which means wildcard.
+     * `*+x = *`.
      */
     // eslint-disable-next-line @typescript-eslint/naming-convention
     public static readonly Instance = new EmptyPredictionContext();

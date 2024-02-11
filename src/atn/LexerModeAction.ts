@@ -12,7 +12,7 @@ import { Lexer } from "../Lexer.js";
 import { HashCode } from "../misc/HashCode.js";
 
 /**
- * Implements the {@code mode} lexer action by calling {@link Lexer//mode} with
+ * Implements the `mode` lexer action by calling {@link Lexer//mode} with
  * the assigned mode
  */
 export class LexerModeAction extends LexerAction {
@@ -24,8 +24,8 @@ export class LexerModeAction extends LexerAction {
     }
 
     /**
-     * <p>This action is implemented by calling {@link Lexer//mode} with the
-     * value provided by {@link getMode}.</p>
+     * This action is implemented by calling {@link Lexer//mode} with the
+     * value provided by {@link getMode}.
      */
     public override execute(lexer: Lexer): void {
         lexer.mode(this.mode);

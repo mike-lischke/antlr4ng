@@ -29,13 +29,13 @@ import { arrayToString } from "../utils/helpers.js";
  *  I have to add a stack to simulate the proper lookahead sequences for
  *  the underlying LL grammar from which the ATN was derived.
  *
- *  <p>I use a set of ATNConfig objects not simple states.  An ATNConfig
+ *  I use a set of ATNConfig objects not simple states.  An ATNConfig
  *  is both a state (ala normal conversion) and a RuleContext describing
- *  the chain of rules (if any) followed to arrive at that state.</p>
+ *  the chain of rules (if any) followed to arrive at that state.
  *
- *  <p>A DFA state may have multiple references to a particular state,
+ *  A DFA state may have multiple references to a particular state,
  *  but with different ATN contexts (with same or different alts)
- *  meaning that state was reached via a different set of rule invocations.</p>
+ *  meaning that state was reached via a different set of rule invocations.
  */
 export class DFAState {
     public stateNumber = -1;
@@ -43,8 +43,8 @@ export class DFAState {
     public configs = new ATNConfigSet();
 
     /**
-     * {@code edges[symbol]} points to target of symbol. Shift up by 1 so (-1)
-     *  {@link Token#EOF} maps to {@code edges[0]}.
+     * `edges[symbol]` points to target of symbol. Shift up by 1 so (-1)
+     *  {@link Token#EOF} maps to `edges[0]`.
      */
 
     public edges: Array<DFAState | null> | null = null;
@@ -53,7 +53,7 @@ export class DFAState {
 
     /**
      * if accept state, what ttype do we match or alt do we predict?
-     *  This is set to {@link ATN#INVALID_ALT_NUMBER} when {@link #predicates}{@code !=null} or
+     *  This is set to {@link ATN#INVALID_ALT_NUMBER} when {@link #predicates}`!=null` or
      *  {@link #requiresFullContext}.
      */
     public prediction = -1;
@@ -75,11 +75,11 @@ export class DFAState {
      *  on-the-fly. If this is not null, then {@link #prediction} is
      *  {@link ATN#INVALID_ALT_NUMBER}.
      *
-     *  <p>We only use these for non-{@link #requiresFullContext} but conflicting states. That
+     *  We only use these for non-{@link #requiresFullContext} but conflicting states. That
      *  means we know from the context (it's $ or we don't dip into outer
-     *  context) that it's an ambiguity not a conflict.</p>
+     *  context) that it's an ambiguity not a conflict.
      *
-     *  <p>This list is computed by {@link ParserATNSimulator#predicateDFAState}.</p>
+     *  This list is computed by {@link ParserATNSimulator#predicateDFAState}.
      */
 
     public predicates: DFAState.PredPrediction[] | null = null;
@@ -107,14 +107,14 @@ export class DFAState {
      * Two {@link DFAState} instances are equal if their ATN configuration sets
      * are the same. This method is used to see if a state already exists.
      *
-     * <p>Because the number of alternatives and number of ATN configurations are
+     * Because the number of alternatives and number of ATN configurations are
      * finite, there is a finite number of DFA states that can be processed.
-     * This is necessary to show that the algorithm terminates.</p>
+     * This is necessary to show that the algorithm terminates.
      *
-     * <p>Cannot test the DFA state numbers here because in
+     * Cannot test the DFA state numbers here because in
      * {@link ParserATNSimulator#addDFAState} we need to know if any other state
      * exists that has this exact set of ATN configurations. The
-     * {@link #stateNumber} is irrelevant.</p>
+     * {@link #stateNumber} is irrelevant.
      *
      * @param o tbd
      *

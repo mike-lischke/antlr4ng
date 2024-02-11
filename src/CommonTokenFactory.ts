@@ -17,9 +17,9 @@ export class CommonTokenFactory implements TokenFactory<CommonToken> {
     /**
      * The default {@link CommonTokenFactory} instance.
      *
-     * <p>
+     *
      * This token factory does not explicitly copy token text when constructing
-     * tokens.</p>
+     * tokens.
      */
     // eslint-disable-next-line @typescript-eslint/naming-convention
     public static readonly DEFAULT = new CommonTokenFactory();
@@ -35,9 +35,9 @@ export class CommonTokenFactory implements TokenFactory<CommonToken> {
      * allows {@link Token#getText} to be called at any time regardless of the
      * input stream implementation.
      *
-     * <p>
+     *
      * The default value is `false` to avoid the performance and memory
-     * overhead of copying text for every token unless explicitly requested.</p>
+     * overhead of copying text for every token unless explicitly requested.
      */
     protected readonly copyText: boolean = false;
 
@@ -53,9 +53,9 @@ export class CommonTokenFactory implements TokenFactory<CommonToken> {
          * allows {@link Token//getText} to be called at any time regardless of the
          * input stream implementation.
          *
-         * <p>
+         *
          * The default value is `false` to avoid the performance and memory
-         * overhead of copying text for every token unless explicitly requested.</p>
+         * overhead of copying text for every token unless explicitly requested.
          */
         this.copyText = copyText ?? false;
     }

@@ -11,10 +11,10 @@ import { LexerAction } from "./LexerAction.js";
 import { Lexer } from "../Lexer.js";
 
 /**
- * Implements the {@code more} lexer action by calling {@link Lexer//more}.
+ * Implements the `more` lexer action by calling {@link Lexer//more}.
  *
- * <p>The {@code more} command does not have any parameters, so this action is
- * implemented as a singleton instance exposed by {@link INSTANCE}.</p>
+ * The `more` command does not have any parameters, so this action is
+ * implemented as a singleton instance exposed by {@link INSTANCE}.
  */
 export class LexerMoreAction extends LexerAction {
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -25,7 +25,7 @@ export class LexerMoreAction extends LexerAction {
     }
 
     /**
-     * <p>This action is implemented by calling {@link Lexer//popMode}.</p>
+     * This action is implemented by calling {@link Lexer//popMode}.
      */
     public override execute(lexer: Lexer): void {
         lexer.more();
