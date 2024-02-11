@@ -25,6 +25,9 @@ import { RuleContext } from "./RuleContext.js";
 import { TraceListener } from "./TraceListener.js";
 import { ProfilingATNSimulator } from "./atn/ProfilingATNSimulator.js";
 import type { IntStream } from "./IntStream.js";
+import type { ParseTreePattern } from "./tree/pattern/ParseTreePattern.js";
+import { Lexer } from "./Lexer.js";
+import { ParseTreePatternMatcher } from "./tree/pattern/ParseTreePatternMatcher.js";
 
 export interface IDebugPrinter {
     println(s: string): void;
@@ -302,6 +305,36 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     // Tell our token source and error strategy about a new way to create tokens.
     public setTokenFactory(factory: TokenFactory<Token>): void {
         this.inputStream!.tokenSource.tokenFactory = factory;
+    }
+
+    /**
+     * The preferred method of getting a tree pattern. For example, here's a
+     * sample use:
+     *
+     * ```
+     * const t = parser.expr();
+     * const p = parser.compileParseTreePattern("<ID>+0", MyParser.RULE_expr);
+     * const m = p.match(t);
+     * const id = m.get("ID");
+     * ```
+     */
+    public compileParseTreePattern(pattern: string, patternRuleIndex: number, lexer?: Lexer): ParseTreePattern {
+        if (!lexer) {
+            if (this.tokenStream !== null) {
+                const tokenSource = this.tokenStream.tokenSource;
+                if (tokenSource instanceof Lexer) {
+                    lexer = tokenSource;
+                }
+            }
+        }
+
+        if (!lexer) {
+            throw new Error("Parser can't discover a lexer to use");
+        }
+
+        const m = new ParseTreePatternMatcher(lexer, this);
+
+        return m.compile(pattern, patternRuleIndex);
     }
 
     /**

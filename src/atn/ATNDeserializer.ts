@@ -4,8 +4,6 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-/* eslint-disable @typescript-eslint/naming-convention */
-
 import { Token } from "../Token.js";
 import { ATN } from "./ATN.js";
 import { ATNType } from "./ATNType.js";
@@ -53,13 +51,6 @@ import { TransitionType } from "./TransitionType.js";
 import { ATNState } from "./ATNState.js";
 import { LexerAction } from "./LexerAction.js";
 import { Transition } from "./Transition.js";
-
-const initArray = <T>(length: number, value: T) => {
-    const tmp = new Array<T>(length - 1);
-    tmp[length - 1] = value;
-
-    return tmp.map(() => { return value; });
-};
 
 export class ATNDeserializer {
     public static readonly SERIALIZED_VERSION = 4;
@@ -183,9 +174,12 @@ export class ATNDeserializer {
         let i;
         const ruleCount = this.readInt();
         if (atn.grammarType === ATNType.LEXER) {
-            atn.ruleToTokenType = initArray(ruleCount, 0);
+            atn.ruleToTokenType = new Array(ruleCount);
+            atn.ruleToTokenType.fill(0);
         }
-        atn.ruleToStartState = initArray<RuleStartState | null>(ruleCount, null);
+
+        atn.ruleToStartState = new Array(ruleCount);
+        atn.ruleToStartState.fill(null);
         for (i = 0; i < ruleCount; i++) {
             const s = this.readInt();
             atn.ruleToStartState[i] = atn.states[s] as RuleStartState;
@@ -194,7 +188,9 @@ export class ATNDeserializer {
                 atn.ruleToTokenType[i] = tokenType;
             }
         }
-        atn.ruleToStopState = initArray<RuleStopState | null>(ruleCount, null);
+
+        atn.ruleToStopState = new Array(ruleCount);
+        atn.ruleToStopState.fill(null);
         for (i = 0; i < atn.states.length; i++) {
             const state = atn.states[i];
             if (!(state instanceof RuleStopState)) {
