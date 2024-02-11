@@ -4,8 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { BitSet, TokenStream } from "../index.js";
-import { ATNConfigSet } from "./ATNConfigSet.js";
+import { BitSet } from "../index.js";
 import { DecisionEventInfo } from "./DecisionEventInfo.js";
 
 /**
@@ -36,37 +35,7 @@ import { DecisionEventInfo } from "./DecisionEventInfo.js";
  * @see ANTLRErrorListener#reportAmbiguity
  */
 
-export class AmbiguityInfo extends DecisionEventInfo {
+export interface AmbiguityInfo extends DecisionEventInfo {
     /** The set of alternative numbers for this decision event that lead to a valid parse. */
-    public ambigAlts: BitSet | null;
-
-    /**
-     * Constructs a new instance of the {@link AmbiguityInfo} class with the
-     * specified detailed ambiguity information.
-     *
-     * @param decision The decision number
-     * @param configs The final configuration set identifying the ambiguous
-     * alternatives for the current input
-     * @param ambigAlts The set of alternatives in the decision that lead to a valid parse.
-     *                  The predicted alt is the min(ambigAlts)
-     * @param input The input token stream
-     * @param startIndex The start index for the current prediction
-     * @param stopIndex The index at which the ambiguity was identified during
-     * prediction
-     * @param fullCtx `true` if the ambiguity was identified during LL
-     * prediction; otherwise, `false` if the ambiguity was identified
-     * during SLL prediction
-     */
-    public constructor(
-        decision: number,
-        configs: ATNConfigSet,
-        ambigAlts: BitSet | null,
-        input: TokenStream,
-        startIndex: number,
-        stopIndex: number,
-        fullCtx: boolean,
-    ) {
-        super(decision, configs, input, startIndex, stopIndex, fullCtx);
-        this.ambigAlts = ambigAlts;
-    }
+    ambigAlts: BitSet | null;
 }

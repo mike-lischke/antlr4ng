@@ -71,8 +71,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      *
      * @see #addParseListener
      */
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    protected _parseListeners: ParseTreeListener[] | null = null;
+    protected parseListeners: ParseTreeListener[] | null = null;
 
     /**
      * The number of syntax errors reported during parsing. This value is
@@ -102,7 +101,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      */
     #bypassAltsAtnCache: ATN | null = null;
 
-    #inputStream: TokenStream | null = null;
+    #inputStream!: TokenStream;
 
     /**
      * this is all the parsing support code essentially; most of it is error
@@ -116,9 +115,9 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         this.tokenStream = input;
     }
 
-    // reset the parser's state
-    public reset(): void {
-        if (this.inputStream !== null) {
+    /** reset the parser's state */
+    public reset(rewindInputStream = true): void {
+        if (rewindInputStream) {
             this.inputStream.seek(0);
         }
         this.errorHandler.reset(this);
@@ -204,7 +203,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     }
 
     public getParseListeners(): ParseTreeListener[] {
-        return this._parseListeners ?? [];
+        return this.parseListeners ?? [];
     }
 
     /**
@@ -240,10 +239,10 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         if (listener === null) {
             throw new Error("listener");
         }
-        if (this._parseListeners === null) {
-            this._parseListeners = [];
+        if (this.parseListeners === null) {
+            this.parseListeners = [];
         }
-        this._parseListeners.push(listener);
+        this.parseListeners.push(listener);
     }
 
     /**
@@ -255,27 +254,27 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * @param listener the listener to remove
      */
     public removeParseListener(listener: ParseTreeListener | null): void {
-        if (this._parseListeners !== null && listener !== null) {
-            const idx = this._parseListeners.indexOf(listener);
+        if (this.parseListeners !== null && listener !== null) {
+            const idx = this.parseListeners.indexOf(listener);
             if (idx >= 0) {
-                this._parseListeners.splice(idx, 1);
+                this.parseListeners.splice(idx, 1);
             }
-            if (this._parseListeners.length === 0) {
-                this._parseListeners = null;
+            if (this.parseListeners.length === 0) {
+                this.parseListeners = null;
             }
         }
     }
 
     // Remove all parse listeners.
     public removeParseListeners(): void {
-        this._parseListeners = null;
+        this.parseListeners = null;
     }
 
     // Notify any parse listeners of an enter rule event.
     public triggerEnterRuleEvent(): void {
-        if (this._parseListeners !== null) {
+        if (this.parseListeners !== null) {
             const ctx = this.context!;
-            this._parseListeners.forEach((listener) => {
+            this.parseListeners.forEach((listener) => {
                 listener.enterEveryRule(ctx);
                 ctx.enterRule(listener);
             });
@@ -288,10 +287,10 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * @see //addParseListener
      */
     public triggerExitRuleEvent(): void {
-        if (this._parseListeners !== null) {
+        if (this.parseListeners !== null) {
             // reverse order walk of listeners
             const ctx = this.context!;
-            this._parseListeners.slice(0).reverse().forEach((listener) => {
+            this.parseListeners.slice(0).reverse().forEach((listener) => {
                 ctx.exitRule(listener);
                 listener.exitEveryRule(ctx);
             });
@@ -299,12 +298,12 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     }
 
     public getTokenFactory(): TokenFactory<Token> {
-        return this.inputStream!.tokenSource.tokenFactory;
+        return this.inputStream.tokenSource.tokenFactory;
     }
 
     // Tell our token source and error strategy about a new way to create tokens.
     public setTokenFactory(factory: TokenFactory<Token>): void {
-        this.inputStream!.tokenSource.tokenFactory = factory;
+        this.inputStream.tokenSource.tokenFactory = factory;
     }
 
     /**
@@ -368,22 +367,21 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         return this.syntaxErrors;
     }
 
-    public get inputStream(): TokenStream | null {
+    public get inputStream(): TokenStream {
         return this.#inputStream;
     }
 
-    public setInputStream(input: IntStream | null): void {
-        this.#inputStream = input as TokenStream;
+    public set inputStream(input: IntStream) {
+        this.tokenStream = input as TokenStream;
     }
 
-    public get tokenStream(): TokenStream | null {
+    public get tokenStream(): TokenStream {
         return this.#inputStream;
     }
 
     // Set the token stream and reset the parser.
     public set tokenStream(input: TokenStream) {
-        this.#inputStream = null;
-        this.reset();
+        this.reset(false);
         this.#inputStream = input;
     }
 
@@ -392,7 +390,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * into the label for the associated token ref; e.g., x=ID.
      */
     public getCurrentToken(): Token {
-        return this.inputStream!.LT(1)!;
+        return this.inputStream.LT(1)!;
     }
 
     public notifyErrorListeners(msg: string, offendingToken: Token | null, err: RecognitionException | null): void {
@@ -432,10 +430,10 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     public consume(): Token {
         const o = this.getCurrentToken();
         if (o.type !== Token.EOF) {
-            this.tokenStream!.consume();
+            this.tokenStream.consume();
         }
 
-        const hasListener = this._parseListeners !== null && this._parseListeners.length > 0;
+        const hasListener = this.parseListeners !== null && this.parseListeners.length > 0;
         if (this.buildParseTrees || hasListener) {
             let node: ErrorNode | TerminalNode;
             if (this.errorHandler.inErrorRecoveryMode(this)) {
@@ -445,7 +443,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
             }
             //node.invokingState = this.state;
             if (hasListener) {
-                this._parseListeners!.forEach((listener) => {
+                this.parseListeners!.forEach((listener) => {
                     if (node instanceof ErrorNode) {
                         listener.visitErrorNode(node);
                     } else {
@@ -472,7 +470,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     public enterRule(localctx: ParserRuleContext, state: number, _ruleIndex: number): void {
         this.state = state;
         this.context = localctx;
-        this.context.start = this.inputStream!.LT(1);
+        this.context.start = this.inputStream.LT(1);
         if (this.buildParseTrees) {
             this.addContextToParseTree();
         }
@@ -480,7 +478,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     }
 
     public exitRule(): void {
-        this.context!.stop = this.inputStream!.LT(-1);
+        this.context!.stop = this.inputStream.LT(-1);
         // trigger event on _ctx, before it reverts to parent
         this.triggerExitRuleEvent();
         this.state = this.context!.invokingState;
@@ -518,7 +516,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         this.state = state;
         this.precedenceStack.push(precedence);
         this.context = localctx;
-        this.context.start = this.inputStream!.LT(1);
+        this.context.start = this.inputStream.LT(1);
         this.triggerEnterRuleEvent(); // simulates rule entry for left-recursive rules
     }
 
@@ -527,7 +525,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         const previous = this.context!;
         previous.parent = localctx;
         previous.invokingState = state;
-        previous.stop = this.inputStream!.LT(-1);
+        previous.stop = this.inputStream.LT(-1);
 
         this.context = localctx;
         this.context.start = previous.start;
@@ -539,7 +537,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
 
     public unrollRecursionContexts(parent: ParserRuleContext | null): void {
         this.precedenceStack.pop();
-        this.context!.stop = this.inputStream!.LT(-1);
+        this.context!.stop = this.inputStream.LT(-1);
         const retCtx = this.context!; // save current ctx (return value)
         // unroll so _ctx is as it was before call to recursive method
         const parseListeners = this.getParseListeners();
@@ -707,7 +705,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     }
 
     public getSourceName(): string {
-        return this.inputStream!.getSourceName();
+        return this.inputStream.getSourceName();
     }
 
     public setProfile(profile: boolean): void {

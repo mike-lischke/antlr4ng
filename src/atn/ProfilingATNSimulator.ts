@@ -12,11 +12,7 @@ import { DFAState } from "../dfa/DFAState.js";
 import { Parser, DFA, BitSet } from "../index.js";
 import { ATNConfigSet } from "./ATNConfigSet.js";
 import { ATNSimulator } from "./ATNSimulator.js";
-import { AmbiguityInfo } from "./AmbiguityInfo.js";
-import { ContextSensitivityInfo } from "./ContextSensitivityInfo.js";
 import { DecisionInfo } from "./DecisionInfo.js";
-import { ErrorInfo } from "./ErrorInfo.js";
-import { LookaheadEventInfo } from "./LookaheadEventInfo.js";
 import { ParserATNSimulator } from "./ParserATNSimulator.js";
 
 export class ProfilingATNSimulator extends ParserATNSimulator {
@@ -78,15 +74,16 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
 
             if (sllLook > this.decisions[decision].SLL_MaxLook) {
                 this.decisions[decision].SLL_MaxLook = sllLook;
-                this.decisions[decision].SLL_MaxLookEvent = new LookaheadEventInfo(
+                this.decisions[decision].SLL_MaxLookEvent = {
                     decision,
-                    null,
-                    alt,
+                    configs: null,
+                    predictedAlt: alt,
                     input,
-                    this._startIndex,
-                    this.#sllStopIndex,
-                    false,
-                );
+                    startIndex: this._startIndex,
+                    stopIndex: this.#sllStopIndex,
+                    fullCtx: false,
+
+                };
             }
 
             if (this.#llStopIndex >= 0) {
@@ -98,15 +95,15 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
 
                 if (llLook > this.decisions[decision].LL_MaxLook) {
                     this.decisions[decision].LL_MaxLook = llLook;
-                    this.decisions[decision].LL_MaxLookEvent = new LookaheadEventInfo(
+                    this.decisions[decision].LL_MaxLookEvent = {
                         decision,
-                        null,
-                        alt,
+                        configs: null,
+                        predictedAlt: alt,
                         input,
-                        this._startIndex,
-                        this.#llStopIndex,
-                        true,
-                    );
+                        startIndex: this._startIndex,
+                        stopIndex: this.#llStopIndex,
+                        fullCtx: true,
+                    };
                 }
             }
 
@@ -125,9 +122,14 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
             if (existingTargetState !== null) {
                 this.decisions[this.currentDecision].SLL_DFATransitions++;
                 if (existingTargetState === ATNSimulator.ERROR) {
-                    this.decisions[this.currentDecision].errors.push(new ErrorInfo(this.currentDecision,
-                        previousD.configs, this._input, this._startIndex, this.#sllStopIndex, false),
-                    );
+                    this.decisions[this.currentDecision].errors.push({
+                        decision: this.currentDecision,
+                        configs: previousD.configs,
+                        input: this._input,
+                        startIndex: this._startIndex,
+                        stopIndex: this.#sllStopIndex,
+                        fullCtx: false,
+                    });
                 }
             }
 
@@ -157,16 +159,26 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
                 this.decisions[this.currentDecision].LL_ATNTransitions++;
 
                 if (reachConfigs === null) {
-                    this.decisions[this.currentDecision].errors.push(new ErrorInfo(this.currentDecision, closure,
-                        this._input, this._startIndex, this.#llStopIndex, true),
-                    );
+                    this.decisions[this.currentDecision].errors.push({
+                        decision: this.currentDecision,
+                        configs: closure,
+                        input: this._input,
+                        startIndex: this._startIndex,
+                        stopIndex: this.#sllStopIndex,
+                        fullCtx: true,
+                    });
                 }
             } else {
                 this.decisions[this.currentDecision].SLL_ATNTransitions++;
                 if (reachConfigs === null) {
-                    this.decisions[this.currentDecision].errors.push(new ErrorInfo(this.currentDecision, closure,
-                        this._input, this._startIndex, this.#sllStopIndex, false),
-                    );
+                    this.decisions[this.currentDecision].errors.push({
+                        decision: this.currentDecision,
+                        configs: closure,
+                        input: this._input,
+                        startIndex: this._startIndex,
+                        stopIndex: this.#sllStopIndex,
+                        fullCtx: false,
+                    });
                 }
             }
         }
@@ -191,9 +203,14 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
     public override reportContextSensitivity(dfa: DFA, prediction: number, configs: ATNConfigSet, startIndex: number,
         stopIndex: number): void {
         if (prediction !== this.conflictingAltResolvedBySLL && this._input) {
-            this.decisions[this.currentDecision].contextSensitivities.push(
-                new ContextSensitivityInfo(this.currentDecision, configs, this._input, startIndex, stopIndex),
-            );
+            this.decisions[this.currentDecision].contextSensitivities.push({
+                decision: this.currentDecision,
+                configs,
+                input: this._input,
+                startIndex,
+                stopIndex,
+                fullCtx: true,
+            });
         }
 
         super.reportContextSensitivity(dfa, prediction, configs, startIndex, stopIndex);
@@ -211,14 +228,25 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
 
         if (this._input) {
             if (configs.fullCtx && prediction !== this.conflictingAltResolvedBySLL) {
-                this.decisions[this.currentDecision].contextSensitivities.push(
-                    new ContextSensitivityInfo(this.currentDecision, configs, this._input, startIndex, stopIndex),
-                );
+                this.decisions[this.currentDecision].contextSensitivities.push({
+                    decision: this.currentDecision,
+                    configs,
+                    input: this._input,
+                    startIndex,
+                    stopIndex,
+                    fullCtx: true,
+                });
             }
 
-            this.decisions[this.currentDecision].ambiguities.push(new AmbiguityInfo(this.currentDecision,
-                configs, ambigAlts, this._input, startIndex, stopIndex, configs.fullCtx),
-            );
+            this.decisions[this.currentDecision].ambiguities.push({
+                ambigAlts,
+                decision: this.currentDecision,
+                configs,
+                input: this._input,
+                startIndex,
+                stopIndex,
+                fullCtx: configs.fullCtx,
+            });
         }
         super.reportAmbiguity(dfa, state, startIndex, stopIndex, exact, ambigAlts, configs);
     }

@@ -8,7 +8,7 @@
 
 import { AmbiguityInfo } from "./AmbiguityInfo.js";
 import { ContextSensitivityInfo } from "./ContextSensitivityInfo.js";
-import { ErrorInfo } from "./ErrorInfo.js";
+import type { DecisionEventInfo } from "./DecisionEventInfo.js";
 import { LookaheadEventInfo } from "./LookaheadEventInfo.js";
 import { PredicateEvalInfo } from "./PredicateEvalInfo.js";
 
@@ -103,11 +103,11 @@ export class DecisionInfo {
     public readonly contextSensitivities: ContextSensitivityInfo[];
 
     /**
-     * A collection of {@link ErrorInfo} instances describing the parse errors
+     * A collection of {@link DecisionEventInfo} instances describing the parse errors
      * identified during calls to {@link ParserATNSimulator#adaptivePredict} for
      * this decision.
      */
-    public readonly errors: ErrorInfo[];
+    public readonly errors: DecisionEventInfo[];
 
     /**
      * A collection of {@link AmbiguityInfo} instances describing the
@@ -207,7 +207,7 @@ export class DecisionInfo {
         this.predicateEvals = [];
     }
 
-    public toString(): string {
+    public toString1(): string {
         return "{" +
             "decision=" + this.decision +
             ", contextSensitivities=" + this.contextSensitivities.length +

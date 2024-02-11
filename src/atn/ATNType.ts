@@ -6,10 +6,8 @@
 
 /* eslint-disable @typescript-eslint/naming-convention */
 
-/**
- * Represents the type of recognizer an ATN applies to
- */
-export const ATNType = {
-    LEXER: 0,
-    PARSER: 1,
+/** Represents the type of recognizer an ATN applies to */
+export namespace ATNType {
+    export const LEXER = 0;
+    export const PARSER = 1;
 };

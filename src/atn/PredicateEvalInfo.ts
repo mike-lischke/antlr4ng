@@ -4,20 +4,18 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { TokenStream } from "../TokenStream.js";
-import { ATNConfigSet } from "./ATNConfigSet.js";
 import { DecisionEventInfo } from "./DecisionEventInfo.js";
 import { SemanticContext } from "./SemanticContext.js";
 
 /**
- * This class represents profiling event information for semantic predicate
+ * This interface represents profiling event information for semantic predicate
  * evaluations which occur during prediction.
  */
-export class PredicateEvalInfo extends DecisionEventInfo {
+export interface PredicateEvalInfo extends DecisionEventInfo {
     /**
      * The semantic context which was evaluated.
      */
-    public semctx: SemanticContext;
+    semctx: SemanticContext;
 
     /**
      * The alternative number for the decision which is guarded by the semantic
@@ -25,12 +23,12 @@ export class PredicateEvalInfo extends DecisionEventInfo {
      * configurations may predict the same alternative which are guarded by
      * other semantic contexts and/or {@link SemanticContext#NONE}.
      */
-    public predictedAlt: number;
+    predictedAlt: number;
 
     /**
      * The result of evaluating the semantic context {@link #semctx}.
      */
-    public evalResult: boolean;
+    evalResult: boolean;
 
     /**
      * Constructs a new instance of the {@link PredicateEvalInfo} class with the
@@ -53,7 +51,7 @@ export class PredicateEvalInfo extends DecisionEventInfo {
      *
      * @see ParserATNSimulator#evalSemanticContext(SemanticContext, ParserRuleContext, int, boolean)
      * @see SemanticContext#eval(Recognizer, RuleContext)
-     */
+     /
     public constructor(
         decision: number,
         input: TokenStream,
@@ -64,9 +62,10 @@ export class PredicateEvalInfo extends DecisionEventInfo {
         predictedAlt: number,
         fullCtx: boolean,
     ) {
-        super(decision, new ATNConfigSet(), input, startIndex, stopIndex, fullCtx);
-        this.semctx = semctx;
-        this.evalResult = evalResult;
-        this.predictedAlt = predictedAlt;
-    }
+    super(decision, new ATNConfigSet(), input, startIndex, stopIndex, fullCtx);
+    this.semctx = semctx;
+    this.evalResult = evalResult;
+    this.predictedAlt = predictedAlt;
+}
+     */
 }

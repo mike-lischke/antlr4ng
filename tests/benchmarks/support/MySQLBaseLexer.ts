@@ -314,7 +314,7 @@ export abstract class MySQLBaseLexer extends Lexer implements IMySQLRecognizerCo
         if (this.isSqlModeActive(SqlMode.IgnoreSpace)) {
             while (input === " " || input === "\t" || input === "\r" || input === "\n") {
                 this.interpreter.consume(this.inputStream);
-                this._channel = Lexer.HIDDEN;
+                this.channel = Lexer.HIDDEN;
                 this.type = MySQLLexer.WHITESPACE;
                 input = String.fromCharCode(this.inputStream.LA(1));
             }

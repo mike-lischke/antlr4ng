@@ -5,18 +5,19 @@
  */
 
 /* eslint-disable @typescript-eslint/naming-convention */
-export const ATNStateType = {
-    INVALID_TYPE: 0,
-    BASIC: 1,
-    RULE_START: 2,
-    BLOCK_START: 3,
-    PLUS_BLOCK_START: 4,
-    STAR_BLOCK_START: 5,
-    TOKEN_START: 6,
-    RULE_STOP: 7,
-    BLOCK_END: 8,
-    STAR_LOOP_BACK: 9,
-    STAR_LOOP_ENTRY: 10,
-    PLUS_LOOP_BACK: 11,
-    LOOP_END: 12,
-} as const;
+
+export namespace ATNStateType {
+    export const INVALID_TYPE = 0;
+    export const BASIC = 1;
+    export const RULE_START = 2;
+    export const BLOCK_START = 3;
+    export const PLUS_BLOCK_START = 4;
+    export const STAR_BLOCK_START = 5;
+    export const TOKEN_START = 6;
+    export const RULE_STOP = 7;
+    export const BLOCK_END = 8;
+    export const STAR_LOOP_BACK = 9;
+    export const STAR_LOOP_ENTRY = 10;
+    export const PLUS_LOOP_BACK = 11;
+    export const LOOP_END = 12;
+}

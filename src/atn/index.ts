@@ -30,7 +30,6 @@ export * from "./DecisionInfo.js";
 export * from "./DecisionState.js";
 export * from "./EmptyPredictionContext.js";
 export * from "./EpsilonTransition.js";
-export * from "./ErrorInfo.js";
 export * from "./LL1Analyzer.js";
 export * from "./LexerATNConfig.js";
 export * from "./LexerATNSimulator.js";
