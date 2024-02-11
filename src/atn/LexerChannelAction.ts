@@ -32,7 +32,7 @@ export class LexerChannelAction extends LexerAction {
      */
     public execute(lexer: Lexer): void {
         // eslint-disable-next-line no-underscore-dangle
-        lexer._channel = this.channel;
+        lexer.channel = this.channel;
     }
 
     public override updateHashCode(hash: HashCode): void {

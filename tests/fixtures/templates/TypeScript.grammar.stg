@@ -115,7 +115,7 @@ resetAcceptPosition (index: number, line: number, column: number) : void {
 }
 
 emit () : any /* should be Token */ {
-	switch(this._type) {
+	switch(this.type) {
 	case PositionAdjustingLexer.TOKENS:
 		this.handleAcceptPositionForKeyword("tokens");
 		break;
@@ -133,9 +133,9 @@ handleAcceptPositionForIdentifier () : boolean {
 	) {
 		identifierLength += 1;
 	}
-	if (this.inputStream.index > this._tokenStartCharIndex + identifierLength) {
+	if (this.inputStream.index > this.tokenStartCharIndex + identifierLength) {
 		var offset = identifierLength - 1;
-		this.resetAcceptPosition(this._tokenStartCharIndex + offset,
+		this.resetAcceptPosition(this.tokenStartCharIndex + offset,
 				this.currentTokenStartLine, this.currentTokenColumn + offset);
 		return true;
 	} else {
@@ -144,9 +144,9 @@ handleAcceptPositionForIdentifier () : boolean {
 }
 
 handleAcceptPositionForKeyword (keyword: string) : boolean {
-	if (this.inputStream.index > this._tokenStartCharIndex + keyword.length) {
+	if (this.inputStream.index > this.tokenStartCharIndex + keyword.length) {
 		var offset = keyword.length - 1;
-		this.resetAcceptPosition(this._tokenStartCharIndex + offset,
+		this.resetAcceptPosition(this.tokenStartCharIndex + offset,
 			this.currentTokenStartLine, this.currentTokenColumn + offset);
 		return true;
 	} else {

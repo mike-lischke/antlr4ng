@@ -73,7 +73,7 @@ export class ATNDeserializer {
 
     public constructor(options?: ATNDeserializationOptions) {
         if (!options) {
-            options = ATNDeserializationOptions.defaultOptions;
+            options = { readOnly: false, verifyATN: true, generateRuleBypassTransitions: false };
         }
 
         this.deserializationOptions = options;

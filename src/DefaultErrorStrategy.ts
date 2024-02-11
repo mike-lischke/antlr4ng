@@ -147,7 +147,7 @@ export class DefaultErrorStrategy {
      *
      */
     public recover(recognizer: Parser, _e: RecognitionException): void {
-        if (this.lastErrorIndex === recognizer.inputStream.index && this.lastErrorStates.contains(recognizer.state)) {
+        if (this.lastErrorIndex === recognizer.inputStream?.index && this.lastErrorStates.contains(recognizer.state)) {
             // uh oh, another error at same token index and previously-visited
             // state in ATN; must be a case where LT(1) is in the recovery
             // token set so nothing got consumed. Consume a single token
@@ -155,7 +155,7 @@ export class DefaultErrorStrategy {
             recognizer.consume();
         }
 
-        this.lastErrorIndex = recognizer.inputStream.index;
+        this.lastErrorIndex = recognizer.inputStream?.index ?? 0;
 
         this.lastErrorStates.addOne(recognizer.state);
         const followSet = this.getErrorRecoverySet(recognizer);
@@ -215,7 +215,8 @@ export class DefaultErrorStrategy {
             return;
         }
         const s = recognizer.atn.states[recognizer.state]!;
-        const la = recognizer.tokenStream.LA(1);
+        const la = recognizer.tokenStream?.LA(1) ?? -1;
+
         // try cheaper subset first; might get lucky. seems to shave a wee bit off
         const nextTokens = recognizer.atn.nextTokens(s);
         if (nextTokens.contains(la)) {
@@ -470,7 +471,8 @@ export class DefaultErrorStrategy {
      * strategy for the current mismatched input, otherwise `false`
      */
     public singleTokenInsertion(recognizer: Parser): boolean {
-        const currentSymbolType = recognizer.tokenStream.LA(1);
+        const currentSymbolType = recognizer.tokenStream?.LA(1) ?? -1;
+
         // if current token is consistent with what could come after current
         // ATN state, then we know we're missing a token; error recovery
         // is free to conjure up and insert the missing token
@@ -507,7 +509,7 @@ export class DefaultErrorStrategy {
      * {@code null}
      */
     public singleTokenDeletion(recognizer: Parser): Token | null {
-        const nextTokenType = recognizer.tokenStream.LA(2);
+        const nextTokenType = recognizer.tokenStream?.LA(2) ?? -1;
         const expecting = this.getExpectedTokens(recognizer);
         if (expecting.contains(nextTokenType)) {
             this.reportUnwantedToken(recognizer);
@@ -563,7 +565,7 @@ export class DefaultErrorStrategy {
         }
 
         let current = currentSymbol;
-        const lookBack = recognizer.tokenStream.LT(-1) as CommonToken;
+        const lookBack = recognizer.tokenStream?.LT(-1) as CommonToken;
         if (current.type === Token.EOF && lookBack !== null) {
             current = lookBack;
         }
@@ -720,12 +722,12 @@ export class DefaultErrorStrategy {
         return recoverSet;
     }
 
-    // Consume tokens until one matches the given token set.//
+    /** Consume tokens until one matches the given token set. */
     public consumeUntil(recognizer: Parser, set: IntervalSet): void {
-        let ttype = recognizer.tokenStream.LA(1);
+        let ttype = recognizer.tokenStream?.LA(1) ?? -1;
         while (ttype !== Token.EOF && !set.contains(ttype)) {
             recognizer.consume();
-            ttype = recognizer.tokenStream.LA(1);
+            ttype = recognizer.tokenStream?.LA(1) ?? -1;
         }
     }
 }

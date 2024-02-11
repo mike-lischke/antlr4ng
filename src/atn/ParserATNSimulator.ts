@@ -1801,7 +1801,7 @@ export class ParserATNSimulator extends ATNSimulator {
         if (ParserATNSimulator.debug || ParserATNSimulator.retry_debug) {
             const interval = new Interval(startIndex, stopIndex + 1);
             console.log("reportAttemptingFullContext decision=" + dfa.decision + ":" + configs +
-                ", input=" + this.parser.tokenStream.getText(interval));
+                ", input=" + this.parser.tokenStream?.getText(interval));
         }
 
         if (this.parser !== null) {
@@ -1815,7 +1815,7 @@ export class ParserATNSimulator extends ATNSimulator {
         if (ParserATNSimulator.debug || ParserATNSimulator.retry_debug) {
             const interval = new Interval(startIndex, stopIndex + 1);
             console.log("reportContextSensitivity decision=" + dfa.decision + ":" + configs +
-                ", input=" + this.parser.tokenStream.getText(interval));
+                ", input=" + this.parser.tokenStream?.getText(interval));
         }
 
         if (this.parser !== null) {
@@ -1830,7 +1830,7 @@ export class ParserATNSimulator extends ATNSimulator {
         if (ParserATNSimulator.debug || ParserATNSimulator.retry_debug) {
             const interval = new Interval(startIndex, stopIndex + 1);
             console.log("reportAmbiguity " + ambigAlts + ":" + configs +
-                ", input=" + this.parser.tokenStream.getText(interval));
+                ", input=" + this.parser.tokenStream?.getText(interval));
         }
         if (this.parser !== null) {
             this.parser.getErrorListenerDispatch().reportAmbiguity(this.parser, dfa, startIndex, stopIndex, exact,

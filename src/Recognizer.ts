@@ -168,6 +168,6 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
     public abstract get ruleNames(): string[];
     public abstract get vocabulary(): Vocabulary;
 
-    public abstract get inputStream(): IntStream;
-    public abstract set inputStream(input: IntStream);
+    public abstract get inputStream(): IntStream | null;
+    public abstract set inputStream(input: IntStream | null);
 }

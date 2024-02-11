@@ -69,7 +69,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
 
         const decision = this.getDecisionDescription(recognizer, dfa);
         const conflictingAlts = this.getConflictingAlts(ambigAlts, configs);
-        const text = recognizer.tokenStream.getText(Interval.of(startIndex, stopIndex));
+        const text = recognizer.tokenStream?.getText(Interval.of(startIndex, stopIndex));
         const message = `reportAmbiguity d=${decision}: ambigAlts=${conflictingAlts}, input='${text}'`;
         recognizer.notifyErrorListeners(message, null, null);
     };
@@ -81,7 +81,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
         _conflictingAlts: BitSet | null,
         _configs: ATNConfigSet | null): void => {
         const decision = this.getDecisionDescription(recognizer, dfa);
-        const text = recognizer.tokenStream.getText(Interval.of(startIndex, stopIndex));
+        const text = recognizer.tokenStream?.getText(Interval.of(startIndex, stopIndex));
         const message = `reportAttemptingFullContext d=${decision}, input='${text}'`;
         recognizer.notifyErrorListeners(message, null, null);
     };
@@ -93,7 +93,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
         _prediction: number,
         _configs: ATNConfigSet | null): void => {
         const decision = this.getDecisionDescription(recognizer, dfa);
-        const text = recognizer.tokenStream.getText(Interval.of(startIndex, stopIndex));
+        const text = recognizer.tokenStream?.getText(Interval.of(startIndex, stopIndex));
         const message = `reportContextSensitivity d=${decision}, input='${text}'`;
         recognizer.notifyErrorListeners(message, null, null);
     };

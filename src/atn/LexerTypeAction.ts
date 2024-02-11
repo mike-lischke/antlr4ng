@@ -23,8 +23,7 @@ export class LexerTypeAction extends LexerAction {
     }
 
     public override execute(lexer: Lexer): void {
-        // eslint-disable-next-line no-underscore-dangle
-        lexer._type = this.type;
+        lexer.type = this.type;
     }
 
     public override updateHashCode(hash: HashCode): void {

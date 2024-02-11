@@ -291,7 +291,7 @@ export class MySQLErrorListener extends BaseErrorListener {
             if (e instanceof LexerNoViableAltException) {
                 const lexer = recognizer as Lexer;
                 const input = lexer.inputStream;
-                let text = lexer.getErrorDisplay(input.getText(lexer._tokenStartCharIndex, input.index));
+                let text = lexer.getErrorDisplay(input.getText(lexer.tokenStartCharIndex, input.index));
                 if (text === "") {
                     text = " ";  // Should never happen, but we must ensure we have text.
                 }
@@ -323,8 +323,8 @@ export class MySQLErrorListener extends BaseErrorListener {
                         break;
                 }
 
-                this.callback(message, 0, lexer._tokenStartCharIndex, line, charPositionInLine,
-                    input.index - lexer._tokenStartCharIndex);
+                this.callback(message, 0, lexer.tokenStartCharIndex, line, charPositionInLine,
+                    input.index - lexer.tokenStartCharIndex);
 
             }
         }

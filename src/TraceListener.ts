@@ -20,7 +20,7 @@ export class TraceListener implements ParseTreeListener {
 
     public enterEveryRule(ctx: ParserRuleContext): void {
         console.log("enter   " + this.parser.ruleNames[ctx.ruleIndex] + ", LT(1)=" +
-            this.parser.inputStream.LT(1)!.text);
+            this.parser.inputStream?.LT(1)?.text);
     }
 
     public visitTerminal(node: TerminalNode): void {
@@ -29,7 +29,7 @@ export class TraceListener implements ParseTreeListener {
 
     public exitEveryRule(ctx: ParserRuleContext): void {
         console.log("exit    " + this.parser.ruleNames[ctx.ruleIndex] + ", LT(1)=" +
-            this.parser.inputStream.LT(1)!.text);
+            this.parser.inputStream?.LT(1)?.text);
     }
 
     public visitErrorNode(_node: TerminalNode): void {
