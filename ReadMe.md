@@ -131,16 +131,9 @@ After that you can either execute different suites separately or as a whole.
 |Real world example|`npm run run-benchmarks`|
 | All together|`npm run full-test`|
 
-The unit tests consist of tests for individual classes in the runtime (API tests) and the runtime test suite ported from Java. They execute in about 10s.
+The unit tests consist of tests for individual classes in the runtime (API tests) and the runtime test suite ported from Java.
 
-### Runtime and API Tests
-
-These are the original tests from ANTLR4, extracted and ported to TypeScript. The two parts are:
-
-- API tests: unit tests for individual classes
-- Runtime tests: integration tests that use descriptors for different grammars and specific input and expected output.
-
-These tests together comprise 530 tests and run in 12.1s.
+These tests together comprise 530 tests and run in 10s.
 
 ### Real World Example
 
@@ -159,10 +152,10 @@ Last release (pure TypeScript):
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
-| Query Collection| 6200 ms | 334 ms |
-| Example File | 1069 ms | 194 ms |
-| Large Inserts | 14472 ms | 14157 ms |
-| Total | 21800 ms | 14709 ms |
+| Query Collection| 5463 ms | 314 ms |
+| Example File | 983 ms | 183 ms |
+| Large Inserts | 12990 ms | 13101 ms |
+| Total | 19512 ms | 13618 ms |
 
 The benchmarks consist of a set of query files, which are parsed by a MySQL parser. The MySQL grammar is one of the largest and most complex grammars you can find for ANTLR4, which, I think, makes it a perfect test case for parser tests.
 

@@ -7,15 +7,15 @@
 /* eslint-disable jsdoc/require-param */
 
 import { LexerIndexedCustomAction } from "./LexerIndexedCustomAction.js";
-import { HashCode } from "../misc/HashCode.js";
 import { LexerAction } from "./LexerAction.js";
 import { CharStream } from "../CharStream.js";
 import { Lexer } from "../Lexer.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 
 export class LexerActionExecutor /*implements*/ extends LexerAction {
     public readonly lexerActions: LexerAction[];
 
-    private cachedHashCode: number;
+    #cachedHashCode: number | undefined;
 
     /**
      * Represents an executor for a sequence of lexer actions which traversed during
@@ -29,12 +29,6 @@ export class LexerActionExecutor /*implements*/ extends LexerAction {
         super(-1);
 
         this.lexerActions = lexerActions ?? [];
-
-        /**
-         * Caches the result of {@link hashCode} since the hash code is an element
-         * of the performance-critical {@link LexerATNConfig//hashCode} operation
-         */
-        this.cachedHashCode = HashCode.hashStuff(lexerActions);
 
         return this;
     }
@@ -161,7 +155,11 @@ export class LexerActionExecutor /*implements*/ extends LexerAction {
     }
 
     public override hashCode(): number {
-        return this.cachedHashCode;
+        if (this.#cachedHashCode === undefined) {
+            this.#cachedHashCode = MurmurHash.hashCode(this.lexerActions, 7);
+        }
+
+        return this.#cachedHashCode;
     }
 
     public override equals(other: unknown): boolean {
@@ -169,7 +167,7 @@ export class LexerActionExecutor /*implements*/ extends LexerAction {
             return true;
         } else if (!(other instanceof LexerActionExecutor)) {
             return false;
-        } else if (this.cachedHashCode !== other.cachedHashCode) {
+        } else if (this.#cachedHashCode !== other.#cachedHashCode) {
             return false;
         } else if (this.lexerActions.length !== other.lexerActions.length) {
             return false;

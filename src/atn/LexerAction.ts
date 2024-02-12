@@ -5,7 +5,7 @@
  */
 
 import { Lexer } from "../Lexer.js";
-import { HashCode } from "../misc/HashCode.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 
 /**
  * Represents a single action which can be executed following the successful
@@ -23,14 +23,7 @@ export abstract class LexerAction {
     }
 
     public hashCode(): number {
-        const hash = new HashCode();
-        this.updateHashCode(hash);
-
-        return hash.finish();
-    }
-
-    public updateHashCode(hash: HashCode): void {
-        hash.update(this.actionType);
+        return MurmurHash.hashCode(this.actionType);
     }
 
     public equals(other: unknown): boolean {

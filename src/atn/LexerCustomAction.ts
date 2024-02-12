@@ -9,7 +9,7 @@
 import { LexerActionType } from "./LexerActionType.js";
 import { LexerAction } from "./LexerAction.js";
 import { Lexer } from "../Lexer.js";
-import { HashCode } from "../misc/HashCode.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 
 /**
  * Executes a custom lexer action by calling {@link Recognizer//action} with the
@@ -24,6 +24,8 @@ import { HashCode } from "../misc/HashCode.js";
 export class LexerCustomAction extends LexerAction {
     public readonly ruleIndex: number;
     public readonly actionIndex: number;
+
+    #cachedHashCode: number | undefined;
 
     /**
      * Constructs a custom lexer action with the specified rule and action
@@ -49,8 +51,16 @@ export class LexerCustomAction extends LexerAction {
         lexer.action(null, this.ruleIndex, this.actionIndex);
     }
 
-    public override updateHashCode(hash: HashCode): void {
-        hash.update(this.actionType, this.ruleIndex, this.actionIndex);
+    public override hashCode(): number {
+        if (this.#cachedHashCode === undefined) {
+            let hash = MurmurHash.initialize();
+            hash = MurmurHash.update(hash, this.actionType);
+            hash = MurmurHash.update(hash, this.ruleIndex);
+            hash = MurmurHash.update(hash, this.actionIndex);
+            this.#cachedHashCode = MurmurHash.finish(hash, 3);
+        }
+
+        return this.#cachedHashCode;
     }
 
     public override equals(other: unknown): boolean {

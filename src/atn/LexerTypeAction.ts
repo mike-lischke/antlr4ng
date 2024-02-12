@@ -7,15 +7,16 @@
 import { LexerActionType } from "./LexerActionType.js";
 import { LexerAction } from "./LexerAction.js";
 import { Lexer } from "../Lexer.js";
-import { HashCode } from "../misc/HashCode.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 
 /**
  * Implements the `type` lexer action by calling {@link Lexer//setType}
  * with the assigned type
  */
-
 export class LexerTypeAction extends LexerAction {
     public readonly type: number;
+
+    #cachedHashCode: number | undefined;
 
     public constructor(type: number) {
         super(LexerActionType.TYPE);
@@ -26,8 +27,15 @@ export class LexerTypeAction extends LexerAction {
         lexer.type = this.type;
     }
 
-    public override updateHashCode(hash: HashCode): void {
-        hash.update(this.actionType, this.type);
+    public override hashCode(): number {
+        if (this.#cachedHashCode === undefined) {
+            let hash = MurmurHash.initialize();
+            hash = MurmurHash.update(hash, this.actionType);
+            hash = MurmurHash.update(hash, this.type);
+            this.#cachedHashCode = MurmurHash.finish(hash, 2);
+        }
+
+        return this.#cachedHashCode;
     }
 
     public override equals(other: unknown): boolean {

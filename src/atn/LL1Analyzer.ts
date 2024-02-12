@@ -41,7 +41,7 @@ export class LL1Analyzer {
      * Calculates the SLL(1) expected lookahead set for each outgoing transition
      * of an {@link ATNState}. The returned array has one element for each
      * outgoing transition in `s`. If the closure from transition
-     * *i* leads to a semantic predicate before matching a symbol, the
+     * _i_ leads to a semantic predicate before matching a symbol, the
      * element at index *i* of the result will be `null`.
      *
      * @param s the ATN state

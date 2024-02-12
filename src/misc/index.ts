@@ -5,7 +5,6 @@
  */
 
 export * from "./BitSet.js";
-export * from "./HashCode.js";
 export * from "./HashMap.js";
 export * from "./HashSet.js";
 export * from "./Interval.js";

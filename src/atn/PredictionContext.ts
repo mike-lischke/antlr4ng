@@ -7,7 +7,7 @@
 /* eslint-disable @typescript-eslint/naming-convention, jsdoc/require-returns, jsdoc/require-param */
 
 import { Recognizer } from "../Recognizer.js";
-import { HashCode } from "../misc/HashCode.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 import { ATNSimulator } from "./ATNSimulator.js";
 
 // Most of the implementation is located in PredictionContextUtils.ts, to avoid circular dependencies.
@@ -25,10 +25,42 @@ export abstract class PredictionContext {
 
     public static trace_atn_sim = false;
 
-    private cachedHashCode: number;
+    #cachedHashCode: number;
 
     public constructor(cachedHashCode: number) {
-        this.cachedHashCode = cachedHashCode;
+        this.#cachedHashCode = cachedHashCode;
+    }
+
+    protected static calculateEmptyHashCode(): number {
+        let hash = MurmurHash.initialize(31);
+        hash = MurmurHash.finish(hash, 0);
+
+        return hash;
+    }
+
+    protected static calculateHashCodeSingle(parent: PredictionContext, returnState: number): number {
+        let hash = MurmurHash.initialize(31);
+        hash = MurmurHash.update(hash, parent);
+        hash = MurmurHash.update(hash, returnState);
+        hash = MurmurHash.finish(hash, 2);
+
+        return hash;
+    }
+
+    protected static calculateHashCodeList(parents: Array<PredictionContext | null>, returnStates: number[]): number {
+        let hash = MurmurHash.initialize(31);
+
+        for (const parent of parents) {
+            hash = MurmurHash.update(hash, parent);
+        }
+
+        for (const returnState of returnStates) {
+            hash = MurmurHash.update(hash, returnState);
+        }
+
+        hash = MurmurHash.finish(hash, 2 * parents.length);
+
+        return hash;
     }
 
     public isEmpty(): boolean {
@@ -40,11 +72,7 @@ export abstract class PredictionContext {
     }
 
     public hashCode(): number {
-        return this.cachedHashCode;
-    }
-
-    public updateHashCode(hash: HashCode): void {
-        hash.update(this.cachedHashCode);
+        return this.#cachedHashCode;
     }
 
     public toString(_recog?: Recognizer<ATNSimulator>): string {

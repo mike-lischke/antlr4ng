@@ -12,9 +12,9 @@ import { ATNConfigSet } from "./ATNConfigSet.js";
 import { ATNConfig } from "./ATNConfig.js";
 import { SemanticContext } from "./SemanticContext.js";
 import { BitSet } from "../misc/BitSet.js";
-import { HashCode } from "../misc/HashCode.js";
 import { HashMap } from "../misc/HashMap.js";
 import { ATNState } from "./ATNState.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 
 /**
  * This enumeration defines the prediction modes available in ANTLR 4 along with
@@ -505,7 +505,14 @@ export class PredictionMode {
      */
     public static getConflictingAltSubsets(configs: ATNConfigSet): BitSet[] {
         const configToAlts = new HashMap<ATNConfig, BitSet>(
-            (cfg: ATNConfig) => { return HashCode.hashStuff(cfg.state.stateNumber, cfg.context); },
+            (cfg: ATNConfig) => {
+                let hashCode = MurmurHash.initialize(7);
+                hashCode = MurmurHash.update(hashCode, cfg.state.stateNumber);
+                hashCode = MurmurHash.update(hashCode, cfg.context);
+                hashCode = MurmurHash.finish(hashCode, 2);
+
+                return hashCode;
+            },
             (c1: ATNConfig, c2: ATNConfig) => {
                 return c1.state.stateNumber === c2.state.stateNumber && (c1.context?.equals(c2.context) ?? true);
             },

@@ -457,28 +457,3 @@ export const mergeRoot = (a: SingletonPredictionContext, b: SingletonPredictionC
 
     return null;
 };
-
-// ter's recursive version of Sam's getAllNodes()
-export const getAllContextNodes = (context: PredictionContext | null, nodes: PredictionContext[],
-    visited: HashMap<PredictionContext, PredictionContext> | null): PredictionContext[] => {
-    if (nodes === null) {
-        nodes = [];
-
-        return getAllContextNodes(context, nodes, visited);
-    } else if (visited === null) {
-        visited = new HashMap();
-
-        return getAllContextNodes(context, nodes, visited);
-    } else {
-        if (context === null || visited.containsKey(context)) {
-            return nodes;
-        }
-        visited.set(context, context);
-        nodes.push(context);
-        for (let i = 0; i < context.length; i++) {
-            getAllContextNodes(context.getParent(i), nodes, visited);
-        }
-
-        return nodes;
-    }
-};

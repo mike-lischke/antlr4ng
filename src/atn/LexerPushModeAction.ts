@@ -9,7 +9,7 @@
 import { LexerActionType } from "./LexerActionType.js";
 import { LexerAction } from "./LexerAction.js";
 import { Lexer } from "../Lexer.js";
-import { HashCode } from "../misc/HashCode.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 
 /**
  * Implements the `pushMode` lexer action by calling
@@ -17,6 +17,8 @@ import { HashCode } from "../misc/HashCode.js";
  */
 export class LexerPushModeAction extends LexerAction {
     public readonly mode: number;
+
+    #cachedHashCode: number | undefined;
 
     public constructor(mode: number) {
         super(LexerActionType.PUSH_MODE);
@@ -31,8 +33,15 @@ export class LexerPushModeAction extends LexerAction {
         lexer.pushMode(this.mode);
     }
 
-    public override updateHashCode(hash: HashCode): void {
-        hash.update(this.actionType, this.mode);
+    public override hashCode(): number {
+        if (this.#cachedHashCode === undefined) {
+            let hash = MurmurHash.initialize();
+            hash = MurmurHash.update(hash, this.actionType);
+            hash = MurmurHash.update(hash, this.mode);
+            this.#cachedHashCode = MurmurHash.finish(hash, 2);
+        }
+
+        return this.#cachedHashCode;
     }
 
     public override equals(other: unknown): boolean {

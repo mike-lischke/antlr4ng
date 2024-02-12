@@ -837,7 +837,6 @@ export class ParserATNSimulator extends ATNSimulator {
         // contains all configurations relevant to the reach set, but this
         // condition is not true when one or more configurations have been
         // withheld in skippedStopStates, or when the current symbol is EOF.
-        //
         if (skippedStopStates === null && t !== Token.EOF) {
             if (intermediate.length === 1) {
                 // Don't pursue the closure if there is just one state.
@@ -851,9 +850,9 @@ export class ParserATNSimulator extends ATNSimulator {
                 reach = intermediate;
             }
         }
+
         // If the reach set could not be trivially determined, perform a closure
         // operation on the intermediate set to compute its initial value.
-        //
         if (reach === null) {
             reach = new ATNConfigSet(fullCtx);
             const closureBusy = new HashSet<ATNConfig>();

@@ -8,7 +8,7 @@
 
 import { LexerAction } from "./LexerAction.js";
 import { Lexer } from "../Lexer.js";
-import { HashCode } from "../misc/HashCode.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 
 /**
  * This implementation of {@link LexerAction} is used for tracking input offsets
@@ -37,6 +37,8 @@ export class LexerIndexedCustomAction extends LexerAction {
     public readonly offset: number;
     public readonly action: LexerAction;
 
+    #cachedHashCode: number | undefined;
+
     public constructor(offset: number, action: LexerAction) {
         super(action.actionType);
         this.offset = offset;
@@ -53,8 +55,16 @@ export class LexerIndexedCustomAction extends LexerAction {
         this.action.execute(lexer);
     }
 
-    public override updateHashCode(hash: HashCode): void {
-        hash.update(this.offset, this.action);
+    public override hashCode(): number {
+        if (this.#cachedHashCode === undefined) {
+            let hash = MurmurHash.initialize();
+            hash = MurmurHash.update(hash, this.offset);
+            hash = MurmurHash.update(hash, this.action);
+
+            this.#cachedHashCode = MurmurHash.finish(hash, 2);
+        }
+
+        return this.#cachedHashCode;
     }
 
     public override equals(other: unknown): boolean {

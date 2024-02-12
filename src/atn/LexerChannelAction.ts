@@ -9,7 +9,7 @@
 import { LexerActionType } from "./LexerActionType.js";
 import { LexerAction } from "./LexerAction.js";
 import { Lexer } from "../Lexer.js";
-import { HashCode } from "../misc/HashCode.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 
 /**
  * Implements the `channel` lexer action by calling
@@ -20,6 +20,8 @@ import { HashCode } from "../misc/HashCode.js";
  */
 export class LexerChannelAction extends LexerAction {
     public readonly channel: number;
+
+    #cachedHashCode: number | undefined;
 
     public constructor(channel: number) {
         super(LexerActionType.CHANNEL);
@@ -35,8 +37,15 @@ export class LexerChannelAction extends LexerAction {
         lexer.channel = this.channel;
     }
 
-    public override updateHashCode(hash: HashCode): void {
-        hash.update(this.actionType, this.channel);
+    public override hashCode(): number {
+        if (this.#cachedHashCode === undefined) {
+            let hash = MurmurHash.initialize();
+            hash = MurmurHash.update(hash, this.actionType);
+            hash = MurmurHash.update(hash, this.channel);
+            this.#cachedHashCode = MurmurHash.finish(hash, 2);
+        }
+
+        return this.#cachedHashCode;
     }
 
     public override equals(other: unknown): boolean {

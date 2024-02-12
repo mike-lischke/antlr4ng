@@ -5,22 +5,17 @@
  */
 
 import { PredictionContext } from "./PredictionContext.js";
-import { HashCode } from "../misc/HashCode.js";
 
 export class SingletonPredictionContext extends PredictionContext {
     public readonly parent: PredictionContext | null;
     public readonly returnState: number;
 
     public constructor(parent: PredictionContext | null, returnState: number) {
-        let hashCode = 0;
-        const hash = new HashCode();
-        if (parent !== null) {
-            hash.update(parent, returnState);
-        } else {
-            hash.update(1);
-        }
-        hashCode = hash.finish();
-        super(hashCode);
+        super(parent != null
+            ? PredictionContext.calculateHashCodeSingle(parent, returnState)
+            : PredictionContext.calculateEmptyHashCode(),
+        );
+
         this.parent = parent;
         this.returnState = returnState;
     }
