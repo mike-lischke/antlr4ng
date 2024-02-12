@@ -360,8 +360,6 @@ export class ParserATNSimulator extends ATNSimulator {
                     // state. We then use DFA.setPrecedenceStartState to set the
                     // appropriate start state for the precedence level rather
                     // than simply setting DFA.s0.
-                    //
-                    dfa.s0!.configs = s0_closure; // not used for prediction but useful to know start configs anyway
                     s0_closure = this.applyPrecedenceFilter(s0_closure);
                     s0 = this.addDFAState(dfa, new DFAState(s0_closure));
                     dfa.setPrecedenceStartState(this.parser.getPrecedence(), s0);

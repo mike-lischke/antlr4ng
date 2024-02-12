@@ -7,11 +7,11 @@
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns */
 
 import { SemanticContext } from "./SemanticContext.js";
-import { HashCode } from "../misc/HashCode.js";
 import { ATNState } from "./ATNState.js";
 import { PredictionContext } from "./PredictionContext.js";
 import { Recognizer } from "../Recognizer.js";
 import { ATNSimulator } from "./ATNSimulator.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 
 export interface IATNConfigParameters {
     state?: ATNState | null,
@@ -82,13 +82,6 @@ export class ATNConfig {
     public readonly alt: number;
 
     /**
-     * The stack of invoking states leading to the rule/states associated
-     *  with this config.  We track only those contexts pushed during
-     *  execution of the ATN simulator.
-     */
-    public context: PredictionContext | null = null;
-
-    /**
      * We cannot execute predicates dependent upon local context unless
      * we know for sure we are in the correct context. Because there is
      * no way to do this efficiently, we simply cannot evaluate
@@ -99,11 +92,14 @@ export class ATNConfig {
      * depth > 0.  Note that it may not be totally accurate depth since I
      * don't ever decrement. TODO: make it a boolean then
      */
-    public reachesIntoOuterContext: number;
+    public reachesIntoOuterContext: number; // Not used in hash code.
 
-    public precedenceFilterSuppressed = false;
+    public precedenceFilterSuppressed = false; // Not used in hash code.
 
     public readonly semanticContext: SemanticContext;
+
+    #context: PredictionContext | null = null;
+    #cachedHashCode: number | undefined;
 
     /**
      * @param {object} params A tuple: (ATN state, predicted alt, syntactic, semantic context).
@@ -114,7 +110,6 @@ export class ATNConfig {
      * an ATN state
      */
     public constructor(params: IATNConfigParameters, config: ATNConfig | null) {
-        //this.checkContext(params, config);
         const checkedParams = checkParams(params);
         const checkedConfig = checkConfig(config);
 
@@ -131,14 +126,31 @@ export class ATNConfig {
     }
 
     public hashCode(): number {
-        const hash = new HashCode();
-        this.updateHashCode(hash);
+        if (this.#cachedHashCode === undefined) {
+            let hashCode = MurmurHash.initialize(7);
+            hashCode = MurmurHash.update(hashCode, this.state.stateNumber);
+            hashCode = MurmurHash.update(hashCode, this.alt);
+            hashCode = MurmurHash.update(hashCode, this.context);
+            hashCode = MurmurHash.update(hashCode, this.semanticContext);
+            hashCode = MurmurHash.finish(hashCode, 4);
+            this.#cachedHashCode = hashCode;
+        }
 
-        return hash.finish();
+        return this.#cachedHashCode;
     }
 
-    public updateHashCode(hash: HashCode): void {
-        hash.update(this.state.stateNumber, this.alt, this.context, this.semanticContext);
+    /**
+     * The stack of invoking states leading to the rule/states associated
+     * with this config.  We track only those contexts pushed during
+     * execution of the ATN simulator.
+     */
+    public get context(): PredictionContext | null {
+        return this.#context;
+    }
+
+    public set context(context: PredictionContext | null) {
+        this.#context = context;
+        this.#cachedHashCode = undefined;
     }
 
     /**
@@ -146,37 +158,35 @@ export class ATNConfig {
      * the same state, they predict the same alternative, and
      * syntactic/semantic contexts are the same
      */
-    public equals(other: unknown): boolean {
+    public equals(other: ATNConfig): boolean {
         if (this === other) {
             return true;
-        } else if (!(other instanceof ATNConfig)) {
-            return false;
-        } else {
-            return (this.state.stateNumber === other.state.stateNumber) &&
-                (this.alt === other.alt) &&
-                (this.context === null ? other.context === null : this.context.equals(other.context)) &&
-                this.semanticContext.equals(other.semanticContext) &&
-                this.precedenceFilterSuppressed === other.precedenceFilterSuppressed;
         }
+
+        return (this.state.stateNumber === other.state.stateNumber) &&
+            (this.alt === other.alt) &&
+            (this.context === null ? other.context === null : this.context.equals(other.context)) &&
+            this.semanticContext.equals(other.semanticContext) &&
+            this.precedenceFilterSuppressed === other.precedenceFilterSuppressed;
     }
 
     public hashCodeForConfigSet(): number {
-        const hash = new HashCode();
-        hash.update(this.state.stateNumber, this.alt, this.semanticContext);
+        let hashCode = 7;
+        hashCode = 31 * hashCode + this.state.stateNumber;
+        hashCode = 31 * hashCode + this.alt;
+        hashCode = 31 * hashCode + this.semanticContext.hashCode();
 
-        return hash.finish();
+        return hashCode;
     }
 
-    public equalsForConfigSet(other: unknown): boolean {
+    public equalsForConfigSet(other: ATNConfig): boolean {
         if (this === other) {
             return true;
-        } else if (!(other instanceof ATNConfig)) {
-            return false;
-        } else {
-            return this.state.stateNumber === other.state.stateNumber &&
-                this.alt === other.alt &&
-                this.semanticContext.equals(other.semanticContext);
         }
+
+        return this.state.stateNumber === other.state.stateNumber &&
+            this.alt === other.alt &&
+            this.semanticContext.equals(other.semanticContext);
     }
 
     public toString(_recog?: Recognizer<ATNSimulator> | null, showAlt = true): string {

@@ -40,6 +40,10 @@
                 "tests/benchmarks/run-benchmarks.ts",
             ],
             "sourceMaps": true,
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ],
         },
         {
             "type": "node",

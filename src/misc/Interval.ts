@@ -9,25 +9,22 @@
 
 /** An immutable inclusive interval a..b */
 export class Interval {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     public static INVALID_INTERVAL = new Interval(-1, -2);
 
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     public static INTERVAL_POOL_MAX_VALUE = 1000;
-
-    private static cache: Array<Interval | null>;
 
     public readonly start: number;
     public readonly stop: number;
 
-    static {
-        Interval.cache = new Array(Interval.INTERVAL_POOL_MAX_VALUE + 1);
-        Interval.cache.fill(null);
-    }
+    static #cache: Interval[] = [];
+
+    #cachedHashCode: number;
 
     public constructor(start: number, stop: number) {
         this.start = start;
         this.stop = stop;
+
+        this.#cachedHashCode = Math.imul(651 + start, 31) + stop;
     }
 
     /**
@@ -50,27 +47,19 @@ export class Interval {
             return new Interval(a, b);
         }
 
-        if (Interval.cache[a] === null) {
-            Interval.cache[a] = new Interval(a, a);
+        if (!Interval.#cache[a]) {
+            Interval.#cache[a] = new Interval(a, a);
         }
 
-        return Interval.cache[a]!;
+        return Interval.#cache[a]!;
     }
 
-    public equals(o: unknown): boolean {
-        if (!(o instanceof Interval)) {
-            return false;
-        }
-
+    public equals(o: Interval): boolean {
         return this.start === o.start && this.stop === o.stop;
     }
 
     public hashCode(): number {
-        let hash = 23;
-        hash = hash * 31 + this.start;
-        hash = hash * 31 + this.stop;
-
-        return hash;
+        return this.#cachedHashCode;
     }
 
     /** Does this start completely before other? Disjoint */

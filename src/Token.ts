@@ -37,9 +37,9 @@ export interface Token {
     column: number;
 
     /**
-     * Return the channel this token. Each token can arrive at the parser
-     *  on a different channel, but the parser only "tunes" to a single channel.
-     *  The parser ignores everything not on DEFAULT_CHANNEL.
+     * Return the channel of this token. Each token can arrive at the parser
+     * on a different channel, but the parser only "tunes" to a single channel.
+     * The parser ignores everything not on DEFAULT_CHANNEL.
      */
     channel: number;
 

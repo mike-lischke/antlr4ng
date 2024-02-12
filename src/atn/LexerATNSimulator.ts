@@ -671,7 +671,6 @@ export class LexerATNSimulator extends ATNSimulator {
         const newState = proposed;
         newState.stateNumber = dfa.states.length;
         configs.setReadonly(true);
-        newState.configs = configs;
         dfa.states.add(newState);
 
         return newState;

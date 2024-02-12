@@ -10,7 +10,7 @@ export interface IComparable {
     hashCode(): number;
 }
 
-const isComparable = (candidate: unknown): candidate is IComparable => {
+export const isComparable = (candidate: unknown): candidate is IComparable => {
     return typeof (candidate as IComparable).equals === "function";
 };
 

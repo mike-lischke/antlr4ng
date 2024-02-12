@@ -8,8 +8,8 @@
 
 import { Recognizer } from "../Recognizer.js";
 import { RuleContext } from "../RuleContext.js";
-import { HashCode } from "../misc/HashCode.js";
 import { HashSet } from "../misc/HashSet.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 
 import { IComparable, equalArrays } from "../utils/helpers.js";
 import { ATNSimulator } from "./ATNSimulator.js";
@@ -23,6 +23,8 @@ import { ATNSimulator } from "./ATNSimulator.js";
  * {@link SemanticContext} within the scope of this outer class.
  */
 export abstract class SemanticContext implements IComparable {
+    protected cachedHashCode: number | undefined;
+
     public static andContext(a: SemanticContext | null, b: SemanticContext | null): SemanticContext | null {
         if (a === null || a === SemanticContext.NONE) {
             return b;
@@ -31,8 +33,8 @@ export abstract class SemanticContext implements IComparable {
             return a;
         }
         const result = new AND(a, b);
-        if (result.opnds.length === 1) {
-            return result.opnds[0];
+        if (result.operands.length === 1) {
+            return result.operands[0];
         } else {
             return result;
         }
@@ -42,15 +44,18 @@ export abstract class SemanticContext implements IComparable {
         if (a === null) {
             return b;
         }
+
         if (b === null) {
             return a;
         }
+
         if (a === SemanticContext.NONE || b === SemanticContext.NONE) {
             return SemanticContext.NONE;
         }
+
         const result = new OR(a, b);
-        if (result.opnds.length === 1) {
-            return result.opnds[0];
+        if (result.operands.length === 1) {
+            return result.operands[0];
         } else {
             return result;
         }
@@ -66,13 +71,6 @@ export abstract class SemanticContext implements IComparable {
 
         return result;
     };
-
-    public hashCode(): number {
-        const hash = new HashCode();
-        this.updateHashCode(hash);
-
-        return hash.finish();
-    }
 
     /**
      * Evaluate the precedence predicates for the context and reduce the result.
@@ -110,12 +108,12 @@ export abstract class SemanticContext implements IComparable {
      */
     public abstract evaluate<T extends ATNSimulator>(parser: Recognizer<T>, parserCallStack: RuleContext): boolean;
 
-    public abstract equals(other: unknown): boolean;
-    public abstract updateHashCode(hash: HashCode): void;
+    public abstract equals(other: SemanticContext): boolean;
+    public abstract hashCode(): number;
 }
 
 class AND extends SemanticContext {
-    public readonly opnds: SemanticContext[];
+    public readonly operands: SemanticContext[];
 
     /**
      * A semantic context which is true whenever none of the contained contexts
@@ -123,21 +121,24 @@ class AND extends SemanticContext {
      */
     public constructor(a: SemanticContext, b: SemanticContext) {
         super();
+
         const operands = new HashSet<SemanticContext>();
         if (a instanceof AND) {
-            a.opnds.forEach((o) => {
+            a.operands.forEach((o) => {
                 operands.add(o);
             });
         } else {
             operands.add(a);
         }
+
         if (b instanceof AND) {
-            b.opnds.forEach((o) => {
+            b.operands.forEach((o) => {
                 operands.add(o);
             });
         } else {
             operands.add(b);
         }
+
         const precedencePredicates = SemanticContext.filterPrecedencePredicates(operands);
         if (precedencePredicates.length > 0) {
             // interested in the transition with the lowest precedence
@@ -151,22 +152,25 @@ class AND extends SemanticContext {
                 operands.add(reduced);
             }
         }
-        this.opnds = operands.values();
+        this.operands = operands.values();
     }
 
-    public override equals(other: unknown): boolean {
+    public override equals(other: AND): boolean {
         if (this === other) {
             return true;
         } else if (!(other instanceof AND)) {
             return false;
         } else {
-            return equalArrays(this.opnds, other.opnds);
+            return equalArrays(this.operands, other.operands);
         }
     }
 
-    public updateHashCode(hash: HashCode): void {
-        hash.update(this.opnds);
-        hash.updateWithHashCode(3813686060); // Hash code of "AND".
+    public hashCode(): number {
+        if (this.cachedHashCode === undefined) {
+            this.cachedHashCode = MurmurHash.hashCode(this.operands, 3813686060); // Hash code of "AND".
+        }
+
+        return this.cachedHashCode;
     }
 
     /**
@@ -178,7 +182,7 @@ class AND extends SemanticContext {
      */
     public evaluate<T extends ATNSimulator>(parser: Recognizer<T>,
         parserCallStack: RuleContext): boolean {
-        for (const operand of this.opnds) {
+        for (const operand of this.operands) {
             if (!operand.evaluate(parser, parserCallStack)) {
                 return false;
             }
@@ -191,7 +195,7 @@ class AND extends SemanticContext {
         parserCallStack: RuleContext): SemanticContext | null {
         let differs = false;
         const operands = [];
-        for (const context of this.opnds) {
+        for (const context of this.operands) {
             const evaluated = context.evalPrecedence(parser, parserCallStack);
             differs ||= (evaluated !== context);
             if (evaluated === null) {
@@ -205,10 +209,12 @@ class AND extends SemanticContext {
         if (!differs) {
             return this;
         }
+
         if (operands.length === 0) {
             // all elements were true, so the AND context is true
             return SemanticContext.NONE;
         }
+
         let result: SemanticContext | null = null;
         operands.forEach((o) => {
             result = result === null ? o : SemanticContext.andContext(result, o);
@@ -218,14 +224,14 @@ class AND extends SemanticContext {
     }
 
     public override toString(): string {
-        const s = this.opnds.map((o) => { return o.toString(); });
+        const s = this.operands.map((o) => { return o.toString(); });
 
         return (s.length > 3 ? s.slice(3) : s).join("&&");
     }
 }
 
 class OR extends SemanticContext {
-    public readonly opnds: SemanticContext[];
+    public readonly operands: SemanticContext[];
 
     /**
      * A semantic context which is true whenever at least one of the contained
@@ -235,14 +241,15 @@ class OR extends SemanticContext {
         super();
         const operands = new HashSet<SemanticContext>();
         if (a instanceof OR) {
-            a.opnds.forEach((o) => {
+            a.operands.forEach((o) => {
                 operands.add(o);
             });
         } else {
             operands.add(a);
         }
+
         if (b instanceof OR) {
-            b.opnds.forEach((o) => {
+            b.operands.forEach((o) => {
                 operands.add(o);
             });
         } else {
@@ -258,7 +265,7 @@ class OR extends SemanticContext {
             const reduced = s[s.length - 1];
             operands.add(reduced);
         }
-        this.opnds = Array.from(operands.values());
+        this.operands = Array.from(operands.values());
     }
 
     public override equals(other: unknown): boolean {
@@ -267,23 +274,24 @@ class OR extends SemanticContext {
         } else if (!(other instanceof OR)) {
             return false;
         } else {
-            return equalArrays(this.opnds, other.opnds);
+            return equalArrays(this.operands, other.operands);
         }
     }
 
-    public updateHashCode(hash: HashCode): void {
-        hash.update(this.opnds);
-        hash.updateWithHashCode(3383313031); // Hash code of "OR".
+    public hashCode(): number {
+        if (this.cachedHashCode === undefined) {
+            this.cachedHashCode = MurmurHash.hashCode(this.operands, 3383313031); // Hash code of "OR".
+        }
+
+        return this.cachedHashCode;
     }
 
     /**
-     *
-     * The evaluation of predicates by this context is short-circuiting, but
-     * unordered.
+     * The evaluation of predicates by this context is short-circuiting, but unordered.
      */
     public evaluate<T extends ATNSimulator>(parser: Recognizer<T>,
         parserCallStack: RuleContext): boolean {
-        for (const operand of this.opnds) {
+        for (const operand of this.operands) {
             if (operand.evaluate(parser, parserCallStack)) {
                 return true;
             }
@@ -296,7 +304,7 @@ class OR extends SemanticContext {
         parserCallStack: RuleContext): SemanticContext | null {
         let differs = false;
         const operands = [];
-        for (const context of this.opnds) {
+        for (const context of this.operands) {
             const evaluated = context.evalPrecedence(parser, parserCallStack);
             differs ||= (evaluated !== context);
             if (evaluated === SemanticContext.NONE) {
@@ -307,13 +315,16 @@ class OR extends SemanticContext {
                 operands.push(evaluated);
             }
         }
+
         if (!differs) {
             return this;
         }
+
         if (operands.length === 0) {
             // all elements were false, so the OR context is false
             return null;
         }
+
         let result: SemanticContext | null = null;
         operands.forEach((o) => {
             result = result === null ? o : SemanticContext.orContext(result, o);
@@ -323,7 +334,7 @@ class OR extends SemanticContext {
     }
 
     public override toString() {
-        const s = this.opnds.map((o) => { return o.toString(); });
+        const s = this.operands.map((o) => { return o.toString(); });
 
         return (s.length > 3 ? s.slice(3) : s).join("||");
     }
@@ -348,20 +359,27 @@ export namespace SemanticContext {
             return parser.sempred(localctx, this.ruleIndex, this.predIndex);
         }
 
-        public override updateHashCode(hash: HashCode): void {
-            hash.update(this.ruleIndex, this.predIndex, this.isCtxDependent);
+        public override hashCode(): number {
+            if (this.cachedHashCode === undefined) {
+                let hashCode = MurmurHash.initialize();
+                hashCode = MurmurHash.update(hashCode, this.ruleIndex);
+                hashCode = MurmurHash.update(hashCode, this.predIndex);
+                hashCode = MurmurHash.update(hashCode, this.isCtxDependent ? 1 : 0);
+                hashCode = MurmurHash.finish(hashCode, 3);
+                this.cachedHashCode = hashCode;
+            }
+
+            return this.cachedHashCode;
         }
 
-        public override equals(other: unknown): boolean {
+        public override equals(other: Predicate): boolean {
             if (this === other) {
                 return true;
-            } else if (!(other instanceof Predicate)) {
-                return false;
-            } else {
-                return this.ruleIndex === other.ruleIndex &&
-                    this.predIndex === other.predIndex &&
-                    this.isCtxDependent === other.isCtxDependent;
             }
+
+            return this.ruleIndex === other.ruleIndex &&
+                this.predIndex === other.predIndex &&
+                this.isCtxDependent === other.isCtxDependent;
         }
 
         public override toString(): string {
@@ -385,27 +403,25 @@ export namespace SemanticContext {
             outerContext: RuleContext | null): SemanticContext | null {
             if (parser.precpred(outerContext, this.precedence)) {
                 return SemanticContext.NONE;
-            } else {
-                return null;
             }
+
+            return null;
         }
 
         public compareTo(other: PrecedencePredicate): number {
             return this.precedence - other.precedence;
         }
 
-        public override updateHashCode(hash: HashCode): void {
-            hash.update(this.precedence);
+        public override hashCode(): number {
+            return 31 + this.precedence;
         }
 
-        public override equals(other: unknown): boolean {
+        public override equals(other: PrecedencePredicate): boolean {
             if (this === other) {
                 return true;
-            } else if (!(other instanceof PrecedencePredicate)) {
-                return false;
-            } else {
-                return this.precedence === other.precedence;
             }
+
+            return this.precedence === other.precedence;
         }
 
         public override toString(): string {

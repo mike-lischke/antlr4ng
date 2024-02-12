@@ -393,8 +393,9 @@ export class BufferedTokenStream implements TokenStream {
             }
 
             case 1: {
-                if (args[0] instanceof Interval) {
-                    const interval = args[0];
+                const o = args[0] as Object;
+                if ("start" in o) {
+                    const interval = o as Interval;
                     const start = interval.start;
                     let stop = interval.stop;
                     if (start < 0 || stop < 0) {

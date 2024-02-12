@@ -86,7 +86,6 @@ export class ATN {
             }
 
             atnState.nextTokenWithinRule = this.nextTokens(atnState, null);
-            atnState.nextTokenWithinRule.setReadonly(true);
 
             return atnState.nextTokenWithinRule;
 

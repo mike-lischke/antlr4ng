@@ -8,8 +8,8 @@
 
 import { Token } from "../Token.js";
 import { Interval } from "./Interval.js";
-import { Lexer } from "../Lexer.js";
 import { Vocabulary } from "../Vocabulary.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 
 /**
  * This class implements the `IntSet` backed by a sorted array of
@@ -23,20 +23,10 @@ import { Vocabulary } from "../Vocabulary.js";
  * (inclusive).
  */
 export class IntervalSet {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    public static COMPLETE_CHAR_SET = IntervalSet.of(Lexer.MIN_CHAR_VALUE, Lexer.MAX_CHAR_VALUE);
-
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    public static EMPTY_SET = new IntervalSet();
-
     /** The list of sorted, disjoint intervals. */
-    private intervals: Interval[] = [];
-    private readOnly: boolean = false;
+    #intervals: Interval[] = [];
 
-    static {
-        IntervalSet.COMPLETE_CHAR_SET.readOnly = true;
-        IntervalSet.EMPTY_SET.readOnly = true;
-    }
+    #cachedHashCode: number | undefined;
 
     public constructor(set?: IntervalSet) {
         if (set) {
@@ -53,11 +43,11 @@ export class IntervalSet {
     }
 
     public [Symbol.iterator](): IterableIterator<Interval> {
-        return this.intervals[Symbol.iterator]();
+        return this.#intervals[Symbol.iterator]();
     }
 
     public get(index: number): Interval {
-        return this.intervals[index];
+        return this.#intervals[index];
     }
 
     /**
@@ -66,11 +56,11 @@ export class IntervalSet {
      * @returns the minimum value contained in the set.
      */
     public get minElement(): number {
-        if (this.intervals.length === 0) {
+        if (this.#intervals.length === 0) {
             return Token.INVALID_TYPE;
         }
 
-        return this.intervals[0].start;
+        return this.#intervals[0].start;
     }
 
     /**
@@ -79,23 +69,20 @@ export class IntervalSet {
      * @returns the maximum value contained in the set.
      */
     public get maxElement(): number {
-        if (this.intervals.length === 0) {
+        if (this.#intervals.length === 0) {
             return Token.INVALID_TYPE;
         }
 
-        return this.intervals[this.intervals.length - 1].stop;
+        return this.#intervals[this.#intervals.length - 1].stop;
     }
 
     public get isNil(): boolean {
-        return this.intervals.length === 0;
+        return this.#intervals.length === 0;
     }
 
     public clear(): void {
-        if (this.readOnly) {
-            throw new Error("can't alter readonly IntervalSet");
-        }
-
-        this.intervals = [];
+        this.#cachedHashCode = undefined;
+        this.#intervals = [];
     }
 
     /**
@@ -119,16 +106,13 @@ export class IntervalSet {
     }
 
     public addInterval(addition: Interval): void {
-        if (this.readOnly) {
-            throw new Error("can't alter readonly IntervalSet");
-        }
-
-        if (this.intervals.length === 0) {
-            this.intervals.push(addition);
+        this.#cachedHashCode = undefined;
+        if (this.#intervals.length === 0) {
+            this.#intervals.push(addition);
         } else {
             // find insert pos
-            for (let pos = 0; pos < this.intervals.length; pos++) {
-                const existing = this.intervals[pos];
+            for (let pos = 0; pos < this.#intervals.length; pos++) {
+                const existing = this.#intervals[pos];
 
                 if (addition.equals(existing)) {
                     return;
@@ -137,20 +121,20 @@ export class IntervalSet {
                 // If both intervals are adjacent or overlap just at start or stop, merge them into a single interval.
                 if (addition.adjacent(existing) || !addition.disjoint(existing)) {
                     const bigger = addition.union(existing);
-                    this.intervals[pos] = bigger;
+                    this.#intervals[pos] = bigger;
 
                     // make sure we didn't just create an interval that
                     // should be merged with next interval in list
-                    for (let sub = pos + 1; sub < this.intervals.length; /* don't increase sub here */) {
-                        const next = this.intervals[sub];
+                    for (let sub = pos + 1; sub < this.#intervals.length; /* don't increase sub here */) {
+                        const next = this.#intervals[sub];
 
                         if (!bigger.adjacent(next) && bigger.disjoint(next)) {
                             break;
                         }
 
                         // If we bump up against or overlap next, merge.
-                        this.intervals.splice(sub, 1);
-                        this.intervals[pos] = bigger.union(next);
+                        this.#intervals.splice(sub, 1);
+                        this.#intervals[pos] = bigger.union(next);
                     }
 
                     return;
@@ -159,19 +143,19 @@ export class IntervalSet {
                 if (addition.startsBeforeDisjoint(existing)) {
                     // Insert before current position. There can't be any overlap with the previous interval,
                     // as we checked that iin the previous loop.
-                    this.intervals.splice(pos, 0, addition);
+                    this.#intervals.splice(pos, 0, addition);
 
                     return;
                 }
             }
 
             // Addition starts after last interval. Just add it.
-            this.intervals.push(addition);
+            this.#intervals.push(addition);
         }
     }
 
     public addSet(other: IntervalSet): this {
-        other.intervals.forEach((toAdd) => { return this.addInterval(toAdd); }, this);
+        other.#intervals.forEach((toAdd) => { return this.addInterval(toAdd); }, this);
 
         return this;
     }
@@ -214,8 +198,8 @@ export class IntervalSet {
             return new IntervalSet();
         }
 
-        const myIntervals = this.intervals;
-        const theirIntervals = other.intervals;
+        const myIntervals = this.#intervals;
+        const theirIntervals = other.#intervals;
         let intersection;
         const mySize = myIntervals.length;
         const theirSize = theirIntervals.length;
@@ -298,9 +282,9 @@ export class IntervalSet {
 
         let resultI = 0;
         let rightI = 0;
-        while (resultI < result.intervals.length && rightI < other.intervals.length) {
-            const resultInterval = result.intervals[resultI];
-            const rightInterval = other.intervals[rightI];
+        while (resultI < result.#intervals.length && rightI < other.#intervals.length) {
+            const resultInterval = result.#intervals[resultI];
+            const rightInterval = other.#intervals[rightI];
 
             // operation: (resultInterval - rightInterval) and update indexes
 
@@ -327,26 +311,26 @@ export class IntervalSet {
             if (beforeCurrent != null) {
                 if (afterCurrent != null) {
                     // split the current interval into two
-                    result.intervals[resultI] = beforeCurrent;
-                    result.intervals.splice(resultI + 1, 0, afterCurrent);
+                    result.#intervals[resultI] = beforeCurrent;
+                    result.#intervals.splice(resultI + 1, 0, afterCurrent);
                     resultI++;
                     rightI++;
                     continue;
                 } else {
                     // replace the current interval
-                    result.intervals[resultI] = beforeCurrent;
+                    result.#intervals[resultI] = beforeCurrent;
                     resultI++;
                     continue;
                 }
             } else {
                 if (afterCurrent != null) {
                     // replace the current interval
-                    result.intervals[resultI] = afterCurrent;
+                    result.#intervals[resultI] = afterCurrent;
                     rightI++;
                     continue;
                 } else {
                     // remove the current interval (thus no need to increment resultI)
-                    result.intervals.splice(resultI, 1);
+                    result.#intervals.splice(resultI, 1);
                     continue;
                 }
             }
@@ -359,14 +343,14 @@ export class IntervalSet {
     }
 
     public contains(el: number): boolean {
-        const n = this.intervals.length;
+        const n = this.#intervals.length;
         let l = 0;
         let r = n - 1;
 
         // Binary search for the element in the (sorted, disjoint) array of intervals.
         while (l <= r) {
             const m = Math.floor((l + r) / 2);
-            const interval = this.intervals[m];
+            const interval = this.#intervals[m];
             if (interval.stop < el) {
                 l = m + 1;
             } else if (interval.start > el) {
@@ -380,35 +364,32 @@ export class IntervalSet {
     }
 
     public removeRange(toRemove: Interval): void {
-        if (this.readOnly) {
-            throw new Error("can't alter readonly IntervalSet");
-        }
-
+        this.#cachedHashCode = undefined;
         if (toRemove.start === toRemove.stop) {
             this.removeOne(toRemove.start);
-        } else if (this.intervals !== null) {
+        } else if (this.#intervals !== null) {
             let pos = 0;
-            for (const existing of this.intervals) {
+            for (const existing of this.#intervals) {
                 // intervals are ordered
                 if (toRemove.stop <= existing.start) {
                     return;
                 } else if (toRemove.start > existing.start && toRemove.stop < existing.stop) {
                     // check for including range, split it
-                    this.intervals[pos] = new Interval(existing.start, toRemove.start);
+                    this.#intervals[pos] = new Interval(existing.start, toRemove.start);
                     const x = new Interval(toRemove.stop, existing.stop);
-                    this.intervals.splice(pos, 0, x);
+                    this.#intervals.splice(pos, 0, x);
 
                     return;
                 } else if (toRemove.start <= existing.start && toRemove.stop >= existing.stop) {
                     // check for included range, remove it
-                    this.intervals.splice(pos, 1);
+                    this.#intervals.splice(pos, 1);
                     pos = pos - 1; // need another pass
                 } else if (toRemove.start < existing.stop) {
                     // check for lower boundary
-                    this.intervals[pos] = new Interval(existing.start, toRemove.start);
+                    this.#intervals[pos] = new Interval(existing.start, toRemove.start);
                 } else if (toRemove.stop < existing.stop) {
                     // check for upper boundary
-                    this.intervals[pos] = new Interval(toRemove.stop, existing.stop);
+                    this.#intervals[pos] = new Interval(toRemove.stop, existing.stop);
                 }
 
                 pos += 1;
@@ -417,45 +398,79 @@ export class IntervalSet {
     }
 
     public removeOne(value: number): void {
-        if (this.readOnly) {
-            throw new Error("can't alter readonly IntervalSet");
-        }
-
-        for (let i = 0; i < this.intervals.length; i++) {
-            const existing = this.intervals[i];
+        this.#cachedHashCode = undefined;
+        for (let i = 0; i < this.#intervals.length; i++) {
+            const existing = this.#intervals[i];
             // intervals are ordered
             if (value < existing.start) {
                 return;
             } else if (value === existing.start && value === existing.stop) {
                 // check for single value range
-                this.intervals.splice(i, 1);
+                this.#intervals.splice(i, 1);
 
                 return;
             } else if (value === existing.start) {
                 // check for lower boundary
-                this.intervals[i] = new Interval(existing.start + 1, existing.stop);
+                this.#intervals[i] = new Interval(existing.start + 1, existing.stop);
 
                 return;
             } else if (value === existing.stop) {
                 // check for upper boundary
-                this.intervals[i] = new Interval(existing.start, existing.stop);
+                this.#intervals[i] = new Interval(existing.start, existing.stop);
 
                 return;
             } else if (value < existing.stop) {
                 // split existing range
                 const replace = new Interval(existing.start, value);
-                this.intervals[i] = new Interval(value + 1, existing.stop);
-                this.intervals.splice(i, 0, replace);
+                this.#intervals[i] = new Interval(value + 1, existing.stop);
+                this.#intervals.splice(i, 0, replace);
 
                 return;
             }
         }
     }
 
+    public hashCode(): number {
+        if (this.#cachedHashCode === undefined) {
+            let hash = MurmurHash.initialize();
+            for (const interval of this.#intervals) {
+                hash = MurmurHash.update(hash, interval.start);
+                hash = MurmurHash.update(hash, interval.stop);
+            }
+
+            this.#cachedHashCode = MurmurHash.finish(hash, this.#intervals.length * 2);
+        }
+
+        return this.#cachedHashCode;
+    }
+
+    /**
+     * Are two IntervalSets equal? Because all intervals are sorted and disjoint, equals is a simple linear walk over
+     * both lists to make sure they are the same. Interval.equals() is used by the List.equals() method to check
+     * the ranges.
+     */
+    public equals(other: IntervalSet): boolean {
+        if (this === other) {
+            return true;
+        }
+
+        if (this.#intervals.length !== other.#intervals.length) {
+            return false;
+        }
+
+        for (let i = 0; i < this.#intervals.length; i++) {
+            if (!this.#intervals[i].equals(other.#intervals[i])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public toString(elementsAreChar?: boolean): string;
     public toString(vocabulary: Vocabulary): string;
     public toString(elementsAreCharOrVocabulary?: boolean | Vocabulary): string {
-        if (this.intervals.length === 0) {
+        if (this.#intervals.length === 0) {
             return "{}";
         }
 
@@ -474,8 +489,8 @@ export class IntervalSet {
             elementsAreChar = elementsAreCharOrVocabulary ?? false;
         }
 
-        for (let i = 0; i < this.intervals.length; ++i) {
-            const interval = this.intervals[i];
+        for (let i = 0; i < this.#intervals.length; ++i) {
+            const interval = this.#intervals[i];
 
             const start = interval.start;
             const stop = interval.stop;
@@ -506,7 +521,7 @@ export class IntervalSet {
                 }
             }
 
-            if (i < this.intervals.length - 1) {
+            if (i < this.#intervals.length - 1) {
                 result += ", ";
             }
         }
@@ -520,7 +535,7 @@ export class IntervalSet {
 
     public toArray(): number[] {
         const data = [];
-        for (const interval of this.intervals) {
+        for (const interval of this.#intervals) {
             for (let j = interval.start; j <= interval.stop; j++) {
                 data.push(j);
             }
@@ -531,33 +546,21 @@ export class IntervalSet {
 
     public get length(): number {
         let result = 0;
-        const intervalCount = this.intervals.length;
+        const intervalCount = this.#intervals.length;
         if (intervalCount === 1) {
-            const firstInterval = this.intervals[0];
+            const firstInterval = this.#intervals[0];
 
             return firstInterval.stop - firstInterval.start + 1;
         }
 
-        for (const interval of this.intervals) {
+        for (const interval of this.#intervals) {
             result += interval.length;
         }
 
         return result;
     }
 
-    public isReadonly(): boolean {
-        return this.readOnly;
-    }
-
-    public setReadonly(readonly: boolean): void {
-        if (this.readOnly && !readonly) {
-            throw new Error("can't alter readonly IntervalSet");
-        }
-
-        this.readOnly = readonly;
-    }
-
-    protected elementName(vocabulary: Vocabulary, token: number): string | null {
+    private elementName(vocabulary: Vocabulary, token: number): string | null {
         if (token === Token.EOF) {
             return "<EOF>";
         } else if (token === Token.EPSILON) {

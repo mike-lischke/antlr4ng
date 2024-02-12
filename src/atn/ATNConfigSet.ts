@@ -10,7 +10,6 @@ import { ATN } from "./ATN.js";
 import { SemanticContext } from "./SemanticContext.js";
 import { merge } from "./PredictionContextUtils.js";
 import { HashSet } from "../misc/HashSet.js";
-import { HashCode } from "../misc/HashCode.js";
 
 import { equalArrays, arrayToString } from "../utils/helpers.js";
 import { ATNConfig } from "./ATNConfig.js";
@@ -19,6 +18,7 @@ import { DoubleDict } from "../utils/DoubleDict.js";
 import { PredictionContext } from "./PredictionContext.js";
 import { ATNState } from "./ATNState.js";
 import { ATNSimulator } from "./ATNSimulator.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 
 const hashATNConfig = (c: ATNConfig) => {
     return c.hashCodeForConfigSet();
@@ -82,19 +82,21 @@ export class ATNConfigSet {
 
     public conflictingAlts: BitSet | null = null;
 
-    private cachedHashCode = -1;
+    #cachedHashCode = -1;
 
     public constructor(fullCtxOrOldSet?: boolean | ATNConfigSet) {
-        if (fullCtxOrOldSet instanceof ATNConfigSet) {
-            const old = fullCtxOrOldSet;
+        if (fullCtxOrOldSet !== undefined) {
+            if (typeof fullCtxOrOldSet === "boolean") {
+                this.fullCtx = fullCtxOrOldSet ?? true;
+            } else {
+                const old = fullCtxOrOldSet;
 
-            this.addAll(old.configs);
-            this.uniqueAlt = old.uniqueAlt;
-            this.conflictingAlts = old.conflictingAlts;
-            this.hasSemanticContext = old.hasSemanticContext;
-            this.dipsIntoOuterContext = old.dipsIntoOuterContext;
-        } else {
-            this.fullCtx = fullCtxOrOldSet ?? true;
+                this.addAll(old.configs);
+                this.uniqueAlt = old.uniqueAlt;
+                this.conflictingAlts = old.conflictingAlts;
+                this.hasSemanticContext = old.hasSemanticContext;
+                this.dipsIntoOuterContext = old.dipsIntoOuterContext;
+            }
         }
     }
 
@@ -128,7 +130,7 @@ export class ATNConfigSet {
 
         const existing = this.configLookup!.add(config);
         if (existing === config) {
-            this.cachedHashCode = -1;
+            this.#cachedHashCode = -1;
             this.configs.push(config); // track order here
 
             return true;
@@ -220,33 +222,32 @@ export class ATNConfigSet {
         return false;
     }
 
-    public equals(other: unknown): boolean {
-        return this === other ||
-            (other instanceof ATNConfigSet &&
-                equalArrays(this.configs, other.configs) &&
-                this.fullCtx === other.fullCtx &&
-                this.uniqueAlt === other.uniqueAlt &&
-                this.conflictingAlts === other.conflictingAlts &&
-                this.hasSemanticContext === other.hasSemanticContext &&
-                this.dipsIntoOuterContext === other.dipsIntoOuterContext);
+    public equals(other: ATNConfigSet): boolean {
+        if (this === other) {
+            return true;
+        }
+
+        if (this.fullCtx === other.fullCtx &&
+            this.uniqueAlt === other.uniqueAlt &&
+            this.conflictingAlts === other.conflictingAlts &&
+            this.hasSemanticContext === other.hasSemanticContext &&
+            this.dipsIntoOuterContext === other.dipsIntoOuterContext) {
+            return true;
+        }
+
+        return equalArrays(this.configs, other.configs);
     }
 
     public hashCode(): number {
-        const hash = new HashCode();
-        hash.update(this.configs);
-
-        return hash.finish();
-    }
-
-    public updateHashCode(hash: HashCode): void {
         if (this.readOnly) {
-            if (this.cachedHashCode === -1) {
-                this.cachedHashCode = this.hashCode();
+            if (this.#cachedHashCode === -1) {
+                this.#cachedHashCode = this.computeHashCode();
             }
-            hash.update(this.cachedHashCode);
-        } else {
-            hash.update(this.hashCode());
+
+            return this.#cachedHashCode;
         }
+
+        return this.computeHashCode();
     }
 
     public get length(): number {
@@ -278,7 +279,7 @@ export class ATNConfigSet {
             throw new Error("This set is readonly");
         }
         this.configs = [];
-        this.cachedHashCode = -1;
+        this.#cachedHashCode = -1;
         this.configLookup = new HashSet();
     }
 
@@ -297,4 +298,13 @@ export class ATNConfigSet {
             (this.dipsIntoOuterContext ? ",dipsIntoOuterContext" : "");
     }
 
+    private computeHashCode(): number {
+        let hash = MurmurHash.initialize();
+        this.configs.forEach((config) => {
+            hash = MurmurHash.update(hash, config.hashCode());
+        });
+        hash = MurmurHash.finish(hash, this.configs.length);
+
+        return hash;
+    }
 }

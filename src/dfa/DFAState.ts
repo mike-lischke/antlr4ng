@@ -4,12 +4,12 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-/* eslint-disable max-classes-per-file */
+/* eslint-disable max-classes-per-file, jsdoc/require-returns, jsdoc/require-param */
 
 import { ATNConfigSet } from "../atn/ATNConfigSet.js";
 import { LexerActionExecutor } from "../atn/LexerActionExecutor.js";
 import { SemanticContext } from "../atn/SemanticContext.js";
-import { HashCode } from "../misc/HashCode.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 import { arrayToString } from "../utils/helpers.js";
 
 /**
@@ -38,15 +38,14 @@ import { arrayToString } from "../utils/helpers.js";
  *  meaning that state was reached via a different set of rule invocations.
  */
 export class DFAState {
-    public stateNumber = -1;
+    public stateNumber: number = -1;
 
-    public configs = new ATNConfigSet();
+    public readonly configs = new ATNConfigSet();
 
     /**
      * `edges[symbol]` points to target of symbol. Shift up by 1 so (-1)
-     *  {@link Token#EOF} maps to `edges[0]`.
+     * {@link Token#EOF} maps to `edges[0]`.
      */
-
     public edges: Array<DFAState | null> | null = null;
 
     public isAcceptState = false;
@@ -97,10 +96,11 @@ export class DFAState {
     }
 
     public hashCode(): number {
-        const hash = new HashCode();
-        hash.update(this.configs.configs);
+        let hash = MurmurHash.initialize(7);
+        hash = MurmurHash.update(hash, this.configs.hashCode());
+        hash = MurmurHash.finish(hash, 1);
 
-        return hash.finish();
+        return hash;
     };
 
     /**
@@ -115,30 +115,9 @@ export class DFAState {
      * {@link ParserATNSimulator#addDFAState} we need to know if any other state
      * exists that has this exact set of ATN configurations. The
      * {@link #stateNumber} is irrelevant.
-     *
-     * @param o tbd
-     *
-     * @returns tbd
      */
-    public equals(o: unknown): boolean {
-        // compare set of ATN configurations in this set with other
-        if (this === o) {
-            return true;
-        }
-
-        if (!(o instanceof DFAState)) {
-            return false;
-        }
-
-        if (this.configs === null) {
-            if (o.configs === null) {
-                return true;
-            }
-
-            return false;
-        }
-
-        return this.configs.equals(o.configs);
+    public equals(o: DFAState): boolean {
+        return this === o || this.configs.equals(o.configs);
     };
 
     public toString(): string {
