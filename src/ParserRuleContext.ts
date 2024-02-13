@@ -74,24 +74,23 @@ export class ParserRuleContext extends RuleContext {
         super.parent = parent;
     }
 
-    // COPY a ctx (I'm deliberately not using copy constructor)
+    /** Copy a context */
     public copyFrom(ctx: ParserRuleContext): void {
-        // from RuleContext
         this.parent = ctx.parent;
         this.invokingState = ctx.invokingState;
-        this.children = null;
+        this.children = [];
         this.start = ctx.start;
         this.stop = ctx.stop;
-        // copy any error nodes to alt label node
+
+        // Copy any error nodes to alt label node.s
         if (ctx.children) {
-            this.children = [];
-            // reset parent pointer for any error nodes
+            // Reset parent pointer for any error nodes.
             ctx.children.forEach((child) => {
                 if (child instanceof ErrorNode) {
-                    this.children!.push(child);
+                    this.children.push(child);
                     child.parent = this;
                 }
-            }, this);
+            });
         }
     }
 
@@ -102,27 +101,10 @@ export class ParserRuleContext extends RuleContext {
     public exitRule(_listener: ParseTreeListener): void {
     }
 
-    /**
-     * Add a parse tree node to this as a child.  Works for
-     *  internal and leaf nodes. Does not set parent link;
-     *  other add methods must do that. Other addChild methods
-     *  call this.
-     *
-     *  We cannot set the parent pointer of the incoming node
-     *  because the existing interfaces do not have a setParent()
-     *  method and I don't want to break backward compatibility for this.
-     */
-    public addAnyChild<T extends ParseTree>(t: T): T {
-        if (this.children == null) {
-            this.children = [];
-        }
-        this.children.push(t);
-
-        return t;
-    }
-
     public addChild(child: RuleContext): RuleContext {
-        return this.addAnyChild(child);
+        this.children.push(child);
+
+        return child;
     }
 
     /**
@@ -131,31 +113,22 @@ export class ParserRuleContext extends RuleContext {
      * generic ruleContext object.
      */
     public removeLastChild(): void {
-        if (this.children !== null) {
-            this.children.pop();
-        }
+        this.children.pop();
     }
 
     public addTokenNode(token: Token): TerminalNode {
         const node = new TerminalNode(token);
-        this.addAnyChild(node);
+        this.children.push(node);
         node.parent = this;
 
         return node;
     }
 
-    /**
-     * Add a child to this node based upon badToken.  It
-     *  creates a ErrorNode rather than using
-     *  {@link Parser#createErrorNode(ParserRuleContext, Token)}. I'm leaving this
-     *  in for compatibility but the parser doesn't use this anymore.
-     *
-     * @deprecated
-     */
     public addErrorNode(errorNode: ErrorNode): ErrorNode {
         errorNode.parent = this;
+        this.children.push(errorNode);
 
-        return this.addAnyChild(errorNode);
+        return errorNode;
     }
 
     public override getChild(i: number): RuleContext | null;
@@ -163,7 +136,7 @@ export class ParserRuleContext extends RuleContext {
         type: new (...args: unknown[]) => T): T | null;
     public override getChild<T extends ParseTree>(i: number,
         type?: new (...args: unknown[]) => T): T | null {
-        if (this.children === null || i < 0 || i >= this.children.length) {
+        if (i < 0 || i >= this.children.length) {
             return null;
         }
 
@@ -185,15 +158,15 @@ export class ParserRuleContext extends RuleContext {
     }
 
     public getToken(ttype: number, i: number): TerminalNode | null {
-        if (this.children === null || i < 0 || i >= this.children.length) {
+        if (i < 0 || i >= this.children.length) {
             return null;
         }
 
         for (const child of this.children) {
-            if (child instanceof TerminalNode) {
-                if (child.symbol?.type === ttype) {
+            if ("symbol" in child) {
+                if ((child as TerminalNode).symbol?.type === ttype) {
                     if (i === 0) {
-                        return child;
+                        return child as TerminalNode;
                     } else {
                         i -= 1;
                     }
@@ -205,49 +178,39 @@ export class ParserRuleContext extends RuleContext {
     }
 
     public getTokens(ttype: number): TerminalNode[] {
-        if (this.children === null) {
-            return [];
-        } else {
-            const tokens = [];
-            for (const child of this.children) {
-                if (child instanceof TerminalNode) {
-                    if (child.symbol?.type === ttype) {
-                        tokens.push(child);
-                    }
+        const tokens = [];
+        for (const child of this.children) {
+            if ("symbol" in child) {
+                if ((child as TerminalNode).symbol?.type === ttype) {
+                    tokens.push(child as TerminalNode);
                 }
             }
-
-            return tokens;
         }
+
+        return tokens;
     }
 
+    // XXX: base the child type selection on the rule index, not the class.
     public getRuleContext<T extends ParserRuleContext, Args extends unknown[]>(index: number,
         ctxType: new (...args: Args) => T): T | null {
         return this.getChild<T>(index, ctxType);
     }
 
+    // XXX: base the child type selection on the rule index, not the class.
     public getRuleContexts<T extends ParserRuleContext, Args extends unknown[]>(
         ctxType: new (...args: Args) => T): T[] {
-        if (this.children === null) {
-            return [];
-        } else {
-            const contexts = [];
-            for (const child of this.children) {
-                if (child instanceof ctxType) {
-                    contexts.push(child);
-                }
+        const contexts = [];
+        for (const child of this.children) {
+            if (child instanceof ctxType) {
+                contexts.push(child);
             }
-
-            return contexts;
         }
+
+        return contexts;
     }
 
     public override getChildCount(): number {
-        if (this.children === null) {
-            return 0;
-        } else {
-            return this.children.length;
-        }
+        return this.children.length;
     }
 
     public override getSourceInterval(): Interval {

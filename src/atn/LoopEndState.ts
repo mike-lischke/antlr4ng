@@ -13,8 +13,5 @@ import { ATNStateType } from "./ATNStateType.js";
 export class LoopEndState extends ATNState {
     public loopBackState: ATNState | null = null;
 
-    public override get stateType(): number {
-        return ATNStateType.LOOP_END;
-    }
-
+    public override readonly stateType = ATNStateType.LOOP_END;
 }

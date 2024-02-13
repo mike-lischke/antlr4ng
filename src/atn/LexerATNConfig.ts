@@ -41,7 +41,7 @@ export class LexerATNConfig extends ATNConfig {
 
     private static checkNonGreedyDecision(source: LexerATNConfig, target: ATNState): boolean {
         return source.passedThroughNonGreedyDecision ||
-            ((target instanceof DecisionState) && target.nonGreedy);
+            (("nonGreedy" in target) && (target as DecisionState).nonGreedy);
     }
 
     public override hashCode(): number {
@@ -67,7 +67,7 @@ export class LexerATNConfig extends ATNConfig {
         }
 
         return this.passedThroughNonGreedyDecision === other.passedThroughNonGreedyDecision &&
-            (this.lexerActionExecutor
+            (this.lexerActionExecutor && other.lexerActionExecutor
                 ? this.lexerActionExecutor.equals(other.lexerActionExecutor)
                 : !other.lexerActionExecutor
             ) && super.equals(other);

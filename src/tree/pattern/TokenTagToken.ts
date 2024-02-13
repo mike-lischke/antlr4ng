@@ -38,7 +38,7 @@ export class TokenTagToken extends CommonToken {
      */
     public constructor(tokenName: string, type: number, label: string | null);
     public constructor(tokenName: string, type: number, label?: string | null) {
-        super(type);
+        super({ type, source: CommonToken.EMPTY_SOURCE });
         this.tokenName = tokenName;
         this.label = label ?? undefined;
     }

@@ -12,6 +12,8 @@ import { Transition } from "./Transition.js";
 export class ATNState implements IComparable {
     public static readonly INVALID_STATE_NUMBER = -1;
 
+    public readonly stateType: number = ATNState.INVALID_STATE_NUMBER;
+
     /** Which ATN are we in? */
     public atn: ATN | null = null;
 
@@ -29,12 +31,8 @@ export class ATNState implements IComparable {
         return this.stateNumber;
     }
 
-    public equals(other: unknown): boolean {
-        if (other instanceof ATNState) {
-            return this.stateNumber === other.stateNumber;
-        } else {
-            return false;
-        }
+    public equals(other: ATNState): boolean {
+        return this.stateNumber === other.stateNumber;
     }
 
     public isNonGreedyExitState(): boolean {
@@ -63,10 +61,6 @@ export class ATNState implements IComparable {
         }
 
         this.transitions.push(transition);
-    }
-
-    public get stateType(): number {
-        return ATNState.INVALID_STATE_NUMBER;
     }
 
     public setTransition(i: number, e: Transition): void {

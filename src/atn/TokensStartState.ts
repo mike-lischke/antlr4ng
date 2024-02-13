@@ -11,8 +11,5 @@ import { ATNStateType } from "./ATNStateType.js";
  * The Tokens rule start state linking to each lexer rule start state
  */
 export class TokensStartState extends DecisionState {
-    public override get stateType(): number {
-        return ATNStateType.TOKEN_START;
-    }
-
+    public override readonly stateType = ATNStateType.TOKEN_START;
 }

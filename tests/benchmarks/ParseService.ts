@@ -4,7 +4,7 @@
  */
 
 import {
-    BailErrorStrategy, CharStreams, CommonTokenStream, ParseTree, PredictionMode,
+    BailErrorStrategy, CharStream, CommonTokenStream, ParseTree, PredictionMode,
 } from "antlr4ng";
 
 import { MySQLLexer } from "./generated/MySQLLexer.js";
@@ -14,7 +14,7 @@ import { IParserErrorInfo, MySQLParseUnit } from "./support/helpers.js";
 import { MySQLErrorListener } from "./support/MySQLErrorListener.js";
 
 export class ParseService {
-    private lexer = new MySQLLexer(CharStreams.fromString(""));
+    private lexer = new MySQLLexer(CharStream.fromString(""));
     private tokenStream = new CommonTokenStream(this.lexer);
     private parser = new MySQLParser(this.tokenStream);
 
@@ -93,7 +93,7 @@ export class ParseService {
      */
     private startParsing(text: string, serverVersion: number, sqlMode: string): ParseTree | undefined {
         this.errors = [];
-        this.lexer.inputStream = CharStreams.fromString(text);
+        this.lexer.inputStream = CharStream.fromString(text);
         this.tokenStream.setTokenSource(this.lexer);
 
         this.parser.reset();

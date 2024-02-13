@@ -27,6 +27,8 @@ export class ListTokenSource implements TokenSource {
      */
     public readonly sourceName: string;
 
+    public tokenFactory: TokenFactory<Token> = CommonTokenFactory.DEFAULT;
+
     /**
      * The wrapped collection of {@link Token} objects to return.
      */
@@ -43,12 +45,6 @@ export class ListTokenSource implements TokenSource {
      * This field caches the EOF token for the token source.
      */
     protected eofToken: Token | null;
-
-    /**
-     * This is the backing field for {@link #getTokenFactory} and
-     * {@link tokenFactory}.
-     */
-    #factory: TokenFactory<Token> = CommonTokenFactory.DEFAULT;
 
     /**
      * Constructs a new {@link ListTokenSource} instance from the specified
@@ -120,7 +116,7 @@ export class ListTokenSource implements TokenSource {
                 }
 
                 const stop = Math.max(-1, start - 1);
-                this.eofToken = this.#factory.create([this, this.inputStream], Token.EOF, "EOF",
+                this.eofToken = this.tokenFactory.create([this, this.inputStream], Token.EOF, "EOF",
                     Token.DEFAULT_CHANNEL, start, stop, this.line, this.column);
             }
 
@@ -200,13 +196,5 @@ export class ListTokenSource implements TokenSource {
         }
 
         return "List";
-    }
-
-    public set tokenFactory(factory: TokenFactory<Token>) {
-        this.#factory = factory;
-    }
-
-    public get tokenFactory(): TokenFactory<Token> {
-        return this.#factory;
     }
 }

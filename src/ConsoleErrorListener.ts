@@ -19,7 +19,6 @@ import { ATNSimulator } from "./atn/ATNSimulator.js";
  * ```
  * line *line*:*charPositionInLine* *msg*
  * ```
- *
  */
 export class ConsoleErrorListener extends BaseErrorListener {
     /**

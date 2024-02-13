@@ -202,7 +202,7 @@ export class ParserInterpreter extends Parser {
             case TransitionType.RANGE:
             case TransitionType.SET:
             case TransitionType.NOT_SET:
-                if (!transition.matches(this.inputStream!.LA(1), Token.MIN_USER_TOKEN_TYPE, 65535)) {
+                if (!transition.matches(this.inputStream.LA(1), Token.MIN_USER_TOKEN_TYPE, 65535)) {
                     this.recoverInline();
                 }
                 this.matchWildcard();
@@ -258,12 +258,12 @@ export class ParserInterpreter extends Parser {
         if (p.transitions.length > 1) {
             this.errorHandler.sync(this);
             const decision = p.decision;
-            if (decision === this.#overrideDecision && this.inputStream!.index === this.#overrideDecisionInputIndex &&
+            if (decision === this.#overrideDecision && this.inputStream.index === this.#overrideDecisionInputIndex &&
                 !this.#overrideDecisionReached) {
                 predictedAlt = this.#overrideDecisionAlt;
                 this.#overrideDecisionReached = true;
             } else {
-                predictedAlt = this.interpreter.adaptivePredict(this.inputStream!, decision, this.context);
+                predictedAlt = this.interpreter.adaptivePredict(this.inputStream, decision, this.context);
             }
         }
 
@@ -290,9 +290,9 @@ export class ParserInterpreter extends Parser {
     }
 
     protected recover(e: RecognitionException): void {
-        const i = this.inputStream!.index;
+        const i = this.inputStream.index;
         this.errorHandler.recover(this, e);
-        if (this.inputStream!.index === i) {
+        if (this.inputStream.index === i) {
             // no input consumed, better add an error node
             const tok = e.offendingToken;
             if (!tok) {

@@ -14,8 +14,6 @@ import { ATNStateType } from "./ATNStateType.js";
  * error handling
  */
 export class RuleStopState extends ATNState {
-    public override get stateType(): number {
-        return ATNStateType.RULE_STOP;
-    }
+    public override readonly stateType = ATNStateType.RULE_STOP;
 
 }

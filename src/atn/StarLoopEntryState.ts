@@ -10,7 +10,7 @@ import { StarLoopbackState } from "./StarLoopbackState.js";
 
 export class StarLoopEntryState extends DecisionState {
     // This is always set during ATN deserialization
-    public loopBackState: StarLoopbackState;
+    public loopBackState!: StarLoopbackState;
 
     /**
      * Indicates whether this state can benefit from a precedence DFA during SLL
@@ -22,15 +22,7 @@ export class StarLoopEntryState extends DecisionState {
      *
      * @see `DFA.isPrecedenceDfa`
      */
-    public precedenceRuleDecision: boolean;
+    public precedenceRuleDecision: boolean = false;
 
-    public constructor() {
-        super();
-        this.precedenceRuleDecision = false;
-    }
-
-    public override get stateType(): number {
-        return ATNStateType.STAR_LOOP_ENTRY;
-    }
-
+    public override readonly stateType = ATNStateType.STAR_LOOP_ENTRY;
 }

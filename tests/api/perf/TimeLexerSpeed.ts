@@ -7,7 +7,7 @@
 import { readFileSync, statSync } from "fs";
 import { basename } from "path";
 
-import { CharStream, CharStreams, CommonTokenStream, Lexer } from "antlr4ng";
+import { CharStream, CommonTokenStream, Lexer } from "antlr4ng";
 import { printf } from "fast-printf";
 
 import { JavaLexer } from "../../generated/JavaLexer.js";
@@ -110,7 +110,7 @@ export class TimeLexerSpeed {
         const start = performance.now(); // track only time to suck data out of stream
 
         for (let i = 0; i < n; i++) {
-            input[i] = CharStreams.fromString(content);
+            input[i] = CharStream.fromString(content);
         }
 
         const stop = performance.now();
@@ -129,7 +129,7 @@ export class TimeLexerSpeed {
 
     public lexNewJavaUTF8(n: number, clearLexerDFACache: boolean): void {
         const content = readFileSync(TimeLexerSpeed.parserJavaFile, { encoding: "utf-8" });
-        const input = CharStreams.fromString(content);
+        const input = CharStream.fromString(content);
         const lexer = new JavaLexer(input);
         const avg = this.tokenize(lexer, n, clearLexerDFACache);
         if (this.output) {
@@ -146,7 +146,7 @@ export class TimeLexerSpeed {
     public lexNewGraphemeUTF8(fileName: String, n: number, clearLexerDFACache: boolean): void {
         const resourceName = TimeLexerSpeed.perfDir + "/" + fileName;
         const content = readFileSync(resourceName, { encoding: "utf-8" });
-        const input = CharStreams.fromString(content);
+        const input = CharStream.fromString(content);
         const lexer = new graphemesLexer(input);
         const avg = this.tokenize(lexer, n, clearLexerDFACache);
         if (this.output) {

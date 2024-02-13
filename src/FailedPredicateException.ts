@@ -15,9 +15,9 @@ import { RecognitionException } from "./RecognitionException.js";
  * prediction.
  */
 export class FailedPredicateException extends RecognitionException {
-    private readonly ruleIndex: number = 0;
-    private readonly predicateIndex: number = 0;
-    private readonly predicate?: string;
+    public readonly ruleIndex: number = 0;
+    public readonly predicateIndex: number = 0;
+    public readonly predicate?: string;
 
     public constructor(recognizer: Parser, predicate?: string, message: string | null = null) {
         super({

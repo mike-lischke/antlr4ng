@@ -21,7 +21,6 @@ import { RuleContext } from "./RuleContext.js";
 import { IntStream } from "./IntStream.js";
 
 export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     public static readonly EOF = -1;
 
     private static tokenTypeMapCache = new Map<Vocabulary, Map<string, number>>();

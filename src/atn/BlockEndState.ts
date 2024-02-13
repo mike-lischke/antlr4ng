@@ -14,8 +14,5 @@ import { BlockStartState } from "./BlockStartState.js";
 export class BlockEndState extends ATNState {
     public startState: BlockStartState | null = null;
 
-    public override get stateType(): number {
-        return ATNStateType.BLOCK_END;
-    }
-
+    public override readonly stateType = ATNStateType.BLOCK_END;
 }

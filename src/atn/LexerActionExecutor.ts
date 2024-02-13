@@ -162,13 +162,9 @@ export class LexerActionExecutor /*implements*/ extends LexerAction {
         return this.#cachedHashCode;
     }
 
-    public override equals(other: unknown): boolean {
+    public override equals(other: LexerActionExecutor): boolean {
         if (this === other) {
             return true;
-        }
-
-        if (!(other instanceof LexerActionExecutor)) {
-            return false;
         }
 
         if (this.#cachedHashCode !== other.#cachedHashCode) {
@@ -179,14 +175,7 @@ export class LexerActionExecutor /*implements*/ extends LexerAction {
             return false;
         }
 
-        const numActions = this.lexerActions.length;
-        for (let idx = 0; idx < numActions; ++idx) {
-            if (!this.lexerActions[idx].equals(other.lexerActions[idx])) {
-                return false;
-            }
-        }
-
-        return true;
+        return this.lexerActions.every((action, index) => { return action.equals(other.lexerActions[index]); });
     }
 
 }

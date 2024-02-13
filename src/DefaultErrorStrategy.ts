@@ -107,14 +107,10 @@ export class DefaultErrorStrategy {
      * and dispatches the reporting task based on the runtime type of `e`
      * according to the following table.
      *
-     * - {@link NoViableAltException}: Dispatches the call to
-     * {@link reportNoViableAlternative}
-     * - {@link InputMismatchException}: Dispatches the call to
-     * {@link reportInputMismatch}
-     * - {@link FailedPredicateException}: Dispatches the call to
-     * {@link reportFailedPredicate}
-     * - All other types: calls {@link Parser//notifyErrorListeners} to report
-     * the exception
+     * - {@link NoViableAltException}: Dispatches the call to {@link reportNoViableAlternative}
+     * - {@link InputMismatchException}: Dispatches the call to {@link reportInputMismatch}
+     * - {@link FailedPredicateException}: Dispatches the call to {@link reportFailedPredicate}
+     * - All other types: calls {@link Parser//notifyErrorListeners} to report the exception
      */
     public reportError(recognizer: Parser, e: RecognitionException): void {
         // if we've already reported an error and have not matched a token

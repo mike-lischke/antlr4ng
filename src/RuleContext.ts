@@ -15,7 +15,7 @@ import { ATN } from "./atn/ATN.js";
 
 export class RuleContext implements ParseTree {
     // TODO: move to ParserRuleContext.
-    public children: ParseTree[] | null = null;
+    public children: ParseTree[] = [];
 
     /**
      * What state invoked the rule associated with this context?
@@ -108,7 +108,7 @@ export class RuleContext implements ParseTree {
      * method.
      */
     public getText(): string {
-        if (!this.children || this.getChildCount() === 0) {
+        if (this.children.length === 0) {
             return "";
         } else {
             return this.children.map((child) => {

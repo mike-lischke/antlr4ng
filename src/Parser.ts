@@ -439,7 +439,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
             } else {
                 node = this.context!.addTokenNode(o);
             }
-            //node.invokingState = this.state;
+
             if (hasListener) {
                 this.parseListeners!.forEach((listener) => {
                     if (node instanceof ErrorNode) {

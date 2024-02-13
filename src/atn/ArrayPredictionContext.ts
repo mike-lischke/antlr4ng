@@ -50,11 +50,7 @@ export class ArrayPredictionContext extends PredictionContext {
             return true;
         }
 
-        if (!(other instanceof ArrayPredictionContext)) {
-            return false;
-        }
-
-        if (this.hashCode() !== other.hashCode()) {
+        if (!(other instanceof ArrayPredictionContext) || this.hashCode() !== other.hashCode()) {
             return false; // can't be same if hash is different
         }
 

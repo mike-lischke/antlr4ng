@@ -29,31 +29,29 @@ export class CommonToken implements WritableToken {
      */
     public source: [TokenSource | null, CharStream | null];
 
-    public tokenIndex = -1;
-
-    public start = 0;
-
-    public stop = 0;
+    public tokenIndex: number;
+    public start: number;
+    public stop: number;
 
     /**
      * This is the backing field for {@link #getType} and {@link #setType}.
      */
-    public type = 0;
+    public type: number;
 
     /**
      * The (one-based) line number on which the 1st character of this token was.
      */
-    public line = 0;
+    public line: number;
 
     /**
      * The zero-based index of the first character position in its line.
      */
-    public column = -1; // set to invalid position
+    public column: number;
 
     /**
      * The token's channel.
      */
-    public channel = Token.DEFAULT_CHANNEL;
+    public channel: number;
 
     /**
      * This is the backing field for {@link #getText} when the token text is
@@ -63,20 +61,66 @@ export class CommonToken implements WritableToken {
      */
     #text: string | null = null;
 
+    protected constructor(details: {
+        source: [TokenSource | null, CharStream | null],
+        type: number,
+        channel?: number,
+        start?: number,
+        stop?: number;
+        text?: string | null,
+        line?: number,
+        tokenIndex?: number,
+        column?: number;
+    }) {
+        this.type = details.type;
+        this.source = details.source;
+        this.tokenIndex = details.tokenIndex ?? -1;
+        this.line = details.line ?? 0;
+        this.column = details.column ?? -1;
+        this.channel = details.channel ?? Token.DEFAULT_CHANNEL;
+        this.start = details.start ?? 0;
+        this.stop = details.stop ?? 0;
+        this.#text = details.text ?? null;
+
+        if (details.source[0] !== null) {
+            this.line = details.source[0].line;
+            this.column = details.source[0].column;
+        }
+    }
+
     /**
      * Constructs a new {@link CommonToken} as a copy of another {@link Token}.
      *
-     *
-     * If `oldToken` is also a {@link CommonToken} instance, the newly
+     * If `token` is also a {@link CommonToken} instance, the newly
      * constructed token will share a reference to the {@link #text} field and
      * the {@link Pair} stored in {@link #source}. Otherwise, {@link #text} will
      * be assigned the result of calling {@link #getText}, and {@link #source}
      * will be constructed from the result of {@link Token#getTokenSource} and
      * {@link Token#getInputStream}.
      *
-     * @param oldToken The token to copy.
+     * @param token The token to copy.
      */
-    public constructor(oldToken: Token);
+    public static fromToken(token: Token): CommonToken {
+        let source: [TokenSource | null, CharStream | null];
+        if ("source" in token) {
+            source = (token as CommonToken).source;
+        } else {
+            source = [token.tokenSource, token.inputStream];
+        }
+
+        return new CommonToken({
+            type: token.type,
+            line: token.line,
+            tokenIndex: token.tokenIndex,
+            column: token.column,
+            channel: token.channel,
+            start: token.start,
+            stop: token.stop,
+            text: token.text,
+            source,
+        });
+    }
+
     /**
      * Constructs a new {@link CommonToken} with the specified token type and
      * text.
@@ -84,49 +128,23 @@ export class CommonToken implements WritableToken {
      * @param type The token type.
      * @param text The text of the token.
      */
-    public constructor(type: number, text?: string | null);
-    public constructor(source: [TokenSource | null, CharStream | null], type: number, channel: number, start: number,
-        stop: number);
-    public constructor(...args: unknown[]) {
-        if (args.length === 1) {
-            if (typeof args[0] === "number") {
-                this.type = args[0];
-                this.source = CommonToken.EMPTY_SOURCE;
-            } else {
-                const oldToken = args[0] as Token;
+    public static fromType(type: number, text?: string | null): CommonToken {
+        return new CommonToken({
+            type,
+            text,
+            source: CommonToken.EMPTY_SOURCE,
+        });
+    }
 
-                this.type = oldToken.type;
-                this.line = oldToken.line;
-                this.tokenIndex = oldToken.tokenIndex;
-                this.column = oldToken.column;
-                this.channel = oldToken.channel;
-                this.start = oldToken.start;
-                this.stop = oldToken.stop;
-
-                this.#text = oldToken.text;
-                if (oldToken instanceof CommonToken) {
-                    this.source = oldToken.source;
-                } else {
-                    this.source = [oldToken.tokenSource, oldToken.inputStream];
-                }
-            }
-        } else if (args.length === 2) {
-            this.type = args[0] as number;
-            this.#text = args[1] as string | null;
-            this.source = CommonToken.EMPTY_SOURCE;
-        } else {
-            const [source, type, channel, start, stop] =
-                args as [[TokenSource | null, CharStream | null], number, number, number, number];
-            this.source = source;
-            this.type = type;
-            this.channel = channel;
-            this.start = start;
-            this.stop = stop;
-            if (this.source[0] !== null) {
-                this.line = source[0]!.line;
-                this.column = source[0]!.column;
-            }
-        };
+    public static fromSource(source: [TokenSource | null, CharStream | null], type: number, channel: number,
+        start: number, stop: number): CommonToken {
+        return new CommonToken({
+            type,
+            channel,
+            start,
+            stop,
+            source,
+        });
     }
 
     public get tokenSource(): TokenSource | null {
@@ -140,7 +158,6 @@ export class CommonToken implements WritableToken {
     /**
      * Constructs a new {@link CommonToken} as a copy of another {@link Token}.
      *
-     *
      * If `oldToken` is also a {@link CommonToken} instance, the newly
      * constructed token will share a reference to the {@link text} field and
      * the {@link Pair} stored in {@link source}. Otherwise, {@link text} will
@@ -149,11 +166,17 @@ export class CommonToken implements WritableToken {
      * {@link Token//getInputStream}.
      */
     public clone(): CommonToken {
-        const t = new CommonToken(this.source, this.type, this.channel, this.start, this.stop);
-        t.tokenIndex = this.tokenIndex;
-        t.line = this.line;
-        t.column = this.column;
-        t.#text = this.#text;
+        const t = new CommonToken({
+            source: this.source,
+            type: this.type,
+            channel: this.channel,
+            start: this.start,
+            stop: this.stop,
+            tokenIndex: this.tokenIndex,
+            line: this.line,
+            column: this.column,
+            text: this.#text,
+        });
 
         return t;
     }
