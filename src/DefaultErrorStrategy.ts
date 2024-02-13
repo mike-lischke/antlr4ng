@@ -279,7 +279,7 @@ export class DefaultErrorStrategy {
             if (e.startToken.type === Token.EOF) {
                 input = "<EOF>";
             } else {
-                input = tokens.getTextWithRange(e.startToken, e.offendingToken);
+                input = tokens.getTextFromRange(e.startToken, e.offendingToken);
             }
         } else {
             input = "<unknown input>";

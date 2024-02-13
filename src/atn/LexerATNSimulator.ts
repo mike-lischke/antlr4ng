@@ -127,7 +127,7 @@ export class LexerATNSimulator extends ATNSimulator {
     // Get the text matched so far for the current token.
     public getText(input: CharStream): string {
         // index is first lookahead char, don't include.
-        return input.getText(this.startIndex, input.index - 1);
+        return input.getTextFromRange(this.startIndex, input.index - 1);
     }
 
     public consume(input: CharStream): void {

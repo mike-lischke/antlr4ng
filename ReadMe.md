@@ -63,12 +63,12 @@ WS: [ \t\r\n]+ -> skip;
 ```
 
 ```typescript
-import { CharStreams, CommonTokenStream } from "antlr4ng";
+import { CharStream, CommonTokenStream } from "antlr4ng";
 import { ExpressionLexer } from "./generated/ExpressionLexer.js";
 import { ExpressionParser } from "./generated/ExpressionParser.js";
 
 const input = "1 + 2 * 3";
-const inputStream = CharStreams.fromString(input);
+const inputStream = CharStream.fromString(input);
 const lexer = new ExpressionLexer(inputStream);
 const tokenStream = new CommonTokenStream(lexer);
 const parser = new ExpressionParser(tokenStream);

@@ -158,7 +158,7 @@ export const sourceTextForRange = (start: Token | ParseTree, stop: Token | Parse
 
     const stream = startToken?.tokenSource?.inputStream;
     const stopIndex = stop && stopToken ? stopToken.stop : 1e100;
-    let result = stream?.getText(startToken ? startToken.start : 0, stopIndex) ?? "";
+    let result = stream?.getTextFromRange(startToken ? startToken.start : 0, stopIndex) ?? "";
     if (keepQuotes || result.length < 2) {
         return result;
     }
@@ -170,7 +170,7 @@ export const sourceTextForRange = (start: Token | ParseTree, stop: Token | Parse
             result = result.replace(quoteChar.repeat(2), quoteChar);
         }
 
-        return result.substr(1, result.length - 2);
+        return result.substring(1, result.length - 2);
     }
 
     return result;

@@ -291,7 +291,7 @@ export class MySQLErrorListener extends BaseErrorListener {
             if (e instanceof LexerNoViableAltException) {
                 const lexer = recognizer as Lexer;
                 const input = lexer.inputStream;
-                let text = lexer.getErrorDisplay(input.getText(lexer.tokenStartCharIndex, input.index));
+                let text = lexer.getErrorDisplay(input.getTextFromRange(lexer.tokenStartCharIndex, input.index));
                 if (text === "") {
                     text = " ";  // Should never happen, but we must ensure we have text.
                 }

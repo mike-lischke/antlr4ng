@@ -16,7 +16,6 @@ export * from "./BailErrorStrategy.js";
 export * from "./BaseErrorListener.js";
 export * from "./BufferedTokenStream.js";
 export * from "./CharStream.js";
-export * from "./CharStreams.js";
 export * from "./CommonToken.js";
 export * from "./CommonTokenFactory.js";
 export * from "./CommonTokenStream.js";

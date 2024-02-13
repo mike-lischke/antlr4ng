@@ -194,7 +194,7 @@ export class CommonToken implements WritableToken {
 
         const n = input.size;
         if (this.start < n && this.stop < n) {
-            return input.getText(this.start, this.stop);
+            return input.getTextFromRange(this.start, this.stop);
         } else {
             return "<EOF>";
         }

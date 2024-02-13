@@ -41,7 +41,7 @@ class CaptureErrorListener extends antlr.BaseErrorListener {
 }
 
 const main = (text: string): void => {
-    const input = antlr.CharStreams.fromString(text);
+    const input = antlr.CharStream.fromString(text);
     const lexer = new <lexerName>(input);
     lexer.removeErrorListeners();
     lexer.addErrorListener(new CaptureErrorListener());

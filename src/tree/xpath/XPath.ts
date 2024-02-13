@@ -6,7 +6,7 @@
 
 /* eslint-disable @typescript-eslint/naming-convention, jsdoc/require-returns, jsdoc/require-param */
 
-import { CharStreams } from "../../CharStreams.js";
+import { CharStream } from "../../CharStream.js";
 import { CommonTokenStream } from "../../CommonTokenStream.js";
 import { LexerNoViableAltException } from "../../LexerNoViableAltException.js";
 import { Parser } from "../../Parser.js";
@@ -84,7 +84,7 @@ export class XPath {
     // TODO: check for invalid token/rule names, bad syntax
 
     public split(path: string): XPathElement[] {
-        const lexer = new XPathLexer(CharStreams.fromString(path));
+        const lexer = new XPathLexer(CharStream.fromString(path));
         lexer.recover = (e: LexerNoViableAltException) => { throw e; };
 
         lexer.removeErrorListeners();

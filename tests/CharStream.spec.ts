@@ -99,25 +99,25 @@ describe("CharStream", () => {
     describe("getText", () => {
         it("should return an empty string if the begin index is greater than or equal to the data length", () => {
             const charStream = new CharStream(unicodeInput);
-            const result = charStream.getText(20, 10);
+            const result = charStream.getTextFromRange(20, 10);
             expect(result).toBe("");
         });
 
         it("should return the correct substring when given an interval", () => {
             const charStream = new CharStream(unicodeInput);
-            const result = charStream.getText(new Interval(6, 11));
+            const result = charStream.getTextFromInterval(new Interval(6, 11));
             expect(result).toBe("👋, Wor");
         });
 
         it("should return the correct substring when given a start and stop index", () => {
             const charStream = new CharStream(unicodeInput);
-            const result = charStream.getText(8, 11);
+            const result = charStream.getTextFromRange(8, 11);
             expect(result).toBe(" Wor");
         });
 
         it("should handle stop index greater than data length", () => {
             const charStream = new CharStream(unicodeInput);
-            const result = charStream.getText(7, 20);
+            const result = charStream.getTextFromRange(7, 20);
             expect(result).toBe(", World! 😁");
         });
 

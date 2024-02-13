@@ -383,10 +383,10 @@ export class BufferedTokenStream implements TokenStream {
 
     /** Get the text of all tokens in this buffer. */
     public getText(): string {
-        return this.getTextWithInterval(Interval.of(0, this.size - 1));
+        return this.getTextFromInterval(Interval.of(0, this.size - 1));
     }
 
-    public getTextWithInterval(interval: Interval): string {
+    public getTextFromInterval(interval: Interval): string {
         const start = interval.start;
         let stop = interval.stop;
         if (start < 0 || stop < 0) {
@@ -412,13 +412,13 @@ export class BufferedTokenStream implements TokenStream {
 
     }
 
-    public getTextWithContext(ctx: RuleContext): string {
-        return this.getTextWithInterval(ctx.getSourceInterval());
+    public getTextFromContext(ctx: RuleContext): string {
+        return this.getTextFromInterval(ctx.getSourceInterval());
     }
 
-    public getTextWithRange(start: Token | null, stop: Token | null): string {
+    public getTextFromRange(start: Token | null, stop: Token | null): string {
         if (start !== null && stop !== null) {
-            return this.getTextWithInterval(Interval.of(start.tokenIndex, stop.tokenIndex));
+            return this.getTextFromInterval(Interval.of(start.tokenIndex, stop.tokenIndex));
         }
 
         return "";

@@ -68,7 +68,7 @@ export class CommonTokenFactory implements TokenFactory<CommonToken> {
         if (text !== null) {
             t.text = text;
         } else if (this.copyText && source[1] !== null) {
-            t.text = source[1].getText(start, stop);
+            t.text = source[1].getTextFromRange(start, stop);
         }
 
         return t;

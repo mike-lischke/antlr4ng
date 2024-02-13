@@ -113,11 +113,11 @@ export class UnbufferedTokenStream implements TokenStream {
         return "";
     }
 
-    public getTextWithContext(ctx: RuleContext): string {
-        return this.getTextWithInterval(ctx.getSourceInterval());
+    public getTextFromContext(ctx: RuleContext): string {
+        return this.getTextFromInterval(ctx.getSourceInterval());
     }
 
-    public getTextWithInterval(interval: Interval): string {
+    public getTextFromInterval(interval: Interval): string {
         const bufferStartIndex = this.getBufferStartIndex();
         const bufferStopIndex = bufferStartIndex + this.tokens.length - 1;
 
@@ -140,8 +140,8 @@ export class UnbufferedTokenStream implements TokenStream {
         return result;
     }
 
-    public getTextWithRange(start: Token, stop: Token): string {
-        return this.getTextWithInterval(Interval.of(start.tokenIndex, stop.tokenIndex));
+    public getTextFromRange(start: Token, stop: Token): string {
+        return this.getTextFromInterval(Interval.of(start.tokenIndex, stop.tokenIndex));
     }
 
     public consume(): void {

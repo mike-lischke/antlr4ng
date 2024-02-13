@@ -5,7 +5,7 @@
  */
 
 import {
-    BaseErrorListener, CommonTokenStream, Recognizer, ErrorNode, TerminalNode, CharStreams, Token, ATNSimulator,
+    BaseErrorListener, CommonTokenStream, Recognizer, ErrorNode, TerminalNode, CharStream, Token, ATNSimulator,
     RuleContext,
 } from "antlr4ng";
 
@@ -26,7 +26,7 @@ describe("TestVisitors", () => {
      */
     it("testVisitTerminalNode", () => {
         const input = "A";
-        const lexer = new VisitorBasicLexer(CharStreams.fromString(input));
+        const lexer = new VisitorBasicLexer(CharStream.fromString(input));
         const parser = new VisitorBasicParser(new CommonTokenStream(lexer));
 
         const context = parser.s();
@@ -59,7 +59,7 @@ describe("TestVisitors", () => {
      */
     it("testVisitErrorNode", () => {
         const input = "";
-        const lexer = new VisitorBasicLexer(CharStreams.fromString(input));
+        const lexer = new VisitorBasicLexer(CharStream.fromString(input));
         const parser = new VisitorBasicParser(new CommonTokenStream(lexer));
 
         const errors: string[] = [];
@@ -103,7 +103,7 @@ describe("TestVisitors", () => {
      */
     it("testShouldNotVisitEOF", () => {
         const input = "A";
-        const lexer = new VisitorBasicLexer(CharStreams.fromString(input));
+        const lexer = new VisitorBasicLexer(CharStream.fromString(input));
         const parser = new VisitorBasicParser(new CommonTokenStream(lexer));
 
         const context = parser.s();
@@ -131,7 +131,7 @@ describe("TestVisitors", () => {
      */
     it("testShouldNotVisitTerminal", () => {
         const input = "A";
-        const lexer = new VisitorBasicLexer(CharStreams.fromString(input));
+        const lexer = new VisitorBasicLexer(CharStream.fromString(input));
         const parser = new VisitorBasicParser(new CommonTokenStream(lexer));
 
         const context = parser.s();
@@ -161,7 +161,7 @@ describe("TestVisitors", () => {
      */
     it("testCalculatorVisitor", () => {
         const input = "2 + 8 / 2";
-        const lexer = new VisitorCalcLexer(CharStreams.fromString(input));
+        const lexer = new VisitorCalcLexer(CharStream.fromString(input));
         const parser = new VisitorCalcParser(new CommonTokenStream(lexer));
 
         const context = parser.s();

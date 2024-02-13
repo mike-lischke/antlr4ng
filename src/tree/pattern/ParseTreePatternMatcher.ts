@@ -7,7 +7,7 @@
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns */
 
 import { BailErrorStrategy } from "../../BailErrorStrategy.js";
-import { CharStreams } from "../../CharStreams.js";
+import { CharStream } from "../../CharStream.js";
 import { CommonTokenStream } from "../../CommonTokenStream.js";
 import type { Lexer } from "../../Lexer.js";
 import { ListTokenSource } from "../../ListTokenSource.js";
@@ -310,7 +310,7 @@ export class ParseTreePatternMatcher {
                 }
             } else {
                 const textChunk = chunk as TextChunk;
-                const input = CharStreams.fromString(textChunk.text);
+                const input = CharStream.fromString(textChunk.text);
                 this.lexer.inputStream = input;
                 let t = this.lexer.nextToken();
                 while (t.type !== Token.EOF) {

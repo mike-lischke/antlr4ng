@@ -6,7 +6,7 @@
 
 // cspell: disable
 
-import { CommonTokenStream, TokenStreamRewriter, Interval, CharStreams, Lexer, CharStream } from "antlr4ng";
+import { CommonTokenStream, TokenStreamRewriter, Interval, Lexer, CharStream } from "antlr4ng";
 
 import { T1 } from "../generated/T1.js";
 import { T2 } from "../generated/T2.js";
@@ -19,7 +19,7 @@ import { T3 } from "../generated/T3.js";
  * @returns A new TokenStreamRewriter instance.
  */
 const createRewriter = <T extends Lexer>(lexerClass: new (input: CharStream) => T, input: string) => {
-    const chars = CharStreams.fromString(input);
+    const chars = CharStream.fromString(input);
 
     const lexer: T = new lexerClass(chars);
     const tokens = new CommonTokenStream(lexer);

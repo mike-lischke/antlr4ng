@@ -272,7 +272,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
     public notifyListeners(e: LexerNoViableAltException): void {
         const start = this.tokenStartCharIndex;
         const stop = this.#input.index;
-        const text = this.#input.getText(start, stop);
+        const text = this.#input.getTextFromRange(start, stop);
         const msg = "token recognition error at: '" + this.getErrorDisplay(text) + "'";
         const listener = this.getErrorListenerDispatch();
         listener.syntaxError(this, null, this.currentTokenStartLine,

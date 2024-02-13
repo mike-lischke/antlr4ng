@@ -17,19 +17,27 @@ export interface CharStream extends IntStream {
      * touched.
      */
     reset(): void;
+
     /**
      * get a substring from the stream at start to stop (inclusive).
      *
      * @param start Start index
      * @param stop Stop index
      */
-    getText(start: number, stop: number): string;
+    getTextFromRange(start: number, stop: number): string;
+
     /**
      * get a substring from the stream at specified interval (inclusive).
      *
      * @param interval
      */
-    getText(interval: Interval): string;
+    getTextFromInterval(interval: Interval): string;
+}
+
+export namespace CharStream {
+    export const fromString = (str: string): CharStream => {
+        return new CharStreamImpl(str);
+    };
 }
 
 export class CharStreamImpl implements CharStream {
@@ -102,28 +110,34 @@ export class CharStreamImpl implements CharStream {
         this.index = Math.min(index, this.data.length);
     }
 
-    public getText(start: number, stop: number): string;
-    public getText(interval: Interval): string;
-    public getText(intervalOrStart: Interval | number, stop?: number): string {
-        let begin;
-        let end: number;
-        if (intervalOrStart instanceof Interval) {
-            begin = intervalOrStart.start;
-            end = intervalOrStart.stop;
-        } else {
-            begin = intervalOrStart;
-            end = stop ?? this.data.length - 1;
+    public getTextFromRange(start: number, stop?: number): string {
+        stop = stop ?? this.data.length - 1;
+
+        if (stop >= this.data.length) {
+            stop = this.data.length - 1;
         }
 
-        if (end >= this.data.length) {
-            end = this.data.length - 1;
+        if (start >= this.data.length) {
+            return "";
         }
 
-        if (begin >= this.data.length) {
+        return this.#stringFromRange(start, stop + 1);
+    }
+
+    public getTextFromInterval(interval: Interval): string {
+        const start = interval.start;
+        let stop = interval.stop;
+
+        if (stop >= this.data.length) {
+            stop = this.data.length - 1;
+        }
+
+        if (start >= this.data.length) {
             return "";
         } else {
-            return this.#stringFromRange(begin, end + 1);
+            return this.#stringFromRange(start, stop + 1);
         }
+
     }
 
     public toString(): string {
