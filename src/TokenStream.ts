@@ -73,7 +73,7 @@ export interface TokenStream extends IntStream {
      *
      * @throws NullPointerException if `interval` is `null`
      */
-    getText(interval: Interval): string;
+    getTextWithInterval(interval: Interval): string;
 
     /**
      * Return the text of all tokens in the stream. This method behaves like the
@@ -83,7 +83,7 @@ export interface TokenStream extends IntStream {
      *
      * ```
      * TokenStream stream = ...;
-     * String text = stream.getText(new Interval(0, stream.size()));
+     * String text = stream.getTextWithInterval(new Interval(0, stream.size()));
      * ```
      *
      * @returns The text of all tokens in the stream.
@@ -101,14 +101,14 @@ export interface TokenStream extends IntStream {
      *
      * ```
      * TokenStream stream = ...;
-     * String text = stream.getText(ctx.getSourceInterval());
+     * String text = stream.getTextWithInterval(ctx.getSourceInterval());
      * ```
      *
      * @param ctx The context providing the source interval of tokens to get
      * text for.
      * @returns The text of all tokens within the source interval of `ctx`.
      */
-    getText(ctx: RuleContext): string;
+    getTextWithContext(ctx: RuleContext): string;
 
     /**
      * Return the text of all tokens in this stream between `start` and
@@ -139,5 +139,5 @@ export interface TokenStream extends IntStream {
      * @throws UnsupportedOperationException if this stream does not support
      * this method for the specified tokens
      */
-    getText(start: Token | null, stop: Token | null): string;
+    getTextWithRange(start: Token | null, stop: Token | null): string;
 }

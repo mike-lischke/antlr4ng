@@ -156,7 +156,6 @@ export class ParseTreePatternMatcher {
      *  compiled pattern instead of a string representation of a tree pattern.
      */
     public matches(tree: ParseTree, pattern: ParseTreePattern): boolean;
-
     /** Does `pattern` matched as rule `patternRuleIndex` match `tree`? */
     public matches(tree: ParseTree, pattern: string, patternRuleIndex: number): boolean;
     public matches(...args: unknown[]): boolean {

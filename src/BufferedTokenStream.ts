@@ -382,64 +382,46 @@ export class BufferedTokenStream implements TokenStream {
     }
 
     /** Get the text of all tokens in this buffer. */
-    public getText(): string;
-    public getText(interval: Interval): string;
-    public getText(ctx: RuleContext): string;
-    public getText(start: Token, stop: Token): string;
-    public getText(...args: unknown[]): string {
-        switch (args.length) {
-            case 0: {
-                return this.getText(Interval.of(0, this.size - 1));
-            }
+    public getText(): string {
+        return this.getTextWithInterval(Interval.of(0, this.size - 1));
+    }
 
-            case 1: {
-                const o = args[0] as Object;
-                if ("start" in o) {
-                    const interval = o as Interval;
-                    const start = interval.start;
-                    let stop = interval.stop;
-                    if (start < 0 || stop < 0) {
-                        return "";
-                    }
-
-                    this.sync(stop);
-                    if (stop >= this.tokens.length) {
-                        stop = this.tokens.length - 1;
-                    }
-
-                    let buf = "";
-                    for (let i: number = start; i <= stop; i++) {
-                        const t = this.tokens[i];
-                        if (t.type === Token.EOF) {
-                            break;
-                        }
-
-                        buf += t.text;
-                    }
-
-                    return buf.toString();
-                } else {
-                    const ctx = args[0] as RuleContext;
-
-                    return this.getText(ctx.getSourceInterval());
-                }
-            }
-
-            case 2: {
-                const start = args[0] as Token;
-                const stop = args[1] as Token;
-
-                if (start !== null && stop !== null) {
-                    return this.getText(Interval.of(start.tokenIndex, stop.tokenIndex));
-                }
-
-                return "";
-            }
-
-            default: {
-                throw new Error(`Invalid number of arguments`);
-            }
+    public getTextWithInterval(interval: Interval): string {
+        const start = interval.start;
+        let stop = interval.stop;
+        if (start < 0 || stop < 0) {
+            return "";
         }
+
+        this.sync(stop);
+        if (stop >= this.tokens.length) {
+            stop = this.tokens.length - 1;
+        }
+
+        let result = "";
+        for (let i = start; i <= stop; ++i) {
+            const t = this.tokens[i];
+            if (t.type === Token.EOF) {
+                break;
+            }
+
+            result += t.text;
+        }
+
+        return result;
+
+    }
+
+    public getTextWithContext(ctx: RuleContext): string {
+        return this.getTextWithInterval(ctx.getSourceInterval());
+    }
+
+    public getTextWithRange(start: Token | null, stop: Token | null): string {
+        if (start !== null && stop !== null) {
+            return this.getTextWithInterval(Interval.of(start.tokenIndex, stop.tokenIndex));
+        }
+
+        return "";
     }
 
     // Get all tokens from lexer until EOF.

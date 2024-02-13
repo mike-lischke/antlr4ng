@@ -11,7 +11,6 @@ import { InputMismatchException } from "./InputMismatchException.js";
 import { NoViableAltException } from "./NoViableAltException.js";
 import { ATNState } from "./atn/ATNState.js";
 import { Token } from "./Token.js";
-import { Interval } from "./misc/Interval.js";
 import { IntervalSet } from "./misc/IntervalSet.js";
 import { ATNStateType } from "./atn/ATNStateType.js";
 import { ParserRuleContext } from "./ParserRuleContext.js";
@@ -280,7 +279,7 @@ export class DefaultErrorStrategy {
             if (e.startToken.type === Token.EOF) {
                 input = "<EOF>";
             } else {
-                input = tokens.getText(new Interval(e.startToken.tokenIndex, e.offendingToken!.tokenIndex));
+                input = tokens.getTextWithRange(e.startToken, e.offendingToken);
             }
         } else {
             input = "<unknown input>";
@@ -306,7 +305,7 @@ export class DefaultErrorStrategy {
         }
 
         const msg = "mismatched input " + this.getTokenErrorDisplay(e.offendingToken) +
-            " expecting " + e.getExpectedTokens()!.toString(recognizer.vocabulary);
+            " expecting " + e.getExpectedTokens()!.toStringWithVocabulary(recognizer.vocabulary);
         recognizer.notifyErrorListeners(msg, e.offendingToken, e);
     }
 
@@ -351,7 +350,8 @@ export class DefaultErrorStrategy {
         const t = recognizer.getCurrentToken();
         const tokenName = this.getTokenErrorDisplay(t);
         const expecting = this.getExpectedTokens(recognizer);
-        const msg = "extraneous input " + tokenName + " expecting " + expecting.toString(recognizer.vocabulary);
+        const msg = "extraneous input " + tokenName + " expecting " +
+            expecting.toStringWithVocabulary(recognizer.vocabulary);
         recognizer.notifyErrorListeners(msg, t, null);
     }
 
@@ -380,7 +380,7 @@ export class DefaultErrorStrategy {
 
         const t = recognizer.getCurrentToken();
         const expecting = this.getExpectedTokens(recognizer);
-        const msg = "missing " + expecting.toString(recognizer.vocabulary) +
+        const msg = "missing " + expecting.toStringWithVocabulary(recognizer.vocabulary) +
             " at " + this.getTokenErrorDisplay(t);
         recognizer.notifyErrorListeners(msg, t, null);
     }

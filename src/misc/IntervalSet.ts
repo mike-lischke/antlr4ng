@@ -160,23 +160,24 @@ export class IntervalSet {
         return this;
     }
 
-    public complement(vocabulary?: IntervalSet): IntervalSet;
-    public complement(minElement: number, maxElement: number): IntervalSet;
-    public complement(vocabularyOrMinElement?: IntervalSet | number, maxElement?: number): IntervalSet {
-        if (!vocabularyOrMinElement) {
-            return new IntervalSet();
-        }
-
+    public complementWithVocabulary(vocabulary?: IntervalSet): IntervalSet {
         const result = new IntervalSet();
-        if (vocabularyOrMinElement instanceof IntervalSet) {
-            if (vocabularyOrMinElement.isNil) {
-                return new IntervalSet(); // nothing in common with null set
-            }
-
-            result.addSet(vocabularyOrMinElement);
-        } else {
-            result.addInterval(new Interval(vocabularyOrMinElement, maxElement ?? 0));
+        if (!vocabulary) {
+            return result;
         }
+
+        if (vocabulary.isNil) {
+            return result; // nothing in common with null set
+        }
+
+        result.addSet(vocabulary);
+
+        return result.subtract(this);
+    }
+
+    public complement(minElement: number, maxElement: number): IntervalSet {
+        const result = new IntervalSet();
+        result.addInterval(new Interval(minElement, maxElement));
 
         return result.subtract(this);
     }
@@ -467,9 +468,7 @@ export class IntervalSet {
         return true;
     }
 
-    public toString(elementsAreChar?: boolean): string;
-    public toString(vocabulary: Vocabulary): string;
-    public toString(elementsAreCharOrVocabulary?: boolean | Vocabulary): string {
+    public toString(elementsAreChar?: boolean): string {
         if (this.#intervals.length === 0) {
             return "{}";
         }
@@ -477,16 +476,6 @@ export class IntervalSet {
         let result = "";
         if (this.length > 1) {
             result += "{";
-        }
-
-        let elementsAreChar = false;
-        let vocabulary;
-        if (elementsAreCharOrVocabulary instanceof Vocabulary) {
-            vocabulary = elementsAreCharOrVocabulary;
-        } else if (Array.isArray(elementsAreCharOrVocabulary)) {
-            vocabulary = Vocabulary.fromTokenNames(elementsAreCharOrVocabulary);
-        } else {
-            elementsAreChar = elementsAreCharOrVocabulary ?? false;
         }
 
         for (let i = 0; i < this.#intervals.length; ++i) {
@@ -499,25 +488,101 @@ export class IntervalSet {
                     result += "<EOF>";
                 } else if (elementsAreChar) {
                     result += "'" + String.fromCodePoint(start) + "'";
-                } else if (vocabulary) {
-                    result += this.elementName(vocabulary, start);
                 } else {
                     result += start;
                 }
             } else {
                 if (elementsAreChar) {
                     result += "'" + String.fromCodePoint(start) + "'..'" + String.fromCodePoint(stop) + "'";
-                } else if (vocabulary) {
-                    for (let i = start; i <= stop; ++i) {
-                        if (i > start) {
-                            result += ", ";
-                        }
-
-                        result += this.elementName(vocabulary, i);
-                    }
-
                 } else {
                     result += start + ".." + stop;
+                }
+            }
+
+            if (i < this.#intervals.length - 1) {
+                result += ", ";
+            }
+        }
+
+        if (this.length > 1) {
+            result += "}";
+        }
+
+        return result;
+    }
+
+    public toStringWithVocabulary(vocabulary: Vocabulary): string {
+        if (this.#intervals.length === 0) {
+            return "{}";
+        }
+
+        let result = "";
+        if (this.length > 1) {
+            result += "{";
+        }
+
+        for (let i = 0; i < this.#intervals.length; ++i) {
+            const interval = this.#intervals[i];
+
+            const start = interval.start;
+            const stop = interval.stop;
+            if (start === stop) {
+                if (start === Token.EOF) {
+                    result += "<EOF>";
+                } else {
+                    result += this.elementName(vocabulary, start);
+                }
+            } else {
+                for (let i = start; i <= stop; ++i) {
+                    if (i > start) {
+                        result += ", ";
+                    }
+
+                    result += this.elementName(vocabulary, i);
+                }
+            }
+
+            if (i < this.#intervals.length - 1) {
+                result += ", ";
+            }
+        }
+
+        if (this.length > 1) {
+            result += "}";
+        }
+
+        return result;
+    }
+
+    public toStringWithRuleNames(ruleNames: string[]): string {
+        if (this.#intervals.length === 0) {
+            return "{}";
+        }
+
+        let result = "";
+        if (this.length > 1) {
+            result += "{";
+        }
+
+        const vocabulary = Vocabulary.fromTokenNames(ruleNames);
+        for (let i = 0; i < this.#intervals.length; ++i) {
+            const interval = this.#intervals[i];
+
+            const start = interval.start;
+            const stop = interval.stop;
+            if (start === stop) {
+                if (start === Token.EOF) {
+                    result += "<EOF>";
+                } else {
+                    result += this.elementName(vocabulary, start);
+                }
+            } else {
+                for (let i = start; i <= stop; ++i) {
+                    if (i > start) {
+                        result += ", ";
+                    }
+
+                    result += this.elementName(vocabulary, i);
                 }
             }
 

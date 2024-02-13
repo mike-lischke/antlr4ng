@@ -109,56 +109,39 @@ export class UnbufferedTokenStream implements TokenStream {
         return this.LT(i).type;
     }
 
-    public getText(): string;
-    public getText(ctx: RuleContext): string;
-    public getText(interval: Interval): string;
-    public getText(start: Token, stop: Token): string;
-    public getText(...args: unknown[]): string {
-        switch (args.length) {
-            case 0: {
-                return "";
-            }
+    public getText(): string {
+        return "";
+    }
 
-            case 1: {
-                if (args[0] instanceof Interval) {
-                    const interval = args[0];
-                    const bufferStartIndex = this.getBufferStartIndex();
-                    const bufferStopIndex = bufferStartIndex + this.tokens.length - 1;
+    public getTextWithContext(ctx: RuleContext): string {
+        return this.getTextWithInterval(ctx.getSourceInterval());
+    }
 
-                    const start = interval.start;
-                    const stop = interval.stop;
-                    if (start < bufferStartIndex || stop > bufferStopIndex) {
-                        throw new Error("interval " + interval + " not in token buffer window: " +
-                            bufferStartIndex + ".." + bufferStopIndex);
-                    }
+    public getTextWithInterval(interval: Interval): string {
+        const bufferStartIndex = this.getBufferStartIndex();
+        const bufferStopIndex = bufferStartIndex + this.tokens.length - 1;
 
-                    const a = start - bufferStartIndex;
-                    const b = stop - bufferStartIndex;
-
-                    let buf = "";
-                    for (let i = a; i <= b; i++) {
-                        const t = this.tokens[i];
-                        buf += t.text;
-                    }
-
-                    return buf.toString();
-                } else {
-                    const [ctx] = args as [RuleContext];
-
-                    return this.getText(ctx.getSourceInterval());
-                }
-            }
-
-            case 2: {
-                const [start, stop] = args as [Token, Token];
-
-                return this.getText(Interval.of(start.tokenIndex, stop.tokenIndex));
-            }
-
-            default: {
-                throw new Error("Invalid number of arguments");
-            }
+        const start = interval.start;
+        const stop = interval.stop;
+        if (start < bufferStartIndex || stop > bufferStopIndex) {
+            throw new Error("interval " + interval + " not in token buffer window: " +
+                bufferStartIndex + ".." + bufferStopIndex);
         }
+
+        const a = start - bufferStartIndex;
+        const b = stop - bufferStartIndex;
+
+        let result = "";
+        for (let i = a; i <= b; i++) {
+            const t = this.tokens[i];
+            result += t.text;
+        }
+
+        return result;
+    }
+
+    public getTextWithRange(start: Token, stop: Token): string {
+        return this.getTextWithInterval(Interval.of(start.tokenIndex, stop.tokenIndex));
     }
 
     public consume(): void {

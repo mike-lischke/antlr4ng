@@ -68,9 +68,8 @@ export class TagChunk extends Chunk {
         this.tag = tag;
     }
 
-    // eslint-disable-next-line jsdoc/require-returns
     /**
-     * This method returns a text representation of the tag chunk. Labeled tags
+     * @returns a text representation of the tag chunk. Labeled tags
      * are returned in the form `label:tag`, and unlabeled tags are
      * returned as just the tag name.
      */

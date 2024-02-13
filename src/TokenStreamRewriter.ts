@@ -226,7 +226,7 @@ export class TokenStreamRewriter {
         }
 
         if (rewrites == null || rewrites.length === 0) {
-            return this.tokens.getText(new Interval(start, stop)); // no instructions to execute
+            return this.tokens.getTextWithInterval(new Interval(start, stop)); // no instructions to execute
         }
 
         const buf = [];

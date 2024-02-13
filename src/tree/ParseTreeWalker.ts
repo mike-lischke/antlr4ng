@@ -12,7 +12,6 @@ import { ParseTreeListener } from "./ParseTreeListener.js";
 import { TerminalNode } from "./TerminalNode.js";
 
 export class ParseTreeWalker {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     public static DEFAULT = new ParseTreeWalker();
 
     /**

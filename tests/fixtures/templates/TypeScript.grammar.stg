@@ -76,7 +76,7 @@ TokenStartColumnEquals(i) ::= <%this.currentTokenColumn === <i>%>
 
 ImportListener(X) ::= ""
 
-GetExpectedTokenNames() ::= "this.getExpectedTokens().toString(this.vocabulary)"
+GetExpectedTokenNames() ::= "this.getExpectedTokens().toStringWithVocabulary(this.vocabulary)"
 
 ImportRuleInvocationStack() ::= <<
 @parser::header {
