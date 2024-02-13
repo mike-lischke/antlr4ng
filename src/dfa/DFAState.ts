@@ -83,16 +83,20 @@ export class DFAState {
 
     public predicates: DFAState.PredPrediction[] | null = null;
 
-    public constructor(stateNumber: number);
-    public constructor(configs?: ATNConfigSet);
-    public constructor(stateNumberOrConfigs?: number | ATNConfigSet) {
-        if (stateNumberOrConfigs) {
-            if (typeof stateNumberOrConfigs === "number") {
-                this.stateNumber = stateNumberOrConfigs;
-            } else {
-                this.configs = stateNumberOrConfigs;
-            }
-        }
+    public static fromState(stateNumber: number): DFAState {
+        const result = new DFAState();
+        result.stateNumber = stateNumber;
+
+        return result;
+    }
+
+    public static fromConfigs(configs: ATNConfigSet): DFAState {
+        const result = new DFAState();
+
+        // @ts-ignore, configs are readonly.
+        result.configs = configs;
+
+        return result;
     }
 
     public hashCode(): number {

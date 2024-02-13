@@ -8,9 +8,6 @@ import { DecisionState } from "./DecisionState.js";
 import { ATNStateType } from "./ATNStateType.js";
 import { StarLoopbackState } from "./StarLoopbackState.js";
 
-import type { ParserATNSimulator } from "./ParserATNSimulator.js";
-import type { ParserInterpreter } from "../ParserInterpreter.js";
-
 export class StarLoopEntryState extends DecisionState {
     // This is always set during ATN deserialization
     public loopBackState: StarLoopbackState;

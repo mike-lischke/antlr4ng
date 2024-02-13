@@ -361,10 +361,10 @@ export class ParserATNSimulator extends ATNSimulator {
                     // appropriate start state for the precedence level rather
                     // than simply setting DFA.s0.
                     s0_closure = this.applyPrecedenceFilter(s0_closure);
-                    s0 = this.addDFAState(dfa, new DFAState(s0_closure));
+                    s0 = this.addDFAState(dfa, DFAState.fromConfigs(s0_closure));
                     dfa.setPrecedenceStartState(this.parser.getPrecedence(), s0);
                 } else {
-                    s0 = this.addDFAState(dfa, new DFAState(s0_closure));
+                    s0 = this.addDFAState(dfa, DFAState.fromConfigs(s0_closure));
                     dfa.s0 = s0;
                 }
             }
@@ -560,7 +560,7 @@ export class ParserATNSimulator extends ATNSimulator {
         }
 
         // create new target state; we'll add to DFA after it's complete
-        let D = new DFAState(reach);
+        let D = DFAState.fromConfigs(reach);
 
         const predictedAlt = ParserATNSimulator.getUniqueAlt(reach);
 

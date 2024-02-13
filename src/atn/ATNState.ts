@@ -45,29 +45,24 @@ export class ATNState implements IComparable {
         return `${this.stateNumber}`;
     }
 
-    public addTransition(index: number, transition: Transition): void;
-    public addTransition(transition: Transition): void;
-    public addTransition(indexOrTransition: number | Transition, trans?: Transition): void {
-        let transition: Transition;
-        let index = -1;
-        if (typeof indexOrTransition === "number") {
-            index = indexOrTransition;
-            transition = trans!;
-        } else {
-            transition = indexOrTransition;
-        }
-
+    public addTransitionAtIndex(index: number, transition: Transition): void {
         if (this.transitions.length === 0) {
             this.epsilonOnlyTransitions = transition.isEpsilon;
         } else if (this.epsilonOnlyTransitions !== transition.isEpsilon) {
             this.epsilonOnlyTransitions = false;
         }
 
-        if (index === -1) {
-            this.transitions.push(transition);
-        } else {
-            this.transitions.splice(index, 1, transition);
+        this.transitions.splice(index, 1, transition);
+    }
+
+    public addTransition(transition: Transition): void {
+        if (this.transitions.length === 0) {
+            this.epsilonOnlyTransitions = transition.isEpsilon;
+        } else if (this.epsilonOnlyTransitions !== transition.isEpsilon) {
+            this.epsilonOnlyTransitions = false;
         }
+
+        this.transitions.push(transition);
     }
 
     public get stateType(): number {

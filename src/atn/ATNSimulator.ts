@@ -13,7 +13,7 @@ import { PredictionContext } from "./PredictionContext.js";
 
 export abstract class ATNSimulator {
     /** Must distinguish between missing edge and edge we know leads nowhere */
-    public static readonly ERROR = new DFAState(0x7FFFFFFF);
+    public static readonly ERROR = DFAState.fromState(0x7FFFFFFF);
 
     public readonly atn: ATN;
 

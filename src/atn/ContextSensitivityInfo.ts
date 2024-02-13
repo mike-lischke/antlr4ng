@@ -21,7 +21,6 @@ import { DecisionEventInfo } from "./DecisionEventInfo.js";
  * @see ParserATNSimulator#reportContextSensitivity
  * @see ANTLRErrorListener#reportContextSensitivity
  */
-
 export interface ContextSensitivityInfo extends DecisionEventInfo {
     fullCtx: true;
 }

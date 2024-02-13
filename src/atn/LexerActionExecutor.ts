@@ -165,22 +165,28 @@ export class LexerActionExecutor /*implements*/ extends LexerAction {
     public override equals(other: unknown): boolean {
         if (this === other) {
             return true;
-        } else if (!(other instanceof LexerActionExecutor)) {
-            return false;
-        } else if (this.#cachedHashCode !== other.#cachedHashCode) {
-            return false;
-        } else if (this.lexerActions.length !== other.lexerActions.length) {
-            return false;
-        } else {
-            const numActions = this.lexerActions.length;
-            for (let idx = 0; idx < numActions; ++idx) {
-                if (!this.lexerActions[idx].equals(other.lexerActions[idx])) {
-                    return false;
-                }
-            }
-
-            return true;
         }
+
+        if (!(other instanceof LexerActionExecutor)) {
+            return false;
+        }
+
+        if (this.#cachedHashCode !== other.#cachedHashCode) {
+            return false;
+        }
+
+        if (this.lexerActions.length !== other.lexerActions.length) {
+            return false;
+        }
+
+        const numActions = this.lexerActions.length;
+        for (let idx = 0; idx < numActions; ++idx) {
+            if (!this.lexerActions[idx].equals(other.lexerActions[idx])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }

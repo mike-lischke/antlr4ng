@@ -4,6 +4,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+/* eslint-disable jsdoc/require-returns, jsdoc/require-param */
+
 import { LL1Analyzer } from "./LL1Analyzer.js";
 import { IntervalSet } from "../misc/IntervalSet.js";
 import { RuleContext } from "../RuleContext.js";
@@ -71,14 +73,7 @@ export class ATN {
      * If `ctx` is null, the set of tokens will not include what can follow
      * the rule surrounding `s`. In other words, the set will be
      * restricted to tokens reachable staying within `s`'s rule.
-     *
-     * @param atnState tbd
-     * @param ctx tbd
-     *
-     * @returns tbd
      */
-    public nextTokens(atnState: ATNState): IntervalSet;
-    public nextTokens(atnState: ATNState, ctx: RuleContext | null): IntervalSet;
     public nextTokens(atnState: ATNState, ctx?: RuleContext | null): IntervalSet {
         if (ctx === undefined) {
             if (atnState.nextTokenWithinRule !== null) {
