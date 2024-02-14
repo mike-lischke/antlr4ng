@@ -106,7 +106,7 @@ export class DFA {
             throw new Error(`Only precedence DFAs may contain a precedence start state.`);
         }
 
-        if (precedence < 0 || !this.s0?.edges) {
+        if (precedence < 0 || !this.s0) {
             return;
         }
 
