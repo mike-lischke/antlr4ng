@@ -42,7 +42,7 @@ export class DFA {
         if (atnStartState instanceof StarLoopEntryState) {
             if (atnStartState.precedenceRuleDecision) {
                 precedenceDfa = true;
-                const precedenceState = new DFAState();
+                const precedenceState = DFAState.fromState(-1);
                 precedenceState.edges = [];
                 precedenceState.isAcceptState = false;
                 precedenceState.requiresFullContext = false;

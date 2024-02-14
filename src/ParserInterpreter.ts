@@ -11,7 +11,6 @@ import { BitSet } from "./misc/BitSet.js";
 import { FailedPredicateException } from "./FailedPredicateException.js";
 import { InputMismatchException } from "./InputMismatchException.js";
 import { InterpreterRuleContext } from "./InterpreterRuleContext.js";
-import { LoopEndState } from "./atn/LoopEndState.js";
 import { Parser } from "./Parser.js";
 import { ParserATNSimulator } from "./atn/ParserATNSimulator.js";
 import { RecognitionException } from "./RecognitionException.js";
@@ -184,7 +183,7 @@ export class ParserInterpreter extends Parser {
         switch (transition.serializationType) {
             case TransitionType.EPSILON:
                 if (this.#pushRecursionContextStates.get(p.stateNumber) &&
-                    !(transition.target instanceof LoopEndState)) {
+                    !(transition.target.stateType === ATNStateType.LOOP_END)) {
                     // We are at the start of a left recursive rule's (...)* loop
                     // and we're not taking the exit branch of loop.
                     const parentContext = this.#parentContextStack[this.#parentContextStack.length - 1];

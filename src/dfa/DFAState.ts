@@ -83,6 +83,12 @@ export class DFAState {
 
     public predicates: DFAState.PredPrediction[] | null = null;
 
+    private constructor(configs?: ATNConfigSet) {
+        if (configs) {
+            this.configs = configs;
+        }
+    }
+
     public static fromState(stateNumber: number): DFAState {
         const result = new DFAState();
         result.stateNumber = stateNumber;
@@ -91,12 +97,7 @@ export class DFAState {
     }
 
     public static fromConfigs(configs: ATNConfigSet): DFAState {
-        const result = new DFAState();
-
-        // @ts-ignore, configs are readonly.
-        result.configs = configs;
-
-        return result;
+        return new DFAState(configs);
     }
 
     public hashCode(): number {
