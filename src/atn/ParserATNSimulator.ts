@@ -1700,11 +1700,6 @@ export class ParserATNSimulator extends ATNSimulator {
             return to;
         }
 
-        if (from_.edges === null) {
-            from_.edges = new Array(this.atn.maxTokenType + 2);
-            from_.edges.fill(null);
-        }
-
         from_.edges[t + 1] = to; // connect
 
         if (ParserATNSimulator.debug) {

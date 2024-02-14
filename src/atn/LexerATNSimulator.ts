@@ -629,12 +629,6 @@ export class LexerATNSimulator extends ATNSimulator {
             console.log("EDGE " + from_ + " -> " + to + " upon " + tk);
         }
 
-        if (from_.edges === null) {
-            // make room for tokens 1..n and -1 masquerading as index 0
-            from_.edges = new Array(LexerATNSimulator.MAX_DFA_EDGE - LexerATNSimulator.MIN_DFA_EDGE + 1);
-            from_.edges.fill(null);
-        }
-
         from_.edges[tk - LexerATNSimulator.MIN_DFA_EDGE] = to; // connect
 
         return to!;

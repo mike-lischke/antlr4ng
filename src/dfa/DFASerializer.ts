@@ -28,20 +28,18 @@ export class DFASerializer {
         const states = this.dfa.getStates();
         for (const s of states) {
             let n = 0;
-            if (s.edges !== null) {
-                n = s.edges.length;
+            n = s.edges.length;
 
-                for (let i = 0; i < n; i++) {
-                    const t = s.edges[i];
-                    if (t && t.stateNumber !== 0x7FFFFFFF) {
-                        buf += this.getStateString(s);
-                        const label = this.getEdgeLabel(i);
-                        buf += "-";
-                        buf += label;
-                        buf += "->";
-                        buf += this.getStateString(t);
-                        buf += "\n";
-                    }
+            for (let i = 0; i < n; i++) {
+                const t = s.edges[i];
+                if (t && t.stateNumber !== 0x7FFFFFFF) {
+                    buf += this.getStateString(s);
+                    const label = this.getEdgeLabel(i);
+                    buf += "-";
+                    buf += label;
+                    buf += "->";
+                    buf += this.getStateString(t);
+                    buf += "\n";
                 }
             }
         }

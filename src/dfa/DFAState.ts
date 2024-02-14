@@ -46,7 +46,7 @@ export class DFAState {
      * `edges[symbol]` points to target of symbol. Shift up by 1 so (-1)
      * {@link Token#EOF} maps to `edges[0]`.
      */
-    public edges: Array<DFAState | null> | null = null;
+    public edges: Array<DFAState | null> = [];
 
     public isAcceptState = false;
 

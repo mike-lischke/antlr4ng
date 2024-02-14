@@ -152,10 +152,10 @@ Last release (pure TypeScript):
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
-| Query Collection| 5463 ms | 314 ms |
-| Example File | 983 ms | 183 ms |
-| Large Inserts | 12990 ms | 13101 ms |
-| Total | 19512 ms | 13618 ms |
+| Query Collection| 56252 ms | 326 ms |
+| Example File | 1010 ms | 195 ms |
+| Large Inserts | 13580 ms | 13677 ms |
+| Total | 20359 ms | 14238 ms |
 
 The benchmarks consist of a set of query files, which are parsed by a MySQL parser. The MySQL grammar is one of the largest and most complex grammars you can find for ANTLR4, which, I think, makes it a perfect test case for parser tests.
 
