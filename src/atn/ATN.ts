@@ -88,7 +88,7 @@ export class ATN {
 
         const analyzer = new LL1Analyzer(this);
 
-        return analyzer.LOOK(atnState, null, ctx);
+        return analyzer.look(atnState, null, ctx);
     }
 
     public addState(state: ATNState | null): void {

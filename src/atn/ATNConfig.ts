@@ -130,7 +130,7 @@ export class ATNConfig {
             let hashCode = MurmurHash.initialize(7);
             hashCode = MurmurHash.update(hashCode, this.state.stateNumber);
             hashCode = MurmurHash.update(hashCode, this.alt);
-            hashCode = MurmurHash.update(hashCode, this.context);
+            hashCode = MurmurHash.update(hashCode, this.#context);
             hashCode = MurmurHash.update(hashCode, this.semanticContext);
             hashCode = MurmurHash.finish(hashCode, 4);
             this.#cachedHashCode = hashCode;
@@ -203,5 +203,20 @@ export class ATNConfig {
             (this.reachesIntoOuterContext > 0 ?
                 (",up=" + this.reachesIntoOuterContext)
                 : "") + ")";
+    }
+
+    /**
+     * Enables or disables the use of a simpler hash code as used for lookups in a {@link ATNConfigSet}.
+     */
+    public set useSimpleHash(useSimple: boolean) {
+        if (useSimple) {
+            let hashCode = 7;
+            hashCode = 31 * hashCode + this.state.stateNumber;
+            hashCode = 31 * hashCode + this.alt;
+            hashCode = 31 * hashCode + this.semanticContext.hashCode();
+            this.#cachedHashCode = hashCode;
+        } else {
+            this.#cachedHashCode = undefined;
+        }
     }
 }
