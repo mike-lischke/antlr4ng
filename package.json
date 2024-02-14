@@ -54,7 +54,7 @@
         "time-lexer-speed": "node --no-warnings --experimental-vm-modules --loader ts-node/esm tests/api/perf/TimeLexerSpeed.ts",
         "generate-test-parsers": "./build/generate-test-parsers.sh",
         "generate-runtime-tests": "antlr-tgen --config tests/fixtures/config.json",
-        "build-bundle": "esbuild ./src/index.js --main-fields=module,main --bundle --target=esnext --sourcemap=external --external:immutable",
+        "build-bundle": "esbuild ./src/index.js --main-fields=module,main --bundle --target=esnext --sourcemap --external:immutable",
         "build-mjs": "npm run build-bundle -- --outfile=dist/index.mjs --format=esm",
         "build-mjs-minified": "npm run build-mjs -- --minify",
         "build-cjs": "npm run build-bundle -- --outfile=dist/index.cjs --format=cjs",

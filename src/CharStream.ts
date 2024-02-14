@@ -76,9 +76,11 @@ export class CharStreamImpl implements CharStream {
         if (offset === 0) {
             return 0; // undefined
         }
+
         if (offset < 0) {
             offset += 1; // e.g., translate LA(-1) to use offset=0
         }
+
         const pos = this.index + offset - 1;
         if (pos < 0 || pos >= this.data.length) { // invalid
             return Token.EOF;
@@ -103,9 +105,9 @@ export class CharStreamImpl implements CharStream {
         if (index <= this.index) {
             this.index = index; // just jump; don't update stream state (line,
 
-            // ...)
             return;
         }
+
         // seek forward
         this.index = Math.min(index, this.data.length);
     }

@@ -9,6 +9,7 @@ import * as fs from "fs";
 import path from "path";
 import assert from "assert";
 import { fileURLToPath } from "url";
+import { performance } from "perf_hooks";
 
 import { ParseService } from "./ParseService.js";
 

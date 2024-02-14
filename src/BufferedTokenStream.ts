@@ -149,6 +149,7 @@ export class BufferedTokenStream implements TokenStream {
         if (this.fetchedEOF) {
             return 0;
         }
+
         for (let i = 0; i < n; i++) {
             const t = this.tokenSource.nextToken();
             t.tokenIndex = this.tokens.length;
@@ -225,9 +226,11 @@ export class BufferedTokenStream implements TokenStream {
         if (k === 0) {
             return null;
         }
+
         if (k < 0) {
             return this.LB(-k);
         }
+
         const i = this.p + k - 1;
         this.sync(i);
         if (i >= this.tokens.length) { // return EOF token
@@ -285,11 +288,13 @@ export class BufferedTokenStream implements TokenStream {
         if (i >= this.tokens.length) {
             return -1;
         }
+
         let token = this.tokens[i];
         while (token.channel !== channel) {
             if (token.type === Token.EOF) {
                 return -1;
             }
+
             i += 1;
             this.sync(i);
             token = this.tokens[i];

@@ -54,8 +54,10 @@ export class CommonTokenStream extends BufferedTokenStream {
         if (k === 0 || this.index - k < 0) {
             return null;
         }
+
         let i = this.index;
         let n = 1;
+
         // find k good tokens looking backwards
         while (n <= k) {
             // skip off-channel tokens
@@ -74,11 +76,14 @@ export class CommonTokenStream extends BufferedTokenStream {
         if (k === 0) {
             return null;
         }
+
         if (k < 0) {
             return this.LB(-k);
         }
+
         let i = this.index;
         let n = 1; // we know tokens[pos] is a good one
+
         // find k good tokens
         while (n < k) {
             // skip off-channel tokens, but make sure to not look past EOF
