@@ -194,7 +194,6 @@ export class LexerATNSimulator extends ATNSimulator {
              * print("Target for:" + str(s) + " and:" + str(t))
              */
             let target = this.getExistingTargetState(s, t);
-            // print("Existing:" + str(target))
             if (target === null) {
                 target = this.computeTargetState(input, s, t);
                 // print("Computed:" + str(target))
@@ -241,9 +240,7 @@ export class LexerATNSimulator extends ATNSimulator {
             return null;
         }
 
-        const target = s.edges[t - LexerATNSimulator.MIN_DFA_EDGE];
-
-        return target ?? null;
+        return s.edges[t - LexerATNSimulator.MIN_DFA_EDGE] ?? null;
     }
 
     /**
@@ -292,6 +289,7 @@ export class LexerATNSimulator extends ATNSimulator {
             if (t === Token.EOF && input.index === this.startIndex) {
                 return Token.EOF;
             }
+
             throw new LexerNoViableAltException(this.recognizer, input, this.startIndex, reach);
         }
     }
@@ -544,16 +542,8 @@ export class LexerATNSimulator extends ATNSimulator {
         settings.dfaState = dfaState;
     }
 
-    private addDFAEdge(from_: DFAState, tk: number, to: DFAState | null, configs?: ATNConfigSet | null): DFAState {
-        if (to === undefined) {
-            to = null;
-        }
-
-        if (configs === undefined) {
-            configs = null;
-        }
-
-        if (to === null && configs !== null) {
+    private addDFAEdge(from_: DFAState, tk: number, to: DFAState | null, configs?: ATNConfigSet): DFAState {
+        if (to === null && configs) {
             // leading to this call, ATNConfigSet.hasSemanticContext is used as a
             // marker indicating dynamic predicate evaluation makes this edge
             // dependent on the specific input sequence, so the static edge in the
@@ -581,7 +571,7 @@ export class LexerATNSimulator extends ATNSimulator {
             return to!;
         }
 
-        from_.edges[tk - LexerATNSimulator.MIN_DFA_EDGE] = to; // connect
+        from_.edges[tk - LexerATNSimulator.MIN_DFA_EDGE] = to!; // connect
 
         return to!;
     }

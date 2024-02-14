@@ -42,11 +42,7 @@ export class DFA {
         if (atnStartState instanceof StarLoopEntryState) {
             if (atnStartState.precedenceRuleDecision) {
                 precedenceDfa = true;
-                const precedenceState = DFAState.fromState(-1);
-                precedenceState.edges = [];
-                precedenceState.isAcceptState = false;
-                precedenceState.requiresFullContext = false;
-                this.s0 = precedenceState;
+                this.s0 = DFAState.fromState(-1);
             }
         }
 
@@ -88,18 +84,14 @@ export class DFA {
             return null;
         }
 
-        return this.s0.edges[precedence];
+        return this.s0.edges[precedence] ?? null;
     };
 
     /**
      * Set the start state for a specific precedence value.
      *
      * @param precedence The current precedence.
-     * @param startState The start state corresponding to the specified
-     * precedence.
-     *
-     * @throws IllegalStateException if this is not a precedence DFA.
-     * @see #isPrecedenceDfa()
+     * @param startState The start state corresponding to the specified precedence.
      */
     public readonly setPrecedenceStartState = (precedence: number, startState: DFAState): void => {
         if (!this.isPrecedenceDfa()) {
@@ -110,15 +102,8 @@ export class DFA {
             return;
         }
 
-        // synchronization on s0 here is ok. when the DFA is turned into a
-        // precedence DFA, s0 will be initialized once and not updated again
-        // s0.edges is never null for a precedence DFA
-        if (precedence >= this.s0.edges.length) {
-            const start = this.s0.edges.length;
-            this.s0.edges.length = precedence + 1;
-            this.s0.edges.fill(null, start, precedence);
-        }
-
+        // Synchronization on s0 here is ok. when the DFA is turned into a
+        // precedence DFA, s0 will be initialized once and not updated again.
         this.s0.edges[precedence] = startState;
     };
 

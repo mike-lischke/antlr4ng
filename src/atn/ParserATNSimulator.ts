@@ -322,7 +322,8 @@ export class ParserATNSimulator extends ATNSimulator {
                 // the start state for a "regular" DFA is just s0
                 s0 = dfa.s0;
             }
-            if (s0 === null) {
+
+            if (!s0) {
                 if (outerContext === null) {
                     outerContext = ParserRuleContext.EMPTY;
                 }

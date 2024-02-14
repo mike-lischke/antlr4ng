@@ -152,7 +152,7 @@ const parseFiles = (logResults: boolean): number[] => {
         { name: "./data/bitrix_queries_cut.sql", initialDelimiter: ";" },
 
         // Not so many, but some very long insert statements.
-        { name: "./data/sakila-db/sakila-data.sql", initialDelimiter: ";" },
+        //{ name: "./data/sakila-db/sakila-data.sql", initialDelimiter: ";" },
     ];
 
     const result: number[] = [];
