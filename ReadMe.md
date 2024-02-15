@@ -152,14 +152,14 @@ Last release (pure TypeScript):
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
-| Query Collection| 56252 ms | 326 ms |
-| Example File | 1010 ms | 195 ms |
-| Large Inserts | 13580 ms | 13677 ms |
-| Total | 20359 ms | 14238 ms |
+| Query Collection| 3230 ms | 311 ms |
+| Example File | 459 ms | 185 ms |
+| Large Inserts | 13092 ms | 13063 ms |
+| Total | 16739 ms | 13584 ms |
 
 The benchmarks consist of a set of query files, which are parsed by a MySQL parser. The MySQL grammar is one of the largest and most complex grammars you can find for ANTLR4, which, I think, makes it a perfect test case for parser tests.
 
-The query collection file contains more than 900 MySQL queries of all kinds, from very simple comments-only statements to complex stored procedures, including some deeply nested select queries that can easily exhaust the available stack space (in certain situations, such as parsing in a thread with default stack size). The minimum MySQL server version used was 8.0.0.
+The query collection file contains more than 900 MySQL queries of all kinds, from very simple comments-only statements to complex stored procedures, including some deeply nested select queries that can easily exhaust the available stack space (in certain situations, such as parsing in a thread with default stack size). The minimum MySQL server version used was 8.2.
 
 The large binary inserts file contains only a few dozen queries, but they are really large with deep recursions, so they stress the prediction engine of the parser. In addition, one query contains binary (image) data containing input characters from the entire UTF-8 range.
 
@@ -172,19 +172,19 @@ Since the Java runtime tests have been ported to TypeScript there's another set 
 The original Java execution times have been taken on OS X with a 4 GHz Intel Core i7 (Java VM args: `-Xms2G -Xmx8g`):
 
 ```bash
-                loadNewUTF8 average time   356µs size  29191b over 3500 loads of 29191 symbols from Parser.java
-                loadNewUTF8 average time    75µs size   7552b over 3500 loads of  7552 symbols from RuleContext.java
-                loadNewUTF8 average time   122µs size  31784b over 3500 loads of 13379 symbols from udhr_hin.txt
+                load_new_utf8 average time   232us size 131232b over 3500 loads of 29038 symbols from Parser.java
+                load_new_utf8 average time    69us size  32928b over 3500 loads of  7625 symbols from RuleContext.java
+                load_new_utf8 average time   210us size  65696b over 3500 loads of 13379 symbols from udhr_hin.txt
 
-             lexNewJavaUTF8 average time   641µs over 2000 runs of 29191 symbols
-             lexNewJavaUTF8 average time  4987µs over 2000 runs of 29191 symbols DFA cleared
+            lex_new_java_utf8 average time   439us over 2000 runs of 29038 symbols
+            lex_new_java_utf8 average time   969us over 2000 runs of 29038 symbols DFA cleared
 
-         lexNewGraphemeUTF8 average time 13537µs over  400 runs of  6614 symbols from udhr_kor.txt
-         lexNewGraphemeUTF8 average time 13802µs over  400 runs of  6614 symbols from udhr_kor.txt DFA cleared
-         lexNewGraphemeUTF8 average time 18762µs over  400 runs of 13379 symbols from udhr_hin.txt
-         lexNewGraphemeUTF8 average time 18925µs over  400 runs of 13379 symbols from udhr_hin.txt DFA cleared
-         lexNewGraphemeUTF8 average time   340µs over  400 runs of    85 symbols from emoji.txt
-         lexNewGraphemeUTF8 average time   401µs over  400 runs of    85 symbols from emoji.txt DFA cleared
+        lex_new_grapheme_utf8 average time  4034us over  400 runs of  6614 symbols from udhr_kor.txt
+        lex_new_grapheme_utf8 average time  4173us over  400 runs of  6614 symbols from udhr_kor.txt DFA cleared
+        lex_new_grapheme_utf8 average time  7680us over  400 runs of 13379 symbols from udhr_hin.txt
+        lex_new_grapheme_utf8 average time  7946us over  400 runs of 13379 symbols from udhr_hin.txt DFA cleared
+        lex_new_grapheme_utf8 average time    70us over  400 runs of    85 symbols from emoji.txt
+        lex_new_grapheme_utf8 average time    82us over  400 runs of    85 symbols from emoji.txt DFA cleared
 ```
 
 The execute times on last release of this runtime have been measured as:
@@ -204,6 +204,8 @@ The execute times on last release of this runtime have been measured as:
          lexNewGraphemeUTF8 average time   329µs over  400 runs of    85 symbols from emoji.txt
          lexNewGraphemeUTF8 average time   387µs over  400 runs of    85 symbols from emoji.txt DFA cleared
 ```
+
+Note: some of the corpus sizes differ, because of the test restructuring. In any case, the numbers cannot be compared directly, because different machines were used to take them.
 
 ## Release Notes
 

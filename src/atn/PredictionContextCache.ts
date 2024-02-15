@@ -6,6 +6,7 @@
 
 import { PredictionContext } from "./PredictionContext.js";
 import { HashMap } from "../misc/HashMap.js";
+import { ObjectEqualityComparator } from "../misc/ObjectEqualityComparator.js";
 
 /**
  * Used to cache {@link PredictionContext} objects. Its used for the shared
@@ -13,7 +14,7 @@ import { HashMap } from "../misc/HashMap.js";
  * can be used for both lexers and parsers.
  */
 export class PredictionContextCache {
-    private cache = new HashMap<PredictionContext, PredictionContext>();
+    private cache = new HashMap<PredictionContext, PredictionContext>(ObjectEqualityComparator.instance);
 
     /**
      * Add a context to the cache and return it. If the context already exists,
@@ -41,6 +42,6 @@ export class PredictionContextCache {
     }
 
     public get length(): number {
-        return this.cache.length;
+        return this.cache.size;
     }
 }

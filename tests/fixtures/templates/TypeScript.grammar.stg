@@ -1,6 +1,6 @@
-writeln(s) ::= <<global.antlrTestWriteLn(<s>);>>
-write(s) ::= <<global.antlrTestWrite(<s>);>>
-writeList(s) ::= <<global.antlrTestWriteLn(<s; separator="+">);>>
+writeln(s) ::= <<global.antlrTestWriteLn!(<s>);>>
+write(s) ::= <<global.antlrTestWrite!(<s>);>>
+writeList(s) ::= <<global.antlrTestWriteLn!(<s; separator="+">);>>
 
 False() ::= "false"
 
@@ -166,7 +166,7 @@ import { ParseTreeWalker, TerminalNode, ErrorNode, ParserRuleContext } from 'ant
 
 class LeafListener extends <X>Listener {
 	visitTerminal(node: TerminalNode) {
-		global.antlrTestWriteLn(node.symbol.text);
+		global.antlrTestWriteLn!(node.symbol.text);
 	}
 
 	public visitErrorNode(node: ErrorNode): void { }
@@ -218,7 +218,7 @@ class LeafListener extends <X>Listener {
         } else {
             str = ctx.ID()!.symbol.toString();
         }
-    	global.antlrTestWriteLn(str);
+    	global.antlrTestWriteLn!(str);
     };
 
 }
@@ -238,7 +238,7 @@ class LeafListener extends <X>Listener {
         } else {
             str = ctx.b(0).start.text;
         }
-    	global.antlrTestWriteLn(str);
+    	global.antlrTestWriteLn!(str);
     };
 }
 
@@ -258,7 +258,7 @@ class LeafListener extends <X>Listener {
         } else {
             str = ctx.INT()!.symbol.text;
         }
-    	global.antlrTestWriteLn(str);
+    	global.antlrTestWriteLn!(str);
     };
 }
 
@@ -273,12 +273,12 @@ class LeafListener extends <X>Listener {
 
     exitCall? = (ctx: CallContext) => {
     	var str = ctx.e().start.text + ' ' + ctx.eList();
-    	global.antlrTestWriteLn(str);
+    	global.antlrTestWriteLn!(str);
     };
 
     exitInt? = (ctx: IntContext) => {
         var str = ctx.INT().symbol.text;
-        global.antlrTestWriteLn(str);
+        global.antlrTestWriteLn!(str);
     }
 
 }
@@ -294,14 +294,14 @@ DeclareContextListGettersFunction() ::= <<
     };
 >>
 
-Declare_foo() ::= "foo() {global.antlrTestWriteLn('foo');}"
+Declare_foo() ::= "foo() {global.antlrTestWriteLn!('foo');}"
 
 Invoke_foo() ::= "this.foo();"
 
 Declare_pred() ::= <<
 
 	pred(v: any) {
-		global.antlrTestWriteLn("eval=" + v.toString());
+		global.antlrTestWriteLn!("eval=" + v.toString());
 		return v;
 	}
 >>

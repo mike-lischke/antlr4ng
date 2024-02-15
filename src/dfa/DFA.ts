@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -13,13 +13,6 @@ import { StarLoopEntryState } from "../atn/StarLoopEntryState.js";
 import { HashSet } from "../misc/HashSet.js";
 
 export class DFA {
-    /**
-     * A set of all DFA states. Use {@link Map} so we can get old state back
-     *  ({@link Set} only allows you to see if it's there).
-     */
-
-    public readonly states = new HashSet<DFAState>();
-
     public s0: DFAState | null = null;
 
     public readonly decision: number;
@@ -33,6 +26,9 @@ export class DFA {
      * `false`. This is the backing field for {@link #isPrecedenceDfa}.
      */
     public readonly precedenceDfa: boolean;
+
+    /** A set of all DFA states. */
+    #states = new HashSet<DFAState>();
 
     public constructor(atnStartState: DecisionState | null, decision?: number) {
         this.atnStartState = atnStartState;
@@ -48,6 +44,10 @@ export class DFA {
 
         this.precedenceDfa = precedenceDfa;
     }
+
+    public [Symbol.iterator] = (): Iterator<DFAState> => {
+        return this.#states[Symbol.iterator]();
+    };
 
     /**
      * Gets whether this DFA is a precedence DFA. Precedence DFAs use a special
@@ -129,13 +129,26 @@ export class DFA {
      * @returns a list of all states in this DFA, ordered by state number.
      */
     public getStates(): DFAState[] {
-        const result = this.states.values();
+        const result = [...this.#states];
         result.sort((o1: DFAState, o2: DFAState): number => {
             return o1.stateNumber - o2.stateNumber;
         });
 
         return result;
     };
+
+    public getState(state: DFAState): DFAState | null {
+        return this.#states.get(state) ?? null;
+    }
+
+    public addState(state: DFAState): void {
+        if (this.#states.contains(state)) {
+            return;
+        }
+
+        this.#states.add(state);
+        state.stateNumber = this.#states.size - 1;
+    }
 
     public toString(vocabulary?: Vocabulary): string {
         if (!vocabulary) {
@@ -161,4 +174,7 @@ export class DFA {
         return serializer.toString() ?? "";
     };
 
+    public get length(): number {
+        return this.#states.size;
+    }
 }

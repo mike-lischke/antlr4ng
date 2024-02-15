@@ -599,17 +599,15 @@ export class LexerATNSimulator extends ATNSimulator {
         }
 
         const dfa = this.decisionToDFA[this.mode];
-        const existing = dfa.states.get(proposed);
+        const existing = dfa.getState(proposed);
         if (existing !== null) {
             return existing;
         }
 
-        const newState = proposed;
-        newState.stateNumber = dfa.states.length;
         configs.setReadonly(true);
-        dfa.states.add(newState);
+        dfa.addState(proposed);
 
-        return newState;
+        return proposed;
     }
 }
 

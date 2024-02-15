@@ -6,10 +6,11 @@
 
 import { DFAState } from "../dfa/DFAState.js";
 import { getCachedPredictionContext } from "./PredictionContextUtils.js";
-import { HashMap } from "../misc/HashMap.js";
 import { ATN } from "./ATN.js";
 import { PredictionContextCache } from "./PredictionContextCache.js";
 import { PredictionContext } from "./PredictionContext.js";
+import { HashMap } from "../misc/HashMap.js";
+import { ObjectEqualityComparator } from "../misc/ObjectEqualityComparator.js";
 
 export abstract class ATNSimulator {
     /** Must distinguish between missing edge and edge we know leads nowhere */
@@ -68,7 +69,7 @@ export abstract class ATNSimulator {
         if (this.sharedContextCache === null) {
             return context;
         }
-        const visited = new HashMap<PredictionContext, PredictionContext>();
+        const visited = new HashMap<PredictionContext, PredictionContext>(ObjectEqualityComparator.instance);
 
         return getCachedPredictionContext(context, this.sharedContextCache, visited);
     }

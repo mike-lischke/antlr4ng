@@ -34,6 +34,12 @@ export abstract class MySQLBaseLexer extends Lexer implements IMySQLRecognizerCo
     public serverVersion = 0;
     public sqlModes = new Set<SqlMode>();
 
+    /** Enable MRS specific language parts. */
+    public supportMrs = true;
+
+    /** Enable Multi Language Extension support. */
+    public supportMle = true;
+
     public charSets: Set<string> = new Set(); // Used to check repertoires.
     protected inVersionComment = false;
 
@@ -182,7 +188,6 @@ export abstract class MySQLBaseLexer extends Lexer implements IMySQLRecognizerCo
             case MySQLLexer.LIKE_SYMBOL:
             case MySQLLexer.NOT_SYMBOL:
             case MySQLLexer.OR_SYMBOL:
-            case MySQLLexer.SOME_SYMBOL:
             case MySQLLexer.EXCEPT_SYMBOL:
             case MySQLLexer.INTERSECT_SYMBOL:
             case MySQLLexer.UNION_SYMBOL:

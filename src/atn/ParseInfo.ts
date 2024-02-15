@@ -166,7 +166,7 @@ export class ParseInfo {
         } else {
             const decisionToDFA = this.atnSimulator.decisionToDFA[decision];
 
-            return decisionToDFA.states.length;
+            return decisionToDFA.length;
         }
     }
 

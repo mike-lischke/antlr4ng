@@ -11,12 +11,13 @@ import { PredictionContext } from "./PredictionContext.js";
 import { ArrayPredictionContext } from "./ArrayPredictionContext.js";
 import { SingletonPredictionContext } from "./SingletonPredictionContext.js";
 import { EmptyPredictionContext } from "./EmptyPredictionContext.js";
-import { HashMap } from "../misc/HashMap.js";
 import { ATN } from "./ATN.js";
 import { PredictionContextCache } from "./PredictionContextCache.js";
 import { DoubleDict } from "../utils/DoubleDict.js";
 import { ParserRuleContext } from "../ParserRuleContext.js";
 import { RuleTransition } from "./RuleTransition.js";
+import { HashMap } from "../misc/HashMap.js";
+import { ObjectEqualityComparator } from "../misc/ObjectEqualityComparator.js";
 
 /**
  * Convert a {@link RuleContext} tree to a {@link PredictionContext} graph.
@@ -278,7 +279,7 @@ const mergeArrays = (a: ArrayPredictionContext, b: ArrayPredictionContext, rootI
  * ones.
  */
 export const combineCommonParents = (parents: Array<PredictionContext | null>): void => {
-    const uniqueParents = new HashMap<PredictionContext, PredictionContext>();
+    const uniqueParents = new HashMap<PredictionContext, PredictionContext>(ObjectEqualityComparator.instance);
 
     for (const parent of parents) {
         if (parent) {
@@ -290,7 +291,7 @@ export const combineCommonParents = (parents: Array<PredictionContext | null>): 
 
     for (let q = 0; q < parents.length; q++) {
         if (parents[q]) {
-            parents[q] = uniqueParents.get(parents[q]!);
+            parents[q] = uniqueParents.get(parents[q]!) ?? null;
         }
     }
 };

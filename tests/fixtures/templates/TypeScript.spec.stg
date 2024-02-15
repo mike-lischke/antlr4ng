@@ -70,10 +70,10 @@ const main = (text: string): void => {
     stream.fill();
     const tokens = stream.getTokens();
     for (const token of tokens) {
-        global.antlrTestWriteLn(token.toString());
+        global.antlrTestWriteLn!(token.toString());
     }
 <if(showDFA)>
-    global.antlrTestWrite(lexer.interpreter.decisionToDFA[antlr.Lexer.DEFAULT_MODE].toLexerString());
+    global.antlrTestWrite!(lexer.interpreter.decisionToDFA[antlr.Lexer.DEFAULT_MODE].toLexerString());
 <endif>
 <endif>
 };

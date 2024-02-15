@@ -2897,3 +2897,7 @@ create user mike identified by 'a'$$
 [>=80031]revoke proxy on mike from current_user() ignore unknown user$$
 [>=80031]analyze table a, b, c update histogram on x using data 'xyz' $$
 [>=80031]select 1 except select 2 $$
+[>=80100]show parse tree drop logfile group Test WAIT, WAIT, storage engine = InnoDB $$
+[>=80200]load xml concurrent from S3 'blah' count 10 in primary key order into table dummy ignore 10 lines parallel=10 memory =100 algorithm = bulk $$
+[>=80200]select * qualify 1 + 1 $$
+[>=80200]analyze table a, b, c update histogram on x with 10 buckets manual update $$

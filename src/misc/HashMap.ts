@@ -4,97 +4,107 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { IComparable, standardEqualsFunction, standardHashCodeFunction } from "../utils/helpers.js";
-import { EqualsFunction, HashFunction } from "./HashSet.js";
+/* eslint-disable max-classes-per-file */
 
-interface Entry<Key extends IComparable, Value> { key: Key, value: Value; }
+import type { EqualityComparator } from "./EqualityComparator.js";
+import { HashSet } from "./HashSet.js";
 
-export class HashMap<Key extends IComparable, Value> {
-    private data: { [key: string]: Array<Entry<Key, Value>>; };
-    private hashFunction: HashFunction;
-    private equalsFunction: EqualsFunction;
+// Since `HashMap` is implemented on top of `HashSet`, we defined a bucket type which can store a
+// key-value pair. The value is optional since looking up values in the map by a key only needs to include the key.
+interface Bucket<K, V> { key: K; value?: V; }
 
-    public constructor(hashFunction?: HashFunction, equalsFunction?: EqualsFunction) {
-        this.data = {};
-        this.hashFunction = hashFunction ?? standardHashCodeFunction;
-        this.equalsFunction = equalsFunction ?? standardEqualsFunction;
+class MapKeyEqualityComparator<K, V> implements EqualityComparator<Bucket<K, V>> {
+    private readonly keyComparator: EqualityComparator<K>;
+
+    public constructor(keyComparator: EqualityComparator<K>) {
+        this.keyComparator = keyComparator;
     }
 
-    public set(key: Key, value: Value): Value {
-        const hashKey = this.hashFunction(key);
-        if (hashKey in this.data) {
-            const entries = this.data[hashKey];
-            for (const entry of entries) {
-                if (this.equalsFunction(key, entry.key)) {
-                    const oldValue = entry.value;
-                    entry.value = value;
+    public hashCode(obj: Bucket<K, V>): number {
+        return this.keyComparator.hashCode(obj.key);
+    }
 
-                    return oldValue;
-                }
-            }
-            entries.push({ key, value });
+    public equals(a: Bucket<K, V>, b: Bucket<K, V>): boolean {
+        return this.keyComparator.equals(a.key, b.key);
+    }
+}
 
-            return value;
+export class HashMap<K, V> {
+    private backingStore: HashSet<Bucket<K, V>>;
+
+    public constructor(keyComparer: EqualityComparator<K>);
+    public constructor(map: HashMap<K, V>);
+    public constructor(keyComparer: EqualityComparator<K> | HashMap<K, V>) {
+        if (keyComparer instanceof HashMap) {
+            this.backingStore = new HashSet<Bucket<K, V>>(keyComparer.backingStore);
         } else {
-            this.data[hashKey] = [{ key, value }];
-
-            return value;
+            this.backingStore = new HashSet<Bucket<K, V>>(new MapKeyEqualityComparator<K, V>(keyComparer));
         }
     }
 
-    public containsKey(key: Key): boolean {
-        const hashKey = this.hashFunction(key);
-        if (hashKey in this.data) {
-            const entries = this.data[hashKey];
-            for (const entry of entries) {
-                if (this.equalsFunction(key, entry.key)) {
-                    return true;
-                }
-            }
+    public clear(): void {
+        this.backingStore.clear();
+    }
+
+    public containsKey(key: K): boolean {
+        return this.backingStore.contains({ key });
+    }
+
+    public get(key: K): V | undefined {
+        const bucket = this.backingStore.get({ key });
+        if (!bucket) {
+            return undefined;
         }
 
-        return false;
+        return bucket.value;
     }
 
-    public get(key: Key): Value | null {
-        const hashKey = this.hashFunction(key);
-        if (hashKey in this.data) {
-            const entries = this.data[hashKey];
-            for (const entry of entries) {
-                if (this.equalsFunction(key, entry.key)) {
-                    return entry.value;
-                }
-            }
+    public get isEmpty(): boolean {
+        return this.backingStore.isEmpty;
+    }
+
+    public set(key: K, value: V): V | undefined {
+        const element = this.backingStore.get({ key, value });
+        let result: V | undefined;
+        if (!element) {
+            this.backingStore.add({ key, value });
+        } else {
+            result = element.value;
+            element.value = value;
         }
 
-        return null;
+        return result;
     }
 
-    public entries(): Array<Entry<Key, Value>> {
-        return Object.keys(this.data).flatMap((key) => {
-            return this.data[key];
-        }, this);
+    public setIfAbsent(key: K, value: V): V | undefined {
+        const element = this.backingStore.get({ key, value });
+        let result: V | undefined;
+        if (!element) {
+            this.backingStore.add({ key, value });
+        } else {
+            result = element.value;
+        }
+
+        return result;
     }
 
-    public getKeys(): Key[] {
-        return this.entries().map((e) => { return e.key; });
+    public values(): Iterable<V> {
+        return this.backingStore.toArray().map((bucket) => { return bucket.value!; });
     }
 
-    public getValues(): Value[] {
-        return this.entries().map((e) => { return e.value; });
+    public get size(): number {
+        return this.backingStore.size;
     }
 
-    public toString(): string {
-        const ss = this.entries().map((e) => { return "{" + e.key + ":" + e.value + "}"; });
-
-        return "[" + ss.join(", ") + "]";
+    public hashCode(): number {
+        return this.backingStore.hashCode();
     }
 
-    public get length(): number {
-        return Object.keys(this.data).map((key) => {
-            return this.data[key].length;
-        }, this).reduce((accumulator, item) => {
-            return accumulator + item;
-        }, 0);
+    public equals(o: unknown): boolean {
+        if (!(o instanceof HashMap)) {
+            return false;
+        }
+
+        return this.backingStore.equals(o.backingStore);
     }
 }

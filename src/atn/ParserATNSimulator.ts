@@ -1282,7 +1282,7 @@ export class ParserATNSimulator extends ATNSimulator {
                     }
 
                     c.reachesIntoOuterContext += 1;
-                    if (closureBusy.add(c) !== c) {
+                    if (closureBusy.getOrAdd(c) !== c) {
                         // avoid infinite recursion for right-recursive rules
                         continue;
                     }
@@ -1291,10 +1291,11 @@ export class ParserATNSimulator extends ATNSimulator {
                     configs.dipsIntoOuterContext = true;
                     newDepth -= 1;
                 } else {
-                    if (!t.isEpsilon && closureBusy.add(c) !== c) {
+                    if (!t.isEpsilon && closureBusy.getOrAdd(c) !== c) {
                         // avoid infinite recursion for EOF* and EOF+
                         continue;
                     }
+
                     if (t instanceof RuleTransition) {
                         // latch when newDepth goes negative - once we step out of the entry context we can't return
                         if (newDepth >= 0) {
@@ -1579,18 +1580,17 @@ export class ParserATNSimulator extends ATNSimulator {
         if (D === ATNSimulator.ERROR) {
             return D;
         }
-        const existing = dfa.states.get(D);
+        const existing = dfa.getState(D);
         if (existing !== null) {
             return existing;
         }
 
-        D.stateNumber = dfa.states.length;
         if (!D.configs.readOnly) {
             D.configs.optimizeConfigs(this);
             D.configs.setReadonly(true);
         }
 
-        dfa.states.add(D);
+        dfa.addState(D);
 
         return D;
     }

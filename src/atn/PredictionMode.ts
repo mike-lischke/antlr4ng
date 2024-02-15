@@ -4,7 +4,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-/* eslint-disable @typescript-eslint/naming-convention, jsdoc/require-returns, jsdoc/require-param */
+/* eslint-disable @typescript-eslint/naming-convention, jsdoc/require-returns, jsdoc/require-param,
+   max-classes-per-file */
 
 import { ATN } from "./ATN.js";
 import { RuleStopState } from "./RuleStopState.js";
@@ -12,9 +13,29 @@ import { ATNConfigSet } from "./ATNConfigSet.js";
 import { ATNConfig } from "./ATNConfig.js";
 import { SemanticContext } from "./SemanticContext.js";
 import { BitSet } from "../misc/BitSet.js";
-import { HashMap } from "../misc/HashMap.js";
 import { ATNState } from "./ATNState.js";
 import { MurmurHash } from "../utils/MurmurHash.js";
+import { ObjectEqualityComparator } from "../misc/ObjectEqualityComparator.js";
+import { HashMap } from "../misc/HashMap.js";
+import type { EqualityComparator } from "../misc/EqualityComparator.js";
+
+class SubsetEqualityComparer implements EqualityComparator<ATNConfig> {
+    public static readonly instance = new SubsetEqualityComparer();
+
+    public hashCode(config: ATNConfig) {
+        let hashCode = MurmurHash.initialize(7);
+        hashCode = MurmurHash.update(hashCode, config.state.stateNumber);
+        hashCode = MurmurHash.update(hashCode, config.context);
+        hashCode = MurmurHash.finish(hashCode, 2);
+
+        return hashCode;
+    }
+
+    public equals(a: ATNConfig, b: ATNConfig) {
+        return a.state.stateNumber === b.state.stateNumber
+            && (a.context?.equals(b.context) ?? true);
+    }
+}
 
 /**
  * This enumeration defines the prediction modes available in ANTLR 4 along with
@@ -504,30 +525,18 @@ export class PredictionMode {
      * ```
      */
     public static getConflictingAltSubsets(configs: ATNConfigSet): BitSet[] {
-        const configToAlts = new HashMap<ATNConfig, BitSet>(
-            (cfg: ATNConfig) => {
-                let hashCode = MurmurHash.initialize(7);
-                hashCode = MurmurHash.update(hashCode, cfg.state.stateNumber);
-                hashCode = MurmurHash.update(hashCode, cfg.context);
-                hashCode = MurmurHash.finish(hashCode, 2);
-
-                return hashCode;
-            },
-            (c1: ATNConfig, c2: ATNConfig) => {
-                return c1.state.stateNumber === c2.state.stateNumber && (c1.context?.equals(c2.context) ?? true);
-            },
-        );
+        const configToAlts = new HashMap<ATNConfig, BitSet>(SubsetEqualityComparer.instance);
 
         for (const cfg of configs) {
             let alts = configToAlts.get(cfg);
-            if (alts === null) {
+            if (!alts) {
                 alts = new BitSet();
                 configToAlts.set(cfg, alts);
             }
             alts.set(cfg.alt);
         }
 
-        return configToAlts.getValues();
+        return Array.from(configToAlts.values());
     };
 
     /**
@@ -539,7 +548,7 @@ export class PredictionMode {
      * ```
      */
     public static getStateToAltMap(configs: ATNConfigSet): HashMap<ATNState, BitSet> {
-        const m = new HashMap<ATNState, BitSet>();
+        const m = new HashMap<ATNState, BitSet>(ObjectEqualityComparator.instance);
         for (const c of configs) {
             let alts = m.get(c.state);
             if (!alts) {

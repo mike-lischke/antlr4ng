@@ -170,25 +170,6 @@ export class ATNConfig {
             this.precedenceFilterSuppressed === other.precedenceFilterSuppressed;
     }
 
-    public hashCodeForConfigSet(): number {
-        let hashCode = 7;
-        hashCode = 31 * hashCode + this.state.stateNumber;
-        hashCode = 31 * hashCode + this.alt;
-        hashCode = 31 * hashCode + this.semanticContext.hashCode();
-
-        return hashCode;
-    }
-
-    public equalsForConfigSet(other: ATNConfig): boolean {
-        if (this === other) {
-            return true;
-        }
-
-        return this.state.stateNumber === other.state.stateNumber &&
-            this.alt === other.alt &&
-            this.semanticContext.equals(other.semanticContext);
-    }
-
     public toString(_recog?: Recognizer<ATNSimulator> | null, showAlt = true): string {
         let alt = "";
         if (showAlt) {

@@ -74,11 +74,4 @@ export class LexerATNConfig extends ATNConfig {
 
     }
 
-    public override hashCodeForConfigSet(): number {
-        return this.hashCode();
-    }
-
-    public override equalsForConfigSet(other: LexerATNConfig): boolean {
-        return this.equals(other);
-    }
 }

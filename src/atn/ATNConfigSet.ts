@@ -4,12 +4,11 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-/* eslint-disable jsdoc/require-returns, jsdoc/require-param */
+/* eslint-disable jsdoc/require-returns, jsdoc/require-param, max-classes-per-file */
 
 import { ATN } from "./ATN.js";
 import { SemanticContext } from "./SemanticContext.js";
 import { merge } from "./PredictionContextUtils.js";
-import { HashSet } from "../misc/HashSet.js";
 
 import { equalArrays, arrayToString } from "../utils/helpers.js";
 import { ATNConfig } from "./ATNConfig.js";
@@ -19,18 +18,31 @@ import { PredictionContext } from "./PredictionContext.js";
 import { ATNState } from "./ATNState.js";
 import { ATNSimulator } from "./ATNSimulator.js";
 import { MurmurHash } from "../utils/MurmurHash.js";
+import { HashSet } from "../misc/HashSet.js";
+import type { EqualityComparator } from "../misc/EqualityComparator.js";
 
-const hashATNConfig = (c: ATNConfig) => {
-    return c.hashCodeForConfigSet();
-};
+class KeyTypeEqualityComparer implements EqualityComparator<ATNConfig> {
+    public static readonly instance = new KeyTypeEqualityComparer();
 
-const equalATNConfigs = (a: ATNConfig, b: ATNConfig): boolean => {
-    if (a === b) {
-        return true;
-    } else if (a === null || b === null) {
-        return false;
-    } else { return a.equalsForConfigSet(b); }
-};
+    public hashCode(config: ATNConfig) {
+        let hashCode = 7;
+        hashCode = 31 * hashCode + config.state.stateNumber;
+        hashCode = 31 * hashCode + config.alt;
+        hashCode = 31 * hashCode + config.semanticContext.hashCode();
+
+        return hashCode;
+    }
+
+    public equals(a: ATNConfig, b: ATNConfig) {
+        if (a === b) {
+            return true;
+        }
+
+        return a.state.stateNumber === b.state.stateNumber &&
+            a.alt === b.alt &&
+            a.semanticContext.equals(b.semanticContext);
+    }
+}
 
 /**
  * Specialized {@link HashSet}`<`{@link ATNConfig}`>` that can track
@@ -50,7 +62,8 @@ export class ATNConfigSet {
      * All configs but hashed by (s, i, _, pi) not including context. Wiped out
      * when we go readonly as this set becomes a DFA state
      */
-    public configLookup: HashSet<ATNConfig> | null = new HashSet<ATNConfig>(hashATNConfig, equalATNConfigs);
+    public configLookup: HashSet<ATNConfig> | null =
+        new HashSet<ATNConfig>(KeyTypeEqualityComparer.instance);
 
     // Track the elements as they are added to the set; supports get(i).
     public configs: ATNConfig[] = [];
@@ -129,7 +142,7 @@ export class ATNConfigSet {
         }
 
         //config.useSimpleHash = true;
-        const existing = this.configLookup!.add(config);
+        const existing = this.configLookup!.getOrAdd(config);
         if (existing === config) {
             this.#cachedHashCode = -1;
             this.configs.push(config); // track order here
@@ -206,7 +219,7 @@ export class ATNConfigSet {
             throw new Error("This set is readonly");
         }
 
-        if (this.configLookup!.length === 0) {
+        if (this.configLookup!.size === 0) {
             return;
         }
 
@@ -232,11 +245,13 @@ export class ATNConfigSet {
             this.uniqueAlt === other.uniqueAlt &&
             this.conflictingAlts === other.conflictingAlts &&
             this.hasSemanticContext === other.hasSemanticContext &&
-            this.dipsIntoOuterContext === other.dipsIntoOuterContext) {
+            this.dipsIntoOuterContext === other.dipsIntoOuterContext &&
+            equalArrays(this.configs, other.configs)) {
+
             return true;
         }
 
-        return equalArrays(this.configs, other.configs);
+        return false;
     }
 
     public hashCode(): number {
@@ -264,7 +279,7 @@ export class ATNConfigSet {
             throw new Error("This method is not implemented for readonly sets.");
         }
 
-        return this.configLookup.has(item);
+        return this.configLookup.contains(item);
     }
 
     public containsFast(item: ATNConfig): boolean {
@@ -272,7 +287,7 @@ export class ATNConfigSet {
             throw new Error("This method is not implemented for readonly sets.");
         }
 
-        return this.configLookup.has(item);
+        return this.configLookup.contains(item);
     }
 
     public clear(): void {
@@ -281,7 +296,7 @@ export class ATNConfigSet {
         }
         this.configs = [];
         this.#cachedHashCode = -1;
-        this.configLookup = new HashSet();
+        this.configLookup = new HashSet(KeyTypeEqualityComparer.instance);
     }
 
     public setReadonly(readOnly: boolean): void {

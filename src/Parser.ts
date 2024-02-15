@@ -686,7 +686,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     public dumpDFA(): void {
         let seenOne = false;
         for (const dfa of this.interpreter.decisionToDFA) {
-            if (dfa.states.length > 0) {
+            if (dfa.length > 0) {
                 if (seenOne) {
                     console.log();
                 }

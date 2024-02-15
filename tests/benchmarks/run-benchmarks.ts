@@ -152,7 +152,7 @@ const parseFiles = (logResults: boolean): number[] => {
         { name: "./data/bitrix_queries_cut.sql", initialDelimiter: ";" },
 
         // Not so many, but some very long insert statements.
-        //{ name: "./data/sakila-db/sakila-data.sql", initialDelimiter: ";" },
+        { name: "./data/sakila-db/sakila-data.sql", initialDelimiter: ";" },
     ];
 
     const result: number[] = [];
@@ -173,7 +173,7 @@ const parseFiles = (logResults: boolean): number[] => {
             const statement = sql.substring(range.span.start, end).trim();
 
             // The parser only supports syntax from 8.0 onwards. So we expect errors for older statements.
-            const checkResult = checkMinStatementVersion(statement, 80031);
+            const checkResult = checkMinStatementVersion(statement, 80400);
             if (checkResult.matched) {
                 let error: IParserErrorInfo | undefined;
                 const result = parsingService.errorCheck(checkResult.statement, MySQLParseUnit.Generic,

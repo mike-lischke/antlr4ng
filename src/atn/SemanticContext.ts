@@ -61,13 +61,14 @@ export abstract class SemanticContext implements IComparable {
         }
     }
 
-    protected static filterPrecedencePredicates(set: HashSet<SemanticContext>): SemanticContext.PrecedencePredicate[] {
+    protected static filterPrecedencePredicates(
+        set: HashSet<SemanticContext>): SemanticContext.PrecedencePredicate[] {
         const result: SemanticContext.PrecedencePredicate[] = [];
-        set.values().forEach((context) => {
+        for (const context of set) {
             if (context instanceof SemanticContext.PrecedencePredicate) {
                 result.push(context);
             }
-        });
+        }
 
         return result;
     };
@@ -152,7 +153,7 @@ class AND extends SemanticContext {
                 operands.add(reduced);
             }
         }
-        this.operands = operands.values();
+        this.operands = operands.toArray();
     }
 
     public override equals(other: AND): boolean {
@@ -265,7 +266,7 @@ class OR extends SemanticContext {
             const reduced = s[s.length - 1];
             operands.add(reduced);
         }
-        this.operands = Array.from(operands.values());
+        this.operands = operands.toArray();
     }
 
     public override equals(other: unknown): boolean {
