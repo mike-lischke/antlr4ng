@@ -208,7 +208,7 @@ export class DefaultErrorStrategy {
             return;
         }
         const s = recognizer.atn.states[recognizer.state]!;
-        const la = recognizer.tokenStream?.LA(1) ?? -1;
+        const la = recognizer.tokenStream.LA(1);
 
         // try cheaper subset first; might get lucky. seems to shave a wee bit off
         const nextTokens = recognizer.atn.nextTokens(s);

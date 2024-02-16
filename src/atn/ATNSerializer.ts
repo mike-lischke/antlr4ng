@@ -5,10 +5,10 @@
 
 /* eslint-disable jsdoc/require-returns */
 
-import { OrderedMap } from "immutable";
-
 import { Token } from "../Token.js";
 import type { IntervalSet } from "../misc/IntervalSet.js";
+import { ObjectEqualityComparator } from "../misc/ObjectEqualityComparator.js";
+import { OrderedHashMap } from "../misc/OrderedHashMap.js";
 import type { ATN } from "./ATN.js";
 import { ATNDeserializer } from "./ATNDeserializer.js";
 import { ATNStateType } from "./ATNStateType.js";
@@ -45,7 +45,7 @@ export class ATNSerializer {
 
     // Note that we use a LinkedHashMap as a set to maintain insertion order while deduplicating entries with the
     // same key.
-    private sets = OrderedMap<IntervalSet, boolean>();
+    private sets = new OrderedHashMap<IntervalSet, boolean>(ObjectEqualityComparator.instance);
     private readonly nonGreedyStates: number[] = [];
     private readonly precedenceStates: number[] = [];
 
@@ -256,7 +256,7 @@ export class ATNSerializer {
                         const edgeType = t.serializationType;
                         if (edgeType === TransitionType.SET || edgeType === TransitionType.NOT_SET) {
                             const st = t as SetTransition;
-                            this.sets = this.sets.set(st.set, true);
+                            this.sets.set(st.set, true);
                         }
                     }
                 }

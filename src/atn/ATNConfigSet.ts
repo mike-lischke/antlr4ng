@@ -141,7 +141,6 @@ export class ATNConfigSet {
             this.dipsIntoOuterContext = true;
         }
 
-        //config.useSimpleHash = true;
         const existing = this.configLookup!.getOrAdd(config);
         if (existing === config) {
             this.#cachedHashCode = -1;

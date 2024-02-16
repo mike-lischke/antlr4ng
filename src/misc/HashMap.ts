@@ -63,6 +63,15 @@ export class HashMap<K, V> {
         return this.backingStore.isEmpty;
     }
 
+    /**
+     * Sets the value for a key in the map. If the key is not present in the map, it is added.
+     * If the key is present, the value is updated and the old value is returned.
+     *
+     * @param key The key to set.
+     * @param value The value to set.
+     *
+     * @returns The old value for the key, if present.
+     */
     public set(key: K, value: V): V | undefined {
         const element = this.backingStore.get({ key, value });
         let result: V | undefined;
@@ -76,6 +85,15 @@ export class HashMap<K, V> {
         return result;
     }
 
+    /**
+     * Sets the value for a key in the map if the key is not already present. Otherwise the value is not changed and
+     * the old value is returned.
+     *
+     * @param key The key to set.
+     * @param value The value to set.
+     *
+     * @returns The current value for the key, if present.
+     */
     public setIfAbsent(key: K, value: V): V | undefined {
         const element = this.backingStore.get({ key, value });
         let result: V | undefined;

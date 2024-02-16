@@ -5,11 +5,11 @@
  */
 
 import { ATNConfigSet } from "./ATNConfigSet.js";
-import { HashSet } from "../misc/HashSet.js";
+import { OrderedHashSet } from "../misc/OrderedHashSet.js";
 
 export class OrderedATNConfigSet extends ATNConfigSet {
     public constructor() {
         super();
-        this.configLookup = new HashSet();
+        this.configLookup = new OrderedHashSet();
     }
 }

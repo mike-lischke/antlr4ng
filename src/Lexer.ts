@@ -121,12 +121,13 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
          */
         const tokenStartMarker = this.#input.mark();
         try {
-            for (; ;) {
+            while (true) {
                 if (this.#hitEOF) {
                     this.emitEOF();
 
                     return this.#token!;
                 }
+
                 this.#token = null;
                 this.channel = Token.DEFAULT_CHANNEL;
                 this.tokenStartCharIndex = this.#input.index;
@@ -134,7 +135,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
                 this.currentTokenStartLine = this.interpreter.line;
                 this.#text = null;
                 let continueOuter = false;
-                for (; ;) {
+                while (true) {
                     this.type = Token.INVALID_TYPE;
                     let ttype = Lexer.SKIP;
                     try {
@@ -147,12 +148,15 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
                             throw e;
                         }
                     }
+
                     if (this.#input.LA(1) === Token.EOF) {
                         this.#hitEOF = true;
                     }
+
                     if (this.type === Token.INVALID_TYPE) {
                         this.type = ttype;
                     }
+
                     if (this.type === Lexer.SKIP) {
                         continueOuter = true;
                         break;
@@ -161,9 +165,11 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
                         break;
                     }
                 }
+
                 if (continueOuter) {
                     continue;
                 }
+
                 if (this.#token === null) {
                     this.emit();
                 }

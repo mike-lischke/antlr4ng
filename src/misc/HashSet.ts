@@ -8,7 +8,7 @@ import { MurmurHash } from "../utils/MurmurHash.js";
 import { DefaultEqualityComparator } from "./DefaultEqualityComparator.js";
 import { EqualityComparator } from "./EqualityComparator.js";
 
-export class HashSet<T extends { toString(): string; }> implements Iterable<T> {
+export class HashSet<T> implements Iterable<T> {
     private static readonly INITIAL_CAPACITY = 16; // must be power of 2
     private static readonly LOAD_FACTOR = 0.75;
 

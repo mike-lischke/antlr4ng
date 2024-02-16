@@ -209,8 +209,8 @@ export class BufferedTokenStream implements TokenStream {
         return subset;
     }
 
-    public LA(i: number): number {
-        return this.LT(i)!.type;
+    public LA(k: number): number {
+        return this.LT(k)?.type ?? Token.INVALID_TYPE;
     }
 
     public LB(k: number): Token | null {
