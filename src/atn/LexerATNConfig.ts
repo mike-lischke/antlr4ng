@@ -12,13 +12,6 @@ import { PredictionContext } from "./PredictionContext.js";
 import { MurmurHash } from "../utils/MurmurHash.js";
 import { SemanticContext } from "./index.js";
 
-export interface ILexerATNConfigParameters {
-    state: ATNState,
-    alt: number,
-    context?: PredictionContext | null,
-    lexerActionExecutor?: LexerActionExecutor | null,
-};
-
 export class LexerATNConfig extends ATNConfig {
     /**
      * This is the backing field for {@link #getLexerActionExecutor}.

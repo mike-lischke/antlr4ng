@@ -20,6 +20,7 @@ import { ATNSimulator } from "./ATNSimulator.js";
 import { MurmurHash } from "../utils/MurmurHash.js";
 import { HashSet } from "../misc/HashSet.js";
 import type { EqualityComparator } from "../misc/EqualityComparator.js";
+import { ATNStateType } from "./ATNStateType.js";
 
 class KeyTypeEqualityComparer implements EqualityComparator<ATNConfig> {
     public static readonly instance = new KeyTypeEqualityComparer();
@@ -95,6 +96,12 @@ export class ATNConfigSet {
 
     public conflictingAlts: BitSet | null = null;
 
+    /**
+     * Tracks the first config that has a rule stop state. Avoids frequent linear search for that, when adding
+     * a DFA state in the lexer ATN simulator.
+     */
+    public firstStopState?: ATNConfig;
+
     #cachedHashCode = -1;
 
     public constructor(fullCtxOrOldSet?: boolean | ATNConfigSet) {
@@ -131,6 +138,10 @@ export class ATNConfigSet {
         mergeCache: DoubleDict<PredictionContext, PredictionContext, PredictionContext> | null = null): boolean {
         if (this.readOnly) {
             throw new Error("This set is readonly");
+        }
+
+        if (!this.firstStopState && config.state.stateType === ATNStateType.RULE_STOP) {
+            this.firstStopState = config;
         }
 
         if (config.semanticContext !== SemanticContext.NONE) {

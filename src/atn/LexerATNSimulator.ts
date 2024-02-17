@@ -4,8 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-/* eslint-disable @typescript-eslint/naming-convention, jsdoc/require-param, max-classes-per-file */
-/* eslint-disable jsdoc/require-returns */
+/* eslint-disable jsdoc/require-param, jsdoc/require-returns */
 
 import { Token } from "../Token.js";
 import { Lexer } from "../Lexer.js";
@@ -15,7 +14,6 @@ import { DFAState } from "../dfa/DFAState.js";
 import { OrderedATNConfigSet } from "./OrderedATNConfigSet.js";
 import { PredictionContext } from "./PredictionContext.js";
 import { SingletonPredictionContext } from "./SingletonPredictionContext.js";
-import { RuleStopState } from "./RuleStopState.js";
 import { LexerATNConfig } from "./LexerATNConfig.js";
 import { LexerActionExecutor } from "./LexerActionExecutor.js";
 import { LexerNoViableAltException } from "../LexerNoViableAltException.js";
@@ -31,9 +29,32 @@ import { PredicateTransition } from "./PredicateTransition.js";
 import { ActionTransition } from "./ActionTransition.js";
 import { ATNStateType } from "./ATNStateType.js";
 
+/**
+ * When we hit an accept state in either the DFA or the ATN, we
+ * have to notify the character stream to start buffering characters
+ * via {@link IntStream#mark} and record the current state. The current sim state
+ * includes the current index into the input, the current line,
+ * and current character position in that line. Note that the Lexer is
+ * tracking the starting line and characterization of the token. These
+ * variables track the "state" of the simulator when it hits an accept state.
+ *
+ * We track these variables separately for the DFA and ATN simulation
+ * because the DFA simulation often has to fail over to the ATN
+ * simulation. If the ATN simulation fails, we need the DFA to fall
+ * back to its previously accepted state, if any. If the ATN succeeds,
+ * then the ATN does the accept and the DFA simulator that invoked it
+ * can simply return the predicted token type.
+ */
+interface SimState {
+    index: number;
+    line: number;
+    column: number;
+    dfaState: DFAState | null;
+}
+
 export class LexerATNSimulator extends ATNSimulator {
-    public static readonly MIN_DFA_EDGE = 0;
-    public static readonly MAX_DFA_EDGE = 127; // forces unicode to stay in ATN
+    // ml: why's that configurable? Memory consumption?
+    public static readonly MAX_DFA_EDGE = 256; // forces unicode to stay in ATN
 
     public readonly decisionToDFA: DFA[];
 
@@ -56,7 +77,11 @@ export class LexerATNSimulator extends ATNSimulator {
     public mode: number = Lexer.DEFAULT_MODE;
 
     /** Used during DFA/ATN exec to record the most recent accept configuration info */
-    protected readonly prevAccept = new LexerATNSimulator.SimState();
+    #prevAccept: SimState | undefined;
+
+    /** Lookup table for lexer ATN config creation. */
+    #lexerATNConfigFactory: Array<(input: CharStream, config: LexerATNConfig, trans: Transition, configs: ATNConfigSet,
+        speculative: boolean, treatEofAsEpsilon: boolean) => LexerATNConfig | null>;
 
     /**
      * When we hit an accept state in either the DFA or the ATN, we
@@ -81,21 +106,15 @@ export class LexerATNSimulator extends ATNSimulator {
         this.recognizer = recog;
     }
 
-    public copyState(simulator: LexerATNSimulator): void {
-        this.column = simulator.column;
-        this.line = simulator.line;
-        this.mode = simulator.mode;
-        this.startIndex = simulator.startIndex;
-    }
-
     public match(input: CharStream, mode: number): number {
         this.mode = mode;
         const mark = input.mark();
         try {
             this.startIndex = input.index;
-            this.prevAccept.reset();
+            this.#prevAccept = undefined;
             const dfa = this.decisionToDFA[mode];
-            if (dfa.s0 === null) {
+
+            if (!dfa.s0) {
                 return this.matchATN(input);
             } else {
                 return this.execATN(input, dfa.s0);
@@ -106,7 +125,7 @@ export class LexerATNSimulator extends ATNSimulator {
     }
 
     public reset(): void {
-        this.prevAccept.reset();
+        this.#prevAccept = undefined;
         this.startIndex = -1;
         this.line = 1;
         this.column = 0;
@@ -123,9 +142,9 @@ export class LexerATNSimulator extends ATNSimulator {
         return this.decisionToDFA[mode];
     }
 
-    // Get the text matched so far for the current token.
+    /** @returns the text matched so far for the current token. */
     public getText(input: CharStream): string {
-        // index is first lookahead char, don't include.
+        // Index is first lookahead char, don't include.
         return input.getTextFromRange(this.startIndex, input.index - 1);
     }
 
@@ -141,7 +160,7 @@ export class LexerATNSimulator extends ATNSimulator {
     }
 
     public getTokenName(tt: number): string {
-        if (tt === -1) {
+        if (tt === Token.EOF) {
             return "EOF";
         } else {
             return "'" + String.fromCharCode(tt) + "'";
@@ -151,27 +170,25 @@ export class LexerATNSimulator extends ATNSimulator {
     private matchATN(input: CharStream): number {
         const startState = this.atn.modeToStartState[this.mode];
 
-        const s0_closure = this.computeStartState(input, startState!);
-        const suppressEdge = s0_closure.hasSemanticContext;
-        s0_closure.hasSemanticContext = false;
+        const s0Closure = this.computeStartState(input, startState!);
+        const suppressEdge = s0Closure.hasSemanticContext;
+        s0Closure.hasSemanticContext = false;
 
-        const next = this.addDFAState(s0_closure);
+        const next = this.addDFAState(s0Closure);
         if (!suppressEdge) {
             this.decisionToDFA[this.mode].s0 = next;
         }
 
-        const predict = this.execATN(input, next);
-
-        return predict;
+        return this.execATN(input, next);
     }
 
-    private execATN(input: CharStream, ds0: DFAState): number {
-        if (ds0.isAcceptState) {
-            // allow zero-length tokens
-            this.captureSimState(this.prevAccept, input, ds0);
+    private execATN(input: CharStream, state: DFAState): number {
+        if (state.isAcceptState) {
+            // Allow zero-length tokens.s
+            this.captureSimState(input, state);
         }
+
         let t = input.LA(1);
-        let s = ds0; // s is current/from DFA state
 
         while (true) {
             /**
@@ -192,12 +209,10 @@ export class LexerATNSimulator extends ATNSimulator {
              * This optimization makes a lot of sense for loops within DFA.
              * A character will take us back to an existing DFA state
              * that already has lots of edges out of it. e.g., .* in comments.
-             * print("Target for:" + str(s) + " and:" + str(t))
              */
-            let target = this.getExistingTargetState(s, t);
-            if (target === null) {
-                target = this.computeTargetState(input, s, t);
-                // print("Computed:" + str(target))
+            let target = this.getExistingTargetState(state, t);
+            if (!target) {
+                target = this.computeTargetState(input, state, t);
             }
 
             if (target === ATNSimulator.ERROR) {
@@ -213,16 +228,17 @@ export class LexerATNSimulator extends ATNSimulator {
             }
 
             if (target.isAcceptState) {
-                this.captureSimState(this.prevAccept, input, target);
+                this.captureSimState(input, target);
                 if (t === Token.EOF) {
                     break;
                 }
             }
+
             t = input.LA(1);
-            s = target!; // flip; current DFA target becomes new src/from state
+            state = target; // flip; current DFA target becomes new src/from state
         }
 
-        return this.failOrAccept(this.prevAccept, input, s.configs, t);
+        return this.failOrAccept(input, state.configs, t);
     }
 
     /**
@@ -230,79 +246,77 @@ export class LexerATNSimulator extends ATNSimulator {
      * for the edge has not yet been computed or is otherwise not available,
      * this method returns `null`.
      *
-     * @param s The current DFA state
-     * @param t The next input symbol
+     * @param s The current DFA state.
+     * @param t The next input symbol.
+     *
      * @returns The existing target DFA state for the given input symbol
-     * `t`, or `null` if the target state for this edge is not
-     * already cached
+     * `t`, or `null` if the target state for this edge is not already cached
      */
-    private getExistingTargetState(s: DFAState, t: number): DFAState | null {
-        if (t < LexerATNSimulator.MIN_DFA_EDGE || t > LexerATNSimulator.MAX_DFA_EDGE) {
-            return null;
+    private getExistingTargetState(s: DFAState, t: number): DFAState | undefined {
+        if (t > Token.EOF && t < LexerATNSimulator.MAX_DFA_EDGE) {
+            return s.edges[t];
         }
 
-        return s.edges[t - LexerATNSimulator.MIN_DFA_EDGE] ?? null;
+        return undefined;
     }
 
     /**
-     * Compute a target state for an edge in the DFA, and attempt to add the
-     * computed state and corresponding edge to the DFA.
+     * Compute a target state for an edge in the DFA, and attempt to add the computed state and corresponding
+     * edge to the DFA.
      *
      * @param input The input stream
      * @param s The current DFA state
      * @param t The next input symbol
      *
-     * @returns The computed target DFA state for the given input symbol
-     * `t`. If `t` does not lead to a valid DFA state, this method
-     * returns {@link ERROR}.
+     * @returns The computed target DFA state for the given input symbol `t`.
+     *          If `t` does not lead to a valid DFA state, this method returns `ERROR`.
      */
     private computeTargetState(input: CharStream, s: DFAState, t: number): DFAState {
         const reach = new OrderedATNConfigSet();
-        // if we don't find an existing DFA state
-        // Fill reach starting from closure, following t transitions
+
+        // If we don't find an existing DFA state,
+        // fill reach starting from closure, following t transitions.
         this.getReachableConfigSet(input, s.configs, reach, t);
 
         if (reach.length === 0) { // we got nowhere on t from s
             if (!reach.hasSemanticContext) {
-                // we got nowhere on t, don't throw out this knowledge; it'd
+                // We got nowhere on t. Don't throw out this knowledge, it'd
                 // cause a failover from DFA later.
                 this.addDFAEdge(s, t, ATNSimulator.ERROR);
             }
 
-            // stop when we can't match any more char
+            // Stop when we can't match any more char.
             return ATNSimulator.ERROR;
         }
 
-        // Add an edge from s to target DFA found/created for reach
+        // Add an edge from s to target DFA found/created for reach.
         return this.addDFAEdge(s, t, null, reach);
     }
 
-    private failOrAccept(prevAccept: LexerATNSimulator.SimState, input: CharStream, reach: ATNConfigSet,
-        t: number): number {
-        if (prevAccept.dfaState !== null) {
-            const lexerActionExecutor = prevAccept.dfaState.lexerActionExecutor;
-            this.accept(input, lexerActionExecutor, this.startIndex,
-                prevAccept.index, prevAccept.line, prevAccept.column);
+    private failOrAccept(input: CharStream, reach: ATNConfigSet, t: number): number {
+        if (this.#prevAccept?.dfaState) {
+            const { dfaState, index, line, column } = this.#prevAccept;
 
-            return prevAccept.dfaState.prediction;
-        } else {
-            // if no accept and EOF is first char, return EOF
-            if (t === Token.EOF && input.index === this.startIndex) {
-                return Token.EOF;
-            }
+            this.accept(input, dfaState.lexerActionExecutor, this.startIndex, index, line, column);
 
-            throw new LexerNoViableAltException(this.recognizer, input, this.startIndex, reach);
+            return dfaState.prediction;
         }
+
+        // If no accept and EOF is first char, return EOF.
+        if (t === Token.EOF && input.index === this.startIndex) {
+            return Token.EOF;
+        }
+
+        throw new LexerNoViableAltException(this.recognizer, input, this.startIndex, reach);
     }
 
     /**
-     * Given a starting configuration set, figure out all ATN configurations
-     * we can reach upon input `t`. Parameter `reach` is a return
-     * parameter.
+     * Given a starting configuration set, figure out all ATN configurations we can reach upon input `t`.
+     * Parameter `reach` is a return parameter.
      */
     private getReachableConfigSet(input: CharStream, closure: ATNConfigSet, reach: ATNConfigSet, t: number): void {
-        // this is used to skip processing for configs which have a lower priority
-        // than a config that already reached an accept state for the same rule
+        // This is used to skip processing for configs which have a lower priority
+        // than a config that already reached an accept state for the same rule.
         let skipAlt = ATN.INVALID_ALT_NUMBER;
         for (const cfg of closure) {
             const currentAltReachedAcceptState = (cfg.alt === skipAlt);
@@ -312,17 +326,16 @@ export class LexerATNSimulator extends ATNSimulator {
 
             for (const trans of cfg.state.transitions) {
                 const target = this.getReachableTarget(trans, t);
-                if (target !== null) {
+                if (target) {
                     let lexerActionExecutor = (cfg as LexerATNConfig).lexerActionExecutor;
-                    if (lexerActionExecutor !== null) {
+                    if (lexerActionExecutor) {
                         lexerActionExecutor = lexerActionExecutor.fixOffsetBeforeMatch(input.index - this.startIndex);
                     }
                     const treatEofAsEpsilon = (t === Token.EOF);
                     const config = LexerATNConfig.createWithExecutor(cfg as LexerATNConfig, target,
                         lexerActionExecutor);
-                    if (this.closure(input, config, reach,
-                        currentAltReachedAcceptState, true, treatEofAsEpsilon)) {
-                        // any remaining configs for this alt have a lower priority
+                    if (this.closure(input, config, reach, currentAltReachedAcceptState, true, treatEofAsEpsilon)) {
+                        // Any remaining configs for this alt have a lower priority
                         // than the one that just reached an accept state.
                         skipAlt = cfg.alt;
                     }
@@ -333,20 +346,20 @@ export class LexerATNSimulator extends ATNSimulator {
 
     private accept(input: CharStream, lexerActionExecutor: LexerActionExecutor | null, startIndex: number,
         index: number, line: number, charPos: number): void {
-        // seek to after last char in token
+        // Seek to after last char in token.
         input.seek(index);
         this.line = line;
         this.column = charPos;
-        if (lexerActionExecutor !== null && this.recognizer !== null) {
+        if (lexerActionExecutor && this.recognizer) {
             lexerActionExecutor.execute(this.recognizer, input, startIndex);
         }
     }
 
-    private getReachableTarget(trans: Transition, t: number): ATNState | null {
+    private getReachableTarget(trans: Transition, t: number): ATNState | undefined {
         if (trans.matches(t, 0, Lexer.MAX_CHAR_VALUE)) {
             return trans.target;
         } else {
-            return null;
+            return undefined;
         }
     }
 
@@ -369,15 +382,14 @@ export class LexerATNSimulator extends ATNSimulator {
      * search from `config`, all other (potentially reachable) states for
      * this rule would have a lower priority.
      *
-     * @returns {boolean} `true` if an accept state is reached, otherwise
-     * `false`.
+     * @returns {boolean} `true` if an accept state is reached, otherwise `false`.
      */
     private closure(input: CharStream, config: LexerATNConfig, configs: ATNConfigSet,
         currentAltReachedAcceptState: boolean, speculative: boolean, treatEofAsEpsilon: boolean): boolean {
         let cfg = null;
         if (config.state.stateType === ATNStateType.RULE_STOP) {
-            if (config.context === null || config.context.hasEmptyPath()) {
-                if (config.context === null || config.context.isEmpty()) {
+            if (!config.context || config.context.hasEmptyPath()) {
+                if (!config.context || config.context.isEmpty()) {
                     configs.add(config);
 
                     return true;
@@ -387,7 +399,7 @@ export class LexerATNSimulator extends ATNSimulator {
                 }
             }
 
-            if (config.context !== null && !config.context.isEmpty()) {
+            if (config.context && !config.context.isEmpty()) {
                 for (let i = 0; i < config.context.length; i++) {
                     if (config.context.getReturnState(i) !== PredictionContext.EMPTY_RETURN_STATE) {
                         const newContext = config.context.getParent(i)!; // "pop" return state
@@ -412,9 +424,9 @@ export class LexerATNSimulator extends ATNSimulator {
 
         for (const trans of config.state.transitions) {
             cfg = this.getEpsilonTarget(input, config, trans, configs, speculative, treatEofAsEpsilon);
-            if (cfg !== null) {
-                currentAltReachedAcceptState = this.closure(input, cfg, configs,
-                    currentAltReachedAcceptState, speculative, treatEofAsEpsilon);
+            if (cfg) {
+                currentAltReachedAcceptState = this.closure(input, cfg, configs, currentAltReachedAcceptState,
+                    speculative, treatEofAsEpsilon);
             }
         }
 
@@ -424,14 +436,38 @@ export class LexerATNSimulator extends ATNSimulator {
     // side-effect: can alter configs.hasSemanticContext
     private getEpsilonTarget(input: CharStream, config: LexerATNConfig, trans: Transition, configs: ATNConfigSet,
         speculative: boolean, treatEofAsEpsilon: boolean): LexerATNConfig | null {
-        let cfg = null;
-        if (trans.serializationType === TransitionType.RULE) {
+        if (!this.#lexerATNConfigFactory) {
+            this.setupATNFactoryLookup();
+        }
+        const factory = this.#lexerATNConfigFactory[trans.serializationType];
+        if (!factory) {
+            return null;
+        }
+
+        return factory(input, config, trans, configs, speculative, treatEofAsEpsilon);
+    };
+
+    /**
+     * Fills the lookup table for creating lexer ATN configs. This helps to avoid frequent checks of the transition
+     * type, which determines the configuration of the created config.
+     */
+    private setupATNFactoryLookup(): void {
+        this.#lexerATNConfigFactory = [];
+
+        this.#lexerATNConfigFactory[TransitionType.RULE] = (input: CharStream, config: LexerATNConfig,
+            trans: Transition) => {
             const newContext = SingletonPredictionContext.create(config.context,
                 (trans as RuleTransition).followState.stateNumber);
-            cfg = LexerATNConfig.createWithConfig(trans.target, config, newContext);
-        } else if (trans.serializationType === TransitionType.PRECEDENCE) {
+
+            return LexerATNConfig.createWithConfig(trans.target, config, newContext);
+        };
+
+        this.#lexerATNConfigFactory[TransitionType.PRECEDENCE] = () => {
             throw new Error("Precedence predicates are not supported in lexers.");
-        } else if (trans.serializationType === TransitionType.PREDICATE) {
+        };
+
+        this.#lexerATNConfigFactory[TransitionType.PREDICATE] = (input: CharStream, config: LexerATNConfig,
+            trans: Transition, configs: ATNConfigSet, speculative: boolean) => {
             // Track traversing semantic predicates. If we traverse,
             // we cannot add a DFA state for this "reach" computation
             // because the DFA would not test the predicate again in the
@@ -453,9 +489,14 @@ export class LexerATNSimulator extends ATNSimulator {
             const pt = trans as PredicateTransition;
             configs.hasSemanticContext = true;
             if (this.evaluatePredicate(input, pt.ruleIndex, pt.predIndex, speculative)) {
-                cfg = LexerATNConfig.createWithConfig(trans.target, config);
+                return LexerATNConfig.createWithConfig(trans.target, config);
             }
-        } else if (trans.serializationType === TransitionType.ACTION) {
+
+            return null;
+        };
+
+        this.#lexerATNConfigFactory[TransitionType.ACTION] = (input: CharStream, config: LexerATNConfig,
+            trans: Transition) => {
             if (config.context === null || config.context.hasEmptyPath()) {
                 // execute actions anywhere in the start rule for a token.
                 //
@@ -471,25 +512,35 @@ export class LexerATNSimulator extends ATNSimulator {
                 // the split operation.
                 const lexerActionExecutor = LexerActionExecutor.append(config.lexerActionExecutor,
                     this.atn.lexerActions[(trans as ActionTransition).actionIndex]);
-                cfg = LexerATNConfig.createWithExecutor(config, trans.target, lexerActionExecutor);
+
+                return LexerATNConfig.createWithExecutor(config, trans.target, lexerActionExecutor);
             } else {
                 // ignore actions in referenced rules
-                cfg = LexerATNConfig.createWithConfig(trans.target, config);
+                return LexerATNConfig.createWithConfig(trans.target, config);
             }
-        } else if (trans.serializationType === TransitionType.EPSILON) {
-            cfg = LexerATNConfig.createWithConfig(trans.target, config);
-        } else if (trans.serializationType === TransitionType.ATOM ||
-            trans.serializationType === TransitionType.RANGE ||
-            trans.serializationType === TransitionType.SET) {
+        };
+
+        this.#lexerATNConfigFactory[TransitionType.EPSILON] = (input: CharStream, config: LexerATNConfig,
+            trans: Transition) => {
+            return LexerATNConfig.createWithConfig(trans.target, config);
+        };
+
+        const simple = (input: CharStream, config: LexerATNConfig,
+            trans: Transition, configs: ATNConfigSet,
+            speculative: boolean, treatEofAsEpsilon: boolean) => {
             if (treatEofAsEpsilon) {
                 if (trans.matches(Token.EOF, 0, Lexer.MAX_CHAR_VALUE)) {
-                    cfg = LexerATNConfig.createWithConfig(trans.target, config);
+                    return LexerATNConfig.createWithConfig(trans.target, config);
                 }
             }
-        }
 
-        return cfg;
-    };
+            return null;
+        };
+
+        this.#lexerATNConfigFactory[TransitionType.ATOM] = simple;
+        this.#lexerATNConfigFactory[TransitionType.RANGE] = simple;
+        this.#lexerATNConfigFactory[TransitionType.SET] = simple;
+    }
 
     /**
      * Evaluate a predicate specified in the lexer.
@@ -514,13 +565,15 @@ export class LexerATNSimulator extends ATNSimulator {
      */
     private evaluatePredicate(input: CharStream, ruleIndex: number, predIndex: number,
         speculative: boolean): boolean {
-        // assume true if no recognizer was provided
-        if (this.recognizer === null) {
+        // Assume true if no recognizer was provided.
+        if (!this.recognizer) {
             return true;
         }
+
         if (!speculative) {
             return this.recognizer.sempred(null, ruleIndex, predIndex);
         }
+
         const savedColumn = this.column;
         const savedLine = this.line;
         const index = input.index;
@@ -537,16 +590,17 @@ export class LexerATNSimulator extends ATNSimulator {
         }
     }
 
-    private captureSimState(settings: LexerATNSimulator.SimState, input: CharStream,
-        dfaState: DFAState | null): void {
-        settings.index = input.index;
-        settings.line = this.line;
-        settings.column = this.column;
-        settings.dfaState = dfaState;
+    private captureSimState(input: CharStream, dfaState: DFAState | null): void {
+        this.#prevAccept = {
+            index: input.index,
+            line: this.line,
+            column: this.column,
+            dfaState,
+        };
     }
 
-    private addDFAEdge(from_: DFAState, tk: number, to: DFAState | null, configs?: ATNConfigSet): DFAState {
-        if (to === null && configs) {
+    private addDFAEdge(from: DFAState, tk: number, to: DFAState | null, configs?: ATNConfigSet): DFAState {
+        if (!to && configs) {
             // leading to this call, ATNConfigSet.hasSemanticContext is used as a
             // marker indicating dynamic predicate evaluation makes this edge
             // dependent on the specific input sequence, so the static edge in the
@@ -557,7 +611,6 @@ export class LexerATNSimulator extends ATNSimulator {
             // TJP notes: next time through the DFA, we see a pred again and eval.
             // If that gets us to a previously created (but dangling) DFA
             // state, we can continue in pure DFA mode from there.
-            // /
             const suppressEdge = configs.hasSemanticContext;
             configs.hasSemanticContext = false;
 
@@ -568,34 +621,27 @@ export class LexerATNSimulator extends ATNSimulator {
             }
         }
 
-        // add the edge
-        if (tk < LexerATNSimulator.MIN_DFA_EDGE || tk > LexerATNSimulator.MAX_DFA_EDGE) {
+        // Add the edge.
+        if (tk === Token.EOF || tk > LexerATNSimulator.MAX_DFA_EDGE) {
             // Only track edges within the DFA bounds
             return to!;
         }
 
-        from_.edges[tk - LexerATNSimulator.MIN_DFA_EDGE] = to!; // connect
+        from.edges[tk] = to!; // connect
 
         return to!;
     }
 
     /**
-     * Add a new DFA state if there isn't one with this set of
-     * configurations already. This method also detects the first
-     * configuration containing an ATN rule stop state. Later, when
-     * traversing the DFA, we will know which rule to accept.
+     * Add a new DFA state if there isn't one with this set of configurations already. This method also detects
+     * the first configuration containing an ATN rule stop state. Later, when traversing the DFA, we will know
+     * which rule to accept.
      */
     private addDFAState(configs: ATNConfigSet): DFAState {
         const proposed = DFAState.fromConfigs(configs);
-        let firstConfigWithRuleStopState = null;
-        for (const cfg of configs) {
-            if (cfg.state instanceof RuleStopState) {
-                firstConfigWithRuleStopState = cfg;
-                break;
-            }
-        }
+        const firstConfigWithRuleStopState = configs.firstStopState;
 
-        if (firstConfigWithRuleStopState !== null) {
+        if (firstConfigWithRuleStopState) {
             proposed.isAcceptState = true;
             proposed.lexerActionExecutor = (firstConfigWithRuleStopState as LexerATNConfig).lexerActionExecutor;
             proposed.prediction = this.atn.ruleToTokenType[firstConfigWithRuleStopState.state.ruleIndex];
@@ -603,7 +649,7 @@ export class LexerATNSimulator extends ATNSimulator {
 
         const dfa = this.decisionToDFA[this.mode];
         const existing = dfa.getState(proposed);
-        if (existing !== null) {
+        if (existing) {
             return existing;
         }
 
@@ -611,37 +657,5 @@ export class LexerATNSimulator extends ATNSimulator {
         dfa.addState(proposed);
 
         return proposed;
-    }
-}
-
-export namespace LexerATNSimulator {
-    /**
-     * When we hit an accept state in either the DFA or the ATN, we
-     *  have to notify the character stream to start buffering characters
-     *  via {@link IntStream#mark} and record the current state. The current sim state
-     *  includes the current index into the input, the current line,
-     *  and current character position in that line. Note that the Lexer is
-     *  tracking the starting line and characterization of the token. These
-     *  variables track the "state" of the simulator when it hits an accept state.
-     *
-     *  We track these variables separately for the DFA and ATN simulation
-     *  because the DFA simulation often has to fail over to the ATN
-     *  simulation. If the ATN simulation fails, we need the DFA to fall
-     *  back to its previously accepted state, if any. If the ATN succeeds,
-     *  then the ATN does the accept and the DFA simulator that invoked it
-     *  can simply return the predicted token type.
-     */
-    export class SimState {
-        public index = -1;
-        public line = 0;
-        public column = -1;
-        public dfaState: DFAState | null = null;
-
-        public reset(): void {
-            this.index = -1;
-            this.line = 0;
-            this.column = -1;
-            this.dfaState = null;
-        }
     }
 }
