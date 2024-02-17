@@ -742,11 +742,12 @@ export class ParserATNSimulator extends ATNSimulator {
             for (const trans of c.state.transitions) {
                 const target = this.getReachableTarget(trans, t);
                 if (target !== null) {
-                    const cfg = new ATNConfig({ state: target }, c);
+                    const cfg = ATNConfig.createWithConfig(target, c);
                     intermediate.add(cfg, this.mergeCache);
                 }
             }
         }
+
         // Now figure out where the reach operation can take us...
         let reach: ATNConfigSet | null = null;
 
@@ -859,8 +860,8 @@ export class ParserATNSimulator extends ATNSimulator {
             if (lookToEndOfRule && config.state.epsilonOnlyTransitions) {
                 const nextTokens = this.atn.nextTokens(config.state);
                 if (nextTokens.contains(Token.EPSILON)) {
-                    const endOfRuleState = this.atn.ruleToStopState[config.state.ruleIndex];
-                    result.add(new ATNConfig({ state: endOfRuleState }, config), this.mergeCache);
+                    const endOfRuleState = this.atn.ruleToStopState[config.state.ruleIndex]!;
+                    result.add(ATNConfig.createWithConfig(endOfRuleState, config), this.mergeCache);
                 }
             }
         }
@@ -875,7 +876,7 @@ export class ParserATNSimulator extends ATNSimulator {
 
         for (let i = 0; i < p.transitions.length; i++) {
             const target = p.transitions[i].target;
-            const c = new ATNConfig({ state: target, alt: i + 1, context: initialContext }, null);
+            const c = ATNConfig.createWithContext(target, i + 1, initialContext);
             const closureBusy = new HashSet<ATNConfig>();
             this.closure(c, configs, closureBusy, true, fullCtx, false);
         }
@@ -948,7 +949,7 @@ export class ParserATNSimulator extends ATNSimulator {
             }
             statesFromAlt1[config.state.stateNumber] = config.context;
             if (updatedContext !== config.semanticContext) {
-                configSet.add(new ATNConfig({ semanticContext: updatedContext }, config), this.mergeCache);
+                configSet.add(ATNConfig.duplicate(config, updatedContext), this.mergeCache);
             } else {
                 configSet.add(config, this.mergeCache);
             }
@@ -1208,8 +1209,8 @@ export class ParserATNSimulator extends ATNSimulator {
                 for (let i = 0; i < config.context.length; i++) {
                     if (config.context.getReturnState(i) === PredictionContext.EMPTY_RETURN_STATE) {
                         if (fullCtx) {
-                            configs.add(new ATNConfig({ state: config.state, context: PredictionContext.EMPTY },
-                                config), this.mergeCache);
+                            configs.add(ATNConfig.createWithConfig(config.state, config, PredictionContext.EMPTY),
+                                this.mergeCache);
                             continue;
                         } else {
                             // we have no context info, just chase follow links (if greedy)
@@ -1218,15 +1219,10 @@ export class ParserATNSimulator extends ATNSimulator {
                         }
                         continue;
                     }
-                    const returnState = this.atn.states[config.context.getReturnState(i)];
-                    const newContext = config.context.getParent(i); // "pop" return state
-                    const parameters = {
-                        state: returnState,
-                        alt: config.alt,
-                        context: newContext,
-                        semanticContext: config.semanticContext,
-                    };
-                    const c = new ATNConfig(parameters, null);
+
+                    const returnState = this.atn.states[config.context.getReturnState(i)]!;
+                    const newContext = config.context.getParent(i)!; // "pop" return state
+                    const c = ATNConfig.createWithContext(returnState, config.alt, newContext, config.semanticContext);
 
                     // While we have context to pop back from, we may have
                     // gotten that context AFTER having falling off a rule.
@@ -1384,9 +1380,9 @@ export class ParserATNSimulator extends ATNSimulator {
             case TransitionType.PREDICATE:
                 return this.predTransition(config, t as PredicateTransition, collectPredicates, inContext, fullCtx);
             case TransitionType.ACTION:
-                return this.actionTransition(config, t as ActionTransition);
+                return ATNConfig.createWithConfig(t.target, config);
             case TransitionType.EPSILON:
-                return new ATNConfig({ state: t.target }, config);
+                return ATNConfig.createWithConfig(t.target, config);
             case TransitionType.ATOM:
             case TransitionType.RANGE:
             case TransitionType.SET:
@@ -1394,7 +1390,7 @@ export class ParserATNSimulator extends ATNSimulator {
                 // transition is traversed
                 if (treatEofAsEpsilon) {
                     if (t.matches(Token.EOF, 0, 1)) {
-                        return new ATNConfig({ state: t.target }, config);
+                        return ATNConfig.createWithConfig(t.target, config);
                     }
                 }
 
@@ -1402,10 +1398,6 @@ export class ParserATNSimulator extends ATNSimulator {
             default:
                 return null;
         }
-    }
-
-    protected actionTransition(config: ATNConfig, t: ActionTransition): ATNConfig {
-        return new ATNConfig({ state: t.target }, config);
     }
 
     protected precedenceTransition(config: ATNConfig, pt: PrecedencePredicateTransition, collectPredicates: boolean,
@@ -1423,14 +1415,14 @@ export class ParserATNSimulator extends ATNSimulator {
                 const predSucceeds = pt.getPredicate().evaluate(this.parser, this._outerContext!);
                 this._input.seek(currentPosition);
                 if (predSucceeds) {
-                    c = new ATNConfig({ state: pt.target }, config); // no pred context
+                    c = ATNConfig.createWithConfig(pt.target, config); // no pred context
                 }
             } else {
                 const newSemCtx = SemanticContext.andContext(config.semanticContext, pt.getPredicate());
-                c = new ATNConfig({ state: pt.target, semanticContext: newSemCtx }, config);
+                c = ATNConfig.createWithSemanticContext(pt.target, config, newSemCtx);
             }
         } else {
-            c = new ATNConfig({ state: pt.target }, config);
+            c = ATNConfig.createWithConfig(pt.target, config);
         }
 
         return c;
@@ -1451,14 +1443,14 @@ export class ParserATNSimulator extends ATNSimulator {
                 const predSucceeds = pt.getPredicate().evaluate(this.parser, this._outerContext!);
                 this._input.seek(currentPosition);
                 if (predSucceeds) {
-                    c = new ATNConfig({ state: pt.target }, config); // no pred context
+                    c = ATNConfig.createWithConfig(pt.target, config); // no pred context
                 }
             } else {
                 const newSemCtx = SemanticContext.andContext(config.semanticContext, pt.getPredicate());
-                c = new ATNConfig({ state: pt.target, semanticContext: newSemCtx }, config);
+                c = ATNConfig.createWithSemanticContext(pt.target, config, newSemCtx);
             }
         } else {
-            c = new ATNConfig({ state: pt.target }, config);
+            c = ATNConfig.createWithConfig(pt.target, config);
         }
 
         return c;
@@ -1468,7 +1460,7 @@ export class ParserATNSimulator extends ATNSimulator {
         const returnState = t.followState;
         const newContext = SingletonPredictionContext.create(config.context, returnState.stateNumber);
 
-        return new ATNConfig({ state: t.target, context: newContext }, config);
+        return ATNConfig.createWithConfig(t.target, config, newContext);
     }
 
     protected getConflictingAlts(configs: ATNConfigSet): BitSet {

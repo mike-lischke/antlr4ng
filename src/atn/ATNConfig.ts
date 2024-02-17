@@ -31,49 +31,6 @@ export interface ICheckedConfigParameters {
     precedenceFilterSuppressed?: boolean,
 };
 
-const checkParams = (params: IATNConfigParameters | null): ICheckedConfigParameters => {
-    if (params === null) {
-        return {
-            state: null,
-            alt: null,
-            context: null,
-            semanticContext: null,
-            reachesIntoOuterContext: null,
-        };
-    } else {
-        return {
-            state: params.state ?? null,
-            alt: params.alt ?? null,
-            context: params.context ?? null,
-            semanticContext: params.semanticContext ?? null,
-            reachesIntoOuterContext: null,
-        };
-    }
-};
-
-const checkConfig = (params: ATNConfig | null): ICheckedConfigParameters => {
-    if (params === null) {
-        return {
-            state: null,
-            alt: null,
-            context: null,
-            semanticContext: null,
-            reachesIntoOuterContext: 0,
-        };
-    } else {
-        const props = {
-            state: params.state ?? null,
-            alt: params.alt ?? null,
-            context: params.context ?? null,
-            semanticContext: params.semanticContext ?? null,
-            reachesIntoOuterContext: params.reachesIntoOuterContext ?? 0,
-            precedenceFilterSuppressed: params.precedenceFilterSuppressed ?? false,
-        };
-
-        return props;
-    }
-};
-
 export class ATNConfig {
     /** The ATN state associated with this configuration */
     public readonly state: ATNState;
@@ -92,37 +49,58 @@ export class ATNConfig {
      * depth > 0.  Note that it may not be totally accurate depth since I
      * don't ever decrement. TODO: make it a boolean then
      */
-    public reachesIntoOuterContext: number; // Not used in hash code.
+    public reachesIntoOuterContext: number = 0; // Not used in hash code.
 
     public precedenceFilterSuppressed = false; // Not used in hash code.
 
-    public readonly semanticContext: SemanticContext;
-
-    #context: PredictionContext | null = null;
-    #cachedHashCode: number | undefined;
+    public get semanticContext(): SemanticContext {
+        return this.#semanticContext;
+    }
 
     /**
-     * @param {object} params A tuple: (ATN state, predicted alt, syntactic, semantic context).
      * The syntactic context is a graph-structured stack node whose
      * path(s) to the root is the rule invocation(s)
      * chain used to arrive at the state.  The semantic context is
      * the tree of semantic predicates encountered before reaching
      * an ATN state
      */
-    public constructor(params: IATNConfigParameters, config: ATNConfig | null) {
-        const checkedParams = checkParams(params);
-        const checkedConfig = checkConfig(config);
+    #context: PredictionContext | null = null;
 
-        this.state = checkedParams.state ?? checkedConfig.state!;
-        this.alt = checkedParams.alt ?? checkedConfig.alt ?? 0;
+    #cachedHashCode: number | undefined;
+    #semanticContext: SemanticContext;
 
-        if (params.context != null || config?.context != null) {
-            this.context = checkedParams.context ?? checkedConfig.context;
+    /** Never create config classes directly. Use the factory methods below. */
+    protected constructor(c: Partial<ATNConfig>, state: ATNState, context: PredictionContext | null,
+        semanticContext?: SemanticContext | null) {
+        this.state = state;
+        this.alt = c.alt!;
+        this.context = context;
+        this.#semanticContext = semanticContext ?? SemanticContext.NONE;
+        if (c.reachesIntoOuterContext !== undefined) {
+            this.reachesIntoOuterContext = c.reachesIntoOuterContext;
         }
 
-        this.semanticContext = checkedParams.semanticContext ?? (checkedConfig.semanticContext ?? SemanticContext.NONE);
-        this.reachesIntoOuterContext = checkedConfig.reachesIntoOuterContext ?? 0;
-        this.precedenceFilterSuppressed = checkedConfig.precedenceFilterSuppressed ?? false;
+        if (c.precedenceFilterSuppressed !== undefined) {
+            this.precedenceFilterSuppressed = c.precedenceFilterSuppressed;
+        }
+    }
+
+    public static duplicate(old: ATNConfig, semanticContext?: SemanticContext): ATNConfig { // dup
+        return new ATNConfig(old, old.state, old.context, semanticContext ?? old.semanticContext);
+    }
+
+    public static createWithContext(state: ATNState, alt: number, context: PredictionContext,
+        semanticContext?: SemanticContext): ATNConfig {
+        return new ATNConfig({ alt }, state, context, semanticContext);
+    }
+
+    public static createWithConfig(state: ATNState, config: ATNConfig, context?: PredictionContext): ATNConfig {
+        return new ATNConfig(config, state, context ?? config.context, config.semanticContext);
+    }
+
+    public static createWithSemanticContext(state: ATNState, c: ATNConfig,
+        semanticContext?: SemanticContext | null): ATNConfig {
+        return new ATNConfig(c, state ?? c.state, c.context, semanticContext);
     }
 
     public hashCode(): number {
@@ -156,7 +134,7 @@ export class ATNConfig {
     /**
      * An ATN configuration is equal to another if both have
      * the same state, they predict the same alternative, and
-     * syntactic/semantic contexts are the same
+     * syntactic/semantic contexts are the same.
      */
     public equals(other: ATNConfig): boolean {
         if (this === other) {
@@ -186,18 +164,4 @@ export class ATNConfig {
                 : "") + ")";
     }
 
-    /**
-     * Enables or disables the use of a simpler hash code as used for lookups in a {@link ATNConfigSet}.
-     */
-    public set useSimpleHash(useSimple: boolean) {
-        if (useSimple) {
-            let hashCode = 7;
-            hashCode = 31 * hashCode + this.state.stateNumber;
-            hashCode = 31 * hashCode + this.alt;
-            hashCode = 31 * hashCode + this.semanticContext.hashCode();
-            this.#cachedHashCode = hashCode;
-        } else {
-            this.#cachedHashCode = undefined;
-        }
-    }
 }

@@ -10,10 +10,11 @@ import { LexerActionExecutor } from "./LexerActionExecutor.js";
 import { ATNState } from "./ATNState.js";
 import { PredictionContext } from "./PredictionContext.js";
 import { MurmurHash } from "../utils/MurmurHash.js";
+import { SemanticContext } from "./index.js";
 
 export interface ILexerATNConfigParameters {
-    state: ATNState | null,
-    alt?: number | null,
+    state: ATNState,
+    alt: number,
     context?: PredictionContext | null,
     lexerActionExecutor?: LexerActionExecutor | null,
 };
@@ -28,18 +29,32 @@ export class LexerATNConfig extends ATNConfig {
 
     #cachedHashCode: number | undefined;
 
-    public constructor(params: ILexerATNConfigParameters, config: LexerATNConfig | null) {
-        super(params, config);
+    public constructor(config: Partial<LexerATNConfig>, state: ATNState, context: PredictionContext | null,
+        lexerActionExecutor: LexerActionExecutor | null) {
+        super(config, state, context ?? config.context!, context ? SemanticContext.NONE : config.semanticContext);
 
-        this.lexerActionExecutor = params.lexerActionExecutor ?? config?.lexerActionExecutor ?? null;
-        this.passedThroughNonGreedyDecision = config !== null
-            ? LexerATNConfig.checkNonGreedyDecision(config, this.state)
-            : false;
+        this.lexerActionExecutor = context ? lexerActionExecutor : config.lexerActionExecutor ?? null;
+        this.passedThroughNonGreedyDecision = LexerATNConfig.checkNonGreedyDecision(config, this.state);
 
         return this;
     }
 
-    private static checkNonGreedyDecision(source: LexerATNConfig, target: ATNState): boolean {
+    public static createWithExecutor(config: LexerATNConfig, state: ATNState,
+        lexerActionExecutor: LexerActionExecutor | null): LexerATNConfig {
+        return new LexerATNConfig(config, state, config.context, lexerActionExecutor);
+    }
+
+    public static override createWithConfig(state: ATNState, config: LexerATNConfig,
+        context?: PredictionContext): LexerATNConfig {
+
+        return new LexerATNConfig(config, state, context ?? null, config.lexerActionExecutor);
+    }
+
+    public static override createWithContext(state: ATNState, alt: number, context: PredictionContext): LexerATNConfig {
+        return new LexerATNConfig({ alt }, state, context, null);
+    }
+
+    private static checkNonGreedyDecision(source: Partial<LexerATNConfig>, target: ATNState): boolean {
         return source.passedThroughNonGreedyDecision ||
             (("nonGreedy" in target) && (target as DecisionState).nonGreedy);
     }

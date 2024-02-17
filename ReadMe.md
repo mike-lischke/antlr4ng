@@ -133,7 +133,7 @@ After that you can either execute different suites separately or as a whole.
 
 The unit tests consist of tests for individual classes in the runtime (API tests) and the runtime test suite ported from Java.
 
-These tests together comprise 530 tests and run in 10s.
+This suite consists of 530 tests and runs in about 9s.
 
 ### Real World Example
 
@@ -152,10 +152,10 @@ Last release (pure TypeScript):
 
 | Test | Cold Run | Warm Run|
 | ---- | -------- | ------- |
-| Query Collection| 3230 ms | 311 ms |
-| Example File | 459 ms | 185 ms |
-| Large Inserts | 13092 ms | 13063 ms |
-| Total | 16739 ms | 13584 ms |
+| Query Collection| 2813 ms | 294 ms |
+| Example File | 416 ms | 177 ms |
+| Large Inserts | 11828 ms | 11684 ms |
+| Total | 15126 ms | 12177 ms |
 
 The benchmarks consist of a set of query files, which are parsed by a MySQL parser. The MySQL grammar is one of the largest and most complex grammars you can find for ANTLR4, which, I think, makes it a perfect test case for parser tests.
 

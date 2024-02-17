@@ -215,7 +215,7 @@ export class PredictionMode {
                 // dup configs, tossing out semantic predicates
                 const dup = new ATNConfigSet();
                 for (let c of configs) {
-                    c = new ATNConfig({ semanticContext: SemanticContext.NONE }, c);
+                    c = ATNConfig.duplicate(c, SemanticContext.NONE);
                     dup.add(c);
                 }
                 configs = dup;

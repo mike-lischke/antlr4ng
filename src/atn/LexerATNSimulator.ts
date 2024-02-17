@@ -29,6 +29,7 @@ import { ATNState } from "./ATNState.js";
 import { RuleTransition } from "./RuleTransition.js";
 import { PredicateTransition } from "./PredicateTransition.js";
 import { ActionTransition } from "./ActionTransition.js";
+import { ATNStateType } from "./ATNStateType.js";
 
 export class LexerATNSimulator extends ATNSimulator {
     public static readonly MIN_DFA_EDGE = 0;
@@ -317,7 +318,8 @@ export class LexerATNSimulator extends ATNSimulator {
                         lexerActionExecutor = lexerActionExecutor.fixOffsetBeforeMatch(input.index - this.startIndex);
                     }
                     const treatEofAsEpsilon = (t === Token.EOF);
-                    const config = new LexerATNConfig({ state: target, lexerActionExecutor }, (cfg as LexerATNConfig));
+                    const config = LexerATNConfig.createWithExecutor(cfg as LexerATNConfig, target,
+                        lexerActionExecutor);
                     if (this.closure(input, config, reach,
                         currentAltReachedAcceptState, true, treatEofAsEpsilon)) {
                         // any remaining configs for this alt have a lower priority
@@ -353,7 +355,7 @@ export class LexerATNSimulator extends ATNSimulator {
         const configs = new OrderedATNConfigSet();
         for (let i = 0; i < p.transitions.length; i++) {
             const target = p.transitions[i].target;
-            const cfg = new LexerATNConfig({ state: target, alt: i + 1, context: initialContext }, null);
+            const cfg = LexerATNConfig.createWithContext(target, i + 1, initialContext);
             this.closure(input, cfg, configs, false, false, false);
         }
 
@@ -373,23 +375,24 @@ export class LexerATNSimulator extends ATNSimulator {
     private closure(input: CharStream, config: LexerATNConfig, configs: ATNConfigSet,
         currentAltReachedAcceptState: boolean, speculative: boolean, treatEofAsEpsilon: boolean): boolean {
         let cfg = null;
-        if (config.state instanceof RuleStopState) {
+        if (config.state.stateType === ATNStateType.RULE_STOP) {
             if (config.context === null || config.context.hasEmptyPath()) {
                 if (config.context === null || config.context.isEmpty()) {
                     configs.add(config);
 
                     return true;
                 } else {
-                    configs.add(new LexerATNConfig({ state: config.state, context: PredictionContext.EMPTY }, config));
+                    configs.add(LexerATNConfig.createWithConfig(config.state, config, PredictionContext.EMPTY));
                     currentAltReachedAcceptState = true;
                 }
             }
+
             if (config.context !== null && !config.context.isEmpty()) {
                 for (let i = 0; i < config.context.length; i++) {
                     if (config.context.getReturnState(i) !== PredictionContext.EMPTY_RETURN_STATE) {
-                        const newContext = config.context.getParent(i); // "pop" return state
-                        const returnState = this.atn.states[config.context.getReturnState(i)];
-                        cfg = new LexerATNConfig({ state: returnState, context: newContext }, config);
+                        const newContext = config.context.getParent(i)!; // "pop" return state
+                        const returnState = this.atn.states[config.context.getReturnState(i)]!;
+                        cfg = LexerATNConfig.createWithConfig(returnState, config, newContext);
                         currentAltReachedAcceptState = this.closure(input, cfg,
                             configs, currentAltReachedAcceptState, speculative,
                             treatEofAsEpsilon);
@@ -425,7 +428,7 @@ export class LexerATNSimulator extends ATNSimulator {
         if (trans.serializationType === TransitionType.RULE) {
             const newContext = SingletonPredictionContext.create(config.context,
                 (trans as RuleTransition).followState.stateNumber);
-            cfg = new LexerATNConfig({ state: trans.target, context: newContext }, config);
+            cfg = LexerATNConfig.createWithConfig(trans.target, config, newContext);
         } else if (trans.serializationType === TransitionType.PRECEDENCE) {
             throw new Error("Precedence predicates are not supported in lexers.");
         } else if (trans.serializationType === TransitionType.PREDICATE) {
@@ -450,7 +453,7 @@ export class LexerATNSimulator extends ATNSimulator {
             const pt = trans as PredicateTransition;
             configs.hasSemanticContext = true;
             if (this.evaluatePredicate(input, pt.ruleIndex, pt.predIndex, speculative)) {
-                cfg = new LexerATNConfig({ state: trans.target }, config);
+                cfg = LexerATNConfig.createWithConfig(trans.target, config);
             }
         } else if (trans.serializationType === TransitionType.ACTION) {
             if (config.context === null || config.context.hasEmptyPath()) {
@@ -468,19 +471,19 @@ export class LexerATNSimulator extends ATNSimulator {
                 // the split operation.
                 const lexerActionExecutor = LexerActionExecutor.append(config.lexerActionExecutor,
                     this.atn.lexerActions[(trans as ActionTransition).actionIndex]);
-                cfg = new LexerATNConfig({ state: trans.target, lexerActionExecutor }, config);
+                cfg = LexerATNConfig.createWithExecutor(config, trans.target, lexerActionExecutor);
             } else {
                 // ignore actions in referenced rules
-                cfg = new LexerATNConfig({ state: trans.target }, config);
+                cfg = LexerATNConfig.createWithConfig(trans.target, config);
             }
         } else if (trans.serializationType === TransitionType.EPSILON) {
-            cfg = new LexerATNConfig({ state: trans.target }, config);
+            cfg = LexerATNConfig.createWithConfig(trans.target, config);
         } else if (trans.serializationType === TransitionType.ATOM ||
             trans.serializationType === TransitionType.RANGE ||
             trans.serializationType === TransitionType.SET) {
             if (treatEofAsEpsilon) {
                 if (trans.matches(Token.EOF, 0, Lexer.MAX_CHAR_VALUE)) {
-                    cfg = new LexerATNConfig({ state: trans.target }, config);
+                    cfg = LexerATNConfig.createWithConfig(trans.target, config);
                 }
             }
         }
