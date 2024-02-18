@@ -8,3 +8,4 @@ export * from "./DFA.js";
 export * from "./DFASerializer.js";
 export * from "./DFAState.js";
 export * from "./LexerDFASerializer.js";
+export * from "./PredPrediction.js";

@@ -48,13 +48,13 @@ export const getCachedPredictionContext = (context: PredictionContext, contextCa
         return context;
     }
 
-    let existing = visited.get(context) || null;
-    if (existing !== null) {
+    let existing = visited.get(context);
+    if (existing) {
         return existing;
     }
 
     existing = contextCache.get(context);
-    if (existing !== null) {
+    if (existing) {
         visited.set(context, existing);
 
         return existing;
@@ -83,7 +83,7 @@ export const getCachedPredictionContext = (context: PredictionContext, contextCa
         return context;
     }
 
-    let updated = null;
+    let updated;
     if (parents.length === 0) {
         updated = PredictionContext.EMPTY;
     } else if (parents.length === 1) {

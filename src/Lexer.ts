@@ -17,19 +17,60 @@ import { TokenFactory } from "./TokenFactory.js";
 import { TokenSource } from "./TokenSource.js";
 
 /**
+ * Options used during lexer execution.
+ */
+export interface LexerOptions {
+    /**
+     * A DFA edge is a DFA state set in the edge cache of another DFA state to quickly look up the next state
+     * for a given input symbol (usually a Unicode codepoint). This speeds up the performance of the lexer at the cost
+     * of memory. The edge cache is a sparse array, so the actual memory usage is proportional to the number of
+     * unique input symbols.
+     *
+     * For input symbols outside of the specified range, the lexer will always use the full computation to determine
+     * the next state. The same is true for lexer rules with predicates, since the next state is not known until the
+     * predicate is evaluated.
+     *
+     * The min DFA edge is 0 by default.
+     */
+    minDFAEdge: number;
+
+    /**
+     * This is the upper bound of the edge cache. Only input symbols smaller than this value are cached.
+     * The default value is 256, which encompasses the entire ASCII range, but leaves most of the other Unicode
+     * codepoints uncached. If you need to parse other languages instead of Latin, you can set the min and max
+     * edge values to Unicode block ranges that cover that particular language.
+     */
+    maxDFAEdge: number;
+
+    /** The minimum input symbol value that is allowed. The default value is 0. */
+    minCodePoint: number;
+
+    /**
+     * The maximum input value that is allowed. The default value is 0x10FFFF (the full Unicode range).
+     * Values outside of this range will be treated as invalid input and will cause the lexer to throw an error.
+     */
+    maxCodePoint: number;
+}
+
+/**
  * A lexer is recognizer that draws input symbols from a character stream.
  * lexer grammars result in a subclass of this object. A Lexer object
  * uses simplified match() and error recovery mechanisms in the interest of speed.
  */
 export abstract class Lexer extends Recognizer<LexerATNSimulator> implements TokenSource {
-    public static DEFAULT_MODE = 0;
-    public static MORE = -2;
-    public static SKIP = -3;
+    public static readonly DEFAULT_MODE = 0;
+    public static readonly MORE = -2;
+    public static readonly SKIP = -3;
 
-    public static DEFAULT_TOKEN_CHANNEL = Token.DEFAULT_CHANNEL;
-    public static HIDDEN = Token.HIDDEN_CHANNEL;
-    public static MIN_CHAR_VALUE = 0x0000;
-    public static MAX_CHAR_VALUE = 0x10FFFF;
+    public static readonly DEFAULT_TOKEN_CHANNEL = Token.DEFAULT_CHANNEL;
+    public static readonly HIDDEN = Token.HIDDEN_CHANNEL;
+
+    public readonly options: LexerOptions = {
+        minDFAEdge: 0,
+        maxDFAEdge: 256,
+        minCodePoint: 0,
+        maxCodePoint: 0x10FFFF,
+    };
 
     /**
      * What character index in the stream did the current token start at?
@@ -83,8 +124,9 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
 
     #factory: TokenFactory<Token>;
 
-    public constructor(input: CharStream) {
+    public constructor(input: CharStream, options?: Partial<LexerOptions>) {
         super();
+        this.options = { ...this.options, ...options };
         this.#input = input;
         this.#factory = CommonTokenFactory.DEFAULT;
     }
@@ -94,6 +136,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
         if (seekBack) {
             this.#input.seek(0); // rewind the input
         }
+
         this.#token = null;
         this.type = Token.INVALID_TYPE;
         this.channel = Token.DEFAULT_CHANNEL;

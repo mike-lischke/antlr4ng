@@ -4,13 +4,10 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-/* eslint-disable max-classes-per-file, jsdoc/require-returns, jsdoc/require-param */
-
-import { ATNConfigSet } from "../atn/ATNConfigSet.js";
+import type { ATNConfigSet } from "../atn/ATNConfigSet.js";
 import { LexerActionExecutor } from "../atn/LexerActionExecutor.js";
-import { SemanticContext } from "../atn/SemanticContext.js";
-import { MurmurHash } from "../utils/MurmurHash.js";
 import { arrayToString } from "../utils/helpers.js";
+import type { PredPrediction } from "./PredPrediction.js";
 
 /**
  * A DFA state represents a set of possible ATN configurations.
@@ -40,7 +37,7 @@ import { arrayToString } from "../utils/helpers.js";
 export class DFAState {
     public stateNumber: number = -1;
 
-    public readonly configs = new ATNConfigSet();
+    public readonly configs: ATNConfigSet;
 
     /**
      * `edges[symbol]` points to target of symbol. Shift up by 1 so (-1)
@@ -51,37 +48,32 @@ export class DFAState {
     public isAcceptState = false;
 
     /**
-     * if accept state, what ttype do we match or alt do we predict?
-     *  This is set to {@link ATN#INVALID_ALT_NUMBER} when {@link #predicates}`!=null` or
-     *  {@link #requiresFullContext}.
+     * If accept state, what ttype do we match or alt do we predict? This is set to {@link ATN.INVALID_ALT_NUMBER}
+     * when {@link predicates} `!= null` or {@link requiresFullContext}.
      */
     public prediction = -1;
 
     public lexerActionExecutor: LexerActionExecutor | null = null;
 
     /**
-     * Indicates that this state was created during SLL prediction that
-     * discovered a conflict between the configurations in the state. Future
-     * {@link ParserATNSimulator#execATN} invocations immediately jumped doing
+     * Indicates that this state was created during SLL prediction that discovered a conflict between the configurations
+     * in the state. Future {@link ParserATNSimulator.execATN} invocations immediately jumped doing
      * full context prediction if this field is true.
      */
     public requiresFullContext = false;
 
     /**
-     * During SLL parsing, this is a list of predicates associated with the
-     *  ATN configurations of the DFA state. When we have predicates,
-     *  {@link #requiresFullContext} is `false` since full context prediction evaluates predicates
-     *  on-the-fly. If this is not null, then {@link #prediction} is
-     *  {@link ATN#INVALID_ALT_NUMBER}.
+     * During SLL parsing, this is a list of predicates associated with the ATN configurations of the DFA state.
+     * When we have predicates, {@link requiresFullContext} is `false` since full context prediction evaluates
+     * predicates on-the-fly. If this is not null, then {@link prediction} is `ATN.INVALID_ALT_NUMBER`.
      *
-     *  We only use these for non-{@link #requiresFullContext} but conflicting states. That
-     *  means we know from the context (it's $ or we don't dip into outer
-     *  context) that it's an ambiguity not a conflict.
+     * We only use these for non-{@link #requiresFullContext} but conflicting states. That
+     * means we know from the context (it's $ or we don't dip into outer
+     * context) that it's an ambiguity not a conflict.
      *
-     *  This list is computed by {@link ParserATNSimulator#predicateDFAState}.
+     * This list is computed by {@link ParserATNSimulator#predicateDFAState}.
      */
-
-    public predicates: DFAState.PredPrediction[] | null = null;
+    public predicates: PredPrediction[] | null = null;
 
     private constructor(configs?: ATNConfigSet) {
         if (configs) {
@@ -100,12 +92,8 @@ export class DFAState {
         return new DFAState(configs);
     }
 
-    public hashCode(): number {
-        let hash = MurmurHash.initialize(7);
-        hash = MurmurHash.update(hash, this.configs.hashCode());
-        hash = MurmurHash.finish(hash, 1);
-
-        return hash;
+    public static hashCode(state: Partial<DFAState>): number {
+        return state.configs!.hashCode();
     };
 
     /**
@@ -120,9 +108,14 @@ export class DFAState {
      * {@link ParserATNSimulator#addDFAState} we need to know if any other state
      * exists that has this exact set of ATN configurations. The
      * {@link #stateNumber} is irrelevant.
+     *
+     * @param a The first {@link DFAState}.
+     * @param b The second {@link DFAState}.
+     *
+     * @returns `true` if the two states are equal, otherwise `false`.
      */
-    public equals(o: DFAState): boolean {
-        return this === o || this.configs.equals(o.configs);
+    public static equals(a: Partial<DFAState>, b: Partial<DFAState>): boolean {
+        return a.configs!.equals(b.configs!);
     };
 
     public toString(): string {
@@ -141,23 +134,4 @@ export class DFAState {
 
         return buf.toString();
     };
-}
-
-export namespace DFAState {
-    /** Map a predicate to a predicted alternative. */
-    export class PredPrediction {
-
-        public pred: SemanticContext; // never null; at least SemanticContext.NONE
-        public alt: number;
-
-        public constructor(pred: SemanticContext, alt: number) {
-            this.alt = alt;
-            this.pred = pred;
-        }
-
-        public toString(): string {
-            return `(${this.pred}, ${this.alt})`;
-        };
-    };
-
 }

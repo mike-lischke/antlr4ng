@@ -57,6 +57,8 @@ export class ATNConfig {
         return this.#semanticContext;
     }
 
+    protected cachedHashCode: number | undefined; // Shared with LexerATNConfig.
+
     /**
      * The syntactic context is a graph-structured stack node whose
      * path(s) to the root is the rule invocation(s)
@@ -66,7 +68,6 @@ export class ATNConfig {
      */
     #context: PredictionContext | null = null;
 
-    #cachedHashCode: number | undefined;
     #semanticContext: SemanticContext;
 
     /** Never create config classes directly. Use the factory methods below. */
@@ -85,7 +86,7 @@ export class ATNConfig {
         }
     }
 
-    public static duplicate(old: ATNConfig, semanticContext?: SemanticContext): ATNConfig { // dup
+    public static duplicate(old: ATNConfig, semanticContext?: SemanticContext): ATNConfig {
         return new ATNConfig(old, old.state, old.context, semanticContext ?? old.semanticContext);
     }
 
@@ -104,17 +105,17 @@ export class ATNConfig {
     }
 
     public hashCode(): number {
-        if (this.#cachedHashCode === undefined) {
+        if (this.cachedHashCode === undefined) {
             let hashCode = MurmurHash.initialize(7);
             hashCode = MurmurHash.update(hashCode, this.state.stateNumber);
             hashCode = MurmurHash.update(hashCode, this.alt);
             hashCode = MurmurHash.update(hashCode, this.#context);
             hashCode = MurmurHash.update(hashCode, this.semanticContext);
             hashCode = MurmurHash.finish(hashCode, 4);
-            this.#cachedHashCode = hashCode;
+            this.cachedHashCode = hashCode;
         }
 
-        return this.#cachedHashCode;
+        return this.cachedHashCode;
     }
 
     /**
@@ -128,7 +129,7 @@ export class ATNConfig {
 
     public set context(context: PredictionContext | null) {
         this.#context = context;
-        this.#cachedHashCode = undefined;
+        this.cachedHashCode = undefined;
     }
 
     /**

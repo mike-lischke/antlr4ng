@@ -20,8 +20,6 @@ export class LexerATNConfig extends ATNConfig {
 
     public readonly passedThroughNonGreedyDecision: boolean;
 
-    #cachedHashCode: number | undefined;
-
     public constructor(config: Partial<LexerATNConfig>, state: ATNState, context: PredictionContext | null,
         lexerActionExecutor: LexerActionExecutor | null) {
         super(config, state, context ?? config.context!, context ? SemanticContext.NONE : config.semanticContext);
@@ -53,7 +51,7 @@ export class LexerATNConfig extends ATNConfig {
     }
 
     public override hashCode(): number {
-        if (this.#cachedHashCode === undefined) {
+        if (this.cachedHashCode === undefined) {
             let hashCode = MurmurHash.initialize(7);
             hashCode = MurmurHash.update(hashCode, this.state.stateNumber);
             hashCode = MurmurHash.update(hashCode, this.alt);
@@ -62,11 +60,11 @@ export class LexerATNConfig extends ATNConfig {
             hashCode = MurmurHash.update(hashCode, this.passedThroughNonGreedyDecision ? 1 : 0);
             hashCode = MurmurHash.update(hashCode, this.lexerActionExecutor);
             hashCode = MurmurHash.finish(hashCode, 6);
-            this.#cachedHashCode = hashCode;
+            this.cachedHashCode = hashCode;
 
         }
 
-        return this.#cachedHashCode;
+        return this.cachedHashCode;
     }
 
     public override equals(other: LexerATNConfig): boolean {

@@ -79,6 +79,9 @@ export class LexerATNSimulator extends ATNSimulator {
     /** Used during DFA/ATN exec to record the most recent accept configuration info */
     #prevAccept: SimState | undefined;
 
+    #minCodePoint: number;
+    #maxCodePoint: number;
+
     /** Lookup table for lexer ATN config creation. */
     #lexerATNConfigFactory: Array<(input: CharStream, config: LexerATNConfig, trans: Transition, configs: ATNConfigSet,
         speculative: boolean, treatEofAsEpsilon: boolean) => LexerATNConfig | null>;
@@ -104,6 +107,11 @@ export class LexerATNSimulator extends ATNSimulator {
         super(atn, sharedContextCache);
         this.decisionToDFA = decisionToDFA;
         this.recognizer = recog;
+
+        if (recog) {
+            this.#minCodePoint = recog.options.minCodePoint;
+            this.#maxCodePoint = recog.options.maxCodePoint;
+        }
     }
 
     public match(input: CharStream, mode: number): number {
@@ -356,7 +364,7 @@ export class LexerATNSimulator extends ATNSimulator {
     }
 
     private getReachableTarget(trans: Transition, t: number): ATNState | undefined {
-        if (trans.matches(t, 0, Lexer.MAX_CHAR_VALUE)) {
+        if (trans.matches(t, this.#minCodePoint, this.#maxCodePoint)) {
             return trans.target;
         } else {
             return undefined;
@@ -529,7 +537,7 @@ export class LexerATNSimulator extends ATNSimulator {
             trans: Transition, configs: ATNConfigSet,
             speculative: boolean, treatEofAsEpsilon: boolean) => {
             if (treatEofAsEpsilon) {
-                if (trans.matches(Token.EOF, 0, Lexer.MAX_CHAR_VALUE)) {
+                if (trans.matches(Token.EOF, this.#minCodePoint, this.#maxCodePoint)) {
                     return LexerATNConfig.createWithConfig(trans.target, config);
                 }
             }
@@ -601,7 +609,7 @@ export class LexerATNSimulator extends ATNSimulator {
 
     private addDFAEdge(from: DFAState, tk: number, to: DFAState | null, configs?: ATNConfigSet): DFAState {
         if (!to && configs) {
-            // leading to this call, ATNConfigSet.hasSemanticContext is used as a
+            // Leading to this call, ATNConfigSet.hasSemanticContext is used as a
             // marker indicating dynamic predicate evaluation makes this edge
             // dependent on the specific input sequence, so the static edge in the
             // DFA should be omitted. The target DFAState is still created since
@@ -638,19 +646,19 @@ export class LexerATNSimulator extends ATNSimulator {
      * which rule to accept.
      */
     private addDFAState(configs: ATNConfigSet): DFAState {
+        // See if we have a state with this set of configurations already.
+        const dfa = this.decisionToDFA[this.mode];
+        const existing = dfa.getStateForConfigs(configs);
+        if (existing) {
+            return existing;
+        }
+
         const proposed = DFAState.fromConfigs(configs);
         const firstConfigWithRuleStopState = configs.firstStopState;
-
         if (firstConfigWithRuleStopState) {
             proposed.isAcceptState = true;
             proposed.lexerActionExecutor = (firstConfigWithRuleStopState as LexerATNConfig).lexerActionExecutor;
             proposed.prediction = this.atn.ruleToTokenType[firstConfigWithRuleStopState.state.ruleIndex];
-        }
-
-        const dfa = this.decisionToDFA[this.mode];
-        const existing = dfa.getState(proposed);
-        if (existing) {
-            return existing;
         }
 
         configs.setReadonly(true);

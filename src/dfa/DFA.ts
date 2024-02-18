@@ -11,6 +11,8 @@ import { Vocabulary } from "../Vocabulary.js";
 import { DecisionState } from "../atn/DecisionState.js";
 import { StarLoopEntryState } from "../atn/StarLoopEntryState.js";
 import { HashSet } from "../misc/HashSet.js";
+import type { ATNConfigSet } from "../index.js";
+import { DFAStateEqualityComparator } from "./DFAStateEqualityComparator.js";
 
 export class DFA {
     public s0: DFAState | null = null;
@@ -28,7 +30,7 @@ export class DFA {
     public readonly precedenceDfa: boolean;
 
     /** A set of all DFA states. */
-    #states = new HashSet<DFAState>();
+    #states = new HashSet<DFAState>(DFAStateEqualityComparator.instance);
 
     public constructor(atnStartState: DecisionState | null, decision?: number) {
         this.atnStartState = atnStartState;
@@ -139,6 +141,10 @@ export class DFA {
 
     public getState(state: DFAState): DFAState | null {
         return this.#states.get(state) ?? null;
+    }
+
+    public getStateForConfigs(configs: ATNConfigSet): DFAState | null {
+        return this.#states.get({ configs } as DFAState) ?? null;
     }
 
     public addState(state: DFAState): void {

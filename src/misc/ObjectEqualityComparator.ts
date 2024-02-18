@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -11,10 +11,10 @@ import { EqualityComparator } from "./EqualityComparator.js";
  * This default implementation of {@link EqualityComparator} uses object equality
  * for comparisons by calling {@link Object#hashCode} and {@link Object#equals}.
  */
-export class ObjectEqualityComparator implements EqualityComparator<IComparable | null | undefined> {
+export class ObjectEqualityComparator implements EqualityComparator<IComparable> {
     public static readonly instance: ObjectEqualityComparator = new ObjectEqualityComparator();
 
-    public hashCode(obj: IComparable | null | undefined): number {
+    public hashCode(obj: IComparable): number {
         if (obj == null) {
             return 0;
         }
@@ -22,7 +22,7 @@ export class ObjectEqualityComparator implements EqualityComparator<IComparable 
         return obj.hashCode();
     }
 
-    public equals(a: IComparable | null | undefined, b: IComparable | null | undefined): boolean {
+    public equals(a: IComparable, b: IComparable): boolean {
         if (a == null) {
             return b == null;
         }

@@ -10,7 +10,7 @@ import { ObjectEqualityComparator } from "../misc/ObjectEqualityComparator.js";
 
 /**
  * Used to cache {@link PredictionContext} objects. Its used for the shared
- * context cash associated with contexts in DFA states. This cache
+ * context cache associated with contexts in DFA states. This cache
  * can be used for both lexers and parsers.
  */
 export class PredictionContextCache {
@@ -28,8 +28,8 @@ export class PredictionContextCache {
         if (ctx === PredictionContext.EMPTY) {
             return PredictionContext.EMPTY;
         }
-        const existing = this.cache.get(ctx) || null;
-        if (existing !== null) {
+        const existing = this.cache.get(ctx);
+        if (existing) {
             return existing;
         }
         this.cache.set(ctx, ctx);
@@ -37,8 +37,8 @@ export class PredictionContextCache {
         return ctx;
     }
 
-    public get(ctx: PredictionContext): PredictionContext | null {
-        return this.cache.get(ctx) || null;
+    public get(ctx: PredictionContext): PredictionContext | undefined {
+        return this.cache.get(ctx);
     }
 
     public get length(): number {

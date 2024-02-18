@@ -200,10 +200,6 @@ export class ATNConfigSet {
         return alts;
     }
 
-    public get(i: number): ATNConfig {
-        return this.configs[i];
-    }
-
     public getPredicates(): SemanticContext[] {
         const preds = [];
         for (const config of this.configs) {

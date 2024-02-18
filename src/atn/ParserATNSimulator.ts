@@ -47,6 +47,7 @@ import type { StarLoopEntryState } from "./StarLoopEntryState.js";
 import type { BlockStartState } from "./BlockStartState.js";
 import type { PrecedencePredicateTransition } from "./PrecedencePredicateTransition.js";
 import type { PredicateTransition } from "./PredicateTransition.js";
+import { PredPrediction } from "../dfa/PredPrediction.js";
 
 /**
  * The embodiment of the adaptive LL(*), ALL(*), parsing strategy.
@@ -264,7 +265,7 @@ export class ParserATNSimulator extends ATNSimulator {
      *  the merge if we ever see a and b again.  Note that (b,a)->c should
      *  also be examined during cache lookup.
      */
-    protected mergeCache: DoubleDict<PredictionContext, PredictionContext, PredictionContext> | null = null;
+    protected mergeCache = new DoubleDict<PredictionContext, PredictionContext, PredictionContext>();
 
     // LAME globals to avoid parameters!!!!! I need these down deep in predTransition
     protected _input: TokenStream | null = null;
@@ -350,7 +351,7 @@ export class ParserATNSimulator extends ATNSimulator {
             return alt;
         } finally {
             this._dfa = null;
-            this.mergeCache = null; // wack cache after each prediction
+            this.mergeCache = new DoubleDict(); // wack cache after each prediction
             input.seek(index);
             input.release(m);
         }
@@ -710,9 +711,6 @@ export class ParserATNSimulator extends ATNSimulator {
     }
 
     protected computeReachSet(closure: ATNConfigSet, t: number, fullCtx: boolean): ATNConfigSet | null {
-        if (this.mergeCache === null) {
-            this.mergeCache = new DoubleDict();
-        }
         const intermediate = new ATNConfigSet(fullCtx);
 
         // Configurations already in a rule stop state indicate reaching the end
@@ -1023,15 +1021,16 @@ export class ParserATNSimulator extends ATNSimulator {
     }
 
     protected getPredicatePredictions(ambigAlts: BitSet,
-        altToPred: Array<SemanticContext | null>): DFAState.PredPrediction[] | null {
-        const pairs = [];
+        altToPred: Array<SemanticContext | null>): PredPrediction[] | null {
+        const pairs: PredPrediction[] = [];
         let containsPredicate = false;
         for (let i = 1; i < altToPred.length; i++) {
             const pred = altToPred[i]!;
             // un-predicated is indicated by SemanticContext.NONE
-            if (ambigAlts !== null && ambigAlts.get(i)) {
-                pairs.push(new DFAState.PredPrediction(pred, i));
+            if (ambigAlts.get(i)) {
+                pairs.push({ pred, alt: i });
             }
+
             if (pred !== SemanticContext.NONE) {
                 containsPredicate = true;
             }
@@ -1162,7 +1161,7 @@ export class ParserATNSimulator extends ATNSimulator {
      * then we stop at the first predicate that evaluates to true. This
      * includes pairs with null predicates.
      */
-    protected evalSemanticContext(predPredictions: DFAState.PredPrediction[], outerContext: ParserRuleContext,
+    protected evalSemanticContext(predPredictions: PredPrediction[], outerContext: ParserRuleContext,
         complete: boolean): BitSet {
         const predictions = new BitSet();
 
