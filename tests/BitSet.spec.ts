@@ -89,32 +89,36 @@ describe("BitSet", () => {
     });
 
     it("Create a BitSet with predefined values", () => {
-        const bitSet = new BitSet([0x003FFE1806000000n]);
-        expect(bitSet.get(5)).toEqual(false);
-        expect(bitSet.get(25)).toEqual(true);
-        expect(bitSet.get(49)).toEqual(true);
-        expect(bitSet.get(38)).toEqual(false);
-        expect(bitSet.length).toEqual(17);
+        const bitSet = new BitSet([0xf8f800f0]);
+        expect(bitSet.get(5)).toEqual(true);
+        expect(bitSet.get(8)).toEqual(false);
+        expect(bitSet.get(19)).toEqual(true);
+        expect(bitSet.get(24)).toEqual(false);
+        expect(bitSet.get(27)).toEqual(true);
+        expect(bitSet.length).toEqual(14);
     });
 
     it("Create a BitSet with multiple values", () => {
-        const bitSet = new BitSet([0x0000000000000001n, 0x003FFE1806000001n]);
+        const bitSet = new BitSet([0x00000001, 0x7f87060]);
         expect(bitSet.get(0)).toEqual(true);
-        expect(bitSet.get(63)).toEqual(false);
-        expect(bitSet.get(64)).toEqual(true);
-        expect(bitSet.get(99)).toEqual(true);
-        expect(bitSet.length).toEqual(19);
+        expect(bitSet.get(32)).toEqual(false);
+        expect(bitSet.get(44)).toEqual(true);
+        expect(bitSet.get(47)).toEqual(false);
+        expect(bitSet.get(51)).toEqual(true);
+        expect(bitSet.get(59)).toEqual(false);
+        expect(bitSet.length).toEqual(14);
     });
 
-    it("Create a BitSet with values exceeding 64 bits", () => {
-        const bitSet = new BitSet([0x003FFE1806000000n, 0x333333330000000000000001n, 0x4444444123456789ABCDEF0n]);
+    it("Create a BitSet with values exceeding 32 bits", () => {
+        const bitSet = new BitSet([0x03fe1806000, 0x333300000001, 0x444123456abcde]);
         expect(bitSet.get(5)).toEqual(false);
-        expect(bitSet.get(47)).toEqual(true);
-        expect(bitSet.get(64)).toEqual(true);
-        expect(bitSet.get(133)).toEqual(true);
-        expect(bitSet.get(188)).toEqual(true);
+        expect(bitSet.get(13)).toEqual(true);
+        expect(bitSet.get(33)).toEqual(false);
+        expect(bitSet.get(88)).toEqual(true);
+        expect(bitSet.get(94)).toEqual(true);
+        expect(bitSet.get(95)).toEqual(false);
         expect(bitSet.get(2000)).toEqual(false);
-        expect(bitSet.length).toEqual(50);
+        expect(bitSet.length).toEqual(23);
     });
 
     // ...
