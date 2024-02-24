@@ -7,7 +7,7 @@
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns */
 
 import { Token } from "../Token.js";
-import { Lexer } from "../Lexer.js";
+import { Lexer, type LexerOptions } from "../Lexer.js";
 import { ATN } from "./ATN.js";
 import { ATNSimulator } from "./ATNSimulator.js";
 import { DFAState } from "../dfa/DFAState.js";
@@ -53,9 +53,6 @@ interface SimState {
 }
 
 export class LexerATNSimulator extends ATNSimulator {
-    // ml: why's that configurable? Memory consumption?
-    public static readonly MAX_DFA_EDGE = 256; // forces unicode to stay in ATN
-
     public readonly decisionToDFA: DFA[];
 
     public readonly recognizer: Lexer | null = null;
@@ -79,8 +76,7 @@ export class LexerATNSimulator extends ATNSimulator {
     /** Used during DFA/ATN exec to record the most recent accept configuration info */
     #prevAccept: SimState | undefined;
 
-    #minCodePoint: number;
-    #maxCodePoint: number;
+    #options: LexerOptions;
 
     /** Lookup table for lexer ATN config creation. */
     #lexerATNConfigFactory: Array<(input: CharStream, config: LexerATNConfig, trans: Transition, configs: ATNConfigSet,
@@ -109,8 +105,7 @@ export class LexerATNSimulator extends ATNSimulator {
         this.recognizer = recog;
 
         if (recog) {
-            this.#minCodePoint = recog.options.minCodePoint;
-            this.#maxCodePoint = recog.options.maxCodePoint;
+            this.#options = recog.options;
         }
     }
 
@@ -261,7 +256,7 @@ export class LexerATNSimulator extends ATNSimulator {
      * `t`, or `null` if the target state for this edge is not already cached
      */
     private getExistingTargetState(s: DFAState, t: number): DFAState | undefined {
-        if (t > Token.EOF && t < LexerATNSimulator.MAX_DFA_EDGE) {
+        if (t >= this.#options.minDFAEdge && t <= this.#options.maxDFAEdge) {
             return s.edges[t];
         }
 
@@ -364,7 +359,7 @@ export class LexerATNSimulator extends ATNSimulator {
     }
 
     private getReachableTarget(trans: Transition, t: number): ATNState | undefined {
-        if (trans.matches(t, this.#minCodePoint, this.#maxCodePoint)) {
+        if (trans.matches(t, this.#options.minCodePoint, this.#options.maxCodePoint)) {
             return trans.target;
         } else {
             return undefined;
@@ -537,7 +532,7 @@ export class LexerATNSimulator extends ATNSimulator {
             trans: Transition, configs: ATNConfigSet,
             speculative: boolean, treatEofAsEpsilon: boolean) => {
             if (treatEofAsEpsilon) {
-                if (trans.matches(Token.EOF, this.#minCodePoint, this.#maxCodePoint)) {
+                if (trans.matches(Token.EOF, this.#options.minCodePoint, this.#options.maxCodePoint)) {
                     return LexerATNConfig.createWithConfig(trans.target, config);
                 }
             }
@@ -630,7 +625,7 @@ export class LexerATNSimulator extends ATNSimulator {
         }
 
         // Add the edge.
-        if (tk === Token.EOF || tk > LexerATNSimulator.MAX_DFA_EDGE) {
+        if (tk < this.#options.minDFAEdge || tk > this.#options.maxDFAEdge) {
             // Only track edges within the DFA bounds
             return to!;
         }

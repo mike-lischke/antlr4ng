@@ -13,24 +13,6 @@ import { Recognizer } from "../Recognizer.js";
 import { ATNSimulator } from "./ATNSimulator.js";
 import { MurmurHash } from "../utils/MurmurHash.js";
 
-export interface IATNConfigParameters {
-    state?: ATNState | null,
-    alt?: number | null,
-    context?: PredictionContext | null,
-    semanticContext?: SemanticContext | null,
-    reachesIntoOuterContext?: number | null,
-    precedenceFilterSuppressed?: number,
-};
-
-export interface ICheckedConfigParameters {
-    state: ATNState | null,
-    alt: number | null,
-    context: PredictionContext | null,
-    semanticContext: SemanticContext | null,
-    reachesIntoOuterContext: number | null,
-    precedenceFilterSuppressed?: boolean,
-};
-
 export class ATNConfig {
     /** The ATN state associated with this configuration */
     public readonly state: ATNState;
@@ -46,10 +28,9 @@ export class ATNConfig {
      * invokes the ATN simulator.
      *
      * closure() tracks the depth of how far we dip into the outer context:
-     * depth > 0.  Note that it may not be totally accurate depth since I
-     * don't ever decrement. TODO: make it a boolean then
+     * depth > 0.
      */
-    public reachesIntoOuterContext: number = 0; // Not used in hash code.
+    public reachesIntoOuterContext: boolean = false; // Not used in hash code.
 
     public precedenceFilterSuppressed = false; // Not used in hash code.
 
@@ -77,9 +58,7 @@ export class ATNConfig {
         this.alt = c.alt!;
         this.context = context;
         this.#semanticContext = semanticContext ?? SemanticContext.NONE;
-        if (c.reachesIntoOuterContext !== undefined) {
-            this.reachesIntoOuterContext = c.reachesIntoOuterContext;
-        }
+        this.reachesIntoOuterContext = c.reachesIntoOuterContext!;
 
         if (c.precedenceFilterSuppressed !== undefined) {
             this.precedenceFilterSuppressed = c.precedenceFilterSuppressed;
@@ -157,12 +136,8 @@ export class ATNConfig {
 
         return "(" + this.state + alt +
             (this.context !== null ? ",[" + this.context.toString() + "]" : "") +
-            (this.semanticContext !== SemanticContext.NONE ?
-                ("," + this.semanticContext.toString())
-                : "") +
-            (this.reachesIntoOuterContext > 0 ?
-                (",up=" + this.reachesIntoOuterContext)
-                : "") + ")";
+            (this.semanticContext !== SemanticContext.NONE ? ("," + this.semanticContext.toString()) : "") +
+            (this.reachesIntoOuterContext ? (",up=" + this.reachesIntoOuterContext) : "") + ")";
     }
 
 }

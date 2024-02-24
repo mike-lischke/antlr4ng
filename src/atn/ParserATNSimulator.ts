@@ -1281,7 +1281,7 @@ export class ParserATNSimulator extends ATNSimulator {
                         }
                     }
 
-                    c.reachesIntoOuterContext = 1;
+                    c.reachesIntoOuterContext = true;
                     if (closureBusy.getOrAdd(c) !== c) {
                         // Avoid infinite recursion for right-recursive rules.
                         continue;

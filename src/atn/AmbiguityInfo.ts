@@ -18,7 +18,7 @@ import { DecisionEventInfo } from "./DecisionEventInfo.js";
  * determine that the SLL conflict is truly an ambiguity. For example, if none
  * of the ATN configurations in the conflicting SLL configuration set have
  * traversed a global follow transition (i.e.
- * {@link ATNConfig#reachesIntoOuterContext} is 0 for all configurations), then
+ * {@link ATNConfig.reachesIntoOuterContext} is 0 for all configurations), then
  * the result of SLL prediction for that input is known to be equivalent to the
  * result of LL prediction for that input.
  *
@@ -32,7 +32,6 @@ import { DecisionEventInfo } from "./DecisionEventInfo.js";
  * @see ParserATNSimulator#reportAmbiguity
  * @see ANTLRErrorListener#reportAmbiguity
  */
-
 export interface AmbiguityInfo extends DecisionEventInfo {
     /** The set of alternative numbers for this decision event that lead to a valid parse. */
     ambigAlts: BitSet | null;

@@ -126,16 +126,14 @@ export class ATNConfigSet {
 
     /**
      * Adding a new config means merging contexts with existing configs for
-     * `(s, i, pi, _)`, where `s` is the
-     * {@link ATNConfig//state}, `i` is the {@link ATNConfig//alt}, and
-     * `pi` is the {@link ATNConfig//semanticContext}. We use
-     * `(s,i,pi)` as key.
+     * `(s, i, pi, _)`, where `s` is the {@link ATNConfig.state}, `i` is the {@link ATNConfig.alt}, and
+     * `pi` is the {@link ATNConfig.semanticContext}. We use `(s,i,pi)` as key.
      *
      * This method updates {@link dipsIntoOuterContext} and
      * {@link hasSemanticContext} when necessary.
      */
     public add(config: ATNConfig,
-        mergeCache: DoubleDict<PredictionContext, PredictionContext, PredictionContext> | null = null): boolean {
+        mergeCache: DoubleDict<PredictionContext, PredictionContext, PredictionContext> | null = null): void {
         if (this.readOnly) {
             throw new Error("This set is readonly");
         }
@@ -144,20 +142,15 @@ export class ATNConfigSet {
             this.firstStopState = config;
         }
 
-        if (config.semanticContext !== SemanticContext.NONE) {
-            this.hasSemanticContext = true;
-        }
-
-        if (config.reachesIntoOuterContext > 0) {
-            this.dipsIntoOuterContext = true;
-        }
+        this.hasSemanticContext ||= config.semanticContext !== SemanticContext.NONE;
+        this.dipsIntoOuterContext ||= config.reachesIntoOuterContext;
 
         const existing = this.configLookup!.getOrAdd(config);
         if (existing === config) {
             this.#cachedHashCode = -1;
             this.configs.push(config); // track order here
 
-            return true;
+            return;
         }
 
         // a previous (s,i,pi,_), merge with it and save result
@@ -169,16 +162,12 @@ export class ATNConfigSet {
          * since only way to create new graphs is "call rule" and here. We
          * cache at both places
          */
-        existing.reachesIntoOuterContext = Math.max(existing.reachesIntoOuterContext, config.reachesIntoOuterContext);
+        existing.reachesIntoOuterContext ||= config.reachesIntoOuterContext;
 
         // make sure to preserve the precedence filter suppression during the merge
-        if (config.precedenceFilterSuppressed) {
-            existing.precedenceFilterSuppressed = true;
-        }
+        existing.precedenceFilterSuppressed ||= config.precedenceFilterSuppressed;
 
         existing.context = merged; // replace context; no need to alt mapping
-
-        return true;
     }
 
     /** Return a List holding list of configs */
@@ -261,15 +250,11 @@ export class ATNConfigSet {
     }
 
     public hashCode(): number {
-        if (this.readOnly) {
-            if (this.#cachedHashCode === -1) {
-                this.#cachedHashCode = this.computeHashCode();
-            }
-
-            return this.#cachedHashCode;
+        if (this.#cachedHashCode === -1) {
+            this.#cachedHashCode = this.computeHashCode();
         }
 
-        return this.computeHashCode();
+        return this.#cachedHashCode;
     }
 
     public get length(): number {
