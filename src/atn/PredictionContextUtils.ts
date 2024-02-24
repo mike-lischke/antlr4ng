@@ -155,17 +155,14 @@ export const merge = (a: PredictionContext, b: PredictionContext, rootIsWildcard
  */
 const mergeArrays = (a: ArrayPredictionContext, b: ArrayPredictionContext, rootIsWildcard: boolean,
     mergeCache: DoubleDict<PredictionContext, PredictionContext, PredictionContext> | null): PredictionContext => {
-    if (mergeCache !== null) {
+    if (mergeCache) {
         let previous = mergeCache.get(a, b);
-        if (previous !== null) {
-            if (PredictionContext.trace_atn_sim) { console.log("mergeArrays a=" + a + ",b=" + b + " -> previous"); }
-
+        if (previous) {
             return previous;
         }
-        previous = mergeCache.get(b, a);
-        if (previous !== null) {
-            if (PredictionContext.trace_atn_sim) { console.log("mergeArrays a=" + a + ",b=" + b + " -> previous"); }
 
+        previous = mergeCache.get(b, a);
+        if (previous) {
             return previous;
         }
     }
@@ -249,7 +246,6 @@ const mergeArrays = (a: ArrayPredictionContext, b: ArrayPredictionContext, rootI
         if (mergeCache !== null) {
             mergeCache.set(a, b, a);
         }
-        if (PredictionContext.trace_atn_sim) { console.log("mergeArrays a=" + a + ",b=" + b + " -> a"); }
 
         return a;
     }
@@ -258,7 +254,6 @@ const mergeArrays = (a: ArrayPredictionContext, b: ArrayPredictionContext, rootI
         if (mergeCache !== null) {
             mergeCache.set(a, b, b);
         }
-        if (PredictionContext.trace_atn_sim) { console.log("mergeArrays a=" + a + ",b=" + b + " -> b"); }
 
         return b;
     }
@@ -268,8 +263,6 @@ const mergeArrays = (a: ArrayPredictionContext, b: ArrayPredictionContext, rootI
     if (mergeCache !== null) {
         mergeCache.set(a, b, merged);
     }
-
-    if (PredictionContext.trace_atn_sim) { console.log("mergeArrays a=" + a + ",b=" + b + " -> " + merged); }
 
     return merged;
 };

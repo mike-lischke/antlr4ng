@@ -26,7 +26,7 @@ export class PredictionContextCache {
      */
     public add(ctx: PredictionContext): PredictionContext {
         if (ctx === PredictionContext.EMPTY) {
-            return PredictionContext.EMPTY;
+            return ctx;
         }
         const existing = this.cache.get(ctx);
         if (existing) {

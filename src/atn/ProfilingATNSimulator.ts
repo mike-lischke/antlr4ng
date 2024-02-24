@@ -20,7 +20,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
     protected numDecisions: number = 0;
 
     protected currentDecision: number = 0;
-    protected currentState: DFAState | null;
+    protected currentState?: DFAState;
 
     /**
      * At the point of LL failover, we record how SLL would resolve the conflict so that
@@ -113,7 +113,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
         }
     }
 
-    public override getExistingTargetState(previousD: DFAState, t: number): DFAState | null {
+    public override getExistingTargetState(previousD: DFAState, t: number): DFAState | undefined {
         if (this._input) {
             this.#sllStopIndex = this._input.index;
 
@@ -138,7 +138,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
             return existingTargetState;
         }
 
-        return null;
+        return undefined;
     }
 
     public override computeTargetState(dfa: DFA, previousD: DFAState, t: number): DFAState {
@@ -255,7 +255,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
         return this.decisions;
     }
 
-    public getCurrentState(): DFAState | null {
+    public getCurrentState(): DFAState | undefined {
         return this.currentState;
     }
 }
