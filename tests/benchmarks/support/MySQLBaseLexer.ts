@@ -29,6 +29,16 @@ import { MySQLLexer } from "../generated/MySQLLexer.js";
 
 import { IMySQLRecognizerCommon, SqlMode } from "./MySQLRecognizerCommon.js";
 
+const longString = "2147483647";
+const longLength = 10;
+const signedLongString = "-2147483648";
+const longLongString = "9223372036854775807";
+const longLongLength = 19;
+const signedLongLongString = "-9223372036854775808";
+const signedLongLongLength = 19;
+const unsignedLongLongString = "18446744073709551615";
+const unsignedLongLongLength = 20;
+
 // The base lexer class provides a number of functions needed in actions in the lexer (grammar).
 export abstract class MySQLBaseLexer extends Lexer implements IMySQLRecognizerCommon {
     public serverVersion = 0;
@@ -337,16 +347,6 @@ export abstract class MySQLBaseLexer extends Lexer implements IMySQLRecognizerCo
      * @returns The token type for that text.
      */
     protected determineNumericType(text: string): number {
-        const longString = "2147483647";
-        const longLength = 10;
-        const signedLongString = "-2147483648";
-        const longLongString = "9223372036854775807";
-        const longLongLength = 19;
-        const signedLongLongString = "-9223372036854775808";
-        const signedLongLongLength = 19;
-        const unsignedLongLongString = "18446744073709551615";
-        const unsignedLongLongLength = 20;
-
         // The original code checks for leading +/- but actually that can never happen, neither in the
         // server parser (as a digit is used to trigger processing in the lexer) nor in our parser
         // as our rules are defined without signs. But we do it anyway for maximum compatibility.

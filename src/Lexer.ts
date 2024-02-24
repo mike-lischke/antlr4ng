@@ -317,9 +317,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
         const stop = this.#input.index;
         const text = this.#input.getTextFromRange(start, stop);
         const msg = "token recognition error at: '" + this.getErrorDisplay(text) + "'";
-        const listener = this.getErrorListenerDispatch();
-        listener.syntaxError(this, null, this.currentTokenStartLine,
-            this.currentTokenColumn, msg, e);
+        this.errorListenerDispatch.syntaxError(this, null, this.currentTokenStartLine, this.currentTokenColumn, msg, e);
     }
 
     public getErrorDisplay(s: string): string {
@@ -329,15 +327,21 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
     public getErrorDisplayForChar(c: string): string {
         if (c.charCodeAt(0) === Token.EOF) {
             return "<EOF>";
-        } else if (c === "\n") {
-            return "\\n";
-        } else if (c === "\t") {
-            return "\\t";
-        } else if (c === "\r") {
-            return "\\r";
-        } else {
-            return c;
         }
+
+        if (c === "\n") {
+            return "\\n";
+        }
+
+        if (c === "\t") {
+            return "\\t";
+        }
+
+        if (c === "\r") {
+            return "\\r";
+        }
+
+        return c;
     }
 
     public getCharErrorDisplay(c: string): string {

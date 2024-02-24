@@ -1589,7 +1589,7 @@ export class ParserATNSimulator extends ATNSimulator {
     protected reportAttemptingFullContext(dfa: DFA, conflictingAlts: BitSet, configs: ATNConfigSet, startIndex: number,
         stopIndex: number): void {
         if (this.parser !== null) {
-            this.parser.getErrorListenerDispatch().reportAttemptingFullContext(this.parser, dfa, startIndex, stopIndex,
+            this.parser.errorListenerDispatch.reportAttemptingFullContext(this.parser, dfa, startIndex, stopIndex,
                 conflictingAlts, configs);
         }
     }
@@ -1597,7 +1597,7 @@ export class ParserATNSimulator extends ATNSimulator {
     protected reportContextSensitivity(dfa: DFA, prediction: number, configs: ATNConfigSet, startIndex: number,
         stopIndex: number): void {
         if (this.parser !== null) {
-            this.parser.getErrorListenerDispatch().reportContextSensitivity(this.parser, dfa, startIndex, stopIndex,
+            this.parser.errorListenerDispatch.reportContextSensitivity(this.parser, dfa, startIndex, stopIndex,
                 prediction, configs);
         }
     }
@@ -1606,7 +1606,7 @@ export class ParserATNSimulator extends ATNSimulator {
     protected reportAmbiguity(dfa: DFA, D: DFAState, startIndex: number, stopIndex: number,
         exact: boolean, ambigAlts: BitSet | null, configs: ATNConfigSet): void {
         if (this.parser !== null) {
-            this.parser.getErrorListenerDispatch().reportAmbiguity(this.parser, dfa, startIndex, stopIndex, exact,
+            this.parser.errorListenerDispatch.reportAmbiguity(this.parser, dfa, startIndex, stopIndex, exact,
                 ambigAlts, configs);
         }
     }

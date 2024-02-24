@@ -137,29 +137,25 @@ This suite consists of 530 tests and runs in about 9s.
 
 ### Real World Example
 
-The following tables show the results of the benchmarks previously run on the old JS runtime and on last release of this one. Warm times were taken from 5 runs with the 2 slowest stripped off and averaged.
+The following table shows the results of the benchmarks that were executed in the [antlr4wasm project](https://github.com/mike-lischke/antlr4wasm/tree/master/benchmarks/mysql). The column for antlr4ng, howevever, contains the current results of this runtime.
 
-Pure JavaScript release (with type definitions):
+|    |C++ |antlr4ng|antlr4|antlr4ts|antl4wasm|
+|---:|---:|---:|---:|---:|---:|
+|Query Collection (cold)|1340 ms| <u>2703</u> ms| 7984 ms| 3402 ms| 3331 ms|
+|  Bitrix Queries (cold)| 195 ms|  <u>409</u> ms| 1134 ms|  444 ms|  998 ms|
+|   Large Inserts (cold)|4981 ms|10966 ms|<u>10695</u> ms|11483 ms|34243 ms|
+|Query Collection (warm)| 133 ms|  283 ms|  <u>223</u> ms|  259 ms| 1177 ms|
+|  Bitrix Queries (warm)|  70 ms|  173 ms|  <u>110</u> ms|  131 ms|  815 ms|
+|   Large Inserts (warm)|4971 ms|10859 ms|<u>10593</u> ms|11287 ms|36317 ms|
+|||||||
+|Total (cold)           |6546 ms|<u>14137</u> ms|19878 ms|15403 ms|38641 ms|
+|Total (warm)           |5198 ms|11339 ms|<u>10944</u> ms|11697 ms|38329 ms|
 
-| Test | Cold Run | Warm Run|
-| ---- | -------- | ------- |
-| Query Collection| 8464 ms | 230 ms |
-| Example File | 1043 ms | 112 ms |
-| Large Inserts | 11022 ms | 10616 ms |
-| Total | 20599 ms | 10978 ms |
-
-Last release (pure TypeScript):
-
-| Test | Cold Run | Warm Run|
-| ---- | -------- | ------- |
-| Query Collection| 2777 ms | 283 ms |
-| Example File | 413 ms | 172 ms |
-| Large Inserts | 11056 ms | 10939 ms |
-| Total | 14315 ms | 11421 ms |
+Underlined entries are the smallest (not counting C++ which beats them all).
 
 The benchmarks consist of a set of query files, which are parsed by a MySQL parser. The MySQL grammar is one of the largest and most complex grammars you can find for ANTLR4, which, I think, makes it a perfect test case for parser tests.
 
-The query collection file contains more than 900 MySQL queries of all kinds, from very simple comments-only statements to complex stored procedures, including some deeply nested select queries that can easily exhaust the available stack space (in certain situations, such as parsing in a thread with default stack size). The minimum MySQL server version used was 8.2.
+The query collection file contains more than 900 MySQL queries of all kinds, from very simple comments-only statements to complex stored procedures, including some deeply nested select queries that can easily exhaust the available stack space (in certain situations, such as parsing in a thread with default stack size). The used MySQL server version was 8.2 (the grammar allows dynamic switching of server versions).
 
 The large binary inserts file contains only a few dozen queries, but they are really large with deep recursions, so they stress the prediction engine of the parser. In addition, one query contains binary (image) data containing input characters from the entire UTF-8 range.
 
@@ -172,19 +168,19 @@ Since the Java runtime tests have been ported to TypeScript there's another set 
 The original Java execution times have been taken on OS X with a 4 GHz Intel Core i7 (Java VM args: `-Xms2G -Xmx8g`):
 
 ```bash
-                load_new_utf8 average time   232us size 131232b over 3500 loads of 29038 symbols from Parser.java
-                load_new_utf8 average time    69us size  32928b over 3500 loads of  7625 symbols from RuleContext.java
-                load_new_utf8 average time   210us size  65696b over 3500 loads of 13379 symbols from udhr_hin.txt
+                load_new_utf8 average time   232µs size 131232b over 3500 loads of 29038 symbols from Parser.java
+                load_new_utf8 average time    69µs size  32928b over 3500 loads of  7625 symbols from RuleContext.java
+                load_new_utf8 average time   210µs size  65696b over 3500 loads of 13379 symbols from udhr_hin.txt
 
-            lex_new_java_utf8 average time   439us over 2000 runs of 29038 symbols
-            lex_new_java_utf8 average time   969us over 2000 runs of 29038 symbols DFA cleared
+            lex_new_java_utf8 average time   439µs over 2000 runs of 29038 symbols
+            lex_new_java_utf8 average time   969µs over 2000 runs of 29038 symbols DFA cleared
 
-        lex_new_grapheme_utf8 average time  4034us over  400 runs of  6614 symbols from udhr_kor.txt
-        lex_new_grapheme_utf8 average time  4173us over  400 runs of  6614 symbols from udhr_kor.txt DFA cleared
-        lex_new_grapheme_utf8 average time  7680us over  400 runs of 13379 symbols from udhr_hin.txt
-        lex_new_grapheme_utf8 average time  7946us over  400 runs of 13379 symbols from udhr_hin.txt DFA cleared
-        lex_new_grapheme_utf8 average time    70us over  400 runs of    85 symbols from emoji.txt
-        lex_new_grapheme_utf8 average time    82us over  400 runs of    85 symbols from emoji.txt DFA cleared
+        lex_new_grapheme_utf8 average time  4034µs over  400 runs of  6614 symbols from udhr_kor.txt
+        lex_new_grapheme_utf8 average time  4173µs over  400 runs of  6614 symbols from udhr_kor.txt DFA cleared
+        lex_new_grapheme_utf8 average time  7680µs over  400 runs of 13379 symbols from udhr_hin.txt
+        lex_new_grapheme_utf8 average time  7946µs over  400 runs of 13379 symbols from udhr_hin.txt DFA cleared
+        lex_new_grapheme_utf8 average time    70µs over  400 runs of    85 symbols from emoji.txt
+        lex_new_grapheme_utf8 average time    82µs over  400 runs of    85 symbols from emoji.txt DFA cleared
 ```
 
 The execute times on last release of this runtime have been measured as:
@@ -205,7 +201,7 @@ The execute times on last release of this runtime have been measured as:
          lexNewGraphemeUTF8 average time   387µs over  400 runs of    85 symbols from emoji.txt DFA cleared
 ```
 
-Note: some of the corpus sizes differ, because of the test restructuring. In any case, the numbers cannot be compared directly, because different machines were used to take them.
+Note: Some of the corpus sizes differ due to the restructuring of the test. However, the numbers are not directly comparable anyway, as they were taken on different machines.
 
 ## Release Notes
 

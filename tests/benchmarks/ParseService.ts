@@ -9,7 +9,7 @@ import {
 
 import { MySQLLexer } from "./generated/MySQLLexer.js";
 import { MySQLParser } from "./generated/MySQLParser.js";
-import { IParserErrorInfo, MySQLParseUnit } from "./support/helpers.js";
+import { IParserErrorInfo } from "./support/helpers.js";
 
 import { MySQLErrorListener } from "./support/MySQLErrorListener.js";
 
@@ -51,15 +51,10 @@ export class ParseService {
     /**
      * Quick check for syntax errors.
      *
-     * @param text The text to parse.
-     * @param unit The type of input. Can be used to limit the available syntax to certain constructs.
-     * @param serverVersion The version of MySQL to use for checking.
-     * @param sqlMode The current SQL mode in the server.
-     *
      * @returns True if no error was found, otherwise false.
      */
-    public errorCheck(text: string, unit: MySQLParseUnit, serverVersion: number, sqlMode: string): boolean {
-        this.startParsing(text, serverVersion, sqlMode);
+    public errorCheck(): boolean {
+        this.startParsing();
 
         return this.errors.length === 0;
     }
@@ -82,30 +77,33 @@ export class ParseService {
     }
 
     /**
-     * This is the method to parse text. Depending on fast mode it creates a syntax tree and otherwise
-     * bails out if an error was found, asap.
+     * Initializes the lexer with a new string and lets the tokenizer load all tokens.
      *
-     * @param text The text to parse.
-     * @param serverVersion The version of MySQL to use for checking.
+     * @param text The text to tokenize.
+     * @param serverVersion The version of the MySQL server to use for parsing.
      * @param sqlMode The current SQL mode in the server.
-     *
-     * @returns A parse tree if enabled.
      */
-    private startParsing(text: string, serverVersion: number, sqlMode: string): ParseTree | undefined {
-        this.errors = [];
+    public tokenize(text: string, serverVersion: number, sqlMode: string): void {
         this.lexer.inputStream = CharStream.fromString(text);
         this.tokenStream.setTokenSource(this.lexer);
+        this.lexer.serverVersion = serverVersion;
+        this.lexer.sqlModeFromString(sqlMode);
+
+        this.tokenStream.fill();
+    }
+
+    /**
+     * This is the method to parse text. It uses the token stream from the last call to tokenize.
+     */
+    private startParsing(): void {
+        this.errors = [];
 
         this.parser.reset();
         this.parser.buildParseTrees = false;
 
-        this.lexer.serverVersion = serverVersion;
-        this.lexer.sqlModeFromString(sqlMode);
-        this.parser.serverVersion = serverVersion;
+        this.parser.serverVersion = this.lexer.serverVersion;
         this.parser.sqlModes = this.lexer.sqlModes;
 
         this.tree = this.parser.query();
-
-        return this.tree;
     }
 }

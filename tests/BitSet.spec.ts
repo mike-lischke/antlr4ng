@@ -120,6 +120,4 @@ describe("BitSet", () => {
         expect(bitSet.get(2000)).toEqual(false);
         expect(bitSet.length).toEqual(23);
     });
-
-    // ...
 });

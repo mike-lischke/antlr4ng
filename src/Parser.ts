@@ -400,8 +400,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         this.syntaxErrors += 1;
         const line = offendingToken.line;
         const column = offendingToken.column;
-        const listener = this.getErrorListenerDispatch();
-        listener.syntaxError(this, offendingToken, line, column, msg, err);
+        this.errorListenerDispatch.syntaxError(this, offendingToken, line, column, msg, err);
     }
 
     /**

@@ -122,7 +122,7 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
         return "line " + line + ":" + column;
     }
 
-    public getErrorListenerDispatch(): ANTLRErrorListener {
+    public get errorListenerDispatch(): ANTLRErrorListener {
         return new ProxyErrorListener(this.#listeners);
     }
 
