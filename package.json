@@ -46,7 +46,7 @@
         "tsc": "tsc --watch",
         "build": "npm run generate-test-parsers && tsc && npm run build-cjs && npm run build-mjs",
         "build-minified": "npm run generate-test-parsers && tsc && npm run build-cjs-minified && npm run build-mjs-minified",
-        "build-bundle": "esbuild ./src/index.js --main-fields=module,main --bundle --target=esnext",
+        "build-bundle": "esbuild ./src/index.js --main-fields=module,main --bundle --target=esnext --keep-names",
         "build-mjs": "npm run build-bundle -- --outfile=dist/index.mjs --format=esm",
         "build-mjs-minified": "npm run build-mjs -- --minify",
         "build-cjs": "npm run build-bundle -- --outfile=dist/index.cjs --format=cjs",
