@@ -19,8 +19,8 @@ export class EpsilonTransition extends Transition {
      * @returns the rule index of a precedence rule for which this transition is
      * returning from, where the precedence value is 0; otherwise, -1.
      *
-     * @see ATNConfig#isPrecedenceFilterSuppressed()
-     * @see ParserATNSimulator#applyPrecedenceFilter(ATNConfigSet)
+     * @see ATNConfig.isPrecedenceFilterSuppressed()
+     * @see ParserATNSimulator.applyPrecedenceFilter(ATNConfigSet)
      * @since 4.4.1
      */
     public get outermostPrecedenceReturn(): number {

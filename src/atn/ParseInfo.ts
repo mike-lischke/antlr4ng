@@ -33,7 +33,7 @@ export class ParseInfo {
     /**
      * Gets the decision numbers for decisions that required one or more
      * full-context predictions during parsing. These are decisions for which
-     * {@link DecisionInfo#LL_Fallback} is non-zero.
+     * {@link DecisionInfo#llFallback} is non-zero.
      *
      * @returns A list of decision numbers which required one or more
      * full-context predictions during parsing.
@@ -42,7 +42,7 @@ export class ParseInfo {
         const decisions = this.atnSimulator.getDecisionInfo();
         const result = new Array<number>();
         for (let i = 0; i < decisions.length; i++) {
-            const fallBack = decisions[i].LL_Fallback;
+            const fallBack = decisions[i].llFallback;
             if (fallBack > 0) {
                 result.push(i);
             }
@@ -69,13 +69,13 @@ export class ParseInfo {
     /**
      * Gets the total number of SLL lookahead operations across all decisions
      * made during parsing. This value is the sum of
-     * {@link DecisionInfo#SLL_TotalLook} for all decisions.
+     * {@link DecisionInfo#sllTotalLook} for all decisions.
      */
     public getTotalSLLLookaheadOps(): number {
         const decisions = this.atnSimulator.getDecisionInfo();
         let k = 0;
         for (const decision of decisions) {
-            k += decision.SLL_TotalLook;
+            k += decision.sllTotalLook;
         }
 
         return k;
@@ -84,13 +84,13 @@ export class ParseInfo {
     /**
      * Gets the total number of LL lookahead operations across all decisions
      * made during parsing. This value is the sum of
-     * {@link DecisionInfo#LL_TotalLook} for all decisions.
+     * {@link DecisionInfo#llTotalLook} for all decisions.
      */
     public getTotalLLLookaheadOps(): number {
         const decisions = this.atnSimulator.getDecisionInfo();
         let k = 0;
         for (const decision of decisions) {
-            k += decision.LL_TotalLook;
+            k += decision.llTotalLook;
         }
 
         return k;
@@ -104,7 +104,7 @@ export class ParseInfo {
         const decisions = this.atnSimulator.getDecisionInfo();
         let k = 0;
         for (const decision of decisions) {
-            k += decision.SLL_ATNTransitions;
+            k += decision.sllATNTransitions;
         }
 
         return k;
@@ -118,7 +118,7 @@ export class ParseInfo {
         const decisions = this.atnSimulator.getDecisionInfo();
         let k = 0;
         for (const decision of decisions) {
-            k += decision.LL_ATNTransitions;
+            k += decision.llATNTransitions;
         }
 
         return k;
@@ -136,8 +136,8 @@ export class ParseInfo {
         const decisions = this.atnSimulator.getDecisionInfo();
         let k = 0;
         for (const decision of decisions) {
-            k += decision.SLL_ATNTransitions;
-            k += decision.LL_ATNTransitions;
+            k += decision.sllATNTransitions;
+            k += decision.llATNTransitions;
         }
 
         return k;

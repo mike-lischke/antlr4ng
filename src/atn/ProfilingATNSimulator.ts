@@ -67,14 +67,14 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
             this.decisions[decision].invocations++;
 
             const sllLook = this.#sllStopIndex - this._startIndex + 1;
-            this.decisions[decision].SLL_TotalLook += sllLook;
-            this.decisions[decision].SLL_MinLook = this.decisions[decision].SLL_MinLook === 0
+            this.decisions[decision].sllTotalLook += sllLook;
+            this.decisions[decision].sllMinLook = this.decisions[decision].sllMinLook === 0
                 ? sllLook
-                : Math.min(this.decisions[decision].SLL_MinLook, sllLook);
+                : Math.min(this.decisions[decision].sllMinLook, sllLook);
 
-            if (sllLook > this.decisions[decision].SLL_MaxLook) {
-                this.decisions[decision].SLL_MaxLook = sllLook;
-                this.decisions[decision].SLL_MaxLookEvent = {
+            if (sllLook > this.decisions[decision].sllMaxLook) {
+                this.decisions[decision].sllMaxLook = sllLook;
+                this.decisions[decision].sllMaxLookEvent = {
                     decision,
                     configs: null,
                     predictedAlt: alt,
@@ -88,14 +88,14 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
 
             if (this.#llStopIndex >= 0) {
                 const llLook = this.#llStopIndex - this._startIndex + 1;
-                this.decisions[decision].LL_TotalLook += llLook;
-                this.decisions[decision].LL_MinLook = this.decisions[decision].LL_MinLook === 0
+                this.decisions[decision].llTotalLook += llLook;
+                this.decisions[decision].llMinLook = this.decisions[decision].llMinLook === 0
                     ? llLook
-                    : Math.min(this.decisions[decision].LL_MinLook, llLook);
+                    : Math.min(this.decisions[decision].llMinLook, llLook);
 
-                if (llLook > this.decisions[decision].LL_MaxLook) {
-                    this.decisions[decision].LL_MaxLook = llLook;
-                    this.decisions[decision].LL_MaxLookEvent = {
+                if (llLook > this.decisions[decision].llMaxLook) {
+                    this.decisions[decision].llMaxLook = llLook;
+                    this.decisions[decision].llMaxLookEvent = {
                         decision,
                         configs: null,
                         predictedAlt: alt,
@@ -120,7 +120,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
             const existingTargetState = super.getExistingTargetState(previousD, t);
 
             if (existingTargetState !== null) {
-                this.decisions[this.currentDecision].SLL_DFATransitions++;
+                this.decisions[this.currentDecision].sllDFATransitions++;
                 if (existingTargetState === ATNSimulator.ERROR) {
                     this.decisions[this.currentDecision].errors.push({
                         decision: this.currentDecision,
@@ -156,7 +156,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
         const reachConfigs = super.computeReachSet(closure, t, fullCtx);
         if (this._input) {
             if (fullCtx) {
-                this.decisions[this.currentDecision].LL_ATNTransitions++;
+                this.decisions[this.currentDecision].llATNTransitions++;
 
                 if (reachConfigs === null) {
                     this.decisions[this.currentDecision].errors.push({
@@ -169,7 +169,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
                     });
                 }
             } else {
-                this.decisions[this.currentDecision].SLL_ATNTransitions++;
+                this.decisions[this.currentDecision].sllATNTransitions++;
                 if (reachConfigs === null) {
                     this.decisions[this.currentDecision].errors.push({
                         decision: this.currentDecision,
@@ -194,7 +194,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
             this.conflictingAltResolvedBySLL = configs.getAlts().nextSetBit(0);
         }
 
-        this.decisions[this.currentDecision].LL_Fallback++;
+        this.decisions[this.currentDecision].llFallback++;
         if (conflictingAlts) {
             super.reportAttemptingFullContext(dfa, conflictingAlts, configs, startIndex, stopIndex);
         }
