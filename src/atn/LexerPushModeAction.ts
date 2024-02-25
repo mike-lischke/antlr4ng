@@ -15,25 +15,27 @@ import { MurmurHash } from "../utils/MurmurHash.js";
  * Implements the `pushMode` lexer action by calling
  * {@link Lexer//pushMode} with the assigned mode
  */
-export class LexerPushModeAction extends LexerAction {
+export class LexerPushModeAction implements LexerAction {
     public readonly mode: number;
+    public readonly actionType: number;
+    public isPositionDependent: boolean = false;
 
     #cachedHashCode: number | undefined;
 
     public constructor(mode: number) {
-        super(LexerActionType.PUSH_MODE);
+        this.actionType = LexerActionType.PUSH_MODE;
         this.mode = mode;
     }
 
     /**
-     * This action is implemented by calling {@link Lexer//pushMode} with the
+     * This action is implemented by calling {@link Lexer.pushMode} with the
      * value provided by {@link getMode}.
      */
-    public override execute(lexer: Lexer): void {
+    public execute(lexer: Lexer): void {
         lexer.pushMode(this.mode);
     }
 
-    public override hashCode(): number {
+    public hashCode(): number {
         if (this.#cachedHashCode === undefined) {
             let hash = MurmurHash.initialize();
             hash = MurmurHash.update(hash, this.actionType);
@@ -44,7 +46,7 @@ export class LexerPushModeAction extends LexerAction {
         return this.#cachedHashCode;
     }
 
-    public override equals(other: unknown): boolean {
+    public equals(other: unknown): boolean {
         if (this === other) {
             return true;
         } else if (!(other instanceof LexerPushModeAction)) {
@@ -54,7 +56,7 @@ export class LexerPushModeAction extends LexerAction {
         }
     }
 
-    public override toString(): string {
+    public toString(): string {
         return "pushMode(" + this.mode + ")";
     }
 }

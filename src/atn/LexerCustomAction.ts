@@ -21,37 +21,35 @@ import { MurmurHash } from "../utils/MurmurHash.js";
  * syntax in ANTLR 4, as well as actions created for lexer commands where the
  * command argument could not be evaluated when the grammar was compiled.
  */
-export class LexerCustomAction extends LexerAction {
+export class LexerCustomAction implements LexerAction {
     public readonly ruleIndex: number;
     public readonly actionIndex: number;
+    public readonly actionType: number;
+    public isPositionDependent: boolean = true;
 
     #cachedHashCode: number | undefined;
 
     /**
-     * Constructs a custom lexer action with the specified rule and action
-     * indexes.
+     * Constructs a custom lexer action with the specified rule and action indexes.
      *
-     * @param ruleIndex The rule index to use for calls to
-     * {@link Recognizer//action}.
-     * @param actionIndex The action index to use for calls to
-     * {@link Recognizer//action}.
+     * @param ruleIndex The rule index to use for calls to {@link Recognizer.action}.
+     * @param actionIndex The action index to use for calls to {@link Recognizer.action}.
      */
     public constructor(ruleIndex: number, actionIndex: number) {
-        super(LexerActionType.CUSTOM);
+        this.actionType = LexerActionType.CUSTOM;
         this.ruleIndex = ruleIndex;
         this.actionIndex = actionIndex;
-        this.isPositionDependent = true;
     }
 
     /**
-     * Custom actions are implemented by calling {@link Lexer//action} with the
+     * Custom actions are implemented by calling {@link Lexer.action} with the
      * appropriate rule and action indexes.
      */
-    public override execute(lexer: Lexer): void {
+    public execute(lexer: Lexer): void {
         lexer.action(null, this.ruleIndex, this.actionIndex);
     }
 
-    public override hashCode(): number {
+    public hashCode(): number {
         if (this.#cachedHashCode === undefined) {
             let hash = MurmurHash.initialize();
             hash = MurmurHash.update(hash, this.actionType);
@@ -63,13 +61,15 @@ export class LexerCustomAction extends LexerAction {
         return this.#cachedHashCode;
     }
 
-    public override equals(other: unknown): boolean {
+    public equals(other: unknown): boolean {
         if (this === other) {
             return true;
-        } else if (!(other instanceof LexerCustomAction)) {
-            return false;
-        } else {
-            return this.ruleIndex === other.ruleIndex && this.actionIndex === other.actionIndex;
         }
+
+        if (!(other instanceof LexerCustomAction)) {
+            return false;
+        }
+
+        return this.ruleIndex === other.ruleIndex && this.actionIndex === other.actionIndex;
     }
 }

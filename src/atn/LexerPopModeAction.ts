@@ -11,26 +11,36 @@ import { LexerAction } from "./LexerAction.js";
 import { Lexer } from "../Lexer.js";
 
 /**
- * Implements the `popMode` lexer action by calling {@link Lexer//popMode}.
+ * Implements the `popMode` lexer action by calling {@link Lexer.popMode}.
  *
  * The `popMode` command does not have any parameters, so this action is
  * implemented as a singleton instance exposed by {@link instance}.
  */
-export class LexerPopModeAction extends LexerAction {
+export class LexerPopModeAction implements LexerAction {
     public static readonly instance = new LexerPopModeAction();
+    public readonly actionType: number;
+    public isPositionDependent: boolean = false;
 
     public constructor() {
-        super(LexerActionType.POP_MODE);
+        this.actionType = LexerActionType.POP_MODE;
+    }
+
+    public equals(obj: unknown): boolean {
+        return obj === this;
+    }
+
+    public hashCode(): number {
+        return LexerActionType.POP_MODE;
     }
 
     /**
      * This action is implemented by calling {@link Lexer//popMode}.
      */
-    public override execute(lexer: Lexer): void {
+    public execute(lexer: Lexer): void {
         lexer.popMode();
     }
 
-    public override toString(): string {
+    public toString(): string {
         return "popMode";
     }
 }

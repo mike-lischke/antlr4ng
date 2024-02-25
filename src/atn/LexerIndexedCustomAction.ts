@@ -33,17 +33,18 @@ import { MurmurHash } from "../utils/MurmurHash.js";
  * input {@link CharStream}.
  */
 
-export class LexerIndexedCustomAction extends LexerAction {
+export class LexerIndexedCustomAction implements LexerAction {
     public readonly offset: number;
     public readonly action: LexerAction;
+    public readonly actionType: number;
+    public isPositionDependent: boolean = true;
 
     #cachedHashCode: number | undefined;
 
     public constructor(offset: number, action: LexerAction) {
-        super(action.actionType);
+        this.actionType = action.actionType;
         this.offset = offset;
         this.action = action;
-        this.isPositionDependent = true;
     }
 
     /**
@@ -51,11 +52,11 @@ export class LexerIndexedCustomAction extends LexerAction {
      * using the provided `lexer`.
      */
     public execute(lexer: Lexer): void {
-        // assume the input stream position was properly set by the calling code
+        // Assume the input stream position was properly set by the calling code
         this.action.execute(lexer);
     }
 
-    public override hashCode(): number {
+    public hashCode(): number {
         if (this.#cachedHashCode === undefined) {
             let hash = MurmurHash.initialize();
             hash = MurmurHash.update(hash, this.offset);
@@ -67,13 +68,15 @@ export class LexerIndexedCustomAction extends LexerAction {
         return this.#cachedHashCode;
     }
 
-    public override equals(other: unknown): boolean {
+    public equals(other: unknown): boolean {
         if (this === other) {
             return true;
-        } else if (!(other instanceof LexerIndexedCustomAction)) {
-            return false;
-        } else {
-            return this.offset === other.offset && this.action === other.action;
         }
+
+        if (!(other instanceof LexerIndexedCustomAction)) {
+            return false;
+        }
+
+        return this.offset === other.offset && this.action === other.action;
     }
 }

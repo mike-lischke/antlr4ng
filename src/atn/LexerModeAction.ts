@@ -15,13 +15,15 @@ import { MurmurHash } from "../utils/MurmurHash.js";
  * Implements the `mode` lexer action by calling {@link Lexer//mode} with
  * the assigned mode
  */
-export class LexerModeAction extends LexerAction {
+export class LexerModeAction implements LexerAction {
     public readonly mode: number;
+    public readonly actionType: number;
+    public isPositionDependent: boolean = false;
 
     #cachedHashCode: number | undefined;
 
     public constructor(mode: number) {
-        super(LexerActionType.MODE);
+        this.actionType = LexerActionType.MODE;
         this.mode = mode;
     }
 
@@ -29,11 +31,11 @@ export class LexerModeAction extends LexerAction {
      * This action is implemented by calling {@link Lexer//mode} with the
      * value provided by {@link getMode}.
      */
-    public override execute(lexer: Lexer): void {
+    public execute(lexer: Lexer): void {
         lexer.mode(this.mode);
     }
 
-    public override hashCode(): number {
+    public hashCode(): number {
         if (this.#cachedHashCode === undefined) {
             let hash = MurmurHash.initialize();
             hash = MurmurHash.update(hash, this.actionType);
@@ -44,7 +46,7 @@ export class LexerModeAction extends LexerAction {
         return this.#cachedHashCode;
     }
 
-    public override equals(other: unknown): boolean {
+    public equals(other: unknown): boolean {
         if (this === other) {
             return true;
         } else if (!(other instanceof LexerModeAction)) {
@@ -54,7 +56,7 @@ export class LexerModeAction extends LexerAction {
         }
     }
 
-    public override toString(): string {
+    public toString(): string {
         return "mode(" + this.mode + ")";
     }
 }

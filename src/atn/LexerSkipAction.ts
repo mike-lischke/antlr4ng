@@ -14,19 +14,29 @@ import { Lexer } from "../Lexer.js";
  * The `skip` command does not have any parameters, so this action is
  * implemented as a singleton instance exposed by {@link instance}.
  */
-export class LexerSkipAction extends LexerAction {
+export class LexerSkipAction implements LexerAction {
     /** Provides a singleton instance of this parameter-less lexer action. */
     public static readonly instance = new LexerSkipAction();
+    public readonly actionType: number;
+    public isPositionDependent: boolean = false;
 
     public constructor() {
-        super(LexerActionType.SKIP);
+        this.actionType = LexerActionType.SKIP;
+    }
+
+    public equals(obj: unknown): boolean {
+        return obj === this;
+    }
+
+    public hashCode(): number {
+        return LexerActionType.SKIP;
     }
 
     public execute(lexer: Lexer): void {
         lexer.skip();
     }
 
-    public override toString(): string {
+    public toString(): string {
         return "skip";
     }
 }

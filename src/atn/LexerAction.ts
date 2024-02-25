@@ -5,30 +5,17 @@
  */
 
 import { Lexer } from "../Lexer.js";
-import { MurmurHash } from "../utils/MurmurHash.js";
+import type { IComparable } from "../index.js";
 
 /**
  * Represents a single action which can be executed following the successful
  * match of a lexer rule. Lexer actions are used for both embedded action syntax
  * and ANTLR 4's new lexer command syntax.
  */
-// TODO: make LexerAction an interface
-export abstract class LexerAction {
-    public readonly actionType: number;
-    public isPositionDependent: boolean;
+export interface LexerAction extends IComparable {
+    readonly actionType: number;
+    isPositionDependent: boolean;
 
-    public constructor(action: number) {
-        this.actionType = action;
-        this.isPositionDependent = false;
-    }
-
-    public hashCode(): number {
-        return MurmurHash.hashCode(this.actionType);
-    }
-
-    public equals(other: unknown): boolean {
-        return this === other;
-    }
-
-    public abstract execute(lexer: Lexer): void;
+    execute(lexer: Lexer): void;
+    toString(): string;
 }

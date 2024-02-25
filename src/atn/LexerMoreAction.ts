@@ -16,21 +16,31 @@ import { Lexer } from "../Lexer.js";
  * The `more` command does not have any parameters, so this action is
  * implemented as a singleton instance exposed by {@link instance}.
  */
-export class LexerMoreAction extends LexerAction {
+export class LexerMoreAction implements LexerAction {
     public static readonly instance = new LexerMoreAction();
+    public readonly actionType: number;
+    public isPositionDependent: boolean = false;
 
     public constructor() {
-        super(LexerActionType.MORE);
+        this.actionType = LexerActionType.MORE;
+    }
+
+    public equals(obj: unknown): boolean {
+        return obj === this;
+    }
+
+    public hashCode(): number {
+        return LexerActionType.MORE;
     }
 
     /**
-     * This action is implemented by calling {@link Lexer//popMode}.
+     * This action is implemented by calling {@link Lexer.popMode}.
      */
-    public override execute(lexer: Lexer): void {
+    public execute(lexer: Lexer): void {
         lexer.more();
     }
 
-    public override toString(): string {
+    public toString(): string {
         return "more";
     }
 }

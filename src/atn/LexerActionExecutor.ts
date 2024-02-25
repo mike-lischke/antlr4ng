@@ -12,8 +12,10 @@ import { CharStream } from "../CharStream.js";
 import { Lexer } from "../Lexer.js";
 import { MurmurHash } from "../utils/MurmurHash.js";
 
-export class LexerActionExecutor /*implements*/ extends LexerAction {
+export class LexerActionExecutor implements LexerAction {
     public readonly lexerActions: LexerAction[];
+    public readonly actionType: number;
+    public isPositionDependent: boolean = false;
 
     #cachedHashCode: number | undefined;
 
@@ -25,9 +27,8 @@ export class LexerActionExecutor /*implements*/ extends LexerAction {
      * efficiently, ensuring that actions appearing only at the end of the rule do
      * not cause bloating of the {@link DFA} created for the lexer.
      */
-    public constructor(lexerActions: LexerAction[] | null) {
-        super(-1);
-
+    public constructor(lexerActions?: LexerAction[]) {
+        this.actionType = -1;
         this.lexerActions = lexerActions ?? [];
 
         return this;
@@ -154,7 +155,7 @@ export class LexerActionExecutor /*implements*/ extends LexerAction {
         }
     }
 
-    public override hashCode(): number {
+    public hashCode(): number {
         if (this.#cachedHashCode === undefined) {
             this.#cachedHashCode = MurmurHash.hashCode(this.lexerActions, 7);
         }
@@ -162,7 +163,7 @@ export class LexerActionExecutor /*implements*/ extends LexerAction {
         return this.#cachedHashCode;
     }
 
-    public override equals(other: LexerActionExecutor): boolean {
+    public equals(other: LexerActionExecutor): boolean {
         if (this === other) {
             return true;
         }

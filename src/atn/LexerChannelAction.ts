@@ -18,13 +18,15 @@ import { MurmurHash } from "../utils/MurmurHash.js";
  *
  * @param channel The channel value to pass to {@link Lexer//setChannel}
  */
-export class LexerChannelAction extends LexerAction {
+export class LexerChannelAction implements LexerAction {
     public readonly channel: number;
+    public readonly actionType: number;
+    public isPositionDependent: boolean = false;
 
     #cachedHashCode: number | undefined;
 
     public constructor(channel: number) {
-        super(LexerActionType.CHANNEL);
+        this.actionType = LexerActionType.CHANNEL;
         this.channel = channel;
     }
 
@@ -37,7 +39,7 @@ export class LexerChannelAction extends LexerAction {
         lexer.channel = this.channel;
     }
 
-    public override hashCode(): number {
+    public hashCode(): number {
         if (this.#cachedHashCode === undefined) {
             let hash = MurmurHash.initialize();
             hash = MurmurHash.update(hash, this.actionType);
@@ -48,17 +50,19 @@ export class LexerChannelAction extends LexerAction {
         return this.#cachedHashCode;
     }
 
-    public override equals(other: unknown): boolean {
+    public equals(other: unknown): boolean {
         if (this === other) {
             return true;
-        } else if (!(other instanceof LexerChannelAction)) {
-            return false;
-        } else {
-            return this.channel === other.channel;
         }
+
+        if (!(other instanceof LexerChannelAction)) {
+            return false;
+        }
+
+        return this.channel === other.channel;
     }
 
-    public override toString(): string {
+    public toString(): string {
         return "channel(" + this.channel + ")";
     }
 }
