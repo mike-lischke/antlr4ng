@@ -8,7 +8,6 @@ import { IntervalSet } from "../misc/IntervalSet.js";
 import { Token } from "../Token.js";
 import { ATNState } from "./ATNState.js";
 import { Transition } from "./Transition.js";
-import { TransitionType } from "./TransitionType.js";
 
 /** A transition containing a set of values. */
 export class SetTransition extends Transition {
@@ -23,8 +22,8 @@ export class SetTransition extends Transition {
         }
     }
 
-    public get serializationType(): number {
-        return TransitionType.SET;
+    public get transitionType(): number {
+        return Transition.SET;
     }
 
     public override get label(): IntervalSet {

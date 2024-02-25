@@ -6,8 +6,8 @@
 
 import { SemanticContext } from "./SemanticContext.js";
 import { AbstractPredicateTransition } from "./AbstractPredicateTransition.js";
-import { TransitionType } from "./TransitionType.js";
 import { ATNState } from "./ATNState.js";
+import { Transition } from "./Transition.js";
 
 export class PredicateTransition extends AbstractPredicateTransition {
     public readonly ruleIndex: number;
@@ -29,8 +29,8 @@ export class PredicateTransition extends AbstractPredicateTransition {
         return false;
     }
 
-    public get serializationType(): number {
-        return TransitionType.PREDICATE;
+    public get transitionType(): number {
+        return Transition.PREDICATE;
     }
 
     public getPredicate(): SemanticContext.Predicate {

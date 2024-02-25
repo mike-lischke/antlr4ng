@@ -73,5 +73,4 @@ export * from "./StarLoopEntryState.js";
 export * from "./StarLoopbackState.js";
 export * from "./TokensStartState.js";
 export * from "./Transition.js";
-export * from "./TransitionType.js";
 export * from "./WildcardTransition.js";

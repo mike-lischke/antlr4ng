@@ -6,7 +6,6 @@
 
 import { ATNState } from "./ATNState.js";
 import { Transition } from "./Transition.js";
-import { TransitionType } from "./TransitionType.js";
 
 export class ActionTransition extends Transition {
     public ruleIndex: number;
@@ -24,8 +23,8 @@ export class ActionTransition extends Transition {
         return true;
     }
 
-    public get serializationType(): number {
-        return TransitionType.ACTION;
+    public get transitionType(): number {
+        return Transition.ACTION;
     }
 
     public matches(_symbol: number, _minVocabSymbol: number, _maxVocabSymbol: number): boolean {

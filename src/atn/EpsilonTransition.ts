@@ -5,7 +5,6 @@
  */
 
 import { Transition } from "./Transition.js";
-import { TransitionType } from "./TransitionType.js";
 import { ATNState } from "./ATNState.js";
 
 export class EpsilonTransition extends Transition {
@@ -32,8 +31,8 @@ export class EpsilonTransition extends Transition {
         return true;
     }
 
-    public get serializationType(): number {
-        return TransitionType.EPSILON;
+    public get transitionType(): number {
+        return Transition.EPSILON;
     }
 
     public override matches(): boolean {

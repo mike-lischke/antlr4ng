@@ -217,10 +217,10 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
     }
 
     public override reportAmbiguity(dfa: DFA, state: DFAState, startIndex: number, stopIndex: number, exact: boolean,
-        ambigAlts: BitSet | null, configs: ATNConfigSet): void {
+        ambigAlts: BitSet | undefined, configs: ATNConfigSet): void {
         let prediction: number | undefined;
 
-        if (ambigAlts !== null) {
+        if (ambigAlts) {
             prediction = ambigAlts.nextSetBit(0);
         } else {
             prediction = configs.getAlts().nextSetBit(0);

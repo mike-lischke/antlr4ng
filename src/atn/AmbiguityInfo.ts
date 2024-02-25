@@ -34,5 +34,5 @@ import { DecisionEventInfo } from "./DecisionEventInfo.js";
  */
 export interface AmbiguityInfo extends DecisionEventInfo {
     /** The set of alternative numbers for this decision event that lead to a valid parse. */
-    ambigAlts: BitSet | null;
+    ambigAlts?: BitSet;
 }

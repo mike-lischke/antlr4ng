@@ -17,7 +17,6 @@ import { SingletonPredictionContext } from "./SingletonPredictionContext.js";
 import { LexerATNConfig } from "./LexerATNConfig.js";
 import { LexerActionExecutor } from "./LexerActionExecutor.js";
 import { LexerNoViableAltException } from "../LexerNoViableAltException.js";
-import { TransitionType } from "./TransitionType.js";
 import { DFA } from "../dfa/DFA.js";
 import { PredictionContextCache } from "./PredictionContextCache.js";
 import { CharStream } from "../CharStream.js";
@@ -442,7 +441,7 @@ export class LexerATNSimulator extends ATNSimulator {
         if (!this.#lexerATNConfigFactory) {
             this.setupATNFactoryLookup();
         }
-        const factory = this.#lexerATNConfigFactory[trans.serializationType];
+        const factory = this.#lexerATNConfigFactory[trans.transitionType];
         if (!factory) {
             return null;
         }
@@ -457,7 +456,7 @@ export class LexerATNSimulator extends ATNSimulator {
     private setupATNFactoryLookup(): void {
         this.#lexerATNConfigFactory = [];
 
-        this.#lexerATNConfigFactory[TransitionType.RULE] = (input: CharStream, config: LexerATNConfig,
+        this.#lexerATNConfigFactory[Transition.RULE] = (input: CharStream, config: LexerATNConfig,
             trans: Transition) => {
             const newContext = SingletonPredictionContext.create(config.context,
                 (trans as RuleTransition).followState.stateNumber);
@@ -465,11 +464,11 @@ export class LexerATNSimulator extends ATNSimulator {
             return LexerATNConfig.createWithConfig(trans.target, config, newContext);
         };
 
-        this.#lexerATNConfigFactory[TransitionType.PRECEDENCE] = () => {
+        this.#lexerATNConfigFactory[Transition.PRECEDENCE] = () => {
             throw new Error("Precedence predicates are not supported in lexers.");
         };
 
-        this.#lexerATNConfigFactory[TransitionType.PREDICATE] = (input: CharStream, config: LexerATNConfig,
+        this.#lexerATNConfigFactory[Transition.PREDICATE] = (input: CharStream, config: LexerATNConfig,
             trans: Transition, configs: ATNConfigSet, speculative: boolean) => {
             // Track traversing semantic predicates. If we traverse,
             // we cannot add a DFA state for this "reach" computation
@@ -498,7 +497,7 @@ export class LexerATNSimulator extends ATNSimulator {
             return null;
         };
 
-        this.#lexerATNConfigFactory[TransitionType.ACTION] = (input: CharStream, config: LexerATNConfig,
+        this.#lexerATNConfigFactory[Transition.ACTION] = (input: CharStream, config: LexerATNConfig,
             trans: Transition) => {
             if (config.context === null || config.context.hasEmptyPath()) {
                 // execute actions anywhere in the start rule for a token.
@@ -523,7 +522,7 @@ export class LexerATNSimulator extends ATNSimulator {
             }
         };
 
-        this.#lexerATNConfigFactory[TransitionType.EPSILON] = (input: CharStream, config: LexerATNConfig,
+        this.#lexerATNConfigFactory[Transition.EPSILON] = (input: CharStream, config: LexerATNConfig,
             trans: Transition) => {
             return LexerATNConfig.createWithConfig(trans.target, config);
         };
@@ -540,9 +539,9 @@ export class LexerATNSimulator extends ATNSimulator {
             return null;
         };
 
-        this.#lexerATNConfigFactory[TransitionType.ATOM] = simple;
-        this.#lexerATNConfigFactory[TransitionType.RANGE] = simple;
-        this.#lexerATNConfigFactory[TransitionType.SET] = simple;
+        this.#lexerATNConfigFactory[Transition.ATOM] = simple;
+        this.#lexerATNConfigFactory[Transition.RANGE] = simple;
+        this.#lexerATNConfigFactory[Transition.SET] = simple;
     }
 
     /**

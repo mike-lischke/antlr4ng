@@ -100,7 +100,7 @@ export interface ANTLRErrorListener {
         startIndex: number,
         stopIndex: number,
         exact: boolean,
-        ambigAlts: BitSet | null,
+        ambigAlts: BitSet | undefined,
         configs: ATNConfigSet): void;
 
     /**

@@ -29,7 +29,7 @@ export class ProxyErrorListener extends BaseErrorListener {
     }
 
     public override reportAmbiguity(recognizer: Parser, dfa: DFA, startIndex: number, stopIndex: number, exact: boolean,
-        ambigAlts: BitSet | null, configs: ATNConfigSet): void {
+        ambigAlts: BitSet | undefined, configs: ATNConfigSet): void {
         this.delegates.forEach((d) => {
             d.reportAmbiguity(recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs);
         });

@@ -17,7 +17,6 @@ import { RecognitionException } from "./RecognitionException.js";
 import { StarLoopEntryState } from "./atn/StarLoopEntryState.js";
 import { Token } from "./Token.js";
 import { ATNStateType } from "./atn/ATNStateType.js";
-import { TransitionType } from "./atn/TransitionType.js";
 import { DFA } from "./dfa/DFA.js";
 import { PredictionContextCache } from "./atn/PredictionContextCache.js";
 import { ATN } from "./atn/ATN.js";
@@ -32,6 +31,7 @@ import { PrecedencePredicateTransition } from "./atn/PrecedencePredicateTransiti
 import { DecisionState } from "./atn/DecisionState.js";
 import { TokenSource } from "./TokenSource.js";
 import { CharStream } from "./CharStream.js";
+import { Transition } from "./atn/Transition.js";
 
 export class ParserInterpreter extends Parser {
     public rootContext: InterpreterRuleContext;
@@ -180,8 +180,8 @@ export class ParserInterpreter extends Parser {
         }
 
         const transition = p.transitions[predictedAlt - 1];
-        switch (transition.serializationType) {
-            case TransitionType.EPSILON:
+        switch (transition.transitionType) {
+            case Transition.EPSILON:
                 if (this.#pushRecursionContextStates.get(p.stateNumber) &&
                     !(transition.target.stateType === ATNStateType.LOOP_END)) {
                     // We are at the start of a left recursive rule's (...)* loop
@@ -194,24 +194,24 @@ export class ParserInterpreter extends Parser {
                 }
                 break;
 
-            case TransitionType.ATOM:
+            case Transition.ATOM:
                 this.match(transition.label!.minElement);
                 break;
 
-            case TransitionType.RANGE:
-            case TransitionType.SET:
-            case TransitionType.NOT_SET:
+            case Transition.RANGE:
+            case Transition.SET:
+            case Transition.NOT_SET:
                 if (!transition.matches(this.inputStream.LA(1), Token.MIN_USER_TOKEN_TYPE, 65535)) {
                     this.recoverInline();
                 }
                 this.matchWildcard();
                 break;
 
-            case TransitionType.WILDCARD:
+            case Transition.WILDCARD:
                 this.matchWildcard();
                 break;
 
-            case TransitionType.RULE:
+            case Transition.RULE:
                 const ruleStartState = transition.target as RuleStartState;
                 const ruleIndex = ruleStartState.ruleIndex;
                 const newContext = this.createInterpreterRuleContext(this.context, p.stateNumber, ruleIndex);
@@ -224,7 +224,7 @@ export class ParserInterpreter extends Parser {
                 }
                 break;
 
-            case TransitionType.PREDICATE:
+            case Transition.PREDICATE:
                 const predicateTransition = transition as PredicateTransition;
                 if (!this.sempred(this.context, predicateTransition.ruleIndex, predicateTransition.predIndex)) {
                     throw new FailedPredicateException(this);
@@ -232,12 +232,12 @@ export class ParserInterpreter extends Parser {
 
                 break;
 
-            case TransitionType.ACTION:
+            case Transition.ACTION:
                 const actionTransition = transition as ActionTransition;
                 this.action(this.context, actionTransition.ruleIndex, actionTransition.actionIndex);
                 break;
 
-            case TransitionType.PRECEDENCE:
+            case Transition.PRECEDENCE:
                 if (!this.precpred(this.context, (transition as PrecedencePredicateTransition).precedence)) {
                     const precedence = (transition as PrecedencePredicateTransition).precedence;
                     throw new FailedPredicateException(this, `precpred(_ctx, ${precedence})`);

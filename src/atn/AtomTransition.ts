@@ -6,7 +6,6 @@
 
 import { IntervalSet } from "../misc/IntervalSet.js";
 import { Transition } from "./Transition.js";
-import { TransitionType } from "./TransitionType.js";
 import { ATNState } from "./ATNState.js";
 
 export class AtomTransition extends Transition {
@@ -25,8 +24,8 @@ export class AtomTransition extends Transition {
         return this.#label;
     }
 
-    public override get serializationType(): number {
-        return TransitionType.ATOM;
+    public override get transitionType(): number {
+        return Transition.ATOM;
     }
 
     public override matches(symbol: number): boolean {

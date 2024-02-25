@@ -21,19 +21,17 @@ import { ATNState } from "./ATNState.js";
  * ATN transitions.
  */
 export abstract class Transition {
-    public static readonly serializationNames = [
-        "INVALID",
-        "EPSILON",
-        "RANGE",
-        "RULE",
-        "PREDICATE",
-        "ATOM",
-        "ACTION",
-        "SET",
-        "NOT_SET",
-        "WILDCARD",
-        "PRECEDENCE",
-    ];
+    public static readonly INVALID = 0;
+    public static readonly EPSILON = 1;
+    public static readonly RANGE = 2;
+    public static readonly RULE = 3;
+    public static readonly PREDICATE = 4; // e.g., {isType(input.LT(1))}
+    public static readonly ATOM = 5;
+    public static readonly ACTION = 6;
+    public static readonly SET = 7; // ~(A|B) or ~atom, wildcard, which convert to next
+    public static readonly NOT_SET = 8;
+    public static readonly WILDCARD = 9;
+    public static readonly PRECEDENCE = 10;
 
     /** The target of this transition. */
     public target: ATNState;
@@ -59,6 +57,6 @@ export abstract class Transition {
         return null;
     }
 
-    public abstract get serializationType(): number;
+    public abstract get transitionType(): number;
     public abstract matches(symbol: number, minVocabSymbol: number, maxVocabSymbol: number): boolean;
 }

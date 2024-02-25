@@ -59,7 +59,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
         startIndex: number,
         stopIndex: number,
         exact: boolean,
-        ambigAlts: BitSet | null,
+        ambigAlts: BitSet | undefined,
         configs: ATNConfigSet): void => {
         if (this.exactOnly && !exact) {
             return;
@@ -124,9 +124,9 @@ export class DiagnosticErrorListener extends BaseErrorListener {
      * @returns Returns `reportedAlts` if it is not `null`, otherwise
      * returns the set of alternatives represented in `configs`.
      */
-    protected getConflictingAlts = (reportedAlts: BitSet | null,
+    protected getConflictingAlts = (reportedAlts: BitSet | undefined,
         configs: ATNConfigSet): BitSet | null => {
-        if (reportedAlts !== null) {
+        if (reportedAlts) {
             return reportedAlts;
         }
 

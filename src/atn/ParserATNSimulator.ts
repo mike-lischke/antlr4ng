@@ -29,7 +29,6 @@ import { RuleTransition } from "./RuleTransition.js";
 import { SemanticContext } from "./SemanticContext.js";
 import { SetTransition } from "./SetTransition.js";
 import { SingletonPredictionContext } from "./SingletonPredictionContext.js";
-import { TransitionType } from "./TransitionType.js";
 import { Vocabulary } from "../Vocabulary.js";
 
 import { Parser } from "../Parser.js";
@@ -708,7 +707,7 @@ export class ParserATNSimulator extends ATNSimulator {
         // the fact that we should predict alternative 1.  We just can't say for
         // sure that there is an ambiguity without looking further.
 
-        this.reportAmbiguity(dfa, D, startIndex, input.index, foundExactAmbig, null, reach);
+        this.reportAmbiguity(dfa, D, startIndex, input.index, foundExactAmbig, undefined, reach);
 
         return predictedAlt;
     }
@@ -1383,21 +1382,21 @@ export class ParserATNSimulator extends ATNSimulator {
 
     protected getEpsilonTarget(config: ATNConfig, t: Transition, collectPredicates: boolean, inContext: boolean,
         fullCtx: boolean, treatEofAsEpsilon: boolean): ATNConfig | null {
-        switch (t.serializationType) {
-            case TransitionType.RULE:
+        switch (t.transitionType) {
+            case Transition.RULE:
                 return this.ruleTransition(config, t as RuleTransition);
-            case TransitionType.PRECEDENCE:
+            case Transition.PRECEDENCE:
                 return this.precedenceTransition(config, t as PrecedencePredicateTransition, collectPredicates,
                     inContext, fullCtx);
-            case TransitionType.PREDICATE:
+            case Transition.PREDICATE:
                 return this.predTransition(config, t as PredicateTransition, collectPredicates, inContext, fullCtx);
-            case TransitionType.ACTION:
+            case Transition.ACTION:
                 return ATNConfig.createWithConfig(t.target, config);
-            case TransitionType.EPSILON:
+            case Transition.EPSILON:
                 return ATNConfig.createWithConfig(t.target, config);
-            case TransitionType.ATOM:
-            case TransitionType.RANGE:
-            case TransitionType.SET:
+            case Transition.ATOM:
+            case Transition.RANGE:
+            case Transition.SET:
                 // EOF transitions act like epsilon transitions after the first EOF
                 // transition is traversed
                 if (treatEofAsEpsilon) {
@@ -1613,7 +1612,7 @@ export class ParserATNSimulator extends ATNSimulator {
 
     // If context sensitive parsing, we know it's ambiguity not conflict.
     protected reportAmbiguity(dfa: DFA, D: DFAState, startIndex: number, stopIndex: number,
-        exact: boolean, ambigAlts: BitSet | null, configs: ATNConfigSet): void {
+        exact: boolean, ambigAlts: BitSet | undefined, configs: ATNConfigSet): void {
         this.parser.errorListenerDispatch.reportAmbiguity(this.parser, dfa, startIndex, stopIndex, exact,
             ambigAlts, configs);
     }

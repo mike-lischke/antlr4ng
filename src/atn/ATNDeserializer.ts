@@ -47,7 +47,6 @@ import { LexerPushModeAction } from "./LexerPushModeAction.js";
 import { LexerPopModeAction } from "./LexerPopModeAction.js";
 import { LexerModeAction } from "./LexerModeAction.js";
 import { ATNStateType } from "./ATNStateType.js";
-import { TransitionType } from "./TransitionType.js";
 import { ATNState } from "./ATNState.js";
 import { LexerAction } from "./LexerAction.js";
 import { Transition } from "./Transition.js";
@@ -505,27 +504,27 @@ export class ATNDeserializer {
         arg3: number, sets: IntervalSet[]): Transition {
         const target = atn.states[trg]!;
         switch (type) {
-            case TransitionType.EPSILON:
+            case Transition.EPSILON:
                 return new EpsilonTransition(target);
-            case TransitionType.RANGE:
+            case Transition.RANGE:
                 return arg3 !== 0
                     ? new RangeTransition(target, Token.EOF, arg2)
                     : new RangeTransition(target, arg1, arg2);
-            case TransitionType.RULE:
+            case Transition.RULE:
                 return new RuleTransition(atn.states[arg1]!, arg2, arg3, target);
-            case TransitionType.PREDICATE:
+            case Transition.PREDICATE:
                 return new PredicateTransition(target, arg1, arg2, arg3 !== 0);
-            case TransitionType.PRECEDENCE:
+            case Transition.PRECEDENCE:
                 return new PrecedencePredicateTransition(target, arg1);
-            case TransitionType.ATOM:
+            case Transition.ATOM:
                 return arg3 !== 0 ? new AtomTransition(target, Token.EOF) : new AtomTransition(target, arg1);
-            case TransitionType.ACTION:
+            case Transition.ACTION:
                 return new ActionTransition(target, arg1, arg2, arg3 !== 0);
-            case TransitionType.SET:
+            case Transition.SET:
                 return new SetTransition(target, sets[arg1]);
-            case TransitionType.NOT_SET:
+            case Transition.NOT_SET:
                 return new NotSetTransition(target, sets[arg1]);
-            case TransitionType.WILDCARD:
+            case Transition.WILDCARD:
                 return new WildcardTransition(target);
             default:
                 throw new Error("The specified transition type: " + type + " is not valid.");

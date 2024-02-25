@@ -30,7 +30,7 @@ import type { RangeTransition } from "./RangeTransition.js";
 import { RuleStartState } from "./RuleStartState.js";
 import type { RuleTransition } from "./RuleTransition.js";
 import type { SetTransition } from "./SetTransition.js";
-import { TransitionType } from "./TransitionType.js";
+import { Transition } from "./Transition.js";
 
 /**
  * This class represents a target neutral serializer for ATNs. An ATN is converted to a list of integers
@@ -253,8 +253,8 @@ export class ATNSerializer {
                     }
 
                     for (const t of s.transitions) {
-                        const edgeType = t.serializationType;
-                        if (edgeType === TransitionType.SET || edgeType === TransitionType.NOT_SET) {
+                        const edgeType = t.transitionType;
+                        if (edgeType === Transition.SET || edgeType === Transition.NOT_SET) {
                             const st = t as SetTransition;
                             this.sets.set(st.set, true);
                         }
@@ -285,12 +285,12 @@ export class ATNSerializer {
 
                         const src = s.stateNumber;
                         let trg = t.target.stateNumber;
-                        const edgeType = t.serializationType;
+                        const edgeType = t.transitionType;
                         let arg1 = 0;
                         let arg2 = 0;
                         let arg3 = 0;
                         switch (edgeType) {
-                            case TransitionType.RULE: {
+                            case Transition.RULE: {
                                 trg = (t as RuleTransition).followState.stateNumber;
                                 arg1 = (t as RuleTransition).target.stateNumber;
                                 arg2 = (t as RuleTransition).ruleIndex;
@@ -298,13 +298,13 @@ export class ATNSerializer {
                                 break;
                             }
 
-                            case TransitionType.PRECEDENCE: {
+                            case Transition.PRECEDENCE: {
                                 const ppt = t as PrecedencePredicateTransition;
                                 arg1 = ppt.precedence;
                                 break;
                             }
 
-                            case TransitionType.PREDICATE: {
+                            case Transition.PREDICATE: {
                                 const pt = t as PredicateTransition;
                                 arg1 = pt.ruleIndex;
                                 arg2 = pt.predIndex;
@@ -312,7 +312,7 @@ export class ATNSerializer {
                                 break;
                             }
 
-                            case TransitionType.RANGE: {
+                            case Transition.RANGE: {
                                 arg1 = (t as RangeTransition).start;
                                 arg2 = (t as RangeTransition).stop;
                                 if (arg1 === Token.EOF) {
@@ -322,7 +322,7 @@ export class ATNSerializer {
                                 break;
                             }
 
-                            case TransitionType.ATOM: {
+                            case Transition.ATOM: {
                                 arg1 = (t as AtomTransition).labelValue;
                                 if (arg1 === Token.EOF) {
                                     arg1 = 0;
@@ -331,7 +331,7 @@ export class ATNSerializer {
                                 break;
                             }
 
-                            case TransitionType.ACTION: {
+                            case Transition.ACTION: {
                                 const at = t as ActionTransition;
                                 arg1 = at.ruleIndex;
                                 arg2 = at.actionIndex;
@@ -339,17 +339,17 @@ export class ATNSerializer {
                                 break;
                             }
 
-                            case TransitionType.SET: {
+                            case Transition.SET: {
                                 arg1 = setIndices.get((t as SetTransition).set)!;
                                 break;
                             }
 
-                            case TransitionType.NOT_SET: {
+                            case Transition.NOT_SET: {
                                 arg1 = setIndices.get((t as SetTransition).set)!;
                                 break;
                             }
 
-                            case TransitionType.WILDCARD: {
+                            case Transition.WILDCARD: {
                                 break;
                             }
 
