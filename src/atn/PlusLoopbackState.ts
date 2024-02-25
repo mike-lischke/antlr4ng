@@ -12,5 +12,5 @@ import { DecisionState } from "./DecisionState.js";
  * one to the loop back to start of the block and one to exit.
  */
 export class PlusLoopbackState extends DecisionState {
-    public override readonly stateType = ATNState.PLUS_LOOP_BACK;
+    public static override readonly stateType = ATNState.PLUS_LOOP_BACK;
 }

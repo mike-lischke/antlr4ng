@@ -11,10 +11,5 @@ import { DecisionState } from "./DecisionState.js";
  *  The start of a regular `(...)` block
  */
 export class BlockStartState extends DecisionState {
-    public endState: BlockEndState | null;
-
-    public constructor() {
-        super();
-        this.endState = null;
-    }
+    public endState?: BlockEndState;
 }

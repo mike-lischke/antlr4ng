@@ -8,9 +8,9 @@ import { ATNState } from "./ATNState.js";
 import { RuleStopState } from "./RuleStopState.js";
 
 export class RuleStartState extends ATNState {
-    public stopState: RuleStopState | null = null;
+    public static override readonly stateType = ATNState.RULE_START;
+
+    public stopState?: RuleStopState;
     public isLeftRecursiveRule: boolean = false;
     public isPrecedenceRule: boolean = false;
-
-    public override readonly stateType = ATNState.RULE_START;
 }

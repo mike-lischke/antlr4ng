@@ -116,7 +116,7 @@ export class ParserInterpreter extends Parser {
 
         while (true) {
             const p = this.atnState;
-            switch (p.stateType) {
+            switch ((p.constructor as typeof ATNState).stateType) {
                 case ATNState.RULE_STOP:
                     // pop; return from rule
                     if (this.context?.isEmpty) {
@@ -182,7 +182,7 @@ export class ParserInterpreter extends Parser {
         switch (transition.transitionType) {
             case Transition.EPSILON:
                 if (this.#pushRecursionContextStates.get(p.stateNumber) &&
-                    !(transition.target.stateType === ATNState.LOOP_END)) {
+                    !((transition.target.constructor as typeof ATNState).stateType === ATNState.LOOP_END)) {
                     // We are at the start of a left recursive rule's (...)* loop
                     // and we're not taking the exit branch of loop.
                     const parentContext = this.#parentContextStack[this.#parentContextStack.length - 1];

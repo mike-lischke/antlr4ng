@@ -226,7 +226,7 @@ export class DefaultErrorStrategy {
 
             return;
         }
-        switch (s.stateType) {
+        switch ((s.constructor as typeof ATNState).stateType) {
             case ATNState.BLOCK_START:
             case ATNState.STAR_BLOCK_START:
             case ATNState.PLUS_BLOCK_START:

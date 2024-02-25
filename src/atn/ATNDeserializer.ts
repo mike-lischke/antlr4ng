@@ -282,16 +282,17 @@ export class ATNDeserializer {
             state = atn.states[i];
             if (state instanceof BlockStartState) {
                 // we need to know the end state to set its start state
-                if (state.endState === null) {
+                if (!state.endState) {
                     throw new Error("IllegalState");
                 }
-                // block end states can only be associated to a single block start
-                // state
+
+                // Block end states can only be associated to a single block start state.
                 if (state.endState.startState) {
                     throw new Error("IllegalState");
                 }
                 state.endState.startState = state;
             }
+
             if (state instanceof PlusLoopbackState) {
                 for (j = 0; j < state.transitions.length; j++) {
                     target = state.transitions[j].target;

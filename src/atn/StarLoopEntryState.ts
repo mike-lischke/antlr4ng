@@ -9,6 +9,8 @@ import { DecisionState } from "./DecisionState.js";
 import { StarLoopbackState } from "./StarLoopbackState.js";
 
 export class StarLoopEntryState extends DecisionState {
+    public static override readonly stateType = ATNState.STAR_LOOP_ENTRY;
+
     // This is always set during ATN deserialization
     public loopBackState!: StarLoopbackState;
 
@@ -23,6 +25,4 @@ export class StarLoopEntryState extends DecisionState {
      * @see `DFA.isPrecedenceDfa`
      */
     public precedenceRuleDecision: boolean = false;
-
-    public override readonly stateType = ATNState.STAR_LOOP_ENTRY;
 }

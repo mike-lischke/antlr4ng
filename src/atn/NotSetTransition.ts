@@ -4,16 +4,10 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { IntervalSet } from "../misc/IntervalSet.js";
-import { ATNState } from "./ATNState.js";
 import { SetTransition } from "./SetTransition.js";
 import { Transition } from "./Transition.js";
 
 export class NotSetTransition extends SetTransition {
-    public constructor(target: ATNState, set: IntervalSet) {
-        super(target, set);
-    }
-
     public override get transitionType(): number {
         return Transition.NOT_SET;
     }

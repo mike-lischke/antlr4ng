@@ -8,10 +8,10 @@ import { ATNState } from "./ATNState.js";
 import { BlockStartState } from "./BlockStartState.js";
 
 /**
- * Terminal node of a simple `(a|b|c)` block
+ * Terminal node of a simple `(a|b|c)` block.
  */
 export class BlockEndState extends ATNState {
-    public startState: BlockStartState | null = null;
+    public static override readonly stateType = ATNState.BLOCK_END;
 
-    public override readonly stateType = ATNState.BLOCK_END;
+    public startState?: BlockStartState;
 }

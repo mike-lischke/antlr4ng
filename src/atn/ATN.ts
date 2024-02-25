@@ -84,7 +84,7 @@ export class ATN {
         }
 
         const analyzer = new LL1Analyzer(this);
-        const next = analyzer.look(atnState, undefined, ctx);
+        const next = analyzer.look(this, atnState, undefined, ctx);
         if (!ctx) {
             atnState.nextTokenWithinRule = next;
         }
@@ -94,7 +94,6 @@ export class ATN {
 
     public addState(state: ATNState | null): void {
         if (state) {
-            state.atn = this;
             state.stateNumber = this.states.length;
         }
         this.states.push(state);

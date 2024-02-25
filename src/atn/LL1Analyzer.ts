@@ -73,6 +73,7 @@ export class LL1Analyzer {
      * If `ctx` is not `null` and the end of the outermost rule is
      * reached, {@link Token//EOF} is added to the result set.
      *
+     * @param atn the ATN
      * @param s the ATN state
      * @param stopState the ATN state to stop at. This can be a
      * {@link BlockEndState} to detect epsilon paths through a closure.
@@ -82,10 +83,10 @@ export class LL1Analyzer {
      * @returns The set of tokens that can follow `s` in the ATN in the
      * specified `ctx`.
      */
-    public look(s: ATNState, stopState?: ATNState, ctx?: RuleContext): IntervalSet {
+    public look(atn: ATN, s: ATNState, stopState?: ATNState, ctx?: RuleContext): IntervalSet {
         const r = new IntervalSet();
 
-        const lookContext = ctx ? predictionContextFromRuleContext(s.atn!, ctx) : undefined;
+        const lookContext = ctx ? predictionContextFromRuleContext(atn, ctx) : undefined;
         this.doLook(s, stopState, lookContext, r, new Set(), new BitSet(), true, true);
 
         return r;
@@ -155,7 +156,7 @@ export class LL1Analyzer {
                 return;
             }
         }
-        if (s.stateType === ATNState.RULE_STOP) {
+        if ((s.constructor as typeof ATNState).stateType === ATNState.RULE_STOP) {
             if (!ctx) {
                 look.addOne(Token.EPSILON);
 

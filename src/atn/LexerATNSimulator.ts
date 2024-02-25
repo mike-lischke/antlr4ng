@@ -388,7 +388,7 @@ export class LexerATNSimulator extends ATNSimulator {
     private closure(input: CharStream, config: LexerATNConfig, configs: ATNConfigSet,
         currentAltReachedAcceptState: boolean, speculative: boolean, treatEofAsEpsilon: boolean): boolean {
         let cfg = null;
-        if (config.state.stateType === ATNState.RULE_STOP) {
+        if ((config.state.constructor as typeof ATNState).stateType === ATNState.RULE_STOP) {
             if (!config.context || config.context.hasEmptyPath()) {
                 if (!config.context || config.context.isEmpty()) {
                     configs.add(config);

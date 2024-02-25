@@ -137,7 +137,7 @@ export class ATNConfigSet {
             throw new Error("This set is readonly");
         }
 
-        if (!this.firstStopState && config.state.stateType === ATNState.RULE_STOP) {
+        if (!this.firstStopState && (config.state.constructor as typeof ATNState).stateType === ATNState.RULE_STOP) {
             this.firstStopState = config;
         }
 

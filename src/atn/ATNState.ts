@@ -6,7 +6,6 @@
 
 import { IntervalSet } from "../misc/IntervalSet.js";
 import { IComparable } from "../utils/helpers.js";
-import { ATN } from "./ATN.js";
 import { Transition } from "./Transition.js";
 
 export class ATNState implements IComparable {
@@ -25,10 +24,7 @@ export class ATNState implements IComparable {
     public static readonly PLUS_LOOP_BACK = 11;
     public static readonly LOOP_END = 12;
 
-    public readonly stateType: number = ATNState.INVALID_STATE_NUMBER;
-
-    /** Which ATN are we in? */
-    public atn: ATN | null = null;
+    public static readonly stateType: number = ATNState.INVALID_STATE_NUMBER;
 
     public stateNumber: number = 0;
     public ruleIndex: number = 0; // at runtime, we don't have Rule objects

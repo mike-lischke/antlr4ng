@@ -225,7 +225,7 @@ export class ATNSerializer {
                         continue;
                     }
 
-                    const stateType = s.stateType;
+                    const stateType = (s.constructor as typeof ATNState).stateType;
                     if (s instanceof DecisionState && s.nonGreedy) {
                         this.nonGreedyStates.push(s.stateNumber);
                     }
@@ -238,7 +238,7 @@ export class ATNSerializer {
 
                     this.data.push(s.ruleIndex);
 
-                    if (s.stateType === ATNState.LOOP_END) {
+                    if ((s.constructor as typeof ATNState).stateType === ATNState.LOOP_END) {
                         this.data.push((s as LoopEndState).loopBackState!.stateNumber);
                     } else {
                         if (s instanceof BlockStartState) {
@@ -246,7 +246,7 @@ export class ATNSerializer {
                         }
                     }
 
-                    if (s.stateType !== ATNState.RULE_STOP) {
+                    if ((s.constructor as typeof ATNState).stateType !== ATNState.RULE_STOP) {
                         // the deserializer can trivially derive these edges, so there's no need to serialize them
                         edgeCount += s.transitions.length;
                     }
@@ -273,7 +273,7 @@ export class ATNSerializer {
                         continue;
                     }
 
-                    if (s.stateType === ATNState.RULE_STOP) {
+                    if ((s.constructor as typeof ATNState).stateType === ATNState.RULE_STOP) {
                         continue;
                     }
 
