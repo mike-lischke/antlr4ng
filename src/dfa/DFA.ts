@@ -20,7 +20,6 @@ export class DFA {
     public readonly decision: number;
 
     /** From which ATN state did we create this DFA? */
-
     public readonly atnStartState: DecisionState | null;
 
     /**

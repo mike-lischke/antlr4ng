@@ -141,23 +141,23 @@ The following table shows the results of the benchmarks that were executed in th
 
 |    |C++ |antlr4ng|antlr4|antlr4ts|antl4wasm|
 |---:|---:|---:|---:|---:|---:|
-|Query Collection (cold)|1340 ms| <u>2703</u> ms| 7984 ms| 3402 ms| 3331 ms|
-|  Bitrix Queries (cold)| 195 ms|  <u>409</u> ms| 1134 ms|  444 ms|  998 ms|
-|   Large Inserts (cold)|4981 ms|10966 ms|<u>10695</u> ms|11483 ms|34243 ms|
-|Query Collection (warm)| 133 ms|  283 ms|  <u>223</u> ms|  259 ms| 1177 ms|
-|  Bitrix Queries (warm)|  70 ms|  173 ms|  <u>110</u> ms|  131 ms|  815 ms|
-|   Large Inserts (warm)|4971 ms|10859 ms|<u>10593</u> ms|11287 ms|36317 ms|
+|Query Collection (cold)|1340 ms| <u>243/2482 (2725)</u> ms| 7984 ms| 3402 ms| 3331 ms|
+|  Bitrix Queries (cold)| 195 ms|  <u>75/330 (405)</u> ms| 1134 ms|  444 ms|  998 ms|
+|   Large Inserts (cold)|4981 ms|<u>7358/3264 (10622) ms</u>|10695</u> ms|11483 ms|34243 ms|
+|Query Collection (warm)| 133 ms|  143/139 (281) ms|  <u>223</u> ms|  259 ms| 1177 ms|
+|  Bitrix Queries (warm)|  70 ms|  71/107 (178) ms|  <u>110</u> ms|  131 ms|  815 ms|
+|   Large Inserts (warm)|4971 ms|<u>7188/3303 (10491) ms</u>|10593 ms|11287 ms|36317 ms|
 |||||||
-|Total (cold)           |6546 ms|<u>14137</u> ms|19878 ms|15403 ms|38641 ms|
-|Total (warm)           |5198 ms|11339 ms|<u>10944</u> ms|11697 ms|38329 ms|
+|Total (cold)           |6546 ms|<u>7676/6076 (13752)</u> ms|19878 ms|15403 ms|38641 ms|
+|Total (warm)           |5198 ms|7403/3552 (10955) ms|<u>10944</u> ms|11697 ms|38329 ms|
 
-Underlined entries are the smallest (not counting C++ which beats them all).
+Underlined entries are the smallest (not counting C++, which beats them all). For antlr4ng, the times are split into lexing and parsing. Note the high lexer execution times, caused by the large number of predicates (126) + lexer actions (40) in the MySQL lexer.
 
-The benchmarks consist of a set of query files, which are parsed by a MySQL parser. The MySQL grammar is one of the largest and most complex grammars you can find for ANTLR4, which, I think, makes it a perfect test case for parser tests.
+The benchmarks consist of a set of query files parsed by a MySQL parser. The MySQL grammar is one of the largest and most complex grammars you can find for ANTLR4, which I think makes it a perfect test case for parser testing.
 
-The query collection file contains more than 900 MySQL queries of all kinds, from very simple comments-only statements to complex stored procedures, including some deeply nested select queries that can easily exhaust the available stack space (in certain situations, such as parsing in a thread with default stack size). The used MySQL server version was 8.2 (the grammar allows dynamic switching of server versions).
+The query collection file contains more than 900 MySQL queries of all kinds, from very simple comments-only statements to complex stored procedures, including some deeply nested select queries that can easily exhaust the available stack space (in certain situations, such as parsing in a thread with default stack size). The MySQL server version used was 8.2 (the grammar allows dynamic switching of server versions).
 
-The large binary inserts file contains only a few dozen queries, but they are really large with deep recursions, so they stress the prediction engine of the parser. In addition, one query contains binary (image) data containing input characters from the entire UTF-8 range.
+The large binary inserts file contains only a few dozen queries, but they are really large with deep recursions, so they stress the parser's prediction engine and often touch uncached DFA states because of the lexer predicates. In addition, one query contains binary (image) data with input characters from the entire UTF-8 range.
 
 The example file is a copy of the largest test file in [this repository](https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples), and is known to be very slow to parse with other MySQL grammars. The one used here, however, is fast.
 
