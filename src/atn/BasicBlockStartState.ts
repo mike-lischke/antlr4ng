@@ -4,9 +4,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { ATNStateType } from "./ATNStateType.js";
+import { ATNState } from "./ATNState.js";
 import { BlockStartState } from "./BlockStartState.js";
 
 export class BasicBlockStartState extends BlockStartState {
-    public override readonly stateType = ATNStateType.BLOCK_START;
+    public override readonly stateType = ATNState.BLOCK_START;
 }

@@ -17,7 +17,6 @@ import { ATN } from "./ATN.js";
 import { ATNConfig } from "./ATNConfig.js";
 import { ATNConfigSet } from "./ATNConfigSet.js";
 import { ATNSimulator } from "./ATNSimulator.js";
-import { ATNStateType } from "./ATNStateType.js";
 import { ActionTransition } from "./ActionTransition.js";
 import { AtomTransition } from "./AtomTransition.js";
 import { NotSetTransition } from "./NotSetTransition.js";
@@ -272,8 +271,7 @@ export class ParserATNSimulator extends ATNSimulator {
     protected _outerContext: ParserRuleContext | null = null;
     protected _dfa: DFA | null = null;
 
-    public constructor(recog: Parser, atn: ATN, decisionToDFA: DFA[],
-        sharedContextCache: PredictionContextCache | null) {
+    public constructor(recog: Parser, atn: ATN, decisionToDFA: DFA[], sharedContextCache?: PredictionContextCache) {
         super(atn, sharedContextCache);
         this.parser = recog;
         this.decisionToDFA = decisionToDFA;
@@ -1267,7 +1265,7 @@ export class ParserATNSimulator extends ATNSimulator {
             const c = this.getEpsilonTarget(config, t, continueCollecting, depth === 0, fullCtx, treatEofAsEpsilon);
             if (c) {
                 let newDepth = depth;
-                if (config.state.stateType === ATNStateType.RULE_STOP) {
+                if (config.state.stateType === ATNState.RULE_STOP) {
                     // target fell off end of rule; mark resulting c as having dipped into outer context
                     // We can't get here if incoming config was rule stop and we had context
                     // track how far we dip into outer context.  Might
@@ -1315,7 +1313,7 @@ export class ParserATNSimulator extends ATNSimulator {
         // the context has an empty stack case. If so, it would mean
         // global FOLLOW so we can't perform optimization
         // Are we the special loop entry/exit state? or SLL wildcard
-        if (p.stateType !== ATNStateType.STAR_LOOP_ENTRY || !config.context) {
+        if (p.stateType !== ATNState.STAR_LOOP_ENTRY || !config.context) {
             return false;
         }
 
@@ -1349,7 +1347,7 @@ export class ParserATNSimulator extends ATNSimulator {
 
             // Look for prefix op case like 'not expr', (' type ')' expr
             const returnStateTarget = returnState.transitions[0].target;
-            if (returnState.stateType === ATNStateType.BLOCK_END && returnStateTarget === p) {
+            if (returnState.stateType === ATNState.BLOCK_END && returnStateTarget === p) {
                 continue;
             }
 
@@ -1368,7 +1366,7 @@ export class ParserATNSimulator extends ATNSimulator {
 
             // Look for complex prefix 'between expr and expr' case where 2nd expr's
             // return state points at block end state of (...)* internal block
-            if (returnStateTarget.stateType === ATNStateType.BLOCK_END && returnStateTarget.transitions.length === 1
+            if (returnStateTarget.stateType === ATNState.BLOCK_END && returnStateTarget.transitions.length === 1
                 && returnStateTarget.transitions[0].isEpsilon && returnStateTarget.transitions[0].target === p) {
                 continue;
             }

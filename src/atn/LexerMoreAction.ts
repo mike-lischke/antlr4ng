@@ -14,11 +14,10 @@ import { Lexer } from "../Lexer.js";
  * Implements the `more` lexer action by calling {@link Lexer//more}.
  *
  * The `more` command does not have any parameters, so this action is
- * implemented as a singleton instance exposed by {@link INSTANCE}.
+ * implemented as a singleton instance exposed by {@link instance}.
  */
 export class LexerMoreAction extends LexerAction {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    public static readonly INSTANCE = new LexerMoreAction();
+    public static readonly instance = new LexerMoreAction();
 
     public constructor() {
         super(LexerActionType.MORE);

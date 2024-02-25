@@ -714,7 +714,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
                 this.interpreter = new ProfilingATNSimulator(this);
             }
         } else if (interp instanceof ProfilingATNSimulator) {
-            const sharedContextCache = interp.getSharedContextCache();
+            const sharedContextCache = interp.sharedContextCache;
             if (sharedContextCache) {
                 const sim = new ParserATNSimulator(this, this.atn, interp.decisionToDFA, sharedContextCache);
                 this.interpreter = sim;

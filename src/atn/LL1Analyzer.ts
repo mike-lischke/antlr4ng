@@ -8,8 +8,6 @@ import { Token } from "../Token.js";
 import { IntervalSet } from "../misc/IntervalSet.js";
 import { RuleTransition } from "./RuleTransition.js";
 import { NotSetTransition } from "./NotSetTransition.js";
-import { WildcardTransition } from "./WildcardTransition.js";
-import { AbstractPredicateTransition } from "./AbstractPredicateTransition.js";
 import { predictionContextFromRuleContext } from "./PredictionContextUtils.js";
 import { PredictionContext } from "./PredictionContext.js";
 import { SingletonPredictionContext } from "./SingletonPredictionContext.js";
@@ -18,7 +16,7 @@ import { ATNState } from "./ATNState.js";
 import { ATN } from "./ATN.js";
 import { RuleContext } from "../RuleContext.js";
 import { MurmurHash } from "../utils/MurmurHash.js";
-import { ATNStateType } from "./ATNStateType.js";
+import { Transition } from "./Transition.js";
 
 export class LL1Analyzer {
     /**
@@ -43,9 +41,9 @@ export class LL1Analyzer {
      * @param s the ATN state
      * @returns the expected symbols for each outgoing transition of `s`.
      */
-    public getDecisionLookahead(s: ATNState | null): Array<IntervalSet | null> | null {
-        if (s === null) {
-            return null;
+    public getDecisionLookahead(s?: ATNState): Array<IntervalSet | null> | undefined {
+        if (!s) {
+            return undefined;
         }
 
         const count = s.transitions.length;
@@ -53,9 +51,8 @@ export class LL1Analyzer {
         for (let alt = 0; alt < count; alt++) {
             const set = new IntervalSet();
             const lookBusy = new Set<number>();
-            const seeThruPreds = false; // fail to get lookahead upon pred
-            this.doLook(s.transitions[alt].target, null, PredictionContext.EMPTY, set, lookBusy, new BitSet(),
-                seeThruPreds, false);
+            this.doLook(s.transitions[alt].target, undefined, PredictionContext.EMPTY, set, lookBusy, new BitSet(),
+                false, false);
 
             // Add lookahead for this alternative if we found something
             // and we had no predicate when we !seeThruPreds.
@@ -85,12 +82,11 @@ export class LL1Analyzer {
      * @returns The set of tokens that can follow `s` in the ATN in the
      * specified `ctx`.
      */
-    public look(s: ATNState, stopState: ATNState | null, ctx: RuleContext | null): IntervalSet {
+    public look(s: ATNState, stopState?: ATNState, ctx?: RuleContext): IntervalSet {
         const r = new IntervalSet();
-        const seeThruPreds = true; // ignore preds; get all lookahead
-        ctx = ctx || null;
-        const lookContext = ctx !== null ? predictionContextFromRuleContext(s.atn!, ctx) : null;
-        this.doLook(s, stopState, lookContext, r, new Set(), new BitSet(), seeThruPreds, true);
+
+        const lookContext = ctx ? predictionContextFromRuleContext(s.atn!, ctx) : undefined;
+        this.doLook(s, stopState, lookContext, r, new Set(), new BitSet(), true, true);
 
         return r;
     }
@@ -125,7 +121,7 @@ export class LL1Analyzer {
      * outermost context is reached. This parameter has no effect if `ctx`
      * is `null`.
      */
-    private doLook(s: ATNState, stopState: ATNState | null, ctx: PredictionContext | null, look: IntervalSet,
+    private doLook(s: ATNState, stopState: ATNState | undefined, ctx: PredictionContext | undefined, look: IntervalSet,
         lookBusy: Set<number>, calledRuleStack: BitSet, seeThruPreds: boolean, addEOF: boolean): void {
 
         // `lookBusy` is essentially a standard recursion stopper. It's based on the given configuration details.
@@ -149,7 +145,7 @@ export class LL1Analyzer {
         }
 
         if (s === stopState) {
-            if (ctx === null) {
+            if (!ctx) {
                 look.addOne(Token.EPSILON);
 
                 return;
@@ -159,8 +155,8 @@ export class LL1Analyzer {
                 return;
             }
         }
-        if (s.stateType === ATNStateType.RULE_STOP) {
-            if (ctx === null) {
+        if (s.stateType === ATNState.RULE_STOP) {
+            if (!ctx) {
                 look.addOne(Token.EPSILON);
 
                 return;
@@ -178,8 +174,8 @@ export class LL1Analyzer {
                     // run thru all possible stack tops in ctx
                     for (let i = 0; i < ctx.length; i++) {
                         const returnState = this.atn.states[ctx.getReturnState(i)]!;
-                        this.doLook(returnState, stopState, ctx.getParent(i), look, lookBusy, calledRuleStack,
-                            seeThruPreds, addEOF);
+                        this.doLook(returnState, stopState, ctx.getParent(i) ?? undefined, look, lookBusy,
+                            calledRuleStack, seeThruPreds, addEOF);
                     }
                 } finally {
                     if (removed) {
@@ -192,34 +188,53 @@ export class LL1Analyzer {
         }
 
         for (const t of s.transitions) {
-            if (t instanceof RuleTransition) {
-                if (calledRuleStack.get(t.target.ruleIndex)) {
-                    continue;
-                }
-                const newContext = SingletonPredictionContext.create(ctx ?? undefined, t.followState.stateNumber);
-                try {
-                    calledRuleStack.set(t.target.ruleIndex);
-                    this.doLook(t.target, stopState, newContext, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
-                } finally {
-                    calledRuleStack.clear(t.target.ruleIndex);
-                }
-            } else if (t instanceof AbstractPredicateTransition) {
-                if (seeThruPreds) {
-                    this.doLook(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
-                } else {
-                    look.addOne(LL1Analyzer.hitPredicate);
-                }
-            } else if (t.isEpsilon) {
-                this.doLook(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
-            } else if (t.constructor === WildcardTransition) {
-                look.addRange(Token.MIN_USER_TOKEN_TYPE, this.atn.maxTokenType);
-            } else {
-                let set = t.label;
-                if (set !== null) {
-                    if (t instanceof NotSetTransition) {
-                        set = set.complement(Token.MIN_USER_TOKEN_TYPE, this.atn.maxTokenType);
+            switch (t.transitionType) {
+                case Transition.RULE: {
+                    if (calledRuleStack.get(t.target.ruleIndex)) {
+                        continue;
                     }
-                    look.addSet(set);
+
+                    const newContext = SingletonPredictionContext.create(ctx,
+                        (t as RuleTransition).followState.stateNumber);
+                    try {
+                        calledRuleStack.set(t.target.ruleIndex);
+                        this.doLook(t.target, stopState, newContext, look, lookBusy, calledRuleStack, seeThruPreds,
+                            addEOF);
+                    } finally {
+                        calledRuleStack.clear(t.target.ruleIndex);
+                    }
+                    break;
+                }
+
+                case Transition.PREDICATE:
+                case Transition.PRECEDENCE: {
+                    if (seeThruPreds) {
+                        this.doLook(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
+                    } else {
+                        look.addOne(LL1Analyzer.hitPredicate);
+                    }
+                    break;
+                }
+
+                case Transition.WILDCARD: {
+                    look.addRange(Token.MIN_USER_TOKEN_TYPE, this.atn.maxTokenType);
+                    break;
+                }
+
+                default: {
+                    if (t.isEpsilon) {
+                        this.doLook(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
+                    } else {
+                        let set = t.label;
+                        if (set) {
+                            if (t instanceof NotSetTransition) {
+                                set = set.complement(Token.MIN_USER_TOKEN_TYPE, this.atn.maxTokenType);
+                            }
+                            look.addSet(set);
+                        }
+                    }
+
+                    break;
                 }
             }
         }

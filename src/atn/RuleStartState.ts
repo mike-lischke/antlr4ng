@@ -5,7 +5,6 @@
  */
 
 import { ATNState } from "./ATNState.js";
-import { ATNStateType } from "./ATNStateType.js";
 import { RuleStopState } from "./RuleStopState.js";
 
 export class RuleStartState extends ATNState {
@@ -13,5 +12,5 @@ export class RuleStartState extends ATNState {
     public isLeftRecursiveRule: boolean = false;
     public isPrecedenceRule: boolean = false;
 
-    public override readonly stateType = ATNStateType.RULE_START;
+    public override readonly stateType = ATNState.RULE_START;
 }

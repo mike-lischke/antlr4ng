@@ -80,7 +80,7 @@ export class ATN {
         }
 
         const analyzer = new LL1Analyzer(this);
-        const next = analyzer.look(atnState, null, ctx ?? null);
+        const next = analyzer.look(atnState, undefined, ctx);
         if (!ctx) {
             atnState.nextTokenWithinRule = next;
         }

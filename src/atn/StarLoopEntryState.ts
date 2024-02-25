@@ -4,8 +4,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+import { ATNState } from "./ATNState.js";
 import { DecisionState } from "./DecisionState.js";
-import { ATNStateType } from "./ATNStateType.js";
 import { StarLoopbackState } from "./StarLoopbackState.js";
 
 export class StarLoopEntryState extends DecisionState {
@@ -24,5 +24,5 @@ export class StarLoopEntryState extends DecisionState {
      */
     public precedenceRuleDecision: boolean = false;
 
-    public override readonly stateType = ATNStateType.STAR_LOOP_ENTRY;
+    public override readonly stateType = ATNState.STAR_LOOP_ENTRY;
 }

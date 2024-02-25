@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { ATNStateType } from "./ATNStateType.js";
+import { ATNState } from "./ATNState.js";
 import { BlockStartState } from "./BlockStartState.js";
 import { PlusLoopbackState } from "./PlusLoopbackState.js";
 
@@ -17,5 +17,5 @@ import { PlusLoopbackState } from "./PlusLoopbackState.js";
 export class PlusBlockStartState extends BlockStartState {
     public loopBackState: PlusLoopbackState;
 
-    public override readonly stateType = ATNStateType.PLUS_BLOCK_START;
+    public override readonly stateType = ATNState.PLUS_BLOCK_START;
 }

@@ -5,7 +5,6 @@
  */
 
 import { ATNState } from "./ATNState.js";
-import { ATNStateType } from "./ATNStateType.js";
 import { BlockStartState } from "./BlockStartState.js";
 
 /**
@@ -14,5 +13,5 @@ import { BlockStartState } from "./BlockStartState.js";
 export class BlockEndState extends ATNState {
     public startState: BlockStartState | null = null;
 
-    public override readonly stateType = ATNStateType.BLOCK_END;
+    public override readonly stateType = ATNState.BLOCK_END;
 }

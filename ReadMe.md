@@ -146,7 +146,7 @@ The following table shows the results of the benchmarks that were executed in th
 |   Large Inserts (cold)|4981 ms|<ins>7244/3302 (10546) ms</ins>|10695 ms|11483 ms|34243 ms|
 |Query Collection (warm)| 133 ms|  142/141 (283) ms|  <ins>223 ms</ins>|  259 ms| 1177 ms|
 |  Bitrix Queries (warm)|  70 ms|  69/109 (178) ms|  <ins>110 ms</ins>|  131 ms|  815 ms|
-|   Large Inserts (warm)|4971 ms|<ins>7148/3318 (10466) ms</ins>|10593 ms|11287 ms|36317 ms|
+|   Large Inserts (warm)|4971 ms|<ins>7244/3302 (10546) ms</ins>|10593 ms|11287 ms|36317 ms|
 |||||||
 |Total (cold)           |6546 ms|<ins>7518/6029 (13752) ms</ins>|19878 ms|15403 ms|38641 ms|
 |Total (warm)           |5198 ms|<ins>7358/3567 (10925) ms<ins>|10944 ms|11697 ms|38329 ms|

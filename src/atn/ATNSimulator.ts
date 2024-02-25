@@ -39,13 +39,22 @@ export abstract class ATNSimulator {
      * more time I think and doesn't save on the overall footprint
      * so it's not worth the complexity.
      */
-    protected readonly sharedContextCache: PredictionContextCache | null = null;
+    public readonly sharedContextCache?: PredictionContextCache;
 
-    public constructor(atn: ATN, sharedContextCache: PredictionContextCache | null) {
+    public constructor(atn: ATN, sharedContextCache?: PredictionContextCache) {
         this.atn = atn;
         this.sharedContextCache = sharedContextCache;
 
         return this;
+    }
+
+    public getCachedContext(context: PredictionContext): PredictionContext {
+        if (!this.sharedContextCache) {
+            return context;
+        }
+        const visited = new HashMap<PredictionContext, PredictionContext>(ObjectEqualityComparator.instance);
+
+        return getCachedPredictionContext(context, this.sharedContextCache, visited);
     }
 
     /**
@@ -57,23 +66,7 @@ export abstract class ATNSimulator {
      * @throws UnsupportedOperationException if the current instance does not
      * support clearing the DFA.
      */
-    public clearDFA(): void {
-        throw new Error("This ATN simulator does not support clearing the DFA.");
-    }
-
-    public getSharedContextCache(): PredictionContextCache | null {
-        return this.sharedContextCache;
-    }
-
-    public getCachedContext(context: PredictionContext): PredictionContext {
-        if (this.sharedContextCache === null) {
-            return context;
-        }
-        const visited = new HashMap<PredictionContext, PredictionContext>(ObjectEqualityComparator.instance);
-
-        return getCachedPredictionContext(context, this.sharedContextCache, visited);
-    }
+    public abstract clearDFA(): void;
 
     public abstract reset(): void;
-
 }

@@ -16,7 +16,6 @@ import { ParserATNSimulator } from "./atn/ParserATNSimulator.js";
 import { RecognitionException } from "./RecognitionException.js";
 import { StarLoopEntryState } from "./atn/StarLoopEntryState.js";
 import { Token } from "./Token.js";
-import { ATNStateType } from "./atn/ATNStateType.js";
 import { DFA } from "./dfa/DFA.js";
 import { PredictionContextCache } from "./atn/PredictionContextCache.js";
 import { ATN } from "./atn/ATN.js";
@@ -118,7 +117,7 @@ export class ParserInterpreter extends Parser {
         while (true) {
             const p = this.atnState;
             switch (p.stateType) {
-                case ATNStateType.RULE_STOP:
+                case ATNState.RULE_STOP:
                     // pop; return from rule
                     if (this.context?.isEmpty) {
                         if (startRuleStartState.isPrecedenceRule) {
@@ -183,7 +182,7 @@ export class ParserInterpreter extends Parser {
         switch (transition.transitionType) {
             case Transition.EPSILON:
                 if (this.#pushRecursionContextStates.get(p.stateNumber) &&
-                    !(transition.target.stateType === ATNStateType.LOOP_END)) {
+                    !(transition.target.stateType === ATNState.LOOP_END)) {
                     // We are at the start of a left recursive rule's (...)* loop
                     // and we're not taking the exit branch of loop.
                     const parentContext = this.#parentContextStack[this.#parentContextStack.length - 1];

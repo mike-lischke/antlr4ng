@@ -12,7 +12,6 @@ export * from "./ATNDeserializer.js";
 export * from "./ATNSerializer.js";
 export * from "./ATNSimulator.js";
 export * from "./ATNState.js";
-export * from "./ATNStateType.js";
 export * from "./ATNType.js";
 export * from "./AbstractPredicateTransition.js";
 export * from "./ActionTransition.js";

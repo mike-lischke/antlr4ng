@@ -11,6 +11,19 @@ import { Transition } from "./Transition.js";
 
 export class ATNState implements IComparable {
     public static readonly INVALID_STATE_NUMBER = -1;
+    public static readonly INVALID_TYPE = 0;
+    public static readonly BASIC = 1;
+    public static readonly RULE_START = 2;
+    public static readonly BLOCK_START = 3;
+    public static readonly PLUS_BLOCK_START = 4;
+    public static readonly STAR_BLOCK_START = 5;
+    public static readonly TOKEN_START = 6;
+    public static readonly RULE_STOP = 7;
+    public static readonly BLOCK_END = 8;
+    public static readonly STAR_LOOP_BACK = 9;
+    public static readonly STAR_LOOP_ENTRY = 10;
+    public static readonly PLUS_LOOP_BACK = 11;
+    public static readonly LOOP_END = 12;
 
     public readonly stateType: number = ATNState.INVALID_STATE_NUMBER;
 

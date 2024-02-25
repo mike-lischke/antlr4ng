@@ -14,11 +14,10 @@ import { Lexer } from "../Lexer.js";
  * Implements the `popMode` lexer action by calling {@link Lexer//popMode}.
  *
  * The `popMode` command does not have any parameters, so this action is
- * implemented as a singleton instance exposed by {@link INSTANCE}.
+ * implemented as a singleton instance exposed by {@link instance}.
  */
 export class LexerPopModeAction extends LexerAction {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    public static readonly INSTANCE = new LexerPopModeAction();
+    public static readonly instance = new LexerPopModeAction();
 
     public constructor() {
         super(LexerActionType.POP_MODE);

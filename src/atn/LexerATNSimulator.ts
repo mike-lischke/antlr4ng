@@ -26,7 +26,6 @@ import { ATNState } from "./ATNState.js";
 import { RuleTransition } from "./RuleTransition.js";
 import { PredicateTransition } from "./PredicateTransition.js";
 import { ActionTransition } from "./ActionTransition.js";
-import { ATNStateType } from "./ATNStateType.js";
 
 /**
  * When we hit an accept state in either the DFA or the ATN, we
@@ -98,7 +97,7 @@ export class LexerATNSimulator extends ATNSimulator {
      * can simply return the predicted token type.
      */
     public constructor(recog: Lexer | null, atn: ATN, decisionToDFA: DFA[],
-        sharedContextCache: PredictionContextCache | null) {
+        sharedContextCache?: PredictionContextCache) {
         super(atn, sharedContextCache);
         this.decisionToDFA = decisionToDFA;
         this.recognizer = recog;
@@ -389,7 +388,7 @@ export class LexerATNSimulator extends ATNSimulator {
     private closure(input: CharStream, config: LexerATNConfig, configs: ATNConfigSet,
         currentAltReachedAcceptState: boolean, speculative: boolean, treatEofAsEpsilon: boolean): boolean {
         let cfg = null;
-        if (config.state.stateType === ATNStateType.RULE_STOP) {
+        if (config.state.stateType === ATNState.RULE_STOP) {
             if (!config.context || config.context.hasEmptyPath()) {
                 if (!config.context || config.context.isEmpty()) {
                     configs.add(config);

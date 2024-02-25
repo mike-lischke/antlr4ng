@@ -20,7 +20,6 @@ import { ATNSimulator } from "./ATNSimulator.js";
 import { MurmurHash } from "../utils/MurmurHash.js";
 import { HashSet } from "../misc/HashSet.js";
 import type { EqualityComparator } from "../misc/EqualityComparator.js";
-import { ATNStateType } from "./ATNStateType.js";
 
 class KeyTypeEqualityComparer implements EqualityComparator<ATNConfig> {
     public static readonly instance = new KeyTypeEqualityComparer();
@@ -138,7 +137,7 @@ export class ATNConfigSet {
             throw new Error("This set is readonly");
         }
 
-        if (!this.firstStopState && config.state.stateType === ATNStateType.RULE_STOP) {
+        if (!this.firstStopState && config.state.stateType === ATNState.RULE_STOP) {
             this.firstStopState = config;
         }
 

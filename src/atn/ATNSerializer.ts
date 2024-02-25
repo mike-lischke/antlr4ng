@@ -11,7 +11,7 @@ import { ObjectEqualityComparator } from "../misc/ObjectEqualityComparator.js";
 import { OrderedHashMap } from "../misc/OrderedHashMap.js";
 import type { ATN } from "./ATN.js";
 import { ATNDeserializer } from "./ATNDeserializer.js";
-import { ATNStateType } from "./ATNStateType.js";
+import { ATNState } from "./ATNState.js";
 import { ATNType } from "./ATNType.js";
 import type { ActionTransition } from "./ActionTransition.js";
 import type { AtomTransition } from "./AtomTransition.js";
@@ -222,7 +222,7 @@ export class ATNSerializer {
                 this.data.push(this.atn.states.length);
                 for (const s of this.atn.states) {
                     if (s === null) { // might be optimized away
-                        this.data.push(ATNStateType.INVALID_TYPE);
+                        this.data.push(ATNState.INVALID_TYPE);
                         continue;
                     }
 
@@ -239,7 +239,7 @@ export class ATNSerializer {
 
                     this.data.push(s.ruleIndex);
 
-                    if (s.stateType === ATNStateType.LOOP_END) {
+                    if (s.stateType === ATNState.LOOP_END) {
                         this.data.push((s as LoopEndState).loopBackState!.stateNumber);
                     } else {
                         if (s instanceof BlockStartState) {
@@ -247,7 +247,7 @@ export class ATNSerializer {
                         }
                     }
 
-                    if (s.stateType !== ATNStateType.RULE_STOP) {
+                    if (s.stateType !== ATNState.RULE_STOP) {
                         // the deserializer can trivially derive these edges, so there's no need to serialize them
                         edgeCount += s.transitions.length;
                     }
@@ -274,7 +274,7 @@ export class ATNSerializer {
                         continue;
                     }
 
-                    if (s.stateType === ATNStateType.RULE_STOP) {
+                    if (s.stateType === ATNState.RULE_STOP) {
                         continue;
                     }
 

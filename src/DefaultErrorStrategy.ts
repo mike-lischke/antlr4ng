@@ -12,7 +12,6 @@ import { NoViableAltException } from "./NoViableAltException.js";
 import { ATNState } from "./atn/ATNState.js";
 import { Token } from "./Token.js";
 import { IntervalSet } from "./misc/IntervalSet.js";
-import { ATNStateType } from "./atn/ATNStateType.js";
 import { ParserRuleContext } from "./ParserRuleContext.js";
 import { Parser } from "./Parser.js";
 import { RecognitionException } from "./RecognitionException.js";
@@ -228,18 +227,18 @@ export class DefaultErrorStrategy {
             return;
         }
         switch (s.stateType) {
-            case ATNStateType.BLOCK_START:
-            case ATNStateType.STAR_BLOCK_START:
-            case ATNStateType.PLUS_BLOCK_START:
-            case ATNStateType.STAR_LOOP_ENTRY:
+            case ATNState.BLOCK_START:
+            case ATNState.STAR_BLOCK_START:
+            case ATNState.PLUS_BLOCK_START:
+            case ATNState.STAR_LOOP_ENTRY:
                 // report error and recover if possible
                 if (this.singleTokenDeletion(recognizer) !== null) {
                     return;
                 } else {
                     throw new InputMismatchException(recognizer);
                 }
-            case ATNStateType.PLUS_LOOP_BACK:
-            case ATNStateType.STAR_LOOP_BACK:
+            case ATNState.PLUS_LOOP_BACK:
+            case ATNState.STAR_LOOP_BACK:
                 {
                     this.reportUnwantedToken(recognizer);
                     const expecting = new IntervalSet();
