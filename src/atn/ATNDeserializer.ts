@@ -6,7 +6,6 @@
 
 import { Token } from "../Token.js";
 import { ATN } from "./ATN.js";
-import { ATNType } from "./ATNType.js";
 
 import { BasicState } from "./BasicState.js";
 import { DecisionState } from "./DecisionState.js";
@@ -111,7 +110,7 @@ export class ATNDeserializer {
         this.markPrecedenceDecisions(atn);
         this.verifyATN(atn);
 
-        if (this.deserializationOptions.generateRuleBypassTransitions && atn.grammarType === ATNType.PARSER) {
+        if (this.deserializationOptions.generateRuleBypassTransitions && atn.grammarType === ATN.PARSER) {
             this.generateRuleBypassTransitions(atn);
 
             // re-verify after modification
@@ -190,7 +189,7 @@ export class ATNDeserializer {
     private readRules(atn: ATN): void {
         let i;
         const ruleCount = this.data[this.pos++];
-        if (atn.grammarType === ATNType.LEXER) {
+        if (atn.grammarType === ATN.LEXER) {
             atn.ruleToTokenType = new Array(ruleCount);
             atn.ruleToTokenType.fill(0);
         }
@@ -200,7 +199,7 @@ export class ATNDeserializer {
         for (i = 0; i < ruleCount; i++) {
             const s = this.data[this.pos++];
             atn.ruleToStartState[i] = atn.states[s] as RuleStartState;
-            if (atn.grammarType === ATNType.LEXER) {
+            if (atn.grammarType === ATN.LEXER) {
                 const tokenType = this.data[this.pos++];
                 atn.ruleToTokenType[i] = tokenType;
             }
@@ -322,7 +321,7 @@ export class ATNDeserializer {
     }
 
     private readLexerActions(atn: ATN): void {
-        if (atn.grammarType === ATNType.LEXER) {
+        if (atn.grammarType === ATN.LEXER) {
             const count = this.data[this.pos++];
             atn.lexerActions = [];
             for (let i = 0; i < count; i++) {

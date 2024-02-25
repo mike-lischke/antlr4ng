@@ -35,7 +35,7 @@ export class ATNState implements IComparable {
     public epsilonOnlyTransitions: boolean = false;
 
     /** Used to cache lookahead during parsing, not used during construction */
-    public nextTokenWithinRule: IntervalSet | null = null;
+    public nextTokenWithinRule?: IntervalSet;
 
     /** Track the transitions emanating from this ATN state. */
     public transitions: Transition[] = [];
@@ -46,10 +46,6 @@ export class ATNState implements IComparable {
 
     public equals(other: ATNState): boolean {
         return this.stateNumber === other.stateNumber;
-    }
-
-    public isNonGreedyExitState(): boolean {
-        return false;
     }
 
     public toString(): string {

@@ -21,6 +21,10 @@ import { RuleTransition } from "./RuleTransition.js";
 export class ATN {
     public static INVALID_ALT_NUMBER = 0;
 
+    /** Represents the type of recognizer an ATN applies to */
+    public static readonly LEXER = 0;
+    public static readonly PARSER = 1;
+
     /**
      * Used for runtime deserialization of ATNs from strings
      * The type of the ATN.

@@ -9,10 +9,9 @@ import { Token } from "../Token.js";
 import type { IntervalSet } from "../misc/IntervalSet.js";
 import { ObjectEqualityComparator } from "../misc/ObjectEqualityComparator.js";
 import { OrderedHashMap } from "../misc/OrderedHashMap.js";
-import type { ATN } from "./ATN.js";
+import { ATN } from "./ATN.js";
 import { ATNDeserializer } from "./ATNDeserializer.js";
 import { ATNState } from "./ATNState.js";
-import { ATNType } from "./ATNType.js";
 import type { ActionTransition } from "./ActionTransition.js";
 import type { AtomTransition } from "./AtomTransition.js";
 import { BlockStartState } from "./BlockStartState.js";
@@ -137,7 +136,7 @@ export class ATNSerializer {
     }
 
     private addLexerActions(): void {
-        if (this.atn.grammarType === ATNType.LEXER) {
+        if (this.atn.grammarType === ATN.LEXER) {
             this.data.push(this.atn.lexerActions.length);
             for (const action of this.atn.lexerActions) {
                 this.data.push(action.actionType);
@@ -402,7 +401,7 @@ export class ATNSerializer {
         for (let r = 0; r < ruleCount; r++) {
             const ruleStartState = this.atn.ruleToStartState[r];
             this.data.push(ruleStartState!.stateNumber);
-            if (this.atn.grammarType === ATNType.LEXER) {
+            if (this.atn.grammarType === ATN.LEXER) {
                 this.data.push(this.atn.ruleToTokenType[r]);
             }
         }
