@@ -139,12 +139,12 @@ This suite consists of 530 tests and runs in about 9s.
 
 The following table shows the results of the benchmarks that were executed in the [antlr4wasm project](https://github.com/mike-lischke/antlr4wasm/tree/master/benchmarks/mysql). The column for antlr4ng, howevever, contains the current results of this runtime.
 
-|    |C++ |antlr4ng|antlr4|antlr4ts|antl4wasm|
+|    | C++ |antlr4ng|antlr4|antlr4ts|antl4wasm|
 |---:|---:|---:|---:|---:|---:|
-|Query Collection (cold)|1340 ms| _243/2482 (2725) ms_| 7984 ms| 3402 ms| 3331 ms|
-|  Bitrix Queries (cold)| 195 ms|  _75/330 (405) ms_| 1134 ms|  444 ms|  998 ms|
-|   Large Inserts (cold)|4981 ms|_7358/3264 (10622) ms_|10695 ms|11483 ms|34243 ms|
-|Query Collection (warm)| 133 ms|  143/139 (281) ms|  _223 ms_|  259 ms| 1177 ms|
+|Query Collection (cold)|1340 ms| <ins>243/2482 (2725) ms</ins>| 7984 ms| 3402 ms| 3331 ms|
+|  Bitrix Queries (cold)| 195 ms|  <ins>75/330 (405) ms</ins>| 1134 ms|  444 ms|  998 ms|
+|   Large Inserts (cold)|4981 ms|<ins>7358/3264 (10622) ms</ins>|10695 ms|11483 ms|34243 ms|
+|Query Collection (warm)| 133 ms|  143/139 (281) ms|  <ins>223 ms</ins>|  259 ms| 1177 ms|
 |  Bitrix Queries (warm)|  70 ms|  71/107 (178) ms|  _110 ms_|  131 ms|  815 ms|
 |   Large Inserts (warm)|4971 ms|_7188/3303 (10491) ms_|10593 ms|11287 ms|36317 ms|
 |||||||
