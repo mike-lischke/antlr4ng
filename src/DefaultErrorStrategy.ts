@@ -473,7 +473,7 @@ export class DefaultErrorStrategy {
         const atn = recognizer.atn;
         const currentState = atn.states[recognizer.state];
         const next = currentState!.transitions[0].target;
-        const expectingAtLL2 = atn.nextTokens(next, recognizer.context);
+        const expectingAtLL2 = atn.nextTokens(next, recognizer.context ?? undefined);
         if (expectingAtLL2.contains(currentSymbolType)) {
             this.reportMissingToken(recognizer);
 

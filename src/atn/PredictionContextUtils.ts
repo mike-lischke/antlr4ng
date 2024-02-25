@@ -23,14 +23,14 @@ import { ObjectEqualityComparator } from "../misc/ObjectEqualityComparator.js";
  * Convert a {@link RuleContext} tree to a {@link PredictionContext} graph.
  * Return {@link EMPTY} if `outerContext` is empty or null.
  */
-export const predictionContextFromRuleContext = (atn: ATN, outerContext: RuleContext): PredictionContext => {
-    if (outerContext === undefined || outerContext === null) {
+export const predictionContextFromRuleContext = (atn: ATN, outerContext?: RuleContext): PredictionContext => {
+    if (!outerContext) {
         outerContext = ParserRuleContext.EMPTY;
     }
 
     // if we are in RuleContext of start rule, s, then PredictionContext
     // is EMPTY. Nobody called us. (if we are empty, return empty)
-    if (outerContext.parent === null || outerContext === ParserRuleContext.EMPTY) {
+    if (!outerContext.parent || outerContext === ParserRuleContext.EMPTY) {
         return PredictionContext.EMPTY;
     }
 
@@ -87,7 +87,7 @@ export const getCachedPredictionContext = (context: PredictionContext, contextCa
     if (parents.length === 0) {
         updated = PredictionContext.EMPTY;
     } else if (parents.length === 1) {
-        updated = SingletonPredictionContext.create(parents[0], context.getReturnState(0));
+        updated = SingletonPredictionContext.create(parents[0] ?? undefined, context.getReturnState(0));
     } else {
         updated = new ArrayPredictionContext(parents, (context as ArrayPredictionContext).returnStates);
     }
@@ -227,7 +227,7 @@ const mergeArrays = (a: ArrayPredictionContext, b: ArrayPredictionContext, rootI
     // trim merged if we combined a few that had same stack tops
     if (k < mergedParents.length) { // write index < last position; trim
         if (k === 1) { // for just one merged element, return singleton top
-            const aNew = SingletonPredictionContext.create(mergedParents[0], mergedReturnStates[0]);
+            const aNew = SingletonPredictionContext.create(mergedParents[0] ?? undefined, mergedReturnStates[0]);
             if (mergeCache !== null) {
                 mergeCache.set(a, b, aNew);
             }

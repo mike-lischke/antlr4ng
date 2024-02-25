@@ -196,7 +196,7 @@ export class LL1Analyzer {
                 if (calledRuleStack.get(t.target.ruleIndex)) {
                     continue;
                 }
-                const newContext = SingletonPredictionContext.create(ctx, t.followState.stateNumber);
+                const newContext = SingletonPredictionContext.create(ctx ?? undefined, t.followState.stateNumber);
                 try {
                     calledRuleStack.set(t.target.ruleIndex);
                     this.doLook(t.target, stopState, newContext, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);

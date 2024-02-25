@@ -458,7 +458,7 @@ export class LexerATNSimulator extends ATNSimulator {
 
         this.#lexerATNConfigFactory[Transition.RULE] = (input: CharStream, config: LexerATNConfig,
             trans: Transition) => {
-            const newContext = SingletonPredictionContext.create(config.context,
+            const newContext = SingletonPredictionContext.create(config.context ?? undefined,
                 (trans as RuleTransition).followState.stateNumber);
 
             return LexerATNConfig.createWithConfig(trans.target, config, newContext);

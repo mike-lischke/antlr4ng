@@ -6,7 +6,7 @@
 
 import { PredictionContext } from "./PredictionContext.js";
 
-import { equalArrays } from "../utils/helpers.js";
+import { equalArrays, equalNumberArrays } from "../utils/helpers.js";
 
 export class ArrayPredictionContext extends PredictionContext {
     public readonly parents: Array<PredictionContext | null> = [];
@@ -54,7 +54,7 @@ export class ArrayPredictionContext extends PredictionContext {
             return false; // can't be same if hash is different
         }
 
-        return equalArrays(this.returnStates, other.returnStates) &&
+        return equalNumberArrays(this.returnStates, other.returnStates) &&
             equalArrays(this.parents, other.parents);
 
     }
@@ -62,25 +62,23 @@ export class ArrayPredictionContext extends PredictionContext {
     public override toString(): string {
         if (this.isEmpty()) {
             return "[]";
-        } else {
-            let s = "[";
-            for (let i = 0; i < this.returnStates.length; i++) {
-                if (i > 0) {
-                    s = s + ", ";
-                }
-                if (this.returnStates[i] === PredictionContext.EMPTY_RETURN_STATE) {
-                    s = s + "$";
-                    continue;
-                }
-                s = s + this.returnStates[i];
-                if (this.parents[i] !== null) {
-                    s = s + " " + this.parents[i];
-                } else {
-                    s = s + "null";
-                }
+        }
+
+        const entries: string[] = [];
+        for (let i = 0; i < this.returnStates.length; i++) {
+            if (this.returnStates[i] === PredictionContext.EMPTY_RETURN_STATE) {
+                entries.push("$");
+                continue;
             }
 
-            return s + "]";
+            entries.push(this.returnStates[i]!.toString());
+            if (this.parents[i]) {
+                entries.push(this.parents[i]!.toString());
+            } else {
+                entries.push("null");
+            }
         }
+
+        return `[${entries.join(", ")}]`;
     }
 }

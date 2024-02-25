@@ -10,17 +10,17 @@ export class SingletonPredictionContext extends PredictionContext {
     public readonly parent: PredictionContext | null;
     public readonly returnState: number;
 
-    public constructor(parent: PredictionContext | null, returnState: number) {
-        super(parent != null
+    public constructor(parent: PredictionContext | undefined, returnState: number) {
+        super(parent
             ? PredictionContext.calculateHashCodeSingle(parent, returnState)
             : PredictionContext.calculateEmptyHashCode(),
         );
 
-        this.parent = parent;
+        this.parent = parent ?? null;
         this.returnState = returnState;
     }
 
-    public static create(parent: PredictionContext | null, returnState: number): SingletonPredictionContext {
+    public static create(parent: PredictionContext | undefined, returnState: number): SingletonPredictionContext {
         if (returnState === PredictionContext.EMPTY_RETURN_STATE && parent === null) {
             // someone can pass in the bits of an array ctx that mean $
             return PredictionContext.EMPTY as SingletonPredictionContext;

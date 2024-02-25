@@ -16,7 +16,7 @@ export class EmptyPredictionContext extends SingletonPredictionContext {
     public static readonly Instance = new EmptyPredictionContext();
 
     public constructor() {
-        super(null, PredictionContext.EMPTY_RETURN_STATE);
+        super(undefined, PredictionContext.EMPTY_RETURN_STATE);
     }
 
     public override isEmpty(): boolean {

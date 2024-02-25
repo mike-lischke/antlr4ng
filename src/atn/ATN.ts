@@ -74,25 +74,22 @@ export class ATN {
      * the rule surrounding `s`. In other words, the set will be
      * restricted to tokens reachable staying within `s`'s rule.
      */
-    public nextTokens(atnState: ATNState, ctx?: RuleContext | null): IntervalSet {
-        if (ctx === undefined) {
-            if (atnState.nextTokenWithinRule !== null) {
-                return atnState.nextTokenWithinRule;
-            }
-
-            atnState.nextTokenWithinRule = this.nextTokens(atnState, null);
-
+    public nextTokens(atnState: ATNState, ctx?: RuleContext): IntervalSet {
+        if (!ctx && atnState.nextTokenWithinRule) {
             return atnState.nextTokenWithinRule;
-
         }
 
         const analyzer = new LL1Analyzer(this);
+        const next = analyzer.look(atnState, null, ctx ?? null);
+        if (!ctx) {
+            atnState.nextTokenWithinRule = next;
+        }
 
-        return analyzer.look(atnState, null, ctx);
+        return next;
     }
 
     public addState(state: ATNState | null): void {
-        if (state !== null) {
+        if (state) {
             state.atn = this;
             state.stateNumber = this.states.length;
         }

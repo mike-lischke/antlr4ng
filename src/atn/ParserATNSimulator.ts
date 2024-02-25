@@ -1469,7 +1469,7 @@ export class ParserATNSimulator extends ATNSimulator {
 
     protected ruleTransition(config: ATNConfig, t: RuleTransition): ATNConfig {
         const returnState = t.followState;
-        const newContext = SingletonPredictionContext.create(config.context, returnState.stateNumber);
+        const newContext = SingletonPredictionContext.create(config.context ?? undefined, returnState.stateNumber);
 
         return ATNConfig.createWithConfig(t.target, config, newContext);
     }

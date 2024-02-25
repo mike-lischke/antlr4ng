@@ -35,7 +35,7 @@ export const arrayToString = (value: unknown[] | null): string => {
  *
  * @returns `true` if `a` and `b` are equal.
  */
-export const equalArrays = (a: unknown[], b: unknown[]): boolean => {
+export const equalArrays = <T extends IComparable | null>(a: T[], b: T[]): boolean => {
     if (a === b) {
         return true;
     }
@@ -51,7 +51,33 @@ export const equalArrays = (a: unknown[], b: unknown[]): boolean => {
             continue;
         }
 
-        if (isComparable(left) && !left.equals(right)) {
+        if (!left || !left.equals(right)) {
+            return false;
+        }
+    }
+
+    return true;
+};
+
+/**
+ * Compares two number arrays for equality.
+ *
+ * @param a The first array to compare.
+ * @param b The second array to compare.
+ *
+ * @returns `true` if `a` and `b` are equal.
+ */
+export const equalNumberArrays = (a: number[], b: number[]): boolean => {
+    if (a === b) {
+        return true;
+    }
+
+    if (a.length !== b.length) {
+        return false;
+    }
+
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) {
             return false;
         }
     }
