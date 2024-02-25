@@ -40,15 +40,25 @@ export class SingletonPredictionContext extends PredictionContext {
     public equals(other: unknown): boolean {
         if (this === other) {
             return true;
-        } else if (!(other instanceof SingletonPredictionContext)) {
-            return false;
-        } else if (this.hashCode() !== other.hashCode()) {
-            return false; // can't be same if hash is different
-        } else {
-            if (this.returnState !== other.returnState) { return false; }
-            else if (this.parent == null) { return other.parent == null; }
-            else { return this.parent.equals(other.parent); }
         }
+
+        if (!(other instanceof SingletonPredictionContext)) {
+            return false;
+        }
+
+        if (this.hashCode() !== other.hashCode()) {
+            return false; // can't be same if hash is different
+        }
+
+        if (this.returnState !== other.returnState) {
+            return false;
+        }
+
+        if (this.parent == null) {
+            return other.parent == null;
+        }
+
+        return this.parent.equals(other.parent);
     }
 
     public override toString(): string {
@@ -56,9 +66,9 @@ export class SingletonPredictionContext extends PredictionContext {
         if (up.length === 0) {
             if (this.returnState === PredictionContext.EMPTY_RETURN_STATE) {
                 return "$";
-            } else {
-                return "" + this.returnState;
             }
+
+            return "" + this.returnState;
         } else {
             return "" + this.returnState + " " + up;
         }

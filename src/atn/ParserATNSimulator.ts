@@ -47,6 +47,15 @@ import type { PrecedencePredicateTransition } from "./PrecedencePredicateTransit
 import type { PredicateTransition } from "./PredicateTransition.js";
 import { PredPrediction } from "../dfa/PredPrediction.js";
 
+/** Comprises the input values for the current prediction run. */
+interface PredictionState {
+    input?: TokenStream;
+    startIndex: number;
+    outerContext?: ParserRuleContext,
+    dfa?: DFA,
+
+}
+
 /**
  * The embodiment of the adaptive LL(*), ALL(*), parsing strategy.
  *
@@ -182,7 +191,7 @@ import { PredPrediction } from "../dfa/PredPrediction.js";
  * The {@link ParserATNSimulator} locks on the {@link decisionToDFA} field when
  * it adds a new DFA object to that array. {@link addDFAEdge}
  * locks on the DFA for the current decision when setting the
- * {@link DFAState//edges} field. {@link addDFAState} locks on
+ * {@link DFAState.edges} field. {@link addDFAState} locks on
  * the DFA for the current decision when looking up a DFA state to see if it
  * already exists. We must make sure that all requests to add DFA states that
  * are equivalent result in the same shared DFA object. This is because lots of
@@ -194,8 +203,8 @@ import { PredPrediction } from "../dfa/PredPrediction.js";
  * safe as long as we can guarantee that all threads referencing
  * `s.edge[t]` get the same physical target {@link DFAState}, or
  * `null`. Once into the DFA, the DFA simulation does not reference the
- * {@link DFA//states} map. It follows the {@link DFAState//edges} field to new
- * targets. The DFA simulator will either find {@link DFAState//edges} to be
+ * {@link DFA.states} map. It follows the {@link DFAState.edges} field to new
+ * targets. The DFA simulator will either find {@link DFAState.edges} to be
  * `null`, to be non-`null` and `dfa.edges[t]` null, or
  * `dfa.edges[t]` to be non-null. The
  * {@link addDFAEdge} method could be racing to set the field
@@ -212,9 +221,9 @@ import { PredPrediction } from "../dfa/PredPrediction.js";
  * mode with the {@link BailErrorStrategy}:
  *
  * ```
- * parser.{@link Parser//getInterpreter() getInterpreter()}.{@link setPredictionMode setPredictionMode}`(`
- * {@link PredictionMode//SLL}`)`;
- * parser.{@link Parser//setErrorHandler setErrorHandler}(new {@link BailErrorStrategy}());
+ * parser.{@link Parser.getInterpreter() getInterpreter()}.{@link setPredictionMode setPredictionMode}`(`
+ * {@link PredictionMode.SLL}`)`;
+ * parser.{@link Parser.setErrorHandler setErrorHandler}(new {@link BailErrorStrategy}());
  * ```
  *
  * If it does not get a syntax error, then we're done. If it does get a syntax
@@ -256,20 +265,17 @@ export class ParserATNSimulator extends ATNSimulator {
 
     /**
      * Each prediction operation uses a cache for merge of prediction contexts.
-     *  Don't keep around as it wastes huge amounts of memory. DoubleKeyMap
-     *  isn't synchronized but we're ok since two threads shouldn't reuse same
-     *  parser/atn sim object because it can only handle one input at a time.
-     *  This maps graphs a and b to merged result c. (a,b)->c. We can avoid
-     *  the merge if we ever see a and b again.  Note that (b,a)->c should
-     *  also be examined during cache lookup.
+     * Don't keep around as it wastes huge amounts of memory. DoubleKeyMap
+     * isn't synchronized but we're ok since two threads shouldn't reuse same
+     * parser/atn sim object because it can only handle one input at a time.
+     * This maps graphs a and b to merged result c. (a,b)->c. We can avoid
+     * the merge if we ever see a and b again.  Note that (b,a)->c should
+     * also be examined during cache lookup.
      */
     protected mergeCache = new DoubleDict<PredictionContext, PredictionContext, PredictionContext>();
 
-    // LAME globals to avoid parameters!!!!! I need these down deep in predTransition
-    protected _input: TokenStream | null = null;
-    protected _startIndex = 0;
-    protected _outerContext: ParserRuleContext | null = null;
-    protected _dfa: DFA | null = null;
+    // Used also in the profiling ATN simulator.
+    protected predictionState: PredictionState | undefined;
 
     public constructor(recog: Parser, atn: ATN, decisionToDFA: DFA[], sharedContextCache?: PredictionContextCache) {
         super(atn, sharedContextCache);
@@ -277,7 +283,7 @@ export class ParserATNSimulator extends ATNSimulator {
         this.decisionToDFA = decisionToDFA;
     }
 
-    protected static getUniqueAlt(configs: ATNConfigSet): number {
+    private static getUniqueAlt(configs: ATNConfigSet): number {
         let alt = ATN.INVALID_ALT_NUMBER;
         for (const c of configs) {
             if (alt === ATN.INVALID_ALT_NUMBER) {
@@ -298,13 +304,16 @@ export class ParserATNSimulator extends ATNSimulator {
         }
     }
 
+    // TODO: make outerContext an optional parameter, not optional null.
     public adaptivePredict(input: TokenStream, decision: number, outerContext: ParserRuleContext | null): number {
-        this._input = input;
-        this._startIndex = input.index;
-        this._outerContext = outerContext;
-
         const dfa = this.decisionToDFA[decision];
-        this._dfa = dfa;
+        this.predictionState = {
+            input,
+            startIndex: input.index,
+            outerContext: outerContext ?? undefined,
+            dfa,
+        };
+
         const m = input.mark();
         const index = input.index;
 
@@ -347,8 +356,8 @@ export class ParserATNSimulator extends ATNSimulator {
 
             return alt;
         } finally {
-            this._dfa = null;
-            this.mergeCache = new DoubleDict(); // wack cache after each prediction
+            this.predictionState.dfa = undefined;
+            this.mergeCache = new DoubleDict(); // Wack cache after each prediction.
             input.seek(index);
             input.release(m);
         }
@@ -940,7 +949,8 @@ export class ParserATNSimulator extends ATNSimulator {
             if (config.alt !== 1) {
                 continue;
             }
-            const updatedContext = config.semanticContext.evalPrecedence(this.parser, this._outerContext);
+            const updatedContext = config.semanticContext.evalPrecedence(this.parser,
+                this.predictionState!.outerContext);
             if (updatedContext === null) {
                 // the configuration was eliminated
                 continue;
@@ -1271,9 +1281,9 @@ export class ParserATNSimulator extends ATNSimulator {
                     // track how far we dip into outer context.  Might
                     // come in handy and we avoid evaluating context dependent
                     // preds if this is > 0.
-                    if (this._dfa !== null && this._dfa.precedenceDfa) {
+                    if (this.predictionState!.dfa && this.predictionState?.dfa.precedenceDfa) {
                         const outermostPrecedenceReturn = (t as EpsilonTransition).outermostPrecedenceReturn;
-                        if (outermostPrecedenceReturn === this._dfa.atnStartState?.ruleIndex) {
+                        if (outermostPrecedenceReturn === this.predictionState?.dfa.atnStartState?.ruleIndex) {
                             c.precedenceFilterSuppressed = true;
                         }
                     }
@@ -1416,15 +1426,15 @@ export class ParserATNSimulator extends ATNSimulator {
 
         let c = null;
         if (collectPredicates && inContext) {
-            if (fullCtx && this._input) {
+            if (fullCtx && this.predictionState?.input) {
                 // In full context mode, we can evaluate predicates on-the-fly
                 // during closure, which dramatically reduces the size of
                 // the config sets. It also obviates the need to test predicates
                 // later during conflict resolution.
-                const currentPosition = this._input.index;
-                this._input.seek(this._startIndex);
-                const predSucceeds = pt.getPredicate().evaluate(this.parser, this._outerContext!);
-                this._input.seek(currentPosition);
+                const currentPosition = this.predictionState.input.index;
+                this.predictionState.input.seek(this.predictionState.startIndex);
+                const predSucceeds = pt.getPredicate().evaluate(this.parser, this.predictionState.outerContext!);
+                this.predictionState.input.seek(currentPosition);
                 if (predSucceeds) {
                     c = ATNConfig.createWithConfig(pt.target, config); // no pred context
                 }
@@ -1444,15 +1454,15 @@ export class ParserATNSimulator extends ATNSimulator {
 
         let c = null;
         if (collectPredicates && ((pt.isCtxDependent && inContext) || !pt.isCtxDependent)) {
-            if (fullCtx && this._input) {
+            if (fullCtx && this.predictionState?.input) {
                 // In full context mode, we can evaluate predicates on-the-fly
                 // during closure, which dramatically reduces the size of
                 // the config sets. It also obviates the need to test predicates
                 // later during conflict resolution.
-                const currentPosition = this._input.index;
-                this._input.seek(this._startIndex);
-                const predSucceeds = pt.getPredicate().evaluate(this.parser, this._outerContext!);
-                this._input.seek(currentPosition);
+                const currentPosition = this.predictionState.input.index;
+                this.predictionState.input.seek(this.predictionState.startIndex);
+                const predSucceeds = pt.getPredicate().evaluate(this.parser, this.predictionState.outerContext!);
+                this.predictionState.input.seek(currentPosition);
                 if (predSucceeds) {
                     c = ATNConfig.createWithConfig(pt.target, config); // no pred context
                 }

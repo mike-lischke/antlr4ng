@@ -29,15 +29,17 @@ export abstract class SemanticContext implements IComparable {
         if (a === null || a === SemanticContext.NONE) {
             return b;
         }
+
         if (b === null || b === SemanticContext.NONE) {
             return a;
         }
+
         const result = new AND(a, b);
         if (result.operands.length === 1) {
             return result.operands[0];
-        } else {
-            return result;
         }
+
+        return result;
     }
 
     public static orContext(a: SemanticContext | null, b: SemanticContext | null): SemanticContext | null {
@@ -90,7 +92,7 @@ export abstract class SemanticContext implements IComparable {
      * semantic context after precedence predicates are evaluated.
      */
     public evalPrecedence<T extends ATNSimulator>(_parser: Recognizer<T>,
-        _parserCallStack: RuleContext | null): SemanticContext | null {
+        _parserCallStack?: RuleContext): SemanticContext | null {
         return this;
     };
 
@@ -159,11 +161,13 @@ class AND extends SemanticContext {
     public override equals(other: AND): boolean {
         if (this === other) {
             return true;
-        } else if (!(other instanceof AND)) {
-            return false;
-        } else {
-            return equalArrays(this.operands, other.operands);
         }
+
+        if (!(other instanceof AND)) {
+            return false;
+        }
+
+        return equalArrays(this.operands, other.operands);
     }
 
     public hashCode(): number {
@@ -401,8 +405,8 @@ export namespace SemanticContext {
         }
 
         public override evalPrecedence(parser: Recognizer<ATNSimulator>,
-            outerContext: RuleContext | null): SemanticContext | null {
-            if (parser.precpred(outerContext, this.precedence)) {
+            outerContext?: RuleContext): SemanticContext | null {
+            if (parser.precpred(outerContext ?? null, this.precedence)) {
                 return SemanticContext.NONE;
             }
 

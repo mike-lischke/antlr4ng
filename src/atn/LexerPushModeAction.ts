@@ -49,11 +49,13 @@ export class LexerPushModeAction implements LexerAction {
     public equals(other: unknown): boolean {
         if (this === other) {
             return true;
-        } else if (!(other instanceof LexerPushModeAction)) {
-            return false;
-        } else {
-            return this.mode === other.mode;
         }
+
+        if (!(other instanceof LexerPushModeAction)) {
+            return false;
+        }
+
+        return this.mode === other.mode;
     }
 
     public toString(): string {

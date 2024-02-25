@@ -28,7 +28,7 @@ export class LexerModeAction implements LexerAction {
     }
 
     /**
-     * This action is implemented by calling {@link Lexer//mode} with the
+     * This action is implemented by calling {@link Lexer.mode} with the
      * value provided by {@link getMode}.
      */
     public execute(lexer: Lexer): void {
@@ -49,11 +49,13 @@ export class LexerModeAction implements LexerAction {
     public equals(other: unknown): boolean {
         if (this === other) {
             return true;
-        } else if (!(other instanceof LexerModeAction)) {
-            return false;
-        } else {
-            return this.mode === other.mode;
         }
+
+        if (!(other instanceof LexerModeAction)) {
+            return false;
+        }
+
+        return this.mode === other.mode;
     }
 
     public toString(): string {

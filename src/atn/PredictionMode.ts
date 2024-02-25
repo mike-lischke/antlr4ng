@@ -270,145 +270,112 @@ export class PredictionMode {
 
     /**
      *
-     *Full LL prediction termination.
+     * Full LL prediction termination.
      *
-     *Can we stop looking ahead during ATN simulation or is there some
-     *uncertainty as to which alternative we will ultimately pick, after
-     *consuming more input? Even if there are partial conflicts, we might know
-     *that everything is going to resolve to the same minimum alternative. That
-     *means we can stop since no more lookahead will change that fact. On the
-     *other hand, there might be multiple conflicts that resolve to different
-     *minimums. That means we need more look ahead to decide which of those
-     *alternatives we should predict.
+     * Can we stop looking ahead during ATN simulation or is there some
+     * uncertainty as to which alternative we will ultimately pick, after
+     * consuming more input? Even if there are partial conflicts, we might know
+     * that everything is going to resolve to the same minimum alternative. That
+     * means we can stop since no more lookahead will change that fact. On the
+     * other hand, there might be multiple conflicts that resolve to different
+     * minimums. That means we need more look ahead to decide which of those
+     * alternatives we should predict.
      *
-     *The basic idea is to split the set of configurations `C`, into
-     *conflicting subsets `(s, _, ctx, _)` and singleton subsets with
-     *non-conflicting configurations. Two configurations conflict if they have
-     *identical {@link ATNConfig//state} and {@link ATNConfig//context} values
-     *but different {@link ATNConfig//alt} value, e.g. `(s, i, ctx, _)`
-     *and `(s, j, ctx, _)` for `i!=j`.
+     * The basic idea is to split the set of configurations `C`, into
+     * conflicting subsets `(s, _, ctx, _)` and singleton subsets with
+     * non-conflicting configurations. Two configurations conflict if they have
+     * identical {@link ATNConfig.state} and {@link ATNConfig.context} values
+     * but different {@link ATNConfig.alt} value, e.g. `(s, i, ctx, _)`
+     * and `(s, j, ctx, _)` for `i!=j`.
      *
-     *Reduce these configuration subsets to the set of possible alternatives.
-     *You can compute the alternative subsets in one pass as follows:
+     * Reduce these configuration subsets to the set of possible alternatives.
+     * You can compute the alternative subsets in one pass as follows:
      *
-     *`A_s,ctx = {i | (s, i, ctx, _)`} for each configuration in
-     *`C` holding `s` and `ctx` fixed.
+     * `A_s,ctx = {i | (s, i, ctx, _)`} for each configuration in
+     * `C` holding `s` and `ctx` fixed.
      *
-     *Or in pseudo-code, for each configuration `c` in `C`:
+     * Or in pseudo-code, for each configuration `c` in `C`:
      *
-     *```
-     *map[c] U= c.{@link ATNConfig//alt alt} // map hash/equals uses s and x, not
-     *alt and not pred
-     *```
+     * ```
+     * map[c] U= c.{@link ATNConfig.alt alt} // map hash/equals uses s and x, not
+     * alt and not pred
+     * ```
      *
-     *The values in `map` are the set of `A_s,ctx` sets.
+     * The values in `map` are the set of `A_s,ctx` sets.
      *
-     *If `|A_s,ctx|=1` then there is no conflict associated with
-     *`s` and `ctx`.
+     * If `|A_s,ctx|=1` then there is no conflict associated with
+     * `s` and `ctx`.
      *
-     *Reduce the subsets to singletons by choosing a minimum of each subset. If
-     *the union of these alternative subsets is a singleton, then no amount of
-     *more lookahead will help us. We will always pick that alternative. If,
-     *however, there is more than one alternative, then we are uncertain which
-     *alternative to predict and must continue looking for resolution. We may
-     *or may not discover an ambiguity in the future, even if there are no
-     *conflicting subsets this round.
+     * Reduce the subsets to singletons by choosing a minimum of each subset. If
+     * the union of these alternative subsets is a singleton, then no amount of
+     * more lookahead will help us. We will always pick that alternative. If,
+     * however, there is more than one alternative, then we are uncertain which
+     * alternative to predict and must continue looking for resolution. We may
+     * or may not discover an ambiguity in the future, even if there are no
+     * conflicting subsets this round.
      *
-     *The biggest sin is to terminate early because it means we've made a
-     *decision but were uncertain as to the eventual outcome. We haven't used
-     *enough lookahead. On the other hand, announcing a conflict too late is no
-     *big deal; you will still have the conflict. It's just inefficient. It
-     *might even look until the end of file.
+     * The biggest sin is to terminate early because it means we've made a
+     * decision but were uncertain as to the eventual outcome. We haven't used
+     * enough lookahead. On the other hand, announcing a conflict too late is no
+     * big deal; you will still have the conflict. It's just inefficient. It
+     * might even look until the end of file.
      *
-     *No special consideration for semantic predicates is required because
-     *predicates are evaluated on-the-fly for full LL prediction, ensuring that
-     *no configuration contains a semantic context during the termination
-     *check.
+     * No special consideration for semantic predicates is required because
+     * predicates are evaluated on-the-fly for full LL prediction, ensuring that
+     * no configuration contains a semantic context during the termination
+     * check.
      *
-     ***CONFLICTING CONFIGS**
+     * **CONFLICTING CONFIGS**
      *
-     *Two configurations `(s, i, x)` and `(s, j, x')`, conflict
-     *when `i!=j` but `x=x'`. Because we merge all
-     *`(s, i, _)` configurations together, that means that there are at
-     *most `n` configurations associated with state `s` for
-     *`n` possible alternatives in the decision. The merged stacks
-     *complicate the comparison of configuration contexts `x` and
-     *`x'`. Sam checks to see if one is a subset of the other by calling
-     *merge and checking to see if the merged result is either `x` or
-     *`x'`. If the `x` associated with lowest alternative `i`
-     *is the superset, then `i` is the only possible prediction since the
-     *others resolve to `min(i)` as well. However, if `x` is
-     *associated with `j>i` then at least one stack configuration for
-     *`j` is not in conflict with alternative `i`. The algorithm
-     *should keep going, looking for more lookahead due to the uncertainty.
+     * Two configurations `(s, i, x)` and `(s, j, x')`, conflict when `i!=j` but `x=x'`. Because we merge all
+     * `(s, i, _)` configurations together, that means that there are at most `n` configurations associated with state
+     * `s` for `n` possible alternatives in the decision. The merged stacks complicate the comparison of configuration
+     * contexts `x` and `x'`. Sam checks to see if one is a subset of the other by calling merge and checking to see
+     * if the merged result is either `x` or `x'`. If the `x` associated with lowest alternative `i` is the superset,
+     * then `i` is the only possible prediction since the others resolve to `min(i)` as well. However, if `x` is
+     * associated with `j>i` then at least one stack configuration for `j` is not in conflict with alternative `i`.
+     * The algorithm should keep going, looking for more lookahead due to the uncertainty.
      *
-     *For simplicity, I'm doing a equality check between `x` and
-     *`x'` that lets the algorithm continue to consume lookahead longer
-     *than necessary. The reason I like the equality is of course the
-     *simplicity but also because that is the test you need to detect the
-     *alternatives that are actually in conflict.
+     * For simplicity, I'm doing a equality check between `x` and `x'` that lets the algorithm continue to consume
+     * lookahead longer than necessary. The reason I like the equality is of course the simplicity but also because
+     * that is the test you need to detect the alternatives that are actually in conflict.
      *
-     ***CONTINUE/STOP RULE**
+     * **CONTINUE/STOP RULE**
      *
-     *Continue if union of resolved alternative sets from non-conflicting and
-     *conflicting alternative subsets has more than one alternative. We are
-     *uncertain about which alternative to predict.
+     * Continue if union of resolved alternative sets from non-conflicting and conflicting alternative subsets has more
+     * than one alternative. We are uncertain about which alternative to predict.
      *
-     *The complete set of alternatives, `[i for (_,i,_)]`, tells us which
-     *alternatives are still in the running for the amount of input we've
-     *consumed at this point. The conflicting sets let us to strip away
-     *configurations that won't lead to more states because we resolve
-     *conflicts to the configuration with a minimum alternate for the
-     *conflicting set.
+     * The complete set of alternatives, `[i for (_,i,_)]`, tells us which alternatives are still in the running for
+     * the amount of input we've consumed at this point. The conflicting sets let us to strip away configurations that
+     * won't lead to more states because we resolve conflicts to the configuration with a minimum alternate for the
+     * conflicting set.
      *
-     ***CASES**
-     *
-     *<ul>
+     * **CASES**
      *
      * - no conflicts and more than 1 alternative in set => continue
+     * -  `(s, 1, x)`, `(s, 2, x)`, `(s, 3, z)`, `(s', 1, y)`, `(s', 2, y)` yields non-conflicting set `{3`} U
+     *   conflicting sets `min({1,2`)} U `min({1,2`)} = `{1,3`} => continue
+     * - `(s, 1, x)`, `(s, 2, x)`, `(s', 1, y)`, `(s', 2, y)`, `(s'', 1, z)` yields non-conflicting set `{1`} U
+     *   conflicting sets `min({1,2`)} U `min({1,2`)} = `{1`} => stop and predict 1
+     * - `(s, 1, x)`, `(s, 2, x)`, `(s', 1, y)`, `(s', 2, y)` yields conflicting, reduced sets `{1`} U
+     *   `{1`} = `{1`} => stop and predict 1, can announce ambiguity `{1,2`}
+     * - `(s, 1, x)`, `(s, 2, x)`, `(s', 2, y)`, `(s', 3, y)` yields conflicting, reduced sets `{1`} U
+     *   `{2`} = `{1,2`} => continue
+     * - `(s, 1, x)`, `(s, 2, x)`, `(s', 3, y)`, `(s', 4, y)` yields conflicting, reduced sets `{1`} U
+     *   `{3`} = `{1,3`} => continue
      *
-     * -  `(s, 1, x)`, `(s, 2, x)`, `(s, 3, z)`,
-     *`(s', 1, y)`, `(s', 2, y)` yields non-conflicting set
-     *`{3`} U conflicting sets `min({1,2`)} U `min({1,2`)} =
-     *`{1,3`} => continue
-     *
-     *
-     * - `(s, 1, x)`, `(s, 2, x)`, `(s', 1, y)`,
-     *`(s', 2, y)`, `(s'', 1, z)` yields non-conflicting set
-     *`{1`} U conflicting sets `min({1,2`)} U `min({1,2`)} =
-     *`{1`} => stop and predict 1
-     *
-     * - `(s, 1, x)`, `(s, 2, x)`, `(s', 1, y)`,
-     *`(s', 2, y)` yields conflicting, reduced sets `{1`} U
-     *`{1`} = `{1`} => stop and predict 1, can announce
-     *ambiguity `{1,2`}
-     *
-     * - `(s, 1, x)`, `(s, 2, x)`, `(s', 2, y)`,
-     *`(s', 3, y)` yields conflicting, reduced sets `{1`} U
-     *`{2`} = `{1,2`} => continue
-     *
-     * - `(s, 1, x)`, `(s, 2, x)`, `(s', 3, y)`,
-     *`(s', 4, y)` yields conflicting, reduced sets `{1`} U
-     *`{3`} = `{1,3`} => continue
-     *
-     *</ul>
-     *
-     ***EXACT AMBIGUITY DETECTION**
+     * **EXACT AMBIGUITY DETECTION**
      *
      *If all states report the same conflicting set of alternatives, then we
      *know we have the exact ambiguity set.
      *
-     *`|A_*i*|>1` and
-     *`A_*i* = A_*j*` for all *i*, *j*.
+     * `|A_*i*|>1` and `A_*i* = A_*j*` for all *i*, *j*.
      *
-     *In other words, we continue examining lookahead until all `A_i`
-     *have more than one alternative and all `A_i` are the same. If
-     *`A={{1,2`, {1,3}}}, then regular LL prediction would terminate
-     *because the resolved set is `{1`}. To determine what the real
-     *ambiguity is, we have to know whether the ambiguity is between one and
-     *two or one and three so we keep going. We can only stop prediction when
-     *we need exact ambiguity detection when the sets look like
-     *`A={{1,2`}} or `{{1,2`,{1,2}}}, etc...
+     * In other words, we continue examining lookahead until all `A_i` have more than one alternative and all `A_i`
+     * are the same. If `A={{1,2`, {1,3}}}, then regular LL prediction would terminate because the resolved set
+     * is `{1`}. To determine what the real ambiguity is, we have to know whether the ambiguity is between one and
+     * two or one and three so we keep going. We can only stop prediction when we need exact ambiguity detection when
+     * the sets look like `A={{1,2`}} or `{{1,2`,{1,2}}}, etc...
      */
     public static resolvesToJustOneViableAlt(altSets: BitSet[]): number {
         return PredictionMode.getSingleViableAlt(altSets);
@@ -485,7 +452,7 @@ export class PredictionMode {
     /**
      * Returns the unique alternative predicted by all alternative subsets in
      * `altSets`. If no such alternative exists, this method returns
-     * {@link ATN//INVALID_ALT_NUMBER}.
+     * {@link ATN.INVALID_ALT_NUMBER}.
      *
      * @param altSets a collection of alternative subsets
      */
@@ -520,7 +487,7 @@ export class PredictionMode {
      * For each configuration `c` in `configs`:
      *
      * ```
-     * map[c] U= c.{@link ATNConfig//alt alt} // map hash/equals uses s and x, not
+     * map[c] U= c.{@link ATNConfig.alt alt} // map hash/equals uses s and x, not
      * alt and not pred
      * ```
      */
@@ -540,11 +507,10 @@ export class PredictionMode {
     };
 
     /**
-     * Get a map from state to alt subset from a configuration set. For each
-     * configuration `c` in `configs`:
+     * Get a map from state to alt subset from a configuration set. For each configuration `c` in `configs`:
      *
      * ```
-     * map[c.{@link ATNConfig//state state}] U= c.{@link ATNConfig//alt alt}
+     * map[c.state] = c.alt
      * ```
      */
     public static getStateToAltMap(configs: ATNConfigSet): HashMap<ATNState, BitSet> {

@@ -134,6 +134,7 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
         return true;
     }
 
+    // TODO: make localCtx an optional parameter, not optional null.
     public precpred(_localctx: RuleContext | null, _precedence: number): boolean {
         return true;
     }

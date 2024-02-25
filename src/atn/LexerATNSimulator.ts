@@ -30,7 +30,7 @@ import { ActionTransition } from "./ActionTransition.js";
 /**
  * When we hit an accept state in either the DFA or the ATN, we
  * have to notify the character stream to start buffering characters
- * via {@link IntStream#mark} and record the current state. The current sim state
+ * via {@link IntStream.mark} and record the current state. The current sim state
  * includes the current index into the input, the current line,
  * and current character position in that line. Note that the Lexer is
  * tracking the starting line and characterization of the token. These
@@ -117,9 +117,9 @@ export class LexerATNSimulator extends ATNSimulator {
 
             if (!dfa.s0) {
                 return this.matchATN(input);
-            } else {
-                return this.execATN(input, dfa.s0);
             }
+
+            return this.execATN(input, dfa.s0);
         } finally {
             input.release(mark);
         }

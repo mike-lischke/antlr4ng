@@ -13,10 +13,10 @@ import { MurmurHash } from "../utils/MurmurHash.js";
 
 /**
  * Implements the `channel` lexer action by calling
- * {@link Lexer//setChannel} with the assigned channel.
+ * {@link Lexer.setChannel} with the assigned channel.
  * Constructs a new `channel` action with the specified channel value.
  *
- * @param channel The channel value to pass to {@link Lexer//setChannel}
+ * @param channel The channel value to pass to {@link Lexer.setChannel}
  */
 export class LexerChannelAction implements LexerAction {
     public readonly channel: number;
@@ -31,7 +31,7 @@ export class LexerChannelAction implements LexerAction {
     }
 
     /**
-     * This action is implemented by calling {@link Lexer//setChannel} with the
+     * This action is implemented by calling {@link Lexer.setChannel} with the
      * value provided by {@link getChannel}.
      */
     public execute(lexer: Lexer): void {

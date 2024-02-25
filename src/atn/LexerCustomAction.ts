@@ -12,7 +12,7 @@ import { Lexer } from "../Lexer.js";
 import { MurmurHash } from "../utils/MurmurHash.js";
 
 /**
- * Executes a custom lexer action by calling {@link Recognizer//action} with the
+ * Executes a custom lexer action by calling {@link Recognizer.action} with the
  * rule and action indexes assigned to the custom action. The implementation of
  * a custom action is added to the generated code for the lexer in an override
  * of {@link Recognizer//action} when the grammar is compiled.

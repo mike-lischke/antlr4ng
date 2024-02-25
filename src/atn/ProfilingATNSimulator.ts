@@ -66,7 +66,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
             this.decisions[decision].timeInPrediction += (stop - start);
             this.decisions[decision].invocations++;
 
-            const sllLook = this.#sllStopIndex - this._startIndex + 1;
+            const sllLook = this.#sllStopIndex - this.predictionState!.startIndex + 1;
             this.decisions[decision].sllTotalLook += sllLook;
             this.decisions[decision].sllMinLook = this.decisions[decision].sllMinLook === 0
                 ? sllLook
@@ -79,7 +79,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
                     configs: null,
                     predictedAlt: alt,
                     input,
-                    startIndex: this._startIndex,
+                    startIndex: this.predictionState!.startIndex,
                     stopIndex: this.#sllStopIndex,
                     fullCtx: false,
 
@@ -87,7 +87,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
             }
 
             if (this.#llStopIndex >= 0) {
-                const llLook = this.#llStopIndex - this._startIndex + 1;
+                const llLook = this.#llStopIndex - this.predictionState!.startIndex + 1;
                 this.decisions[decision].llTotalLook += llLook;
                 this.decisions[decision].llMinLook = this.decisions[decision].llMinLook === 0
                     ? llLook
@@ -100,7 +100,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
                         configs: null,
                         predictedAlt: alt,
                         input,
-                        startIndex: this._startIndex,
+                        startIndex: this.predictionState!.startIndex,
                         stopIndex: this.#llStopIndex,
                         fullCtx: true,
                     };
@@ -114,8 +114,8 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
     }
 
     public override getExistingTargetState(previousD: DFAState, t: number): DFAState | undefined {
-        if (this._input) {
-            this.#sllStopIndex = this._input.index;
+        if (this.predictionState?.input) {
+            this.#sllStopIndex = this.predictionState.input.index;
 
             const existingTargetState = super.getExistingTargetState(previousD, t);
 
@@ -125,8 +125,8 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
                     this.decisions[this.currentDecision].errors.push({
                         decision: this.currentDecision,
                         configs: previousD.configs,
-                        input: this._input,
-                        startIndex: this._startIndex,
+                        input: this.predictionState.input,
+                        startIndex: this.predictionState.startIndex,
                         stopIndex: this.#sllStopIndex,
                         fullCtx: false,
                     });
@@ -149,12 +149,12 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
     }
 
     public override computeReachSet(closure: ATNConfigSet, t: number, fullCtx: boolean): ATNConfigSet | null {
-        if (fullCtx && this._input) {
-            this.#llStopIndex = this._input.index;
+        if (fullCtx && this.predictionState?.input) {
+            this.#llStopIndex = this.predictionState.input.index;
         }
 
         const reachConfigs = super.computeReachSet(closure, t, fullCtx);
-        if (this._input) {
+        if (this.predictionState?.input) {
             if (fullCtx) {
                 this.decisions[this.currentDecision].llATNTransitions++;
 
@@ -162,8 +162,8 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
                     this.decisions[this.currentDecision].errors.push({
                         decision: this.currentDecision,
                         configs: closure,
-                        input: this._input,
-                        startIndex: this._startIndex,
+                        input: this.predictionState.input,
+                        startIndex: this.predictionState.startIndex,
                         stopIndex: this.#sllStopIndex,
                         fullCtx: true,
                     });
@@ -174,8 +174,8 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
                     this.decisions[this.currentDecision].errors.push({
                         decision: this.currentDecision,
                         configs: closure,
-                        input: this._input,
-                        startIndex: this._startIndex,
+                        input: this.predictionState.input,
+                        startIndex: this.predictionState.startIndex,
                         stopIndex: this.#sllStopIndex,
                         fullCtx: false,
                     });
@@ -202,11 +202,11 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
 
     public override reportContextSensitivity(dfa: DFA, prediction: number, configs: ATNConfigSet, startIndex: number,
         stopIndex: number): void {
-        if (prediction !== this.conflictingAltResolvedBySLL && this._input) {
+        if (prediction !== this.conflictingAltResolvedBySLL && this.predictionState!.input) {
             this.decisions[this.currentDecision].contextSensitivities.push({
                 decision: this.currentDecision,
                 configs,
-                input: this._input,
+                input: this.predictionState!.input,
                 startIndex,
                 stopIndex,
                 fullCtx: true,
@@ -226,12 +226,12 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
             prediction = configs.getAlts().nextSetBit(0);
         }
 
-        if (this._input) {
+        if (this.predictionState?.input) {
             if (configs.fullCtx && prediction !== this.conflictingAltResolvedBySLL) {
                 this.decisions[this.currentDecision].contextSensitivities.push({
                     decision: this.currentDecision,
                     configs,
-                    input: this._input,
+                    input: this.predictionState.input,
                     startIndex,
                     stopIndex,
                     fullCtx: true,
@@ -242,7 +242,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
                 ambigAlts,
                 decision: this.currentDecision,
                 configs,
-                input: this._input,
+                input: this.predictionState.input,
                 startIndex,
                 stopIndex,
                 fullCtx: configs.fullCtx,
