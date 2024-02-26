@@ -4,17 +4,17 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { ErrorNode } from "./ErrorNode.js";
-import { TerminalNode } from "./TerminalNode.js";
-import { ParseTree } from "./ParseTree.js";
-import { RuleContext } from "../RuleContext.js";
+import { type ErrorNode } from "./ErrorNode.js";
+import { type TerminalNode } from "./TerminalNode.js";
+import { type ParseTree } from "./ParseTree.js";
+import { type RuleContext } from "../RuleContext.js";
 
 /**
  * This interface defines the basic notion of a parse tree visitor. Generated
  * visitors implement this interface and the `XVisitor` interface for
  * grammar `X`.
  *
- * @param T The return type of the visit operation. Use {@link Void} for
+ * @param T The return type of the visit operation. Use void for
  * operations with no return type.
  */
 export interface ParseTreeVisitor<T> {

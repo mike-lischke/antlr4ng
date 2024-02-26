@@ -21,7 +21,7 @@ import { Chunk } from "./Chunk.js";
 export class TagChunk extends Chunk {
     public readonly tag: string;
 
-    public readonly label: string | null;
+    public readonly label?: string;
 
     /**
      * Construct a new instance of {@link TagChunk} using the specified tag and
@@ -33,7 +33,7 @@ export class TagChunk extends Chunk {
      * @throws IllegalArgumentException if `tag` is `null` or
      * empty.
      */
-    public constructor(tag: string | null);
+    public constructor(tag?: string);
     /**
      * Construct a new instance of {@link TagChunk} using the specified label
      * and tag.
@@ -46,16 +46,15 @@ export class TagChunk extends Chunk {
      * @throws IllegalArgumentException if `tag` is `null` or
      * empty.
      */
-    public constructor(label: string | null, tag: string);
+    public constructor(label: string | undefined, tag: string);
     public constructor(...args: unknown[]) {
-        let label: string | null;
+        let label: string | undefined;
         let tag: string;
 
         if (args.length === 1) {
-            label = null;
             tag = args[0] as string;
         } else {
-            label = args[0] as string | null;
+            label = args[0] as string | undefined;
             tag = args[1] as string;
         }
 

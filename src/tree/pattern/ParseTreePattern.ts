@@ -22,19 +22,16 @@ export class ParseTreePattern {
     /**
      * This is the backing field for {@link #getPattern()}.
      */
-
     private readonly pattern: string;
 
     /**
      * This is the backing field for {@link #getPatternTree()}.
      */
-
     private readonly patternTree: ParseTree;
 
     /**
      * This is the backing field for {@link #getMatcher()}.
      */
-
     private readonly matcher: ParseTreePatternMatcher;
 
     /**
@@ -110,7 +107,6 @@ export class ParseTreePattern {
      * @returns The {@link ParseTreePatternMatcher} which created this tree
      * pattern.
      */
-
     public getMatcher(): ParseTreePatternMatcher {
         return this.matcher;
     }
@@ -120,7 +116,6 @@ export class ParseTreePattern {
      *
      * @returns The tree pattern in concrete syntax form.
      */
-
     public getPattern(): string {
         return this.pattern;
     }
@@ -143,7 +138,6 @@ export class ParseTreePattern {
      *
      * @returns The tree pattern as a {@link ParseTree}.
      */
-
     public getPatternTree(): ParseTree {
         return this.patternTree;
     }

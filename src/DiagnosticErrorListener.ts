@@ -76,7 +76,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
         dfa: DFA,
         startIndex: number,
         stopIndex: number,
-        _conflictingAlts: BitSet | null,
+        _conflictingAlts: BitSet | undefined,
         _configs: ATNConfigSet | null): void => {
         const decision = this.getDecisionDescription(recognizer, dfa);
         const text = recognizer.tokenStream?.getTextFromInterval(Interval.of(startIndex, stopIndex));

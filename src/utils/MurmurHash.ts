@@ -16,8 +16,7 @@ import { isComparable } from "./helpers.js";
  * @author Mike Lischke
  */
 export class MurmurHash {
-
-    private static readonly defaultSeed = 701;
+    static readonly #defaultSeed = 701;
 
     private constructor() { /**/ }
 
@@ -28,7 +27,7 @@ export class MurmurHash {
      *
      * @returns the intermediate hash value
      */
-    public static initialize(seed = MurmurHash.defaultSeed): number {
+    public static initialize(seed = MurmurHash.#defaultSeed): number {
         return seed;
     }
 
@@ -181,7 +180,7 @@ export class MurmurHash {
             return value.hashCode();
         }
 
-        return MurmurHash.finish(MurmurHash.update(seed ?? MurmurHash.defaultSeed, value), 1);
+        return MurmurHash.finish(MurmurHash.update(seed ?? MurmurHash.#defaultSeed, value), 1);
     };
 
     /**

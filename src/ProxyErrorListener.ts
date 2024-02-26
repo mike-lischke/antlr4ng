@@ -36,7 +36,7 @@ export class ProxyErrorListener extends BaseErrorListener {
     }
 
     public override reportAttemptingFullContext(recognizer: Parser, dfa: DFA, startIndex: number, stopIndex: number,
-        conflictingAlts: BitSet | null, configs: ATNConfigSet): void {
+        conflictingAlts: BitSet | undefined, configs: ATNConfigSet): void {
         this.delegates.forEach((d) => {
             d.reportAttemptingFullContext(recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs);
         });

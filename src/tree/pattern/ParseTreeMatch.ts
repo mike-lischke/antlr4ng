@@ -30,7 +30,7 @@ export class ParseTreeMatch {
     /**
      * This is the backing field for {@link #getMismatchedNode()}.
      */
-    private readonly mismatchedNode: ParseTree | null;
+    private readonly mismatchedNode?: ParseTree;
 
     /**
      * Constructs a new instance of {@link ParseTreeMatch} from the specified
@@ -44,18 +44,7 @@ export class ParseTreeMatch {
      * pattern during the matching process.
      */
     public constructor(tree: ParseTree, pattern: ParseTreePattern, labels: MultiMap<string, ParseTree>,
-        mismatchedNode: ParseTree | null) {
-        if (tree === null) {
-            throw new Error("tree cannot be null");
-        }
-
-        if (pattern === null) {
-            throw new Error("pattern cannot be null");
-        }
-
-        if (labels === null) {
-            throw new Error("labels cannot be null");
-        }
+        mismatchedNode?: ParseTree) {
 
         this.tree = tree;
         this.pattern = pattern;
@@ -122,7 +111,7 @@ export class ParseTreeMatch {
      *
      * The map includes special entries corresponding to the names of rules and
      * tokens referenced in tags in the original pattern. For additional
-     * information, see the description of {@link #getAll(String)}.
+     * information, see the description of {@link getAll(String)}.
      *
      * @returns A mapping from labels to parse tree nodes. If the parse tree
      * pattern did not contain any rule or token tags, this map will be empty.
@@ -139,7 +128,7 @@ export class ParseTreeMatch {
      * if the match was successful.
      */
 
-    public getMismatchedNode(): ParseTree | null {
+    public getMismatchedNode(): ParseTree | undefined {
         return this.mismatchedNode;
     }
 
@@ -149,7 +138,7 @@ export class ParseTreeMatch {
      * @returns `true` if the match operation succeeded; otherwise, `false`.
      */
     public succeeded(): boolean {
-        return this.mismatchedNode === null;
+        return !this.mismatchedNode;
     }
 
     /**

@@ -4,9 +4,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { RecognitionException } from "./RecognitionException.js";
-import { Parser } from "./Parser.js";
-import { Token } from "./Token.js";
+import { type RecognitionException } from "./RecognitionException.js";
+import { type Parser } from "./Parser.js";
+import { type Token } from "./Token.js";
 
 /**
  * The interface for defining strategies to deal with syntax errors encountered
@@ -18,8 +18,7 @@ import { Token } from "./Token.js";
  * - The current input does not match what we were looking for
  * - A predicate evaluated to false
  *
- * Implementations of this interface report syntax errors by calling
- * {@link Parser#notifyErrorListeners}.
+ * Implementations of this interface report syntax errors by calling {@link Parser.notifyErrorListeners}.
  *
  * TODO: what to do about lexers
  */
@@ -33,7 +32,7 @@ export interface ANTLRErrorStrategy {
 
     /**
      * This method is called when an unexpected symbol is encountered during an
-     * inline match operation, such as {@link Parser#match}. If the error
+     * inline match operation, such as {@link Parser.match}. If the error
      * strategy successfully recovers from the match failure, this method
      * returns the {@link Token} instance which should be treated as the
      * successful result of the match.
@@ -53,7 +52,7 @@ export interface ANTLRErrorStrategy {
 
     /**
      * This method is called to recover from exception `e`. This method is
-     * called after {@link #reportError} by the default exception handler
+     * called after {@link reportError} by the default exception handler
      * generated for a rule method.
      *
      * @see #reportError
@@ -70,7 +69,7 @@ export interface ANTLRErrorStrategy {
      * syntactic or semantic errors in the input stream before they result in a
      * {@link RecognitionException}.
      *
-     * The generated code currently contains calls to {@link #sync} after
+     * The generated code currently contains calls to {@link sync} after
      * entering the decision state of a closure block (`(...)*` or
      * `(...)+`).
      *

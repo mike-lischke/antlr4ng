@@ -31,7 +31,7 @@ export class BaseErrorListener implements ANTLRErrorListener {
     }
 
     public reportAttemptingFullContext(recognizer: Parser, dfa: DFA, startIndex: number, stopIndex: number,
-        conflictingAlts: BitSet | null, configs: ATNConfigSet): void {
+        conflictingAlts: BitSet | undefined, configs: ATNConfigSet): void {
     }
 
     public reportContextSensitivity(recognizer: Parser, dfa: DFA, startIndex: number, stopIndex: number,

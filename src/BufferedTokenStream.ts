@@ -114,9 +114,11 @@ export class BufferedTokenStream implements TokenStream {
             // not yet initialized
             skipEofCheck = false;
         }
+
         if (!skipEofCheck && this.LA(1) === Token.EOF) {
             throw new Error("cannot consume EOF");
         }
+
         if (this.sync(this.p + 1)) {
             this.p = this.adjustSeekIndex(this.p + 1);
         }
@@ -125,9 +127,7 @@ export class BufferedTokenStream implements TokenStream {
     /**
      * Make sure index `i` in tokens has a token.
      *
-     * @returns {boolean} `true` if a token is located at index `i`, otherwise
-     * `false`.
-     * @see //get(int i)
+     * @returns {boolean} `true` if a token is located at index `i`, otherwise `false`.
      */
     public sync(i: number): boolean {
         const n = i - this.tokens.length + 1; // how many more elements we need?
@@ -164,7 +164,7 @@ export class BufferedTokenStream implements TokenStream {
         return n;
     }
 
-    // Get all tokens from start..stop, inclusively.
+    /** Get all tokens from start..stop, inclusively. */
     public getTokens(start?: number, stop?: number, types?: Set<number>): Token[] {
         this.lazyInit();
 
@@ -248,12 +248,12 @@ export class BufferedTokenStream implements TokenStream {
      * exception is thrown in this method, the current stream index should not be
      * changed.
      *
-     * For example, {@link CommonTokenStream} overrides this method to ensure
-     * that
+     * For example, {@link CommonTokenStream} overrides this method to ensure that
      * the seek target is always an on-channel token.
      *
-     * @param {number} i The target token index.
-     * @returns {number} The adjusted target token index.
+     * @param  i The target token index.
+     *
+     * @returns The adjusted target token index.
      */
     public adjustSeekIndex(i: number): number {
         return i;
@@ -270,7 +270,7 @@ export class BufferedTokenStream implements TokenStream {
         this.p = this.adjustSeekIndex(0);
     }
 
-    // Reset this token stream by setting its token source.///
+    /** Reset this token stream by setting its token source. */
     public setTokenSource(tokenSource: TokenSource): void {
         this.tokenSource = tokenSource;
         this.tokens = [];
@@ -321,7 +321,7 @@ export class BufferedTokenStream implements TokenStream {
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL or
      * EOF. If channel is -1, find any non default channel token.
      */
-    public getHiddenTokensToRight(tokenIndex: number, channel: number): Token[] | null {
+    public getHiddenTokensToRight(tokenIndex: number, channel: number): Token[] | undefined {
         if (channel === undefined) {
             channel = -1;
         }
@@ -343,7 +343,7 @@ export class BufferedTokenStream implements TokenStream {
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL.
      * If channel is -1, find any non default channel token.
      */
-    public getHiddenTokensToLeft(tokenIndex: number, channel: number): Token[] | null {
+    public getHiddenTokensToLeft(tokenIndex: number, channel: number): Token[] | undefined {
         if (channel === undefined) {
             channel = -1;
         }
@@ -353,17 +353,17 @@ export class BufferedTokenStream implements TokenStream {
         }
         const prevOnChannel = this.previousTokenOnChannel(tokenIndex - 1, Lexer.DEFAULT_TOKEN_CHANNEL);
         if (prevOnChannel === tokenIndex - 1) {
-            return null;
+            return undefined;
         }
 
-        // if none on channel to left, prevOnChannel=-1 then from=0
+        // If none on channel to left, prevOnChannel = -1 then from = 0.
         const from = prevOnChannel + 1;
         const to = tokenIndex - 1;
 
         return this.filterForChannel(from, to, channel);
     }
 
-    public filterForChannel(left: number, right: number, channel: number): Token[] | null {
+    public filterForChannel(left: number, right: number, channel: number): Token[] | undefined {
         const hidden = [];
         for (let i = left; i < right + 1; i++) {
             const t = this.tokens[i];
@@ -376,7 +376,7 @@ export class BufferedTokenStream implements TokenStream {
             }
         }
         if (hidden.length === 0) {
-            return null;
+            return undefined;
         }
 
         return hidden;

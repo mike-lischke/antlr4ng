@@ -386,7 +386,7 @@ export class ParseTreePatternMatcher {
             // copy inside of <tag>
             const tag = pattern.substring(starts[i] + this.start.length, stops[i]);
             let ruleOrToken = tag;
-            let label = null;
+            let label;
             const colon = tag.indexOf(":");
             if (colon >= 0) {
                 label = tag.substring(0, colon);
@@ -434,12 +434,12 @@ export class ParseTreePatternMatcher {
      */
 
     protected matchImpl(tree: ParseTree, patternTree: ParseTree,
-        labels: MultiMap<string, ParseTree>): ParseTree | null {
+        labels: MultiMap<string, ParseTree>): ParseTree | undefined {
         // x and <ID>, x and y, or x and x; or could be mismatched types
         if (tree instanceof TerminalNode && patternTree instanceof TerminalNode) {
             const t1 = tree;
             const t2 = patternTree;
-            let mismatchedNode = null;
+            let mismatchedNode;
             // both are tokens and they have same type
             if (t1.getSymbol().type === t2.getSymbol().type) {
                 if (t2.getSymbol() instanceof TokenTagToken) { // x and <ID>
@@ -454,13 +454,13 @@ export class ParseTreePatternMatcher {
                         // x and x
                     } else {
                         // x and y
-                        if (mismatchedNode === null) {
+                        if (!mismatchedNode) {
                             mismatchedNode = t1;
                         }
                     }
                 }
             } else {
-                if (mismatchedNode === null) {
+                if (!mismatchedNode) {
                     mismatchedNode = t1;
                 }
             }
@@ -469,19 +469,19 @@ export class ParseTreePatternMatcher {
         }
 
         if (tree instanceof ParserRuleContext && patternTree instanceof ParserRuleContext) {
-            let mismatchedNode = null;
+            let mismatchedNode;
 
             // (expr ...) and <expr>
             const ruleTagToken = this.getRuleTagToken(patternTree);
-            if (ruleTagToken !== null) {
+            if (ruleTagToken) {
                 if (tree.ruleIndex === patternTree.ruleIndex) {
                     // track label->list-of-nodes for both rule name and label (if any)
                     labels.map(ruleTagToken.ruleName, tree);
-                    if (ruleTagToken.label !== undefined) {
+                    if (ruleTagToken.label) {
                         labels.map(ruleTagToken.label, tree);
                     }
                 } else {
-                    if (mismatchedNode === null) {
+                    if (!mismatchedNode) {
                         mismatchedNode = tree;
                     }
                 }
@@ -491,7 +491,7 @@ export class ParseTreePatternMatcher {
 
             // (expr ...) and (expr ...)
             if (tree.getChildCount() !== patternTree.getChildCount()) {
-                if (mismatchedNode === null) {
+                if (!mismatchedNode) {
                     mismatchedNode = tree;
                 }
 
@@ -501,7 +501,7 @@ export class ParseTreePatternMatcher {
             const n = tree.getChildCount();
             for (let i = 0; i < n; i++) {
                 const childMatch = this.matchImpl(tree.getChild(i)!, patternTree.getChild(i)!, labels);
-                if (childMatch !== null) {
+                if (childMatch) {
                     return childMatch;
                 }
             }
@@ -516,7 +516,7 @@ export class ParseTreePatternMatcher {
     /**
      * Is `t` `(expr <expr>)` subtree?
      */
-    protected getRuleTagToken(t: ParseTree): RuleTagToken | null {
+    protected getRuleTagToken(t: ParseTree): RuleTagToken | undefined {
         if (t instanceof RuleContext) {
             if (t.getChildCount() === 1 && t.getChild(0) instanceof TerminalNode) {
                 const c = t.getChild(0) as TerminalNode;
@@ -526,6 +526,6 @@ export class ParseTreePatternMatcher {
             }
         }
 
-        return null;
+        return undefined;
     }
 }

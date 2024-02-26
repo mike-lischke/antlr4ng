@@ -32,7 +32,7 @@ import { XPathWildcardElement } from "./XPathWildcardElement.js";
  * pair, find set of nodes. Next stage uses those as work list.
  *
  * The basic interface is
- * {@link XPath#findAll ParseTree.findAll}`(tree, pathString, parser)`.
+ * {@link XPath.findAll ParseTree.findAll}`(tree, pathString, parser)`.
  * But that is just shorthand for:
  *
  * ```
@@ -72,7 +72,6 @@ export class XPath {
         this.parser = parser;
         this.path = path;
         this.elements = this.split(path);
-        // console.log(this.elements.toString());
     }
 
     public static findAll(tree: ParseTree, xpath: string, parser: Parser): Set<ParseTree> {
@@ -102,10 +101,10 @@ export class XPath {
         }
 
         const tokens: Token[] = tokenStream.getTokens();
-        // console.log("path=" + path + "=>" + tokens);
         const elements: XPathElement[] = [];
         const n: number = tokens.length;
         let i: number = 0;
+
         loop:
         while (i < n) {
             const el: Token = tokens[i];
@@ -125,13 +124,15 @@ export class XPath {
                     pathElement.invert = invert;
                     elements.push(pathElement);
                     i++;
+
                     break;
 
                 case XPathLexer.TOKEN_REF:
                 case XPathLexer.RULE_REF:
                 case XPathLexer.WILDCARD:
                     elements.push(this.getXPathElement(el, false));
-                    i++;
+                    ++i;
+
                     break;
 
                 case Token.EOF:

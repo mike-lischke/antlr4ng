@@ -4,14 +4,14 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { Parser } from "./Parser.js";
-import { RecognitionException } from "./RecognitionException.js";
-import { Recognizer } from "./Recognizer.js";
-import { ATNConfigSet } from "./atn/ATNConfigSet.js";
-import { DFA } from "./dfa/DFA.js";
-import { ATNSimulator } from "./atn/ATNSimulator.js";
-import { Token } from "./Token.js";
-import { BitSet } from "./misc/BitSet.js";
+import { type Parser } from "./Parser.js";
+import { type RecognitionException } from "./RecognitionException.js";
+import { type Recognizer } from "./Recognizer.js";
+import { type ATNConfigSet } from "./atn/ATNConfigSet.js";
+import { type DFA } from "./dfa/DFA.js";
+import { type ATNSimulator } from "./atn/ATNSimulator.js";
+import { type Token } from "./Token.js";
+import { type BitSet } from "./misc/BitSet.js";
 
 /** How to emit recognition errors. */
 export interface ANTLRErrorListener {
@@ -56,12 +56,10 @@ export interface ANTLRErrorListener {
         e: RecognitionException | null): void;
 
     /**
-     * This method is called by the parser when a full-context prediction
-     * results in an ambiguity.
+     * This method is called by the parser when a full-context prediction results in an ambiguity.
      *
      * Each full-context prediction which does not result in a syntax error
-     * will call either {@link #reportContextSensitivity} or
-     * {@link #reportAmbiguity}.
+     * will call either {@link reportContextSensitivity} or {@link reportAmbiguity}.
      *
      * When `ambigAlts` is not null, it contains the set of potentially
      * viable alternatives identified by the prediction algorithm. When
@@ -76,7 +74,7 @@ export interface ANTLRErrorListener {
      * least the *minimum* potentially viable alternative is truly
      * viable.
      *
-     * When the {@link PredictionMode#LL_EXACT_AMBIG_DETECTION} prediction
+     * When the {@link PredictionMode.LL_EXACT_AMBIG_DETECTION} prediction
      * mode is used, the parser is required to identify exact ambiguities so
      * `exact` will always be `true`.
      *
@@ -88,7 +86,7 @@ export interface ANTLRErrorListener {
      * @param stopIndex the input input where the ambiguity was identified
      * @param exact `true` if the ambiguity is exactly known, otherwise
      * `false`. This is always `true` when
-     * {@link PredictionMode#LL_EXACT_AMBIG_DETECTION} is used.
+     * {@link PredictionMode.LL_EXACT_AMBIG_DETECTION} is used.
      * @param ambigAlts the potentially ambiguous alternatives, or `null`
      * to indicate that the potentially ambiguous alternatives are the complete
      * set of represented alternatives in `configs`
@@ -130,7 +128,7 @@ export interface ANTLRErrorListener {
         dfa: DFA,
         startIndex: number,
         stopIndex: number,
-        conflictingAlts: BitSet | null,
+        conflictingAlts: BitSet | undefined,
         configs: ATNConfigSet): void;
 
     /**
@@ -138,7 +136,7 @@ export interface ANTLRErrorListener {
      * unique result.
      *
      * Each full-context prediction which does not result in a syntax error
-     * will call either {@link #reportContextSensitivity} or
+     * will call either {@link reportContextSensitivity} or
      * {@link #reportAmbiguity}.
      *
      * For prediction implementations that only evaluate full-context
@@ -155,7 +153,7 @@ export interface ANTLRErrorListener {
      * is passed as the `prediction` argument.
      *
      * Note that the definition of "context sensitivity" in this method
-     * differs from the concept in {@link DecisionInfo#contextSensitivities}.
+     * differs from the concept in {@link DecisionInfo.contextSensitivities}.
      * This method reports all instances where an SLL conflict occurred but LL
      * parsing produced a unique result, whether or not that unique result
      * matches the minimum alternative in the SLL conflicting set.

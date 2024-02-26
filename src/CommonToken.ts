@@ -54,10 +54,8 @@ export class CommonToken implements WritableToken {
     public channel: number;
 
     /**
-     * This is the backing field for {@link #getText} when the token text is
-     * explicitly set in the constructor or via {@link #setText}.
-     *
-     * @see #getText()
+     * This is the backing field for {@link getText} when the token text is
+     * explicitly set in the constructor or via {@link setText}.
      */
     #text: string | null = null;
 
@@ -122,37 +120,26 @@ export class CommonToken implements WritableToken {
     }
 
     /**
-     * Constructs a new {@link CommonToken} with the specified token type and
-     * text.
+     * Constructs a new {@link CommonToken} with the specified token type and text.
      *
      * @param type The token type.
      * @param text The text of the token.
      */
     public static fromType(type: number, text?: string | null): CommonToken {
-        return new CommonToken({
-            type,
-            text,
-            source: CommonToken.EMPTY_SOURCE,
-        });
+        return new CommonToken({ type, text, source: CommonToken.EMPTY_SOURCE });
     }
 
     public static fromSource(source: [TokenSource | null, CharStream | null], type: number, channel: number,
         start: number, stop: number): CommonToken {
-        return new CommonToken({
-            type,
-            channel,
-            start,
-            stop,
-            source,
-        });
+        return new CommonToken({ type, channel, start, stop, source });
     }
 
     public get tokenSource(): TokenSource | null {
-        return this.source[0] ?? null;
+        return this.source[0];
     }
 
     public get inputStream(): CharStream | null {
-        return this.source[1] ?? null;
+        return this.source[1];
     }
 
     /**

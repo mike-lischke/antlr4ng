@@ -4,9 +4,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { Interval } from "../misc/Interval.js";
-import { Parser } from "../Parser.js";
-import { ParseTreeVisitor } from "./ParseTreeVisitor.js";
+import { type Interval } from "../misc/Interval.js";
+import { type Parser } from "../Parser.js";
+import { type ParseTreeVisitor } from "./ParseTreeVisitor.js";
 
 /**
  * The basic notion of a tree has a parent, a payload, and a list of children.
@@ -14,7 +14,6 @@ import { ParseTreeVisitor } from "./ParseTreeVisitor.js";
  *
  * Note: this interface is a combination of 3 Java interfaces: ParseTree, SyntaxTree and Tree.
  */
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export interface ParseTree {
     /**
      * The parent of this node. If the return value is null, then this
@@ -67,7 +66,7 @@ export interface ParseTree {
      * token stream.  Currently, the code base can only have i=0..n-1 but
      * in concept one could have an empty interval after EOF.
      *
-     * If source interval is unknown, this returns {@link Interval#INVALID}.
+     * If source interval is unknown, this returns {@link Interval.INVALID}.
      *
      * As a weird special case, the source interval for rules matched after
      * EOF is unspecified.

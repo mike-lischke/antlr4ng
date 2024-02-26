@@ -48,14 +48,13 @@ export class RuleTagToken implements Token {
      * @param label The label associated with the rule tag, or `null` if
      * the rule tag is unlabeled.
      *
-     * @throws IllegalArgumentException if `ruleName` is `null`
-     * or empty.
+     * @throws IllegalArgumentException if `ruleName` is `undefined` or empty.
      */
-    public constructor(ruleName: string, bypassTokenType: number, label: string | null);
-    public constructor(ruleName: string, bypassTokenType: number, label?: string | null) {
+    public constructor(ruleName: string, bypassTokenType: number, label: string | undefined);
+    public constructor(ruleName: string, bypassTokenType: number, label?: string | undefined) {
         this.ruleName = ruleName;
         this.bypassTokenType = bypassTokenType;
-        this.label = label ?? undefined;
+        this.label = label;
     }
 
     /**

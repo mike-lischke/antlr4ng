@@ -33,14 +33,14 @@ export class TokenTagToken extends CommonToken {
      *
      * @param tokenName The token name.
      * @param type The token type.
-     * @param label The label associated with the token tag, or `null` if
+     * @param label The label associated with the token tag, or `undefined` if
      * the token tag is unlabeled.
      */
-    public constructor(tokenName: string, type: number, label: string | null);
-    public constructor(tokenName: string, type: number, label?: string | null) {
+    public constructor(tokenName: string, type: number, label: string | undefined);
+    public constructor(tokenName: string, type: number, label?: string | undefined) {
         super({ type, source: CommonToken.EMPTY_SOURCE });
         this.tokenName = tokenName;
-        this.label = label ?? undefined;
+        this.label = label;
     }
 
     /**
