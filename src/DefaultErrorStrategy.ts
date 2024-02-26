@@ -546,7 +546,7 @@ export class DefaultErrorStrategy {
         const currentSymbol = recognizer.getCurrentToken() as CommonToken;
         const expecting = this.getExpectedTokens(recognizer);
         let expectedTokenType = Token.INVALID_TYPE;
-        if (!expecting.isNil) {
+        if (expecting.length !== 0) {
             expectedTokenType = expecting.minElement; // get any element
         }
 

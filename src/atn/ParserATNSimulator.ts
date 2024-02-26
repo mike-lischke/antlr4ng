@@ -321,7 +321,7 @@ export class ParserATNSimulator extends ATNSimulator {
         // But, do we still need an initial state?
         try {
             let s0;
-            if (dfa.precedenceDfa) {
+            if (dfa.isPrecedenceDfa) {
                 // the start state for a precedence DFA depends on the current
                 // parser precedence, and is provided by a DFA method.
                 s0 = dfa.getPrecedenceStartState(this.parser.getPrecedence());
@@ -331,14 +331,14 @@ export class ParserATNSimulator extends ATNSimulator {
             }
 
             if (!s0) {
-                if (outerContext === null) {
+                if (!outerContext) {
                     outerContext = ParserRuleContext.EMPTY;
                 }
 
                 const fullCtx = false;
                 let s0_closure = this.computeStartState(dfa.atnStartState!, ParserRuleContext.EMPTY, fullCtx);
 
-                if (dfa.precedenceDfa) {
+                if (dfa.isPrecedenceDfa) {
                     // If this is a precedence DFA, we use applyPrecedenceFilter
                     // to convert the computed start state to a precedence start
                     // state. We then use DFA.setPrecedenceStartState to set the
@@ -1281,7 +1281,7 @@ export class ParserATNSimulator extends ATNSimulator {
                     // track how far we dip into outer context.  Might
                     // come in handy and we avoid evaluating context dependent
                     // preds if this is > 0.
-                    if (this.predictionState!.dfa && this.predictionState?.dfa.precedenceDfa) {
+                    if (this.predictionState!.dfa && this.predictionState?.dfa.isPrecedenceDfa) {
                         const outermostPrecedenceReturn = (t as EpsilonTransition).outermostPrecedenceReturn;
                         if (outermostPrecedenceReturn === this.predictionState?.dfa.atnStartState?.ruleIndex) {
                             c.precedenceFilterSuppressed = true;

@@ -4,30 +4,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-/* eslint-disable max-classes-per-file */
-
-import type { EqualityComparator } from "./EqualityComparator.js";
+import { type EqualityComparator } from "./EqualityComparator.js";
 import { HashSet } from "./HashSet.js";
-
-// Since `HashMap` is implemented on top of `HashSet`, we defined a bucket type which can store a
-// key-value pair. The value is optional since looking up values in the map by a key only needs to include the key.
-interface Bucket<K, V> { key: K; value?: V; }
-
-class MapKeyEqualityComparator<K, V> implements EqualityComparator<Bucket<K, V>> {
-    private readonly keyComparator: EqualityComparator<K>;
-
-    public constructor(keyComparator: EqualityComparator<K>) {
-        this.keyComparator = keyComparator;
-    }
-
-    public hashCode(obj: Bucket<K, V>): number {
-        return this.keyComparator.hashCode(obj.key);
-    }
-
-    public equals(a: Bucket<K, V>, b: Bucket<K, V>): boolean {
-        return this.keyComparator.equals(a.key, b.key);
-    }
-}
+import { MapKeyEqualityComparator, type Bucket } from "./MapKeyEqualityOperator.js";
 
 export class HashMap<K, V> {
     private backingStore: HashSet<Bucket<K, V>>;
@@ -118,11 +97,7 @@ export class HashMap<K, V> {
         return this.backingStore.hashCode();
     }
 
-    public equals(o: unknown): boolean {
-        if (!(o instanceof HashMap)) {
-            return false;
-        }
-
+    public equals(o: HashMap<K, V>): boolean {
         return this.backingStore.equals(o.backingStore);
     }
 }

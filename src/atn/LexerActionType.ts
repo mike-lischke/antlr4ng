@@ -13,14 +13,14 @@ export const LexerActionType = {
     CUSTOM: 1,
     /** The type of a {@link LexerModeAction} action. */
     MODE: 2,
-    /** he type of a {@link LexerMoreAction} action. */
+    /** The type of a {@link LexerMoreAction} action. */
     MORE: 3,
-    /** he type of a {@link LexerPopModeAction} action. */
+    /** The type of a {@link LexerPopModeAction} action. */
     POP_MODE: 4,
-    /** he type of a {@link LexerPushModeAction} action. */
+    /** The type of a {@link LexerPushModeAction} action. */
     PUSH_MODE: 5,
-    /** he type of a {@link LexerSkipAction} action. */
+    /** The type of a {@link LexerSkipAction} action. */
     SKIP: 6,
-    /** he type of a {@link LexerTypeAction} action. */
+    /** The type of a {@link LexerTypeAction} action. */
     TYPE: 7,
 } as const;

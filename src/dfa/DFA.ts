@@ -23,10 +23,15 @@ export class DFA {
     public readonly atnStartState: DecisionState | null;
 
     /**
-     * `true` if this DFA is for a precedence decision; otherwise,
-     * `false`. This is the backing field for {@link #isPrecedenceDfa}.
+     * Gets whether this DFA is a precedence DFA. Precedence DFAs use a special
+     * start state {@link #s0} which is not stored in {@link #states}. The
+     * {@link DFAState#edges} array for this start state contains outgoing edges
+     * supplying individual start states corresponding to specific precedence
+     * values.
+     *
+     * @returns `true` if this is a precedence DFA; otherwise, `false`.
      */
-    public readonly precedenceDfa: boolean;
+    public readonly isPrecedenceDfa: boolean;
 
     /** A set of all DFA states. */
     #states = new HashSet<DFAState>(DFAStateEqualityComparator.instance);
@@ -43,26 +48,11 @@ export class DFA {
             }
         }
 
-        this.precedenceDfa = precedenceDfa;
+        this.isPrecedenceDfa = precedenceDfa;
     }
 
     public [Symbol.iterator] = (): Iterator<DFAState> => {
         return this.#states[Symbol.iterator]();
-    };
-
-    /**
-     * Gets whether this DFA is a precedence DFA. Precedence DFAs use a special
-     * start state {@link #s0} which is not stored in {@link #states}. The
-     * {@link DFAState#edges} array for this start state contains outgoing edges
-     * supplying individual start states corresponding to specific precedence
-     * values.
-     *
-      @returns `true` if this is a precedence DFA; otherwise,
-     * `false`.
-     * @see Parser#getPrecedence()
-     */
-    public readonly isPrecedenceDfa = (): boolean => {
-        return this.precedenceDfa;
     };
 
     /**
@@ -73,10 +63,10 @@ export class DFA {
      * `null` if no start state exists for the specified precedence.
      *
      * @throws IllegalStateException if this is not a precedence DFA.
-     * @see #isPrecedenceDfa()
+     * @see #isPrecedenceDfa
      */
     public readonly getPrecedenceStartState = (precedence: number): DFAState | null => {
-        if (!this.isPrecedenceDfa()) {
+        if (!this.isPrecedenceDfa) {
             throw new Error(`Only precedence DFAs may contain a precedence start state.`);
         }
 
@@ -95,7 +85,7 @@ export class DFA {
      * @param startState The start state corresponding to the specified precedence.
      */
     public readonly setPrecedenceStartState = (precedence: number, startState: DFAState): void => {
-        if (!this.isPrecedenceDfa()) {
+        if (!this.isPrecedenceDfa) {
             throw new Error(`Only precedence DFAs may contain a precedence start state.`);
         }
 
@@ -120,7 +110,7 @@ export class DFA {
      * @deprecated This method no longer performs any action.
      */
     public setPrecedenceDfa(precedenceDfa: boolean): void {
-        if (precedenceDfa !== this.isPrecedenceDfa()) {
+        if (precedenceDfa !== this.isPrecedenceDfa) {
             throw new Error(
                 `The precedenceDfa field cannot change after a DFA is constructed.`);
         }

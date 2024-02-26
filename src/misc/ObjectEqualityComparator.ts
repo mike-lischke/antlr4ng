@@ -9,7 +9,7 @@ import { EqualityComparator } from "./EqualityComparator.js";
 
 /**
  * This default implementation of {@link EqualityComparator} uses object equality
- * for comparisons by calling {@link Object#hashCode} and {@link Object#equals}.
+ * for comparisons by calling {@link Object.hashCode} and {@link Object.equals}.
  */
 export class ObjectEqualityComparator implements EqualityComparator<IComparable> {
     public static readonly instance: ObjectEqualityComparator = new ObjectEqualityComparator();

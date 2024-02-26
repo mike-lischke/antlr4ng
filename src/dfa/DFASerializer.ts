@@ -59,9 +59,9 @@ export class DFASerializer {
         if (s.isAcceptState) {
             if (s.predicates !== null) {
                 return `${baseStateStr}=>${s.predicates.toString()}`;
-            } else {
-                return `${baseStateStr}=>${s.prediction}`;
             }
+
+            return `${baseStateStr}=>${s.prediction}`;
         } else {
             return `${baseStateStr}`;
         }

@@ -19,11 +19,13 @@ export class DefaultEqualityComparator implements EqualityComparator<unknown> {
     public hashCode(obj: unknown): number {
         if (obj == null) {
             return 0;
-        } else if (typeof obj === "string" || typeof obj === "number") {
-            return MurmurHash.hashCode(obj);
-        } else {
-            return ObjectEqualityComparator.instance.hashCode(obj as IComparable);
         }
+
+        if (typeof obj === "string" || typeof obj === "number") {
+            return MurmurHash.hashCode(obj);
+        }
+
+        return ObjectEqualityComparator.instance.hashCode(obj as IComparable);
     }
 
     public equals(a: unknown, b: unknown): boolean {

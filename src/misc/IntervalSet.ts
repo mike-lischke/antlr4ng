@@ -76,10 +76,6 @@ export class IntervalSet {
         return this.#intervals[this.#intervals.length - 1].stop;
     }
 
-    public get isNil(): boolean {
-        return this.#intervals.length === 0;
-    }
-
     public clear(): void {
         this.#cachedHashCode = undefined;
         this.#intervals = [];
@@ -166,7 +162,7 @@ export class IntervalSet {
             return result;
         }
 
-        if (vocabulary.isNil) {
+        if (vocabulary.length === 0) {
             return result; // nothing in common with null set
         }
 
@@ -194,7 +190,7 @@ export class IntervalSet {
     }
 
     public and(other: IntervalSet): IntervalSet {
-        if (other.isNil) {
+        if (other.length === 0) {
             // nothing in common with null set
             return new IntervalSet();
         }
@@ -271,12 +267,12 @@ export class IntervalSet {
      * `null`, it is treated as though it was an empty set.
      */
     public subtract(other: IntervalSet): IntervalSet {
-        if (this.isNil) {
+        if (this.length === 0) {
             return new IntervalSet();
         }
 
         const result = new IntervalSet(this);
-        if (other.isNil) {
+        if (other.length === 0) {
             // Other set has no elements; just return the copy of the current set.
             return result;
         }
@@ -628,11 +624,13 @@ export class IntervalSet {
     private elementName(vocabulary: Vocabulary, token: number): string | null {
         if (token === Token.EOF) {
             return "<EOF>";
-        } else if (token === Token.EPSILON) {
-            return "<EPSILON>";
-        } else {
-            return vocabulary.getDisplayName(token);
         }
+
+        if (token === Token.EPSILON) {
+            return "<EPSILON>";
+        }
+
+        return vocabulary.getDisplayName(token);
     }
 
 }

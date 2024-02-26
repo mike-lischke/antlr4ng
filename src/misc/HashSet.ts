@@ -9,38 +9,39 @@ import { DefaultEqualityComparator } from "./DefaultEqualityComparator.js";
 import { EqualityComparator } from "./EqualityComparator.js";
 
 export class HashSet<T> implements Iterable<T> {
-    private static readonly INITIAL_CAPACITY = 16; // must be power of 2
-    private static readonly LOAD_FACTOR = 0.75;
+    static readonly #defaultLoadFactor = 0.75;
+    static readonly #initialCapacity = 16; // must be power of 2
 
-    protected comparator: EqualityComparator<T>;
-    protected buckets: Array<T[] | undefined>;
+    #comparator: EqualityComparator<T>;
+    #buckets: Array<T[] | undefined>;
 
     /** How many elements in set */
-    protected n = 0;
+    #itemCount = 0;
 
-    protected threshold = Math.floor(HashSet.INITIAL_CAPACITY * HashSet.LOAD_FACTOR);
+    #threshold: number;
 
     public constructor(comparator?: EqualityComparator<T>, initialCapacity?: number);
     public constructor(set: HashSet<T>);
     public constructor(
         comparatorOrSet?: EqualityComparator<T> | HashSet<T>,
-        initialCapacity = HashSet.INITIAL_CAPACITY) {
+        initialCapacity = HashSet.#initialCapacity) {
 
         if (comparatorOrSet instanceof HashSet) {
-            this.comparator = comparatorOrSet.comparator;
-            this.buckets = comparatorOrSet.buckets.slice(0);
-            for (let i = 0; i < this.buckets.length; i++) {
-                const bucket = this.buckets[i];
+            this.#comparator = comparatorOrSet.#comparator;
+            this.#buckets = comparatorOrSet.#buckets.slice(0);
+            for (let i = 0; i < this.#buckets.length; i++) {
+                const bucket = this.#buckets[i];
                 if (bucket) {
-                    this.buckets[i] = bucket.slice(0);
+                    this.#buckets[i] = bucket.slice(0);
                 }
             }
 
-            this.n = comparatorOrSet.n;
-            this.threshold = comparatorOrSet.threshold;
+            this.#itemCount = comparatorOrSet.#itemCount;
+            this.#threshold = comparatorOrSet.#threshold;
         } else {
-            this.comparator = comparatorOrSet ?? DefaultEqualityComparator.instance;
-            this.buckets = this.createBuckets(initialCapacity);
+            this.#comparator = comparatorOrSet ?? DefaultEqualityComparator.instance;
+            this.#buckets = this.createBuckets(initialCapacity);
+            this.#threshold = Math.floor(HashSet.#initialCapacity * HashSet.#defaultLoadFactor);
         }
     }
 
@@ -54,32 +55,32 @@ export class HashSet<T> implements Iterable<T> {
      * @returns An existing element that equals to `o` if already in set, otherwise `o`.
      */
     public getOrAdd(o: T): T {
-        if (this.n > this.threshold) {
+        if (this.#itemCount > this.#threshold) {
             this.expand();
         }
 
         const b = this.getBucket(o);
-        let bucket = this.buckets[b];
+        let bucket = this.#buckets[b];
 
         // Need a new bucket.
         if (!bucket) {
             bucket = [o];
-            this.buckets[b] = bucket;
-            ++this.n;
+            this.#buckets[b] = bucket;
+            ++this.#itemCount;
 
             return o;
         }
 
         // We have a bucket, look for element in it.
         for (const existing of bucket) {
-            if (this.comparator.equals(existing, o)) {
+            if (this.#comparator.equals(existing, o)) {
                 return existing;
             }
         }
 
         // Bucket is full, have to expand it.
         bucket.push(o);
-        ++this.n;
+        ++this.#itemCount;
 
         return o;
     }
@@ -90,14 +91,14 @@ export class HashSet<T> implements Iterable<T> {
         }
 
         const b = this.getBucket(o);
-        const bucket = this.buckets[b];
+        const bucket = this.#buckets[b];
         if (!bucket) {
             // no bucket
             return undefined;
         }
 
         for (const e of bucket) {
-            if (this.comparator.equals(e, o)) {
+            if (this.#comparator.equals(e, o)) {
                 return e;
             }
         }
@@ -107,7 +108,7 @@ export class HashSet<T> implements Iterable<T> {
 
     public hashCode(): number {
         let hash = MurmurHash.initialize();
-        for (const bucket of this.buckets) {
+        for (const bucket of this.#buckets) {
             if (bucket == null) {
                 continue;
             }
@@ -116,7 +117,7 @@ export class HashSet<T> implements Iterable<T> {
                 if (o == null) {
                     break;
                 }
-                hash = MurmurHash.update(hash, this.comparator.hashCode(o));
+                hash = MurmurHash.update(hash, this.#comparator.hashCode(o));
             }
         }
 
@@ -168,7 +169,7 @@ export class HashSet<T> implements Iterable<T> {
 
         // Copy elements from the nested arrays into the destination array
         let i = 0; // Position within destination array
-        for (const bucket of this.buckets) {
+        for (const bucket of this.#buckets) {
             if (bucket == null) {
                 continue;
             }
@@ -186,7 +187,7 @@ export class HashSet<T> implements Iterable<T> {
 
     public containsAll(collection: Iterable<T>): boolean {
         if (collection instanceof HashSet) {
-            for (const bucket of collection.buckets) {
+            for (const bucket of collection.#buckets) {
                 if (bucket == null) {
                     continue;
                 }
@@ -226,9 +227,9 @@ export class HashSet<T> implements Iterable<T> {
     }
 
     public clear(): void {
-        this.buckets = this.createBuckets(HashSet.INITIAL_CAPACITY);
-        this.n = 0;
-        this.threshold = Math.floor(HashSet.INITIAL_CAPACITY * HashSet.LOAD_FACTOR);
+        this.#buckets = this.createBuckets(HashSet.#initialCapacity);
+        this.#itemCount = 0;
+        this.#threshold = Math.floor(HashSet.#initialCapacity * HashSet.#defaultLoadFactor);
     }
 
     public toString(): string {
@@ -238,7 +239,7 @@ export class HashSet<T> implements Iterable<T> {
 
         let buf = "{";
         let first: boolean = true;
-        for (const bucket of this.buckets) {
+        for (const bucket of this.#buckets) {
             if (bucket == null) {
                 continue;
             }
@@ -262,7 +263,7 @@ export class HashSet<T> implements Iterable<T> {
 
     public toTableString(): string {
         let buf = "";
-        for (const bucket of this.buckets) {
+        for (const bucket of this.#buckets) {
             if (bucket == null) {
                 buf += "null\n";
                 continue;
@@ -288,18 +289,18 @@ export class HashSet<T> implements Iterable<T> {
     }
 
     protected getBucket(o: T): number {
-        const hash = this.comparator.hashCode(o);
-        const b = hash & (this.buckets.length - 1); // assumes len is power of 2
+        const hash = this.#comparator.hashCode(o);
+        const b = hash & (this.#buckets.length - 1); // assumes len is power of 2
 
         return b;
     }
 
     protected expand(): void {
-        const old = this.buckets;
-        const newCapacity = this.buckets.length * 2;
+        const old = this.#buckets;
+        const newCapacity = this.#buckets.length * 2;
         const newTable: Array<T[] | undefined> = this.createBuckets(newCapacity);
-        this.buckets = newTable;
-        this.threshold = Math.floor(newCapacity * HashSet.LOAD_FACTOR);
+        this.#buckets = newTable;
+        this.#threshold = Math.floor(newCapacity * HashSet.#defaultLoadFactor);
 
         // rehash all existing entries
         for (const bucket of old) {
@@ -309,10 +310,10 @@ export class HashSet<T> implements Iterable<T> {
 
             for (const o of bucket) {
                 const b = this.getBucket(o);
-                let newBucket: T[] | undefined = this.buckets[b];
+                let newBucket: T[] | undefined = this.#buckets[b];
                 if (!newBucket) {
                     newBucket = [];
-                    this.buckets[b] = newBucket;
+                    this.#buckets[b] = newBucket;
                 }
 
                 newBucket.push(o);
@@ -321,11 +322,11 @@ export class HashSet<T> implements Iterable<T> {
     }
 
     public get size(): number {
-        return this.n;
+        return this.#itemCount;
     }
 
     public get isEmpty(): boolean {
-        return this.n === 0;
+        return this.#itemCount === 0;
     }
 
     /**

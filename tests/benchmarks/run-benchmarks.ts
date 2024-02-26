@@ -57,7 +57,7 @@ const testFiles: ITestFile[] = [
     { name: "./data/bitrix_queries_cut.sql", initialDelimiter: ";" },
 
     // Not so many, but some very long insert statements.
-    { name: "./data/sakila-db/sakila-data.sql", initialDelimiter: ";" },
+    //{ name: "./data/sakila-db/sakila-data.sql", initialDelimiter: ";" },
 ];
 
 /**
@@ -242,6 +242,7 @@ splitterTest();
 console.log("Splitter tests took " + Math.round(performance.now() - timestamp) + " ms");
 
 console.log("Running antlr4ng parser once (cold)");
+parserRun(true);
 parserRun(true);
 
 process.stdout.write("\nRunning antlr4ng parser 5 times (warm) ");

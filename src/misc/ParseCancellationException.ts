@@ -9,8 +9,6 @@
  * not extend {@link RecognitionException}, allowing it to bypass the standard
  * error recovery mechanisms. {@link BailErrorStrategy} throws this exception in
  * response to a parse error.
- *
- * @author Sam Harwell
  */
 export class ParseCancellationException extends Error {
 

@@ -308,7 +308,7 @@ export class ParserInterpreter extends Parser {
                 }
 
                 let expectedTokenType = Token.INVALID_TYPE;
-                if (!expectedTokens.isNil) {
+                if (expectedTokens.length !== 0) {
                     // get any element
                     expectedTokenType = expectedTokens.minElement;
                 }
