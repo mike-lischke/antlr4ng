@@ -38,11 +38,11 @@ export interface ANTLRErrorStrategy {
      * successful result of the match.
      *
      * This method handles the consumption of any tokens - the caller should
-     * not* call {@link Parser#consume} after a successful recovery.
+     * not* call {@link Parser.consume} after a successful recovery.
      *
      * Note that the calling code will not report an error if this method
      * returns successfully. The error strategy implementation is responsible
-     * for calling {@link Parser#notifyErrorListeners} as appropriate.
+     * for calling {@link Parser.notifyErrorListeners} as appropriate.
      *
      * @param recognizer the parser instance
      * @throws RecognitionException if the error strategy was not able to
@@ -74,7 +74,7 @@ export interface ANTLRErrorStrategy {
      * `(...)+`).
      *
      * For an implementation based on Jim Idle's "magic sync" mechanism, see
-     * {@link DefaultErrorStrategy#sync}.
+     * {@link DefaultErrorStrategy.sync}.
      *
      * @see DefaultErrorStrategy#sync
      *
@@ -86,8 +86,7 @@ export interface ANTLRErrorStrategy {
     sync(recognizer: Parser): void;
 
     /**
-     * This method is called by when the parser successfully matches an input
-     * symbol.
+     * This method is called by when the parser successfully matches an input symbol.
      *
      * @param recognizer the parser instance
      */

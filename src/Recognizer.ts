@@ -28,7 +28,7 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
 
     public interpreter: ATNInterpreter;
 
-    #listeners: ANTLRErrorListener[] = [ConsoleErrorListener.INSTANCE];
+    #listeners: ANTLRErrorListener[] = [ConsoleErrorListener.instance];
     #stateNumber = -1;
 
     public checkVersion(toolVersion: string): void {

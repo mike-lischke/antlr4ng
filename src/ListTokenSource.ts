@@ -80,23 +80,21 @@ export class ListTokenSource implements TokenSource {
         } else {
             if (this.eofToken !== null) {
                 return this.eofToken.column;
-            } else {
-                if (this.tokens.length > 0) {
-                    // have to calculate the result from the line/column of the previous
-                    // token, along with the text of the token.
-                    const lastToken = this.tokens[this.tokens.length - 1];
-                    const tokenText = lastToken.text;
-                    if (tokenText !== null) {
-                        const lastNewLine = tokenText.lastIndexOf("\n");
-                        if (lastNewLine >= 0) {
-                            return tokenText.length - lastNewLine - 1;
-                        }
-                    }
-
-                    return lastToken.column + lastToken.stop - lastToken.start + 1;
-                }
             }
+            if (this.tokens.length > 0) {
+                // have to calculate the result from the line/column of the previous
+                // token, along with the text of the token.
+                const lastToken = this.tokens[this.tokens.length - 1];
+                const tokenText = lastToken.text;
+                if (tokenText) {
+                    const lastNewLine = tokenText.lastIndexOf("\n");
+                    if (lastNewLine >= 0) {
+                        return tokenText.length - lastNewLine - 1;
+                    }
+                }
 
+                return lastToken.column + lastToken.stop - lastToken.start + 1;
+            }
         }
 
         // only reach this if tokens is empty, meaning EOF occurs at the first
@@ -147,7 +145,7 @@ export class ListTokenSource implements TokenSource {
                     let line = lastToken.line;
 
                     const tokenText = lastToken.text;
-                    if (tokenText !== null) {
+                    if (tokenText) {
                         for (const char of tokenText) {
                             if (char === "\n") {
                                 line++;

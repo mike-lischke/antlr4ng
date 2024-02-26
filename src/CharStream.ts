@@ -136,10 +136,9 @@ export class CharStreamImpl implements CharStream {
 
         if (start >= this.data.length) {
             return "";
-        } else {
-            return this.#stringFromRange(start, stop + 1);
         }
 
+        return this.#stringFromRange(start, stop + 1);
     }
 
     public toString(): string {
@@ -153,9 +152,9 @@ export class CharStreamImpl implements CharStream {
     public getSourceName(): string {
         if (this.name) {
             return this.name;
-        } else {
-            return IntStream.UNKNOWN_SOURCE_NAME;
         }
+
+        return IntStream.UNKNOWN_SOURCE_NAME;
     }
 
     #stringFromRange(start: number, stop?: number): string {

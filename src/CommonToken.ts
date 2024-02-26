@@ -57,7 +57,7 @@ export class CommonToken implements WritableToken {
      * This is the backing field for {@link getText} when the token text is
      * explicitly set in the constructor or via {@link setText}.
      */
-    #text: string | null = null;
+    #text?: string;
 
     protected constructor(details: {
         source: [TokenSource | null, CharStream | null],
@@ -65,7 +65,7 @@ export class CommonToken implements WritableToken {
         channel?: number,
         start?: number,
         stop?: number;
-        text?: string | null,
+        text?: string,
         line?: number,
         tokenIndex?: number,
         column?: number;
@@ -78,7 +78,7 @@ export class CommonToken implements WritableToken {
         this.channel = details.channel ?? Token.DEFAULT_CHANNEL;
         this.start = details.start ?? 0;
         this.stop = details.stop ?? 0;
-        this.#text = details.text ?? null;
+        this.#text = details.text;
 
         if (details.source[0] !== null) {
             this.line = details.source[0].line;
@@ -91,9 +91,9 @@ export class CommonToken implements WritableToken {
      *
      * If `token` is also a {@link CommonToken} instance, the newly
      * constructed token will share a reference to the {@link #text} field and
-     * the {@link Pair} stored in {@link #source}. Otherwise, {@link #text} will
-     * be assigned the result of calling {@link #getText}, and {@link #source}
-     * will be constructed from the result of {@link Token#getTokenSource} and
+     * the {@link Pair} stored in {@link source}. Otherwise, {@link text} will
+     * be assigned the result of calling {@link getText}, and {@link source}
+     * will be constructed from the result of {@link Token.getTokenSource} and
      * {@link Token#getInputStream}.
      *
      * @param token The token to copy.
@@ -125,7 +125,7 @@ export class CommonToken implements WritableToken {
      * @param type The token type.
      * @param text The text of the token.
      */
-    public static fromType(type: number, text?: string | null): CommonToken {
+    public static fromType(type: number, text?: string): CommonToken {
         return new CommonToken({ type, text, source: CommonToken.EMPTY_SOURCE });
     }
 
@@ -149,8 +149,8 @@ export class CommonToken implements WritableToken {
      * constructed token will share a reference to the {@link text} field and
      * the {@link Pair} stored in {@link source}. Otherwise, {@link text} will
      * be assigned the result of calling {@link getText}, and {@link source}
-     * will be constructed from the result of {@link Token//getTokenSource} and
-     * {@link Token//getInputStream}.
+     * will be constructed from the result of {@link Token.getTokenSource} and
+     * {@link Token.getInputStream}.
      */
     public clone(): CommonToken {
         const t = new CommonToken({
@@ -192,31 +192,31 @@ export class CommonToken implements WritableToken {
             channelStr + "," + this.line + ":" + this.column + "]";
     }
 
-    public get text(): string | null {
-        if (this.#text !== null) {
+    public get text(): string | undefined {
+        if (this.#text) {
             return this.#text;
         }
 
         const input = this.inputStream;
-        if (input === null) {
-            return null;
+        if (!input) {
+            return undefined;
         }
 
         const n = input.size;
         if (this.start < n && this.stop < n) {
             return input.getTextFromRange(this.start, this.stop);
-        } else {
-            return "<EOF>";
         }
+
+        return "<EOF>";
     }
 
-    public set text(text: string | null) {
+    public set text(text: string) {
         this.#text = text;
     }
 
     // WritableToken implementation
 
-    public setText(text: string | null): void {
+    public setText(text: string): void {
         this.#text = text;
     }
 

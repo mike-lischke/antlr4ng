@@ -46,9 +46,9 @@ export class BailErrorStrategy extends DefaultErrorStrategy {
      */
     public override recover(recognizer: Parser, e: RecognitionException): void {
         let context: ParserRuleContext | null = recognizer.context;
-        while (context !== null) {
+        while (context) {
             context.exception = e;
-            context = context.parent as ParserRuleContext;
+            context = context.parent;
         }
         throw new ParseCancellationException(e);
     }
@@ -62,7 +62,7 @@ export class BailErrorStrategy extends DefaultErrorStrategy {
         let context: ParserRuleContext | null = recognizer.context;
         while (context !== null) {
             context.exception = exception;
-            context = context.parent as ParserRuleContext;
+            context = context.parent;
         }
 
         throw new ParseCancellationException(exception);

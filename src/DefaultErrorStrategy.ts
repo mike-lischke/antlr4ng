@@ -53,9 +53,6 @@ export class DefaultErrorStrategy {
      */
     protected nextTokensContext: ParserRuleContext | null = null;
 
-    /**
-     * @see #nextTokensContext
-     */
     protected nextTokenState = 0;
 
     /**
@@ -91,7 +88,6 @@ export class DefaultErrorStrategy {
     }
 
     /**
-     * {@inheritDoc}
      * The default implementation simply calls {@link endErrorCondition}.
      */
     public reportMatch(recognizer: Parser): void {
@@ -99,8 +95,6 @@ export class DefaultErrorStrategy {
     }
 
     /**
-     * {@inheritDoc}
-     *
      * The default implementation returns immediately if the handler is already
      * in error recovery mode. Otherwise, it calls {@link beginErrorCondition}
      * and dispatches the reporting task based on the runtime type of `e`
@@ -109,14 +103,15 @@ export class DefaultErrorStrategy {
      * - {@link NoViableAltException}: Dispatches the call to {@link reportNoViableAlternative}
      * - {@link InputMismatchException}: Dispatches the call to {@link reportInputMismatch}
      * - {@link FailedPredicateException}: Dispatches the call to {@link reportFailedPredicate}
-     * - All other types: calls {@link Parser//notifyErrorListeners} to report the exception
+     * - All other types: calls {@link Parser.notifyErrorListeners} to report the exception
      */
     public reportError(recognizer: Parser, e: RecognitionException): void {
-        // if we've already reported an error and have not matched a token
+        // If we've already reported an error and have not matched a token
         // yet successfully, don't report any errors.
         if (this.inErrorRecoveryMode(recognizer)) {
             return; // don't report spurious errors
         }
+
         this.beginErrorCondition(recognizer);
         if (e instanceof NoViableAltException) {
             this.reportNoViableAlternative(recognizer, e);
@@ -130,9 +125,6 @@ export class DefaultErrorStrategy {
     }
 
     /**
-     *
-     * {@inheritDoc}
-     *
      * The default implementation resynchronizes the parser by consuming tokens
      * until we find one in the resynchronization set--loosely the set of tokens
      * that can follow the current rule.
@@ -140,7 +132,7 @@ export class DefaultErrorStrategy {
      */
     public recover(recognizer: Parser, _e: RecognitionException): void {
         if (this.lastErrorIndex === recognizer.inputStream?.index && this.lastErrorStates.contains(recognizer.state)) {
-            // uh oh, another error at same token index and previously-visited
+            // Uh oh, another error at same token index and previously-visited
             // state in ATN; must be a case where LT(1) is in the recovery
             // token set so nothing got consumed. Consume a single token
             // at least to prevent an infinite loop; this is a failsafe.
@@ -155,7 +147,7 @@ export class DefaultErrorStrategy {
     }
 
     /**
-     * The default implementation of {@link ANTLRErrorStrategy//sync} makes sure
+     * The default implementation of {@link ANTLRErrorStrategy.sync} makes sure
      * that the current lookahead symbol is consistent with what were expecting
      * at this point in the ATN. You can call this anytime but ANTLR only
      * generates code to check before subrules/loops and each iteration.
@@ -202,7 +194,7 @@ export class DefaultErrorStrategy {
      *
      */
     public sync(recognizer: Parser): void {
-        // If already recovering, don't try to sync
+        // If already recovering, don't try to sync.
         if (this.inErrorRecoveryMode(recognizer)) {
             return;
         }
@@ -216,7 +208,9 @@ export class DefaultErrorStrategy {
             this.nextTokenState = ATNState.INVALID_STATE_NUMBER;
 
             return;
-        } else if (nextTokens.contains(Token.EPSILON)) {
+        }
+
+        if (nextTokens.contains(Token.EPSILON)) {
             if (this.nextTokensContext === null) {
                 // It's possible the next token won't match information tracked
                 // by sync is restricted for performance.
@@ -226,27 +220,30 @@ export class DefaultErrorStrategy {
 
             return;
         }
+
         switch ((s.constructor as typeof ATNState).stateType) {
             case ATNState.BLOCK_START:
             case ATNState.STAR_BLOCK_START:
             case ATNState.PLUS_BLOCK_START:
-            case ATNState.STAR_LOOP_ENTRY:
+            case ATNState.STAR_LOOP_ENTRY: {
                 // report error and recover if possible
                 if (this.singleTokenDeletion(recognizer) !== null) {
                     return;
-                } else {
-                    throw new InputMismatchException(recognizer);
                 }
+                throw new InputMismatchException(recognizer);
+            }
+
             case ATNState.PLUS_LOOP_BACK:
-            case ATNState.STAR_LOOP_BACK:
-                {
-                    this.reportUnwantedToken(recognizer);
-                    const expecting = new IntervalSet();
-                    expecting.addSet(recognizer.getExpectedTokens());
-                    const whatFollowsLoopIterationOrRule = expecting.addSet(this.getErrorRecoverySet(recognizer));
-                    this.consumeUntil(recognizer, whatFollowsLoopIterationOrRule);
-                }
+            case ATNState.STAR_LOOP_BACK: {
+                this.reportUnwantedToken(recognizer);
+                const expecting = new IntervalSet();
+                expecting.addSet(recognizer.getExpectedTokens());
+                const whatFollowsLoopIterationOrRule = expecting.addSet(this.getErrorRecoverySet(recognizer));
+                this.consumeUntil(recognizer, whatFollowsLoopIterationOrRule);
+
                 break;
+            }
+
             default:
             // do nothing if we can't identify the exact kind of ATN state
         }
@@ -256,7 +253,7 @@ export class DefaultErrorStrategy {
      * This is called by {@link reportError} when the exception is a
      * {@link NoViableAltException}.
      *
-     * @see //reportError
+     * @see reportError
      *
      * @param recognizer the parser instance
      * @param e the recognition exception
@@ -284,10 +281,9 @@ export class DefaultErrorStrategy {
     }
 
     /**
-     * This is called by {@link reportError} when the exception is an
-     * {@link InputMismatchException}.
+     * This is called by {@link reportError} when the exception is an {@link InputMismatchException}.
      *
-     * @see //reportError
+     * @see reportError
      *
      * @param recognizer the parser instance
      * @param e the recognition exception
@@ -308,7 +304,7 @@ export class DefaultErrorStrategy {
      * This is called by {@link reportError} when the exception is a
      * {@link FailedPredicateException}.
      *
-     * @see //reportError
+     * @see reportError
      *
      * @param recognizer the parser instance
      * @param e the recognition exception
@@ -333,7 +329,7 @@ export class DefaultErrorStrategy {
      * The default implementation simply returns if the handler is already in
      * error recovery mode. Otherwise, it calls {@link beginErrorCondition} to
      * enter error recovery mode, followed by calling
-     * {@link Parser//notifyErrorListeners}.
+     * {@link Parser.notifyErrorListeners}.
      *
      * @param recognizer the parser instance
      */
@@ -341,6 +337,7 @@ export class DefaultErrorStrategy {
         if (this.inErrorRecoveryMode(recognizer)) {
             return;
         }
+
         this.beginErrorCondition(recognizer);
         const t = recognizer.getCurrentToken();
         const tokenName = this.getTokenErrorDisplay(t);
@@ -363,7 +360,7 @@ export class DefaultErrorStrategy {
      * The default implementation simply returns if the handler is already in
      * error recovery mode. Otherwise, it calls {@link beginErrorCondition} to
      * enter error recovery mode, followed by calling
-     * {@link Parser//notifyErrorListeners}.
+     * {@link Parser.notifyErrorListeners}.
      *
      * @param recognizer the parser instance
      */
@@ -371,6 +368,7 @@ export class DefaultErrorStrategy {
         if (this.inErrorRecoveryMode(recognizer)) {
             return;
         }
+
         this.beginErrorCondition(recognizer);
 
         const t = recognizer.getCurrentToken();
@@ -431,18 +429,19 @@ export class DefaultErrorStrategy {
     public recoverInline(recognizer: Parser): Token {
         // SINGLE TOKEN DELETION
         const matchedSymbol = this.singleTokenDeletion(recognizer);
-        if (matchedSymbol !== null) {
-            // we have deleted the extra token.
-            // now, move past ttype token as if all were ok
+        if (matchedSymbol) {
+            // We have deleted the extra token. Now, move past ttype token as if all were ok.
             recognizer.consume();
 
             return matchedSymbol;
         }
+
         // SINGLE TOKEN INSERTION
         if (this.singleTokenInsertion(recognizer)) {
             return this.getMissingSymbol(recognizer);
         }
-        // even that didn't work; must throw the exception
+
+        // Even that didn't work - must throw the exception.
         throw new InputMismatchException(recognizer);
     }
 
@@ -477,9 +476,9 @@ export class DefaultErrorStrategy {
             this.reportMissingToken(recognizer);
 
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -492,7 +491,7 @@ export class DefaultErrorStrategy {
      *
      * If the single-token deletion is successful, this method calls
      * {@link reportUnwantedToken} to report the error, followed by
-     * {@link Parser//consume} to actually "delete" the extraneous token. Then,
+     * {@link Parser.consume} to actually "delete" the extraneous token. Then,
      * before returning {@link reportMatch} is called to signal a successful
      * match.
      *
@@ -516,9 +515,9 @@ export class DefaultErrorStrategy {
             this.reportMatch(recognizer); // we know current token is correct
 
             return matchedSymbol;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -540,7 +539,6 @@ export class DefaultErrorStrategy {
      * a CommonToken of the appropriate type. The text will be the token.
      * If you change what tokens must be created by the lexer,
      * override this method to create the appropriate tokens.
-     *
      */
     public getMissingSymbol(recognizer: Parser): Token {
         const currentSymbol = recognizer.getCurrentToken() as CommonToken;
@@ -585,8 +583,9 @@ export class DefaultErrorStrategy {
         if (t === null) {
             return "<no token>";
         }
+
         let s = t.text;
-        if (s === null) {
+        if (!s) {
             if (t.type === Token.EOF) {
                 s = "<EOF>";
             } else {

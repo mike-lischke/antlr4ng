@@ -19,7 +19,7 @@ export interface Token {
     /**
      * Get the text of the token.
      */
-    text: string | null;
+    text?: string;
 
     /** Get the token type of the token */
     type: number;

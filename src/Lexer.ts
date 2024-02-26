@@ -120,7 +120,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
      * for the next token is fixed and is not subject to change in the normal
      * workflow of the lexer.
      */
-    #text: string | null = null;
+    #text?: string;
 
     #factory: TokenFactory<Token>;
 
@@ -143,7 +143,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
         this.tokenStartCharIndex = -1;
         this.currentTokenColumn = -1;
         this.currentTokenStartLine = -1;
-        this.#text = null;
+        this.#text = undefined;
 
         this.#hitEOF = false;
         this.#mode = Lexer.DEFAULT_MODE;
@@ -176,7 +176,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
                 this.tokenStartCharIndex = this.#input.index;
                 this.currentTokenColumn = this.interpreter.column;
                 this.currentTokenStartLine = this.interpreter.line;
-                this.#text = null;
+                this.#text = undefined;
                 let continueOuter = false;
                 while (true) {
                     this.type = Token.INVALID_TYPE;
@@ -285,8 +285,8 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
     }
 
     public emitEOF(): Token {
-        const eof = this.#factory.create([this, this.#input], Token.EOF, null, Token.DEFAULT_CHANNEL, this.#input.index,
-            this.#input.index - 1, this.line, this.column);
+        const eof = this.#factory.create([this, this.#input], Token.EOF, undefined, Token.DEFAULT_CHANNEL,
+            this.#input.index, this.#input.index - 1, this.line, this.column);
         this.emitToken(eof);
 
         return eof;
@@ -404,14 +404,14 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
     }
 
     public get text(): string {
-        if (this.#text !== null) {
+        if (this.#text) {
             return this.#text;
         } else {
             return this.interpreter.getText(this.#input);
         }
     }
 
-    public set text(text: string | null) {
+    public set text(text: string) {
         this.#text = text;
     }
 }

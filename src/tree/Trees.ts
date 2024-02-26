@@ -50,7 +50,7 @@ export class Trees {
         return res;
     }
 
-    public static getNodeText(t: ParseTree, ruleNames: string[] | null, recog?: Parser | null): string | null {
+    public static getNodeText(t: ParseTree, ruleNames: string[] | null, recog?: Parser | null): string | undefined {
         ruleNames = ruleNames ?? null;
         recog = recog ?? null;
         if (recog !== null) {

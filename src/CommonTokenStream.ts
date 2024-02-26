@@ -13,7 +13,7 @@ import { TokenSource } from "./TokenSource.js";
 /**
  * This class extends {@link BufferedTokenStream} with functionality to filter
  * token streams to tokens on a particular channel (tokens where
- * {@link Token//getChannel} returns a particular value).
+ * {@link Token.getChannel} returns a particular value).
  *
  * This token stream provides access to all tokens by index or when calling
  * methods like {@link getText}. The channel filtering is only used for code
@@ -21,13 +21,13 @@ import { TokenSource } from "./TokenSource.js";
  * {@link LB}.
  *
  * By default, tokens are placed on the default channel
- * ({@link Token//DEFAULT_CHANNEL}), but may be reassigned by using the
+ * ({@link Token.DEFAULT_CHANNEL}), but may be reassigned by using the
  * `->channel(HIDDEN)` lexer command, or by using an embedded action to
- * call {@link Lexer//setChannel}.
+ * call {@link Lexer.setChannel}.
  *
  *
  * Note: lexer rules which use the `->skip` lexer command or call
- * {@link Lexer//skip} do not produce tokens at all, so input text matched by
+ * {@link Lexer.skip} do not produce tokens at all, so input text matched by
  * such a rule will not be available as part of the token stream, regardless of
  * channel.
  */
@@ -36,7 +36,7 @@ export class CommonTokenStream extends BufferedTokenStream {
      * Specifies the channel to use for filtering tokens.
      *
      *
-     * The default value is {@link Token#DEFAULT_CHANNEL}, which matches the
+     * The default value is {@link Token.DEFAULT_CHANNEL}, which matches the
      * default channel assigned to tokens created by the lexer.
      */
     protected channel = Token.DEFAULT_CHANNEL;
