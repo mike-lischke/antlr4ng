@@ -1,6 +1,6 @@
 {
     "name": "antlr4ng",
-    "version": "2.0.10",
+    "version": "2.0.11",
     "type": "module",
     "description": "Alternative JavaScript/TypeScript runtime for ANTLR4",
     "main": "dist/index.cjs",
@@ -27,7 +27,7 @@
         "@mike-lischke/antlr-tgen": "1.0.7",
         "@types/jest": "29.5.11",
         "@types/node": "20.10.4",
-        "@types/unicode-properties": "^1.3.2",
+        "@types/unicode-properties": "1.3.2",
         "@typescript-eslint/eslint-plugin": "6.14.0",
         "@typescript-eslint/parser": "6.14.0",
         "esbuild": "0.19.9",
@@ -42,15 +42,12 @@
         "unicode-properties": "1.4.1"
     },
     "scripts": {
-        "prepublishOnly": "npm run build-minified && npm run test",
+        "prepublishOnly": "npm run build && npm run test",
         "tsc": "tsc --watch",
         "build": "npm run generate-test-parsers && tsc && npm run build-cjs && npm run build-mjs",
-        "build-minified": "npm run generate-test-parsers && tsc && npm run build-cjs-minified && npm run build-mjs-minified",
         "build-bundle": "esbuild ./src/index.js --main-fields=module,main --bundle --target=esnext --keep-names",
         "build-mjs": "npm run build-bundle -- --outfile=dist/index.mjs --format=esm",
-        "build-mjs-minified": "npm run build-mjs -- --minify",
         "build-cjs": "npm run build-bundle -- --outfile=dist/index.cjs --format=cjs",
-        "build-cjs-minified": "npm run build-cjs -- --minify",
         "generate-xpath-lexer": "node cli/index.js -Dlanguage=TypeScript -o src/tree/xpath/generated -no-visitor -no-listener -Xexact-output-dir src/tree/xpath/XPathLexer.g4",
         "full-test": "npm run test && npm run run-benchmarks && npm run time-lexer-speed",
         "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --no-coverage",

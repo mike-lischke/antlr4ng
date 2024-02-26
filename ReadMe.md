@@ -214,6 +214,13 @@ The execute times on last release of this runtime have been measured as:
 
 ## Release Notes
 
+### 2.0.11
+
+- Fixed bug #30 ReferenceError: Super constructor may only be called once
+- The entire runtime test library from the Java runtime has now been ported to TypeScript and is used from now on to check the correctness of this runtime.
+- The bit set class used bigint to store the values, which is a problem with bundlers like webpack that have no support for bigint. For this reason that type has been replaced (PR #40 feat: replace bigint and BigUint64Array).
+- The bundle is no longer minified and hence larger than before. Bundling a minfied bundle with other bundlers (like terser) in dependent projects might cause trouble. Additionally, minifying a bundle has no benefit in execution time, it's just a size difference (related bugs: #31, #34, #38).
+
 ### 2.0.10
 
 Fixed bug #26 getRuleContext is incompatible with generated code (2.0.5)

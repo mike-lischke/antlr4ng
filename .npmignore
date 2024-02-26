@@ -6,6 +6,7 @@ tests/
 coverage/
 dist/*.map
 src/
+build/
 
 jest.config.ts
 .eslintignore
