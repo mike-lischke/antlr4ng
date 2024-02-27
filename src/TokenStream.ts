@@ -4,11 +4,11 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { IntStream } from "./IntStream.js";
-import { RuleContext } from "./RuleContext.js";
-import { Token } from "./Token.js";
-import { TokenSource } from "./TokenSource.js";
-import { Interval } from "./misc/Interval.js";
+import { type IntStream } from "./IntStream.js";
+import { type RuleContext } from "./RuleContext.js";
+import { type Token } from "./Token.js";
+import { type TokenSource } from "./TokenSource.js";
+import { type Interval } from "./misc/Interval.js";
 
 /**
  * An IntStream whose symbols are {@link Token} instances.
@@ -17,11 +17,11 @@ export interface TokenStream extends IntStream {
     /**
      * Get the {@link Token} instance associated with the value returned by
      * {@link LA LA(k)}. This method has the same pre- and post-conditions as
-     * {@link IntStream#LA}. In addition, when the preconditions of this method
+     * {@link IntStream.LA}. In addition, when the preconditions of this method
      * are met, the return value is non-null and the value of
      * `LT(k).getType()==LA(k)`.
      *
-     * @see IntStream#LA
+     * @see IntStream.LA
      */
     // eslint-disable-next-line @typescript-eslint/naming-convention
     LT(k: number): Token | null;
@@ -39,10 +39,6 @@ export interface TokenStream extends IntStream {
      * in the case of filtering streams where `index` lies before the end
      * of the stream. Unlike `seek()`, this method does not adjust
      * `index` to point to a non-ignored symbol.
-     *
-     * @throws IllegalArgumentException if {code index} is less than 0
-     * @throws UnsupportedOperationException if the stream does not support
-     * retrieving the token at the specified index
      */
     get(index: number): Token;
 
@@ -55,7 +51,7 @@ export interface TokenStream extends IntStream {
     /**
      * Return the text of all tokens within the specified `interval`. This
      * method behaves like the following code (including potential exceptions
-     * for violating preconditions of {@link #get}, but may be optimized by the
+     * for violating preconditions of {@link get}, but may be optimized by the
      * specific implementation.
      *
      * ```
@@ -78,7 +74,7 @@ export interface TokenStream extends IntStream {
     /**
      * Return the text of all tokens in the stream. This method behaves like the
      * following code, including potential exceptions from the calls to
-     * {@link IntStream#size} and {@link #getText(Interval)}, but may be
+     * {@link IntStream.size} and {@link getText getText(Interval)}, but may be
      * optimized by the specific implementation.
      *
      * ```
@@ -93,7 +89,7 @@ export interface TokenStream extends IntStream {
     /**
      * Return the text of all tokens in the source interval of the specified
      * context. This method behaves like the following code, including potential
-     * exceptions from the call to {@link #getText(Interval)}, but may be
+     * exceptions from the call to {@link getText getText(Interval)}, but may be
      * optimized by the specific implementation.
      *
      * If `ctx.getSourceInterval()` does not return a valid interval of
@@ -118,7 +114,7 @@ export interface TokenStream extends IntStream {
      * this stream, or if the `stop` occurred before the `start`
      * token, the behavior is unspecified.
      *
-     * For streams which ensure that the {@link Token#getTokenIndex} method is
+     * For streams which ensure that the {@link Token.getTokenIndex} method is
      * accurate for all of its provided tokens, this method behaves like the
      * following code. Other streams may implement this method in other ways
      * provided the behavior is consistent with this at a high level.

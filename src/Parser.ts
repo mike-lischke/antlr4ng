@@ -377,7 +377,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         return this.#inputStream;
     }
 
-    // Set the token stream and reset the parser.
+    /** Set the token stream and reset the parser. */
     public set tokenStream(input: TokenStream) {
         this.reset(false);
         this.#inputStream = input;
@@ -517,7 +517,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         this.triggerEnterRuleEvent(); // simulates rule entry for left-recursive rules
     }
 
-    // Like {@link enterRule} but for recursive rules.
+    /** Like {@link enterRule} but for recursive rules. */
     public pushNewRecursionContext(localctx: ParserRuleContext, state: number, _ruleIndex: number): void {
         const previous = this.context!;
         previous.parent = localctx;
@@ -546,6 +546,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         } else {
             this.context = parent;
         }
+
         // hook into tree
         retCtx.parent = parent;
         if (this.buildParseTrees && parent !== null) {
@@ -621,7 +622,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * state and context, as given by {@link getState} and {@link getContext},
      * respectively.
      *
-     * @see ATN.getExpectedTokens(int, RuleContext)
+     * {@link ATN.getExpectedTokens ATN.getExpectedTokens(int, RuleContext)}
      */
     public getExpectedTokens(): IntervalSet {
         return this.interpreter.atn.getExpectedTokens(this.state, this.context);
@@ -634,18 +635,18 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         return atn.nextTokens(s);
     }
 
-    // Get a rule's index (i.e., `RULE_ruleName` field) or -1 if not found.
+    /** Get a rule's index (i.e., `RULE_ruleName` field) or -1 if not found. */
     public getRuleIndex(ruleName: string): number {
         const ruleIndex = this.getRuleIndexMap().get(ruleName);
         if (ruleIndex != null) {
             return ruleIndex;
-        } else {
-            return -1;
         }
+
+        return -1;
     }
 
     /**
-     * Return List<String> of the rule names in your parser instance
+     * @returns an array of string of the rule names in your parser instance
      * leading up to a call to the current rule. You could override if
      * you want more details such as the file/line info of where
      * in the ATN a rule is invoked.
@@ -657,6 +658,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         if (p === null) {
             p = this.context;
         }
+
         const stack = [];
         while (p !== null) {
             // compute what follows who invoked us

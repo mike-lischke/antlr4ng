@@ -10,11 +10,11 @@
  * checking for matching version numbers and notifying listeners in the case
  * where a version mismatch is detected.
  *
- * The runtime version information is provided by {@link #VERSION} and
- * {@link #getRuntimeVersion()}. Detailed information about these values is
+ * The runtime version information is provided by {@link VERSION} and
+ * {@link getRuntimeVersion()}. Detailed information about these values is
  * provided in the documentation for each member.
  *
- * The runtime version check is implemented by {@link #checkVersion}. Detailed
+ * The runtime version check is implemented by {@link checkVersion}. Detailed
  * information about incorporating this call into user code, as well as its use
  * in generated code, is provided in the documentation for the method.
  *
@@ -56,7 +56,7 @@ export class RuntimeMetaData {
     /**
      * Gets the currently executing version of the ANTLR 4 runtime library.
      *
-     * This method provides runtime access to the {@link #VERSION} field, as
+     * This method provides runtime access to the {@link VERSION} field, as
      * opposed to directly referencing the field as a compile-time constant.
      *
      * @returns The currently executing version of the ANTLR 4 library
@@ -83,7 +83,7 @@ export class RuntimeMetaData {
      * Starting with ANTLR 4.3, the code generator emits a call to this method
      * using two constants in each generated lexer and parser: a hard-coded
      * constant indicating the version of the tool used to generate the parser
-     * and a reference to the compile-time constant {@link #VERSION}. At
+     * and a reference to the compile-time constant {@link VERSION}. At
      * runtime, this method is called during the initialization of the generated
      * parser to detect mismatched versions, and notify the registered listeners
      * prior to creating instances of the parser.
@@ -118,7 +118,7 @@ export class RuntimeMetaData {
      * by, and does not reference, the ANTLR 4 Tool itself.
      * @param compileTimeVersion The version of the runtime the parser was
      * compiled against. This should always be passed using a direct reference
-     * to {@link #VERSION}.
+     * to {@link VERSION}.
      */
     public static checkVersion(generatingToolVersion: string, compileTimeVersion: string): void {
         const runtimeVersion = RuntimeMetaData.VERSION;

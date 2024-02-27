@@ -4,9 +4,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { CharStream } from "./CharStream.js";
+import { type CharStream } from "./CharStream.js";
 import { IntStream } from "./IntStream.js";
-import { TokenSource } from "./TokenSource.js";
+import { type TokenSource } from "./TokenSource.js";
 
 /* eslint-disable @typescript-eslint/naming-convention */
 
@@ -107,11 +107,11 @@ export namespace Token {
      * user-defined token channel.
      *
      *
-     * The non-negative numbers less than {@link #MIN_USER_CHANNEL_VALUE} are
-     * assigned to the predefined channels {@link #DEFAULT_CHANNEL} and
-     * {@link #HIDDEN_CHANNEL}.
+     * The non-negative numbers less than {@link MIN_USER_CHANNEL_VALUE} are
+     * assigned to the predefined channels {@link DEFAULT_CHANNEL} and
+     * {@link HIDDEN_CHANNEL}.
      *
-     * @see Token#getChannel()
+     * @see Token.getChannel()
      */
     export const MIN_USER_CHANNEL_VALUE: number = 2;
 }

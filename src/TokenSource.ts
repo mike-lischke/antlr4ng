@@ -4,12 +4,12 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { CharStream } from "./CharStream.js";
-import { Token } from "./Token.js";
-import { TokenFactory } from "./TokenFactory.js";
+import { type CharStream } from "./CharStream.js";
+import { type Token } from "./Token.js";
+import { type TokenFactory } from "./TokenFactory.js";
 
 /**
- * A source of tokens must provide a sequence of tokens via {@link #nextToken()}
+ * A source of tokens must provide a sequence of tokens via {@link nextToken()}
  * and also must reveal it's source of characters; {@link CommonToken}'s text is
  * computed from a {@link CharStream}; it only store indices into the char
  * stream.
@@ -63,7 +63,7 @@ export interface TokenSource {
     /**
      * Gets the name of the underlying input source. This method returns a
      * non-null, non-empty string. If such a name is not known, this method
-     * returns {@link IntStream#UNKNOWN_SOURCE_NAME}.
+     * returns {@link IntStream.UNKNOWN_SOURCE_NAME}.
      */
     sourceName: string;
 

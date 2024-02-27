@@ -35,7 +35,7 @@ export class ListTokenSource implements TokenSource {
     protected readonly tokens: Token[];
 
     /**
-     * The index into {@link #tokens} of token to return by the next call to
+     * The index into {@link tokens} of token to return by the next call to
      * {@link #nextToken}. The end of the input is indicated by this value
      * being greater than or equal to the number of items in {@link #tokens}.
      */
@@ -77,28 +77,29 @@ export class ListTokenSource implements TokenSource {
     public get column(): number {
         if (this.i < this.tokens.length) {
             return this.tokens[this.i].column;
-        } else {
-            if (this.eofToken !== null) {
-                return this.eofToken.column;
-            }
-            if (this.tokens.length > 0) {
-                // have to calculate the result from the line/column of the previous
-                // token, along with the text of the token.
-                const lastToken = this.tokens[this.tokens.length - 1];
-                const tokenText = lastToken.text;
-                if (tokenText) {
-                    const lastNewLine = tokenText.lastIndexOf("\n");
-                    if (lastNewLine >= 0) {
-                        return tokenText.length - lastNewLine - 1;
-                    }
-                }
-
-                return lastToken.column + lastToken.stop - lastToken.start + 1;
-            }
         }
 
-        // only reach this if tokens is empty, meaning EOF occurs at the first
-        // position in the input
+        if (this.eofToken !== null) {
+            return this.eofToken.column;
+        }
+
+        if (this.tokens.length > 0) {
+            // Have to calculate the result from the line/column of the previous
+            // token, along with the text of the token.
+            const lastToken = this.tokens[this.tokens.length - 1];
+            const tokenText = lastToken.text;
+            if (tokenText) {
+                const lastNewLine = tokenText.lastIndexOf("\n");
+                if (lastNewLine >= 0) {
+                    return tokenText.length - lastNewLine - 1;
+                }
+            }
+
+            return lastToken.column + lastToken.stop - lastToken.start + 1;
+        }
+
+        // Only reach this if tokens is empty, meaning EOF occurs at the first
+        // position in the input.
         return 0;
     }
 
@@ -134,52 +135,50 @@ export class ListTokenSource implements TokenSource {
     public get line(): number {
         if (this.i < this.tokens.length) {
             return this.tokens[this.i].line;
-        } else {
-            if (this.eofToken !== null) {
-                return this.eofToken.line;
-            } else {
-                if (this.tokens.length > 0) {
-                    // have to calculate the result from the line/column of the previous
-                    // token, along with the text of the token.
-                    const lastToken = this.tokens[this.tokens.length - 1];
-                    let line = lastToken.line;
+        }
 
-                    const tokenText = lastToken.text;
-                    if (tokenText) {
-                        for (const char of tokenText) {
-                            if (char === "\n") {
-                                line++;
-                            }
-                        }
+        if (this.eofToken !== null) {
+            return this.eofToken.line;
+        }
+
+        if (this.tokens.length > 0) {
+            // have to calculate the result from the line/column of the previous
+            // token, along with the text of the token.
+            const lastToken = this.tokens[this.tokens.length - 1];
+            let line = lastToken.line;
+
+            const tokenText = lastToken.text;
+            if (tokenText) {
+                for (const char of tokenText) {
+                    if (char === "\n") {
+                        line++;
                     }
-
-                    // if no text is available, assume the token did not contain any newline characters.
-                    return line;
                 }
             }
 
+            // if no text is available, assume the token did not contain any newline characters.
+            return line;
         }
 
-        // only reach this if tokens is empty, meaning EOF occurs at the first
-        // position in the input
+        // Only reach this if tokens is empty, meaning EOF occurs at the first
+        // position in the input.
         return 1;
     }
 
     public get inputStream(): CharStream | null {
         if (this.i < this.tokens.length) {
             return this.tokens[this.i].inputStream;
-        } else {
-            if (this.eofToken !== null) {
-                return this.eofToken.inputStream;
-            } else {
-                if (this.tokens.length > 0) {
-                    return this.tokens[this.tokens.length - 1].inputStream;
-                }
-            }
-
         }
 
-        // no input stream information is available
+        if (this.eofToken !== null) {
+            return this.eofToken.inputStream;
+        }
+
+        if (this.tokens.length > 0) {
+            return this.tokens[this.tokens.length - 1].inputStream;
+        }
+
+        // No input stream information is available.
         return null;
     }
 

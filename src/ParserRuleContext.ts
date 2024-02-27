@@ -124,29 +124,26 @@ export class ParserRuleContext extends RuleContext {
     }
 
     public override getChild(i: number): RuleContext | null;
-    public override getChild<T extends ParseTree>(i: number,
-        type: new (...args: unknown[]) => T): T | null;
-    public override getChild<T extends ParseTree>(i: number,
-        type?: new (...args: unknown[]) => T): T | null {
+    public override getChild<T extends ParseTree>(i: number, type: new (...args: unknown[]) => T): T | null;
+    public override getChild<T extends ParseTree>(i: number, type?: new (...args: unknown[]) => T): T | null {
         if (i < 0 || i >= this.children.length) {
             return null;
         }
 
         if (!type) {
             return this.children[i] as T;
-        } else {
-            for (const child of this.children) {
-                if (child instanceof type) {
-                    if (i === 0) {
-                        return child;
-                    } else {
-                        i -= 1;
-                    }
+        }
+        for (const child of this.children) {
+            if (child instanceof type) {
+                if (i === 0) {
+                    return child;
+                } else {
+                    i -= 1;
                 }
             }
-
-            return null;
         }
+
+        return null;
     }
 
     public getToken(ttype: number, i: number): TerminalNode | null {

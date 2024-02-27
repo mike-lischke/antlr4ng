@@ -36,7 +36,7 @@ export interface IntStream {
      * between "on-channel" and "off-channel" tokens).
      *
      * @throws IllegalStateException if an attempt is made to consume the
-     * end of the stream (i.e. if `LA(1)==`{@link #EOF EOF} before calling
+     * end of the stream (i.e. if `LA(1)==`{@link EOF} before calling
      * `consume`).
      */
     consume(): void;
@@ -53,7 +53,7 @@ export interface IntStream {
      * This method is guaranteed to succeed if any of the following are true:
      *
      *   - `i>0`
-     *   - `i==-1` and {@link #index index()} returns a value greater
+     *   - `i==-1` and {@link index()} returns a value greater
      *     than the value of `index()` after the stream was constructed
      *     and `LA(1)` was called in that order. Specifying the current
      *     `index()` relative to the index after the stream was created
@@ -64,10 +64,10 @@ export interface IntStream {
      *     that has not yet been released.
      *
      * If `i` represents a position at or beyond the end of the stream,
-     * this method returns {@link #EOF}.
+     * this method returns {@link EOF}.
      *
      * The return value is unspecified if `i<0` and fewer than `-i`
-     * calls to {@link #consume consume()} have occurred from the beginning of
+     * calls to {@link consume()} have occurred from the beginning of
      * the stream before calling this method.
      *
      * @throws UnsupportedOperationException if the stream does not support
@@ -77,14 +77,14 @@ export interface IntStream {
     LA(i: number): number;
 
     /**
-     * A mark provides a guarantee that {@link #seek seek()} operations will be
+     * A mark provides a guarantee that {@link seek()} operations will be
      * valid over a "marked range" extending from the index where `mark()`
-     * was called to the current {@link #index index()}. This allows the use of
+     * was called to the current {@link index()}. This allows the use of
      * streaming input sources by specifying the minimum buffering requirements
      * to support arbitrary lookahead during prediction.
      *
      * The returned mark is an opaque handle (type `int`) which is passed
-     * to {@link #release release()} when the guarantees provided by the marked
+     * to {@link release()} when the guarantees provided by the marked
      * range are no longer necessary. When calls to
      * `mark()`/`release()` are nested, the marks must be released
      * in reverse order of which they were obtained. Since marked regions are
@@ -99,9 +99,9 @@ export interface IntStream {
      *
      * This method does not change the current position in the input stream.
      *
-     * The following example shows the use of {@link #mark mark()},
-     * {@link #release release(mark)}, {@link #index index()}, and
-     * {@link #seek seek(index)} as part of an operation to safely work within a
+     * The following example shows the use of {@link mark()},
+     * {@link release(mark)}, {@link index()}, and
+     * {@link seek seek(index)} as part of an operation to safely work within a
      * marked region, then restore the stream position to its original value and
      * release the mark.
      * ```
@@ -120,21 +120,20 @@ export interface IntStream {
      * ```
      *
      * @returns An opaque marker which should be passed to
-     * {@link #release release()} when the marked range is no longer required.
+     * {@link release()} when the marked range is no longer required.
      */
     mark(): number;
 
     /**
      * This method releases a marked range created by a call to
-     * {@link #mark mark()}. Calls to `release()` must appear in the
+     * {@link mark()}. Calls to `release()` must appear in the
      * reverse order of the corresponding calls to `mark()`. If a mark is
      * released twice, or if marks are not released in reverse order of the
      * corresponding calls to `mark()`, the behavior is unspecified.
      *
-     * For more information and an example, see {@link #mark}.
+     * For more information and an example, see {@link mark}.
      *
      * @param marker A marker returned by a call to `mark()`.
-     * @see #mark
      */
     release(marker: number): void;
 
@@ -155,7 +154,7 @@ export interface IntStream {
      * returns without throwing an exception, then at least one of the following
      * will be true.
      *
-     *   - {@link #index index()} will return the index of the first symbol
+     *   - {@link index()} will return the index of the first symbol
      *     appearing at or after the specified `index`. Specifically,
      *     implementations which filter their sources should automatically
      *     adjust `index` forward the minimum amount required for the

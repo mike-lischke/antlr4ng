@@ -22,10 +22,10 @@ export interface IExceptionParams {
 
 /**
  * The root of the ANTLR exception hierarchy. In general, ANTLR tracks just
- *  3 kinds of errors: prediction errors, failed predicate errors, and
- *  mismatched input errors. In each case, the parser knows where it is
- *  in the input, where it is in the ATN, the rule invocation stack,
- *  and what kind of problem occurred.
+ * 3 kinds of errors: prediction errors, failed predicate errors, and
+ * mismatched input errors. In each case, the parser knows where it is
+ * in the input, where it is in the ATN, the rule invocation stack,
+ * and what kind of problem occurred.
  */
 export class RecognitionException extends Error {
     public ctx: RuleContext | null;

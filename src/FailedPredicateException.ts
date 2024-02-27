@@ -25,6 +25,7 @@ export class FailedPredicateException extends RecognitionException {
             recognizer,
             input: recognizer.inputStream, ctx: recognizer.context,
         });
+
         const s = recognizer.atn.states[recognizer.state]!;
         const trans = s.transitions[0];
         if (trans instanceof PredicateTransition) {
@@ -42,7 +43,7 @@ export class FailedPredicateException extends RecognitionException {
 const formatMessage = (predicate: string | null, message: string | null) => {
     if (message !== null) {
         return message;
-    } else {
-        return "failed predicate: {" + predicate + "}?";
     }
+
+    return "failed predicate: {" + predicate + "}?";
 };

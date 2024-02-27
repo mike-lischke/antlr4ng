@@ -152,7 +152,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
         this.interpreter.reset();
     }
 
-    // Return a token from this source; i.e., match a token on the char stream.
+    /** @returns a token from this source; i.e., match a token on the char stream. */
     public nextToken(): Token {
         if (this.#input === null) {
             throw new Error("nextToken requires a non-null input stream.");
@@ -292,7 +292,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
         return eof;
     }
 
-    // What is the index of the current character of lookahead?///
+    /** What is the index of the current character of lookahead? */
     public getCharIndex(): number {
         return this.#input.index;
     }
