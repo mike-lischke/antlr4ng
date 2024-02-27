@@ -133,7 +133,7 @@ export class LL1Analyzer {
 
         let hashCode = MurmurHash.initialize(7);
         hashCode = MurmurHash.update(hashCode, s.stateNumber);
-        hashCode = MurmurHash.update(hashCode, ctx);
+        hashCode = MurmurHash.updateFromComparable(hashCode, ctx);
         hashCode = MurmurHash.finish(hashCode, 2);
 
         const size = lookBusy.size;

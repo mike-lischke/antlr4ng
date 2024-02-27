@@ -60,7 +60,7 @@ export class LexerIndexedCustomAction implements LexerAction {
         if (this.#cachedHashCode === undefined) {
             let hash = MurmurHash.initialize();
             hash = MurmurHash.update(hash, this.offset);
-            hash = MurmurHash.update(hash, this.action);
+            hash = MurmurHash.updateFromComparable(hash, this.action);
 
             this.#cachedHashCode = MurmurHash.finish(hash, 2);
         }

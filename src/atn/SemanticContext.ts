@@ -172,7 +172,12 @@ class AND extends SemanticContext {
 
     public hashCode(): number {
         if (this.cachedHashCode === undefined) {
-            this.cachedHashCode = MurmurHash.hashCode(this.operands, 3813686060); // Hash code of "AND".
+            let hash = MurmurHash.initialize();
+            for (const operand of this.operands) {
+                hash = MurmurHash.updateFromComparable(hash, operand);
+            }
+            hash = MurmurHash.update(hash, 3813686060); // Hash code of "AND".
+            this.cachedHashCode = MurmurHash.finish(hash, this.operands.length + 1);
         }
 
         return this.cachedHashCode;
@@ -285,7 +290,12 @@ class OR extends SemanticContext {
 
     public hashCode(): number {
         if (this.cachedHashCode === undefined) {
-            this.cachedHashCode = MurmurHash.hashCode(this.operands, 3383313031); // Hash code of "OR".
+            let hash = MurmurHash.initialize();
+            for (const operand of this.operands) {
+                hash = MurmurHash.updateFromComparable(hash, operand);
+            }
+            hash = MurmurHash.update(hash, 3383313031); // Hash code of "OR".
+            this.cachedHashCode = MurmurHash.finish(hash, this.operands.length + 1);
         }
 
         return this.cachedHashCode;

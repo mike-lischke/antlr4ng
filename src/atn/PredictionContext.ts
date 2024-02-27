@@ -40,7 +40,7 @@ export abstract class PredictionContext {
 
     protected static calculateHashCodeSingle(parent: PredictionContext, returnState: number): number {
         let hash = MurmurHash.initialize(31);
-        hash = MurmurHash.update(hash, parent);
+        hash = MurmurHash.updateFromComparable(hash, parent);
         hash = MurmurHash.update(hash, returnState);
         hash = MurmurHash.finish(hash, 2);
 
@@ -51,7 +51,7 @@ export abstract class PredictionContext {
         let hash = MurmurHash.initialize(31);
 
         for (const parent of parents) {
-            hash = MurmurHash.update(hash, parent);
+            hash = MurmurHash.updateFromComparable(hash, parent);
         }
 
         for (const returnState of returnStates) {

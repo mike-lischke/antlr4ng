@@ -55,13 +55,12 @@ export class LexerATNConfig extends ATNConfig {
             let hashCode = MurmurHash.initialize(7);
             hashCode = MurmurHash.update(hashCode, this.state.stateNumber);
             hashCode = MurmurHash.update(hashCode, this.alt);
-            hashCode = MurmurHash.update(hashCode, this.context);
-            hashCode = MurmurHash.update(hashCode, this.semanticContext);
+            hashCode = MurmurHash.updateFromComparable(hashCode, this.context);
+            hashCode = MurmurHash.updateFromComparable(hashCode, this.semanticContext);
             hashCode = MurmurHash.update(hashCode, this.passedThroughNonGreedyDecision ? 1 : 0);
-            hashCode = MurmurHash.update(hashCode, this.lexerActionExecutor);
+            hashCode = MurmurHash.updateFromComparable(hashCode, this.lexerActionExecutor);
             hashCode = MurmurHash.finish(hashCode, 6);
             this.cachedHashCode = hashCode;
-
         }
 
         return this.cachedHashCode;

@@ -88,8 +88,8 @@ export class ATNConfig {
             let hashCode = MurmurHash.initialize(7);
             hashCode = MurmurHash.update(hashCode, this.state.stateNumber);
             hashCode = MurmurHash.update(hashCode, this.alt);
-            hashCode = MurmurHash.update(hashCode, this.#context);
-            hashCode = MurmurHash.update(hashCode, this.semanticContext);
+            hashCode = MurmurHash.updateFromComparable(hashCode, this.#context);
+            hashCode = MurmurHash.updateFromComparable(hashCode, this.semanticContext);
             hashCode = MurmurHash.finish(hashCode, 4);
             this.cachedHashCode = hashCode;
         }

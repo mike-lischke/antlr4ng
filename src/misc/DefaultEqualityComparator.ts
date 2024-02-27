@@ -5,7 +5,6 @@
  */
 
 import type { IComparable } from "../index.js";
-import { MurmurHash } from "../utils/MurmurHash.js";
 import { EqualityComparator } from "./EqualityComparator.js";
 import { ObjectEqualityComparator } from "./ObjectEqualityComparator.js";
 
@@ -19,10 +18,6 @@ export class DefaultEqualityComparator implements EqualityComparator<unknown> {
     public hashCode(obj: unknown): number {
         if (obj == null) {
             return 0;
-        }
-
-        if (typeof obj === "string" || typeof obj === "number") {
-            return MurmurHash.hashCode(obj);
         }
 
         return ObjectEqualityComparator.instance.hashCode(obj as IComparable);

@@ -25,7 +25,7 @@ class SubsetEqualityComparer implements EqualityComparator<ATNConfig> {
     public hashCode(config: ATNConfig) {
         let hashCode = MurmurHash.initialize(7);
         hashCode = MurmurHash.update(hashCode, config.state.stateNumber);
-        hashCode = MurmurHash.update(hashCode, config.context);
+        hashCode = MurmurHash.updateFromComparable(hashCode, config.context);
         hashCode = MurmurHash.finish(hashCode, 2);
 
         return hashCode;

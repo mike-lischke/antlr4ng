@@ -157,7 +157,11 @@ export class LexerActionExecutor implements LexerAction {
 
     public hashCode(): number {
         if (this.#cachedHashCode === undefined) {
-            this.#cachedHashCode = MurmurHash.hashCode(this.lexerActions, 7);
+            let hashCode = MurmurHash.initialize(7);
+            for (const lexerAction of this.lexerActions) {
+                hashCode = MurmurHash.update(hashCode, lexerAction.hashCode());
+            }
+            this.#cachedHashCode = MurmurHash.finish(hashCode, this.lexerActions.length);
         }
 
         return this.#cachedHashCode;
