@@ -12,7 +12,7 @@ import { Lexer } from "./Lexer.js";
 import { Interval } from "./misc/Interval.js";
 import { TokenStream } from "./TokenStream.js";
 import { TokenSource } from "./TokenSource.js";
-import { RuleContext } from "./RuleContext.js";
+import { ParserRuleContext } from "./ParserRuleContext.js";
 
 /**
  * This implementation of {@link TokenStream} loads tokens from a
@@ -416,7 +416,7 @@ export class BufferedTokenStream implements TokenStream {
 
     }
 
-    public getTextFromContext(ctx: RuleContext): string {
+    public getTextFromContext(ctx: ParserRuleContext): string {
         return this.getTextFromInterval(ctx.getSourceInterval());
     }
 

@@ -22,11 +22,7 @@ export class InterpreterRuleContext extends ParserRuleContext {
     #ruleIndex: number;
 
     public constructor(ruleIndex: number, parent: ParserRuleContext | null, invokingStateNumber?: number) {
-        if (invokingStateNumber !== undefined) {
-            super(parent, invokingStateNumber);
-        } else {
-            super();
-        }
+        super(parent, invokingStateNumber);
 
         this.#ruleIndex = ruleIndex;
     }

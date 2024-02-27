@@ -143,7 +143,6 @@ export class ParserInterpreter extends Parser {
                     } catch (e) {
                         if (e instanceof RecognitionException) {
                             this.state = this.#atn.ruleToStopState[p.ruleIndex]!.stateNumber;
-                            this.context!.exception = e;
                             this.errorHandler.reportError(this, e);
                             this.recover(e);
                         } else {

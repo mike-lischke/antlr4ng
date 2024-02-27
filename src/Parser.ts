@@ -21,7 +21,6 @@ import { ATN } from "./atn/ATN.js";
 import { RecognitionException } from "./RecognitionException.js";
 import { RuleTransition } from "./atn/RuleTransition.js";
 import { IntervalSet } from "./misc/IntervalSet.js";
-import { RuleContext } from "./RuleContext.js";
 import { TraceListener } from "./TraceListener.js";
 import { ProfilingATNSimulator } from "./atn/ProfilingATNSimulator.js";
 import type { IntStream } from "./IntStream.js";
@@ -637,12 +636,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
 
     /** Get a rule's index (i.e., `RULE_ruleName` field) or -1 if not found. */
     public getRuleIndex(ruleName: string): number {
-        const ruleIndex = this.getRuleIndexMap().get(ruleName);
-        if (ruleIndex != null) {
-            return ruleIndex;
-        }
-
-        return -1;
+        return this.getRuleIndexMap().get(ruleName) ?? -1; // Terribly inefficient.
     }
 
     /**
@@ -653,7 +647,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      *
      * this is very useful for error messages.
      */
-    public getRuleInvocationStack(p?: RuleContext | null): string[] {
+    public getRuleInvocationStack(p?: ParserRuleContext | null): string[] {
         p = p ?? null;
         if (p === null) {
             p = this.context;

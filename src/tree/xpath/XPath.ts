@@ -151,7 +151,7 @@ export class XPath {
      * path. The root `/` is relative to the node passed to {@link evaluate}.
      */
     public evaluate(t: ParseTree): Set<ParseTree> {
-        const dummyRoot = new ParserRuleContext();
+        const dummyRoot = new ParserRuleContext(null);
         dummyRoot.addChild(t as ParserRuleContext);
 
         let work = new Set<ParseTree>([dummyRoot]);

@@ -36,7 +36,6 @@ import { PredictionContextCache } from "./PredictionContextCache.js";
 import { TokenStream } from "../TokenStream.js";
 import { ParserRuleContext } from "../ParserRuleContext.js";
 import { DecisionState } from "./DecisionState.js";
-import { RuleContext } from "../RuleContext.js";
 import { ATNState } from "./ATNState.js";
 import { Transition } from "./Transition.js";
 
@@ -332,11 +331,11 @@ export class ParserATNSimulator extends ATNSimulator {
 
             if (!s0) {
                 if (!outerContext) {
-                    outerContext = ParserRuleContext.EMPTY;
+                    outerContext = ParserRuleContext.empty;
                 }
 
                 const fullCtx = false;
-                let s0_closure = this.computeStartState(dfa.atnStartState!, ParserRuleContext.EMPTY, fullCtx);
+                let s0_closure = this.computeStartState(dfa.atnStartState!, ParserRuleContext.empty, fullCtx);
 
                 if (dfa.isPrecedenceDfa) {
                     // If this is a precedence DFA, we use applyPrecedenceFilter
@@ -563,7 +562,7 @@ export class ParserATNSimulator extends ATNSimulator {
             return "EOF";
         }
 
-        const vocabulary = this.parser != null ? this.parser.vocabulary : Vocabulary.EMPTY_VOCABULARY;
+        const vocabulary = this.parser?.vocabulary ?? Vocabulary.EMPTY_VOCABULARY;
         const displayName = vocabulary.getDisplayName(t)!;
         if (displayName === t.toString()) {
             return displayName;
@@ -876,7 +875,7 @@ export class ParserATNSimulator extends ATNSimulator {
         return result;
     }
 
-    protected computeStartState(p: ATNState, ctx: RuleContext, fullCtx: boolean): ATNConfigSet {
+    protected computeStartState(p: ATNState, ctx: ParserRuleContext, fullCtx: boolean): ATNConfigSet {
         // always at least the implicit call to start rule
         const initialContext = predictionContextFromRuleContext(this.atn, ctx);
         const configs = new ATNConfigSet(fullCtx);

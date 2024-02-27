@@ -157,7 +157,7 @@ export class HashSet<T> implements Iterable<T> {
             return false;
         }
 
-        return this.get(obj) != null;
+        return this.get(obj) !== undefined;
     }
 
     public *[Symbol.iterator](): IterableIterator<T> {

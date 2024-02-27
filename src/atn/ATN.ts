@@ -8,7 +8,6 @@
 
 import { LL1Analyzer } from "./LL1Analyzer.js";
 import { IntervalSet } from "../misc/IntervalSet.js";
-import { RuleContext } from "../RuleContext.js";
 import { ATNState } from "./ATNState.js";
 import { DecisionState } from "./DecisionState.js";
 import { RuleStartState } from "./RuleStartState.js";
@@ -17,6 +16,7 @@ import { LexerAction } from "./LexerAction.js";
 import { TokensStartState } from "./TokensStartState.js";
 import { Token } from "../Token.js";
 import { RuleTransition } from "./RuleTransition.js";
+import type { ParserRuleContext } from "../ParserRuleContext.js";
 
 export class ATN {
     public static INVALID_ALT_NUMBER = 0;
@@ -80,7 +80,7 @@ export class ATN {
      * the rule surrounding `s`. In other words, the set will be
      * restricted to tokens reachable staying within `s`'s rule.
      */
-    public nextTokens(atnState: ATNState, ctx?: RuleContext): IntervalSet {
+    public nextTokens(atnState: ATNState, ctx?: ParserRuleContext): IntervalSet {
         if (!ctx && atnState.nextTokenWithinRule) {
             return atnState.nextTokenWithinRule;
         }
@@ -144,7 +144,7 @@ export class ATN {
      * @throws IllegalArgumentException if the ATN does not contain a state with
      * number `stateNumber`
      */
-    public getExpectedTokens(stateNumber: number, context: RuleContext | null): IntervalSet {
+    public getExpectedTokens(stateNumber: number, context: ParserRuleContext | null): IntervalSet {
         if (stateNumber < 0 || stateNumber >= this.states.length) {
             throw new Error("Invalid state number.");
         }
@@ -155,7 +155,7 @@ export class ATN {
             return following;
         }
 
-        let ctx: RuleContext | null = context;
+        let ctx: ParserRuleContext | null = context;
         const expected = new IntervalSet();
         expected.addSet(following);
         expected.removeOne(Token.EPSILON);

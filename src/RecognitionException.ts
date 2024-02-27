@@ -7,7 +7,6 @@
 import { CharStream } from "./CharStream.js";
 import { ParserRuleContext } from "./ParserRuleContext.js";
 import { Recognizer } from "./Recognizer.js";
-import { RuleContext } from "./RuleContext.js";
 import { Token } from "./Token.js";
 import { TokenStream } from "./TokenStream.js";
 import { ATNSimulator } from "./atn/ATNSimulator.js";
@@ -28,7 +27,7 @@ export interface IExceptionParams {
  * and what kind of problem occurred.
  */
 export class RecognitionException extends Error {
-    public ctx: RuleContext | null;
+    public ctx: ParserRuleContext | null;
 
     /**
      * The current {@link Token} when an error occurred. Since not all streams

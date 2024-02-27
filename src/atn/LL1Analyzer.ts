@@ -14,7 +14,7 @@ import { SingletonPredictionContext } from "./SingletonPredictionContext.js";
 import { BitSet } from "../misc/BitSet.js";
 import { ATNState } from "./ATNState.js";
 import { ATN } from "./ATN.js";
-import { RuleContext } from "../RuleContext.js";
+import { ParserRuleContext } from "../ParserRuleContext.js";
 import { MurmurHash } from "../utils/MurmurHash.js";
 import { Transition } from "./Transition.js";
 
@@ -79,7 +79,7 @@ export class LL1Analyzer {
      * @returns The set of tokens that can follow `s` in the ATN in the
      * specified `ctx`.
      */
-    public look(atn: ATN, s: ATNState, stopState?: ATNState, ctx?: RuleContext): IntervalSet {
+    public look(atn: ATN, s: ATNState, stopState?: ATNState, ctx?: ParserRuleContext): IntervalSet {
         this.#atn = atn;
         const r = new IntervalSet();
 

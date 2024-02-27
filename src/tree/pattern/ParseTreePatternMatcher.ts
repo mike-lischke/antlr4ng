@@ -15,7 +15,6 @@ import type { Parser } from "../../Parser.js";
 import { ParserInterpreter } from "../../ParserInterpreter.js";
 import { ParserRuleContext } from "../../ParserRuleContext.js";
 import { RecognitionException } from "../../RecognitionException.js";
-import { RuleContext } from "../../RuleContext.js";
 import { Token } from "../../Token.js";
 import { MultiMap } from "../../misc/MultiMap.js";
 import { ParseCancellationException } from "../../misc/ParseCancellationException.js";
@@ -517,7 +516,7 @@ export class ParseTreePatternMatcher {
      * Is `t` `(expr <expr>)` subtree?
      */
     protected getRuleTagToken(t: ParseTree): RuleTagToken | undefined {
-        if (t instanceof RuleContext) {
+        if (t instanceof ParserRuleContext) {
             if (t.getChildCount() === 1 && t.getChild(0) instanceof TerminalNode) {
                 const c = t.getChild(0) as TerminalNode;
                 if (c.getSymbol() instanceof RuleTagToken) {

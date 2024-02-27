@@ -5,7 +5,6 @@
  */
 
 import { ParserRuleContext } from "../ParserRuleContext.js";
-import { RuleContext } from "../RuleContext.js";
 import { ErrorNode } from "./ErrorNode.js";
 import { ParseTree } from "./ParseTree.js";
 import { ParseTreeListener } from "./ParseTreeListener.js";
@@ -30,7 +29,7 @@ export class ParseTreeWalker {
         } else if (t instanceof TerminalNode) {
             listener.visitTerminal(t);
         } else {
-            const r = t as RuleContext;
+            const r = t as ParserRuleContext;
             this.enterRule(listener, r);
             for (let i = 0; i < t.getChildCount(); i++) {
                 this.walk(listener, t.getChild(i)!);
@@ -46,8 +45,8 @@ export class ParseTreeWalker {
      * @param listener The listener responding to the trigger events
      * @param r The grammar rule containing the rule context
      */
-    protected enterRule(listener: ParseTreeListener, r: RuleContext): void {
-        const ctx = r.ruleContext as ParserRuleContext;
+    protected enterRule(listener: ParseTreeListener, r: ParserRuleContext): void {
+        const ctx = r.ruleContext;
         listener.enterEveryRule(ctx);
         ctx.enterRule(listener);
     }
@@ -59,8 +58,8 @@ export class ParseTreeWalker {
      * @param listener The listener responding to the trigger events
      * @param r The grammar rule containing the rule context
      */
-    protected exitRule(listener: ParseTreeListener, r: RuleContext): void {
-        const ctx = r.ruleContext as ParserRuleContext;
+    protected exitRule(listener: ParseTreeListener, r: ParserRuleContext): void {
+        const ctx = r.ruleContext;
         ctx.exitRule(listener);
         listener.exitEveryRule(ctx);
     }

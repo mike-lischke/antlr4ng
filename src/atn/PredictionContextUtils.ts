@@ -6,7 +6,6 @@
 
 /* eslint-disable jsdoc/require-returns, jsdoc/require-param */
 
-import { RuleContext } from "../RuleContext.js";
 import { PredictionContext } from "./PredictionContext.js";
 import { ArrayPredictionContext } from "./ArrayPredictionContext.js";
 import { SingletonPredictionContext } from "./SingletonPredictionContext.js";
@@ -23,14 +22,14 @@ import { ObjectEqualityComparator } from "../misc/ObjectEqualityComparator.js";
  * Convert a {@link RuleContext} tree to a {@link PredictionContext} graph.
  * Return {@link EMPTY} if `outerContext` is empty or null.
  */
-export const predictionContextFromRuleContext = (atn: ATN, outerContext?: RuleContext): PredictionContext => {
+export const predictionContextFromRuleContext = (atn: ATN, outerContext?: ParserRuleContext): PredictionContext => {
     if (!outerContext) {
-        outerContext = ParserRuleContext.EMPTY;
+        outerContext = ParserRuleContext.empty;
     }
 
     // if we are in RuleContext of start rule, s, then PredictionContext
     // is EMPTY. Nobody called us. (if we are empty, return empty)
-    if (!outerContext.parent || outerContext === ParserRuleContext.EMPTY) {
+    if (!outerContext.parent || outerContext === ParserRuleContext.empty) {
         return PredictionContext.EMPTY;
     }
 

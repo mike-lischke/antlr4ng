@@ -6,7 +6,7 @@
 
 /* eslint-disable jsdoc/require-returns, jsdoc/require-param */
 
-import type { RuleContext } from "./RuleContext.js";
+import type { ParserRuleContext } from "./ParserRuleContext.js";
 import { Token } from "./Token.js";
 import type { TokenSource } from "./TokenSource.js";
 import type { TokenStream } from "./TokenStream.js";
@@ -113,7 +113,7 @@ export class UnbufferedTokenStream implements TokenStream {
         return "";
     }
 
-    public getTextFromContext(ctx: RuleContext): string {
+    public getTextFromContext(ctx: ParserRuleContext): string {
         return this.getTextFromInterval(ctx.getSourceInterval());
     }
 

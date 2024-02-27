@@ -15,9 +15,9 @@ import { <grammarName>Visitor } from "./<grammarName>Visitor.js";
 class TreeShapeListener implements antlr.ParseTreeListener {
     public enterEveryRule(ctx: antlr.ParserRuleContext) {
         for (let i = 0; i \< ctx.getChildCount(); i++) {
-            const child = ctx.getChild(i) as antlr.RuleContext;
+            const child = ctx.getChild(i) as antlr.ParserRuleContext;
             const parent = child.parent;
-            if (parent!.ruleContext !== ctx || !(parent instanceof antlr.RuleContext)) {
+            if (parent!.ruleContext !== ctx || !(parent instanceof antlr.ParserRuleContext)) {
                 throw new Error("Invalid parse tree shape detected.");
             }
         }

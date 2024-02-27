@@ -5,7 +5,7 @@
  */
 
 import { type IntStream } from "./IntStream.js";
-import { type RuleContext } from "./RuleContext.js";
+import { type ParserRuleContext } from "./ParserRuleContext.js";
 import { type Token } from "./Token.js";
 import { type TokenSource } from "./TokenSource.js";
 import { type Interval } from "./misc/Interval.js";
@@ -104,7 +104,7 @@ export interface TokenStream extends IntStream {
      * text for.
      * @returns The text of all tokens within the source interval of `ctx`.
      */
-    getTextFromContext(ctx: RuleContext): string;
+    getTextFromContext(ctx: ParserRuleContext): string;
 
     /**
      * Return the text of all tokens in this stream between `start` and

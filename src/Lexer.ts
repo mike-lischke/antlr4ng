@@ -360,7 +360,6 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
                 // skip a char and try again
                 this.interpreter.consume(this.#input);
             } else {
-                // TODO: Do we lose character or line position information?
                 this.#input.consume();
             }
         }

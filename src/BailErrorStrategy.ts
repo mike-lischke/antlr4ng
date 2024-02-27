@@ -11,7 +11,6 @@ import { ParseCancellationException } from "./misc/ParseCancellationException.js
 import { DefaultErrorStrategy } from "./DefaultErrorStrategy.js";
 import { Parser } from "./Parser.js";
 import { RecognitionException } from "./RecognitionException.js";
-import { ParserRuleContext } from "./ParserRuleContext.js";
 
 /**
  * This implementation of {@link ANTLRErrorStrategy} responds to syntax errors
@@ -45,11 +44,6 @@ export class BailErrorStrategy extends DefaultErrorStrategy {
      * original {@link RecognitionException}.
      */
     public override recover(recognizer: Parser, e: RecognitionException): void {
-        let context: ParserRuleContext | null = recognizer.context;
-        while (context) {
-            context.exception = e;
-            context = context.parent;
-        }
         throw new ParseCancellationException(e);
     }
 
@@ -59,11 +53,6 @@ export class BailErrorStrategy extends DefaultErrorStrategy {
      */
     public override recoverInline(recognizer: Parser): never {
         const exception = new InputMismatchException(recognizer);
-        let context: ParserRuleContext | null = recognizer.context;
-        while (context !== null) {
-            context.exception = exception;
-            context = context.parent;
-        }
 
         throw new ParseCancellationException(exception);
     }

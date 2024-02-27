@@ -6,7 +6,7 @@
 
 import {
     BaseErrorListener, CommonTokenStream, Recognizer, ErrorNode, TerminalNode, CharStream, Token, ATNSimulator,
-    RuleContext,
+    ParserRuleContext,
 } from "antlr4ng";
 
 import { VisitorBasicLexer } from "../generated/VisitorBasicLexer.js";
@@ -114,7 +114,7 @@ describe("TestVisitors", () => {
                 return node.getSymbol().toString() + "\n";
             }
 
-            protected override shouldVisitNextChild(node: RuleContext, currentResult: string | null): boolean {
+            protected override shouldVisitNextChild(node: ParserRuleContext, currentResult: string | null): boolean {
                 return currentResult === null || currentResult.length === 0;
             }
         }();

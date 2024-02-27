@@ -7,7 +7,7 @@
 /* eslint-disable max-classes-per-file, jsdoc/require-jsdoc, jsdoc/require-param, jsdoc/require-returns */
 
 import { Recognizer } from "../Recognizer.js";
-import { RuleContext } from "../RuleContext.js";
+import { ParserRuleContext } from "../ParserRuleContext.js";
 import { HashSet } from "../misc/HashSet.js";
 import { MurmurHash } from "../utils/MurmurHash.js";
 
@@ -92,7 +92,7 @@ export abstract class SemanticContext implements IComparable {
      * semantic context after precedence predicates are evaluated.
      */
     public evalPrecedence<T extends ATNSimulator>(_parser: Recognizer<T>,
-        _parserCallStack?: RuleContext): SemanticContext | null {
+        _parserCallStack?: ParserRuleContext): SemanticContext | null {
         return this;
     };
 
@@ -109,7 +109,8 @@ export abstract class SemanticContext implements IComparable {
      * prediction, so we passed in the outer context here in case of context
      * dependent predicate evaluation.
      */
-    public abstract evaluate<T extends ATNSimulator>(parser: Recognizer<T>, parserCallStack: RuleContext): boolean;
+    public abstract evaluate<T extends ATNSimulator>(parser: Recognizer<T>,
+        parserCallStack: ParserRuleContext): boolean;
 
     public abstract equals(other: SemanticContext): boolean;
     public abstract hashCode(): number;
@@ -191,7 +192,7 @@ class AND extends SemanticContext {
      * unordered.
      */
     public evaluate<T extends ATNSimulator>(parser: Recognizer<T>,
-        parserCallStack: RuleContext): boolean {
+        parserCallStack: ParserRuleContext): boolean {
         for (const operand of this.operands) {
             if (!operand.evaluate(parser, parserCallStack)) {
                 return false;
@@ -202,7 +203,7 @@ class AND extends SemanticContext {
     }
 
     public override evalPrecedence<T extends ATNSimulator>(parser: Recognizer<T>,
-        parserCallStack: RuleContext): SemanticContext | null {
+        parserCallStack: ParserRuleContext): SemanticContext | null {
         let differs = false;
         const operands = [];
         for (const context of this.operands) {
@@ -305,7 +306,7 @@ class OR extends SemanticContext {
      * The evaluation of predicates by this context is short-circuiting, but unordered.
      */
     public evaluate<T extends ATNSimulator>(parser: Recognizer<T>,
-        parserCallStack: RuleContext): boolean {
+        parserCallStack: ParserRuleContext): boolean {
         for (const operand of this.operands) {
             if (operand.evaluate(parser, parserCallStack)) {
                 return true;
@@ -316,7 +317,7 @@ class OR extends SemanticContext {
     }
 
     public override evalPrecedence<T extends ATNSimulator>(parser: Recognizer<T>,
-        parserCallStack: RuleContext): SemanticContext | null {
+        parserCallStack: ParserRuleContext): SemanticContext | null {
         let differs = false;
         const operands = [];
         for (const context of this.operands) {
@@ -368,7 +369,8 @@ export namespace SemanticContext {
             this.isCtxDependent = isCtxDependent ?? false;
         }
 
-        public override evaluate<T extends ATNSimulator>(parser: Recognizer<T>, outerContext: RuleContext): boolean {
+        public override evaluate<T extends ATNSimulator>(parser: Recognizer<T>,
+            outerContext: ParserRuleContext): boolean {
             const localctx = this.isCtxDependent ? outerContext : null;
 
             return parser.sempred(localctx, this.ruleIndex, this.predIndex);
@@ -410,12 +412,13 @@ export namespace SemanticContext {
             this.precedence = precedence ?? 0;
         }
 
-        public override evaluate<T extends ATNSimulator>(parser: Recognizer<T>, outerContext: RuleContext): boolean {
+        public override evaluate<T extends ATNSimulator>(parser: Recognizer<T>,
+            outerContext: ParserRuleContext): boolean {
             return parser.precpred(outerContext, this.precedence);
         }
 
         public override evalPrecedence(parser: Recognizer<ATNSimulator>,
-            outerContext?: RuleContext): SemanticContext | null {
+            outerContext?: ParserRuleContext): SemanticContext | null {
             if (parser.precpred(outerContext ?? null, this.precedence)) {
                 return SemanticContext.NONE;
             }

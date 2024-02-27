@@ -43,9 +43,9 @@ export class Vocabulary {
      */
     public constructor(literalNames: Array<string | null>, symbolicNames: Array<string | null>,
         displayNames?: Array<string | null> | null) {
-        this.literalNames = literalNames != null ? literalNames : Vocabulary.EMPTY_NAMES;
-        this.symbolicNames = symbolicNames != null ? symbolicNames : Vocabulary.EMPTY_NAMES;
-        this.displayNames = displayNames != null ? displayNames : Vocabulary.EMPTY_NAMES;
+        this.literalNames = literalNames ?? Vocabulary.EMPTY_NAMES;
+        this.symbolicNames = symbolicNames ?? Vocabulary.EMPTY_NAMES;
+        this.displayNames = displayNames ?? Vocabulary.EMPTY_NAMES;
 
         // See note here on -1 part: https://github.com/antlr/antlr4/pull/1146
         this.maxTokenType = Math.max(this.displayNames.length, Math.max(this.literalNames.length,

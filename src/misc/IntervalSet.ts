@@ -295,8 +295,8 @@ export class IntervalSet {
                 continue;
             }
 
-            let beforeCurrent = null;
-            let afterCurrent = null;
+            let beforeCurrent;
+            let afterCurrent;
             if (rightInterval.start > resultInterval.start) {
                 beforeCurrent = new Interval(resultInterval.start, rightInterval.start - 1);
             }
@@ -305,30 +305,26 @@ export class IntervalSet {
                 afterCurrent = new Interval(rightInterval.stop + 1, resultInterval.stop);
             }
 
-            if (beforeCurrent != null) {
-                if (afterCurrent != null) {
+            if (beforeCurrent) {
+                if (afterCurrent) {
                     // split the current interval into two
                     result.#intervals[resultI] = beforeCurrent;
                     result.#intervals.splice(resultI + 1, 0, afterCurrent);
                     resultI++;
                     rightI++;
-                    continue;
                 } else {
                     // replace the current interval
                     result.#intervals[resultI] = beforeCurrent;
                     resultI++;
-                    continue;
                 }
             } else {
-                if (afterCurrent != null) {
+                if (afterCurrent) {
                     // replace the current interval
                     result.#intervals[resultI] = afterCurrent;
                     rightI++;
-                    continue;
                 } else {
                     // remove the current interval (thus no need to increment resultI)
                     result.#intervals.splice(resultI, 1);
-                    continue;
                 }
             }
         }

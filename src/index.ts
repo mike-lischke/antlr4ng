@@ -36,7 +36,6 @@ export * from "./ParserRuleContext.js";
 export * from "./ProxyErrorListener.js";
 export * from "./RecognitionException.js";
 export * from "./Recognizer.js";
-export * from "./RuleContext.js";
 export * from "./Token.js";
 export * from "./TokenFactory.js";
 export * from "./TokenSource.js";

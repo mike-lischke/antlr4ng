@@ -17,7 +17,7 @@ import { Vocabulary } from "./Vocabulary.js";
 import { ANTLRErrorListener } from "./ANTLRErrorListener.js";
 import { RecognitionException } from "./RecognitionException.js";
 import { ATN } from "./atn/ATN.js";
-import { RuleContext } from "./RuleContext.js";
+import { ParserRuleContext } from "./ParserRuleContext.js";
 import { IntStream } from "./IntStream.js";
 
 export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
@@ -130,16 +130,16 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
      * subclass needs to override these if there are semantic predicates or actions
      * that the ATN interp needs to execute
      */
-    public sempred(_localctx: RuleContext | null, _ruleIndex: number, _actionIndex: number): boolean {
+    public sempred(_localctx: ParserRuleContext | null, _ruleIndex: number, _actionIndex: number): boolean {
         return true;
     }
 
     // TODO: make localCtx an optional parameter, not optional null.
-    public precpred(_localctx: RuleContext | null, _precedence: number): boolean {
+    public precpred(_localctx: ParserRuleContext | null, _precedence: number): boolean {
         return true;
     }
 
-    public action(_localctx: RuleContext | null, _ruleIndex: number, _actionIndex: number): void {
+    public action(_localctx: ParserRuleContext | null, _ruleIndex: number, _actionIndex: number): void {
     }
 
     public get atn(): ATN {
