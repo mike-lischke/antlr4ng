@@ -10,12 +10,10 @@ import { LexerDFASerializer } from "./LexerDFASerializer.js";
 import { Vocabulary } from "../Vocabulary.js";
 import { DecisionState } from "../atn/DecisionState.js";
 import { StarLoopEntryState } from "../atn/StarLoopEntryState.js";
-import { HashSet } from "../misc/HashSet.js";
 import type { ATNConfigSet } from "../index.js";
-import { DFAStateEqualityComparator } from "./DFAStateEqualityComparator.js";
 
 export class DFA {
-    public s0: DFAState | null = null;
+    public s0?: DFAState;
 
     public readonly decision: number;
 
@@ -33,8 +31,11 @@ export class DFA {
      */
     public readonly isPrecedenceDfa: boolean;
 
-    /** A set of all DFA states. */
-    #states = new HashSet<DFAState>(DFAStateEqualityComparator.instance);
+    /**
+     * A mapping from an ATNConfigSet hash to a DFAState.
+     * Used to quick look up the DFA state for a particular configuration set.
+     */
+    #states = new Map<number, DFAState>();
 
     public constructor(atnStartState: DecisionState | null, decision?: number) {
         this.atnStartState = atnStartState;
@@ -52,7 +53,7 @@ export class DFA {
     }
 
     public [Symbol.iterator] = (): Iterator<DFAState> => {
-        return this.#states[Symbol.iterator]();
+        return this.#states.values()[Symbol.iterator]();
     };
 
     /**
@@ -65,17 +66,17 @@ export class DFA {
      * @throws IllegalStateException if this is not a precedence DFA.
      * @see #isPrecedenceDfa
      */
-    public readonly getPrecedenceStartState = (precedence: number): DFAState | null => {
+    public readonly getPrecedenceStartState = (precedence: number): DFAState | undefined => {
         if (!this.isPrecedenceDfa) {
             throw new Error(`Only precedence DFAs may contain a precedence start state.`);
         }
 
         // s0.edges is never null for a precedence DFA
         if (!this.s0 || !this.s0.edges || precedence < 0 || precedence >= this.s0.edges.length) {
-            return null;
+            return undefined;
         }
 
-        return this.s0.edges[precedence] ?? null;
+        return this.s0.edges[precedence];
     };
 
     /**
@@ -99,28 +100,10 @@ export class DFA {
     };
 
     /**
-     * Sets whether this is a precedence DFA.
-     *
-     * @param precedenceDfa `true` if this is a precedence DFA; otherwise,
-     * `false`
-     *
-     * @throws UnsupportedOperationException if `precedenceDfa` does not
-     * match the value of {@link #isPrecedenceDfa} for the current DFA.
-     *
-     * @deprecated This method no longer performs any action.
-     */
-    public setPrecedenceDfa(precedenceDfa: boolean): void {
-        if (precedenceDfa !== this.isPrecedenceDfa) {
-            throw new Error(
-                `The precedenceDfa field cannot change after a DFA is constructed.`);
-        }
-    };
-
-    /**
      * @returns a list of all states in this DFA, ordered by state number.
      */
     public getStates(): DFAState[] {
-        const result = [...this.#states];
+        const result = [...this.#states.values()];
         result.sort((o1: DFAState, o2: DFAState): number => {
             return o1.stateNumber - o2.stateNumber;
         });
@@ -129,19 +112,20 @@ export class DFA {
     };
 
     public getState(state: DFAState): DFAState | null {
-        return this.#states.get(state) ?? null;
+        return this.#states.get(state.configs.hashCode()) ?? null;
     }
 
     public getStateForConfigs(configs: ATNConfigSet): DFAState | null {
-        return this.#states.get({ configs } as DFAState) ?? null;
+        return this.#states.get(configs.hashCode()) ?? null;
     }
 
     public addState(state: DFAState): void {
-        if (this.#states.contains(state)) {
+        const hash = state.configs.hashCode();
+        if (this.#states.has(hash)) {
             return;
         }
 
-        this.#states.add(state);
+        this.#states.set(hash, state);
         state.stateNumber = this.#states.size - 1;
     }
 
@@ -150,7 +134,7 @@ export class DFA {
             return this.toString(Vocabulary.EMPTY_VOCABULARY);
         }
 
-        if (this.s0 === null) {
+        if (!this.s0) {
             return "";
         }
 
@@ -160,7 +144,7 @@ export class DFA {
     }
 
     public toLexerString(): string {
-        if (this.s0 === null) {
+        if (!this.s0) {
             return "";
         }
 

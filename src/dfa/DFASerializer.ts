@@ -20,7 +20,7 @@ export class DFASerializer {
     }
 
     public toString(): string {
-        if (this.dfa.s0 === null) {
+        if (!this.dfa.s0) {
             return "";
         }
 

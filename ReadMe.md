@@ -141,15 +141,15 @@ The following table shows the results of the benchmarks that were executed in th
 
 |    | C++ |antlr4ng|antlr4|antlr4ts|antl4wasm|
 |---:|---:|---:|---:|---:|---:|
-|Query Collection (cold)|1340 ms| <ins>220/2448 (2668) ms</ins>| 7984 ms| 3402 ms| 3331 ms|
-|  Bitrix Queries (cold)| 195 ms|  <ins>77/298 (375) ms</ins>| 1134 ms|  444 ms|  998 ms|
-|   Large Inserts (cold)|4981 ms|<ins>7514/2345 (9859) ms</ins>|10695 ms|11483 ms|34243 ms|
-|Query Collection (warm)| 133 ms|  145/108 (253) ms|  <ins>223 ms</ins>|  259 ms| 1177 ms|
-|  Bitrix Queries (warm)|  70 ms|  70/79 (149) ms|  <ins>110 ms</ins>|  131 ms|  815 ms|
-|   Large Inserts (warm)|4971 ms|<ins>7536/2389 (9925) ms</ins>|10593 ms|11287 ms|36317 ms|
+|Query Collection (cold)|1340 ms| <ins>181/2167 (2348) ms</ins>| 7984 ms| 3402 ms| 3331 ms|
+|  Bitrix Queries (cold)| 195 ms|  <ins>67/271 (338) ms</ins>| 1134 ms|  444 ms|  998 ms|
+|   Large Inserts (cold)|4981 ms|<ins>6249/2282 (8531) ms</ins>|10695 ms|11483 ms|34243 ms|
+|Query Collection (warm)| 133 ms|  129/99 (228) ms|  <ins>223 ms</ins>|  259 ms| 1177 ms|
+|  Bitrix Queries (warm)|  70 ms|  63/73 (136) ms|  <ins>110 ms</ins>|  131 ms|  815 ms|
+|   Large Inserts (warm)|4971 ms|<ins>6249/2269 (8518) ms</ins>|10593 ms|11287 ms|36317 ms|
 |||||||
-|Total (cold)           |6546 ms|<ins>7811/5091 (12902) ms</ins>|19878 ms|15403 ms|38641 ms|
-|Total (warm)           |5198 ms|<ins>7753/2585 (10338) ms</ins>|10944 ms|11697 ms|38329 ms|
+|Total (cold)           |6546 ms|<ins>6497/4720 (11217) ms</ins>|19878 ms|15403 ms|38641 ms|
+|Total (warm)           |5198 ms|<ins>6441/2445 (8886) ms</ins>|10944 ms|11697 ms|38329 ms|
 
 Underlined entries are the smallest (not counting C++, which beats them all). For antlr4ng, the times are split into lexing and parsing. Note the high lexer execution times, caused by the large number of predicates (126) + lexer actions (40) in the MySQL lexer.
 
