@@ -21,7 +21,7 @@
     },
     "homepage": "https://github.com/mike-lischke/antlr4ng",
     "peerDependencies": {
-        "antlr4ng-cli": "1.0.7"
+        "antlr4ng-cli": "2.0.0"
     },
     "devDependencies": {
         "@mike-lischke/antlr-tgen": "1.0.7",
