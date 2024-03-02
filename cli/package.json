@@ -1,6 +1,6 @@
 {
     "name": "antlr4ng-cli",
-    "version": "1.0.7",
+    "version": "2.0.0",
     "description": "ANTLR4 NG command line tool for TypeScript",
     "author": "Mike Lischke",
     "files": [

@@ -186,19 +186,19 @@ The original Java execution times have been taken on OS X with a 4 GHz Intel Cor
 The execute times on last release of this runtime have been measured as:
 
 ```bash
-                loadNewUTF8 average time   358µs size  29191b over 3500 loads of 29191 symbols from Parser.java
+                loadNewUTF8 average time   354µs size  29191b over 3500 loads of 29191 symbols from Parser.java
                 loadNewUTF8 average time    74µs size   7552b over 3500 loads of  7552 symbols from RuleContext.java
-                loadNewUTF8 average time   122µs size  31784b over 3500 loads of 13379 symbols from udhr_hin.txt
+                loadNewUTF8 average time   120µs size  31784b over 3500 loads of 13379 symbols from udhr_hin.txt
 
-             lexNewJavaUTF8 average time   610µs over 2000 runs of 29191 symbols
-             lexNewJavaUTF8 average time  4817µs over 2000 runs of 29191 symbols DFA cleared
+             lexNewJavaUTF8 average time   669µs over 2000 runs of 29191 symbols
+             lexNewJavaUTF8 average time  1923µs over 2000 runs of 29191 symbols DFA cleared
 
-         lexNewGraphemeUTF8 average time 12973µs over  400 runs of  6614 symbols from udhr_kor.txt
-         lexNewGraphemeUTF8 average time 13151µs over  400 runs of  6614 symbols from udhr_kor.txt DFA cleared
-         lexNewGraphemeUTF8 average time 18051µs over  400 runs of 13379 symbols from udhr_hin.txt
-         lexNewGraphemeUTF8 average time 18228µs over  400 runs of 13379 symbols from udhr_hin.txt DFA cleared
-         lexNewGraphemeUTF8 average time   329µs over  400 runs of    85 symbols from emoji.txt
-         lexNewGraphemeUTF8 average time   387µs over  400 runs of    85 symbols from emoji.txt DFA cleared
+         lexNewGraphemeUTF8 average time  8098µs over  400 runs of  6614 symbols from udhr_kor.txt
+         lexNewGraphemeUTF8 average time  8223µs over  400 runs of  6614 symbols from udhr_kor.txt DFA cleared
+         lexNewGraphemeUTF8 average time 12800µs over  400 runs of 13379 symbols from udhr_hin.txt
+         lexNewGraphemeUTF8 average time 12856µs over  400 runs of 13379 symbols from udhr_hin.txt DFA cleared
+         lexNewGraphemeUTF8 average time   205µs over  400 runs of    85 symbols from emoji.txt
+         lexNewGraphemeUTF8 average time   235µs over  400 runs of    85 symbols from emoji.txt DFA cleared
 ```
 
 Note: Some of the corpus sizes differ due to the restructuring of the test. However, the numbers are not directly comparable anyway, as they were taken on different machines.

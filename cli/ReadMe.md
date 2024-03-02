@@ -33,6 +33,16 @@ in the root of your project, where you installed the package.
 
 ## Release Notes
 
+### 2.0.0
+
+This is the next major release of the code generator, after an overhaul of the antlr4ng runtime. It introduces a number of API changes, but no changes to the original working mechanism. The other targets (C++, Java, etc.) are not affected by this release. All changes in this release are to support the new antlr4ng major release 3.0.0:
+
+- Renamed class members (`_type` -> `type`, `_channel` -> `channel`, `_mode` -> `mode`, `_parseListeners` -> `parseListeners`).
+- Specialized `getText` methods for the token stream, to avoid frequent parameter checking in method overloading.
+- Merged the class `RuleContext` into `ParserRuleContext`. It's not used anywhere else, so why keeping it around?
+- `ParserRuleContext.exception` has been removed and it is no longer set in generated code (only relevant for error conditions, where a proper exception is passed to error listeners.
+- More non-null assertions and null-safety checks have been added (mostly relevant for local rule variables and return values).
+
 ### 1.0.7
 
 Code generation improvements, especially for local rule attributes. Attributes in a rule (which are implemented as local variables in the generated code) can be unassigned and need extra null-safety checks (the ? operator) or non-null assertions. The code generator now adds these checks automatically.
