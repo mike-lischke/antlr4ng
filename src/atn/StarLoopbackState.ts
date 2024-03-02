@@ -5,10 +5,7 @@
  */
 
 import { ATNState } from "./ATNState.js";
-import { ATNStateType } from "./ATNStateType.js";
 
 export class StarLoopbackState extends ATNState {
-    public override get stateType(): number {
-        return ATNStateType.STAR_LOOP_BACK;
-    }
+    public static override readonly stateType = ATNState.STAR_LOOP_BACK;
 }

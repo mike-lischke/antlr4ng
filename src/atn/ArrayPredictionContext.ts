@@ -5,9 +5,8 @@
  */
 
 import { PredictionContext } from "./PredictionContext.js";
-import { HashCode } from "../misc/HashCode.js";
 
-import { equalArrays } from "../utils/helpers.js";
+import { equalArrays, equalNumberArrays } from "../utils/helpers.js";
 
 export class ArrayPredictionContext extends PredictionContext {
     public readonly parents: Array<PredictionContext | null> = [];
@@ -20,10 +19,8 @@ export class ArrayPredictionContext extends PredictionContext {
          * null parent and
          * returnState == {@link EMPTY_RETURN_STATE}.
          */
-        const h = new HashCode();
-        h.update(parents, returnStates);
-        const hashCode = h.finish();
-        super(hashCode);
+        super(PredictionContext.calculateHashCodeList(parents, returnStates));
+
         this.parents = parents;
         this.returnStates = returnStates;
 
@@ -34,6 +31,10 @@ export class ArrayPredictionContext extends PredictionContext {
         // since EMPTY_RETURN_STATE can only appear in the last position, we
         // don't need to verify that size==1
         return this.returnStates[0] === PredictionContext.EMPTY_RETURN_STATE;
+    }
+
+    public get length(): number {
+        return this.returnStates.length;
     }
 
     public getParent(index: number): PredictionContext | null {
@@ -49,15 +50,11 @@ export class ArrayPredictionContext extends PredictionContext {
             return true;
         }
 
-        if (!(other instanceof ArrayPredictionContext)) {
-            return false;
-        }
-
-        if (this.hashCode() !== other.hashCode()) {
+        if (!(other instanceof ArrayPredictionContext) || this.hashCode() !== other.hashCode()) {
             return false; // can't be same if hash is different
         }
 
-        return equalArrays(this.returnStates, other.returnStates) &&
+        return equalNumberArrays(this.returnStates, other.returnStates) &&
             equalArrays(this.parents, other.parents);
 
     }
@@ -65,29 +62,23 @@ export class ArrayPredictionContext extends PredictionContext {
     public override toString(): string {
         if (this.isEmpty()) {
             return "[]";
-        } else {
-            let s = "[";
-            for (let i = 0; i < this.returnStates.length; i++) {
-                if (i > 0) {
-                    s = s + ", ";
-                }
-                if (this.returnStates[i] === PredictionContext.EMPTY_RETURN_STATE) {
-                    s = s + "$";
-                    continue;
-                }
-                s = s + this.returnStates[i];
-                if (this.parents[i] !== null) {
-                    s = s + " " + this.parents[i];
-                } else {
-                    s = s + "null";
-                }
+        }
+
+        const entries: string[] = [];
+        for (let i = 0; i < this.returnStates.length; i++) {
+            if (this.returnStates[i] === PredictionContext.EMPTY_RETURN_STATE) {
+                entries.push("$");
+                continue;
             }
 
-            return s + "]";
+            entries.push(this.returnStates[i]!.toString());
+            if (this.parents[i]) {
+                entries.push(this.parents[i]!.toString());
+            } else {
+                entries.push("null");
+            }
         }
-    }
 
-    public get length(): number {
-        return this.returnStates.length;
+        return `[${entries.join(", ")}]`;
     }
 }

@@ -6,14 +6,15 @@
 
 import { PredictionContext } from "./PredictionContext.js";
 import { HashMap } from "../misc/HashMap.js";
+import { ObjectEqualityComparator } from "../misc/ObjectEqualityComparator.js";
 
 /**
  * Used to cache {@link PredictionContext} objects. Its used for the shared
- * context cash associated with contexts in DFA states. This cache
+ * context cache associated with contexts in DFA states. This cache
  * can be used for both lexers and parsers.
  */
 export class PredictionContextCache {
-    private cache = new HashMap<PredictionContext, PredictionContext>();
+    private cache = new HashMap<PredictionContext, PredictionContext>(ObjectEqualityComparator.instance);
 
     /**
      * Add a context to the cache and return it. If the context already exists,
@@ -25,10 +26,10 @@ export class PredictionContextCache {
      */
     public add(ctx: PredictionContext): PredictionContext {
         if (ctx === PredictionContext.EMPTY) {
-            return PredictionContext.EMPTY;
+            return ctx;
         }
-        const existing = this.cache.get(ctx) || null;
-        if (existing !== null) {
+        const existing = this.cache.get(ctx);
+        if (existing) {
             return existing;
         }
         this.cache.set(ctx, ctx);
@@ -36,11 +37,11 @@ export class PredictionContextCache {
         return ctx;
     }
 
-    public get(ctx: PredictionContext): PredictionContext | null {
-        return this.cache.get(ctx) || null;
+    public get(ctx: PredictionContext): PredictionContext | undefined {
+        return this.cache.get(ctx);
     }
 
     public get length(): number {
-        return this.cache.length;
+        return this.cache.size;
     }
 }

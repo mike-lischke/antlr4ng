@@ -17,18 +17,16 @@ import { Interval } from "./misc/Interval.js";
  * are made by calling {@link Parser#notifyErrorListeners} with the appropriate
  * message.
  *
- * <ul>
- * <li><b>Ambiguities</b>: These are cases where more than one path through the
- * grammar can match the input.</li>
- * <li><b>Weak context sensitivity</b>: These are cases where full-context
+ * - <b>Ambiguities</b>: These are cases where more than one path through the
+ * grammar can match the input.
+ * - <b>Weak context sensitivity</b>: These are cases where full-context
  * prediction resolved an SLL conflict to a unique alternative which equaled the
- * minimum alternative of the SLL conflict.</li>
- * <li><b>Strong (forced) context sensitivity</b>: These are cases where the
+ * minimum alternative of the SLL conflict.
+ * - <b>Strong (forced) context sensitivity</b>: These are cases where the
  * full-context prediction resolved an SLL conflict to a unique alternative,
- * <em>and</em> the minimum alternative of the SLL conflict was found to not be
+ * and* the minimum alternative of the SLL conflict was found to not be
  * a truly viable alternative. Two-stage parsing cannot be used for inputs where
- * this situation occurs.</li>
- * </ul>
+ * this situation occurs.
  *
  * @author Sam Harwell
  */
@@ -48,7 +46,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
      * whether all ambiguities or only exact ambiguities are reported.
      *
      * @param exactOnly `true` to report only exact ambiguities, otherwise
-     * {@code false} to report all ambiguities.
+     * `false` to report all ambiguities.
      */
     public constructor(exactOnly: boolean);
     public constructor(exactOnly?: boolean) {
@@ -61,7 +59,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
         startIndex: number,
         stopIndex: number,
         exact: boolean,
-        ambigAlts: BitSet | null,
+        ambigAlts: BitSet | undefined,
         configs: ATNConfigSet): void => {
         if (this.exactOnly && !exact) {
             return;
@@ -69,7 +67,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
 
         const decision = this.getDecisionDescription(recognizer, dfa);
         const conflictingAlts = this.getConflictingAlts(ambigAlts, configs);
-        const text = recognizer.tokenStream.getText(Interval.of(startIndex, stopIndex));
+        const text = recognizer.tokenStream?.getTextFromInterval(Interval.of(startIndex, stopIndex));
         const message = `reportAmbiguity d=${decision}: ambigAlts=${conflictingAlts}, input='${text}'`;
         recognizer.notifyErrorListeners(message, null, null);
     };
@@ -78,10 +76,10 @@ export class DiagnosticErrorListener extends BaseErrorListener {
         dfa: DFA,
         startIndex: number,
         stopIndex: number,
-        _conflictingAlts: BitSet | null,
+        _conflictingAlts: BitSet | undefined,
         _configs: ATNConfigSet | null): void => {
         const decision = this.getDecisionDescription(recognizer, dfa);
-        const text = recognizer.tokenStream.getText(Interval.of(startIndex, stopIndex));
+        const text = recognizer.tokenStream?.getTextFromInterval(Interval.of(startIndex, stopIndex));
         const message = `reportAttemptingFullContext d=${decision}, input='${text}'`;
         recognizer.notifyErrorListeners(message, null, null);
     };
@@ -93,7 +91,7 @@ export class DiagnosticErrorListener extends BaseErrorListener {
         _prediction: number,
         _configs: ATNConfigSet | null): void => {
         const decision = this.getDecisionDescription(recognizer, dfa);
-        const text = recognizer.tokenStream.getText(Interval.of(startIndex, stopIndex));
+        const text = recognizer.tokenStream?.getTextFromInterval(Interval.of(startIndex, stopIndex));
         const message = `reportContextSensitivity d=${decision}, input='${text}'`;
         recognizer.notifyErrorListeners(message, null, null);
     };
@@ -123,12 +121,12 @@ export class DiagnosticErrorListener extends BaseErrorListener {
      * @param reportedAlts The set of conflicting or ambiguous alternatives, as
      * reported by the parser.
      * @param configs The conflicting or ambiguous configuration set.
-     * @returns Returns {@code reportedAlts} if it is not {@code null}, otherwise
-     * returns the set of alternatives represented in {@code configs}.
+     * @returns Returns `reportedAlts` if it is not `null`, otherwise
+     * returns the set of alternatives represented in `configs`.
      */
-    protected getConflictingAlts = (reportedAlts: BitSet | null,
+    protected getConflictingAlts = (reportedAlts: BitSet | undefined,
         configs: ATNConfigSet): BitSet | null => {
-        if (reportedAlts !== null) {
+        if (reportedAlts) {
             return reportedAlts;
         }
 

@@ -6,16 +6,15 @@
 
 import { DFAState } from "../dfa/DFAState.js";
 import { getCachedPredictionContext } from "./PredictionContextUtils.js";
-import { HashMap } from "../misc/HashMap.js";
 import { ATN } from "./ATN.js";
 import { PredictionContextCache } from "./PredictionContextCache.js";
 import { PredictionContext } from "./PredictionContext.js";
+import { HashMap } from "../misc/HashMap.js";
+import { ObjectEqualityComparator } from "../misc/ObjectEqualityComparator.js";
 
-export class ATNSimulator {
+export abstract class ATNSimulator {
     /** Must distinguish between missing edge and edge we know leads nowhere */
-
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    public static readonly ERROR = new DFAState(0x7FFFFFFF);
+    public static readonly ERROR = DFAState.fromState(0x7FFFFFFF);
 
     public readonly atn: ATN;
 
@@ -27,27 +26,35 @@ export class ATNSimulator {
      * fill this during closure() since there are lots of contexts that
      * pop up but are not used ever again. It also greatly slows down closure().
      *
-     * <p>This cache makes a huge difference in memory and a little bit in speed.
+     * This cache makes a huge difference in memory and a little bit in speed.
      * For the Java grammar on java.*, it dropped the memory requirements
      * at the end from 25M to 16M. We don't store any of the full context
      * graphs in the DFA because they are limited to local context only,
      * but apparently there's a lot of repetition there as well. We optimize
      * the config contexts before storing the config set in the DFA states
-     * by literally rebuilding them with cached subgraphs only.</p>
+     * by literally rebuilding them with cached subgraphs only.
      *
-     * <p>I tried a cache for use during closure operations, that was
+     * I tried a cache for use during closure operations, that was
      * whacked after each adaptivePredict(). It cost a little bit
      * more time I think and doesn't save on the overall footprint
-     * so it's not worth the complexity.</p>
+     * so it's not worth the complexity.
      */
-    protected readonly sharedContextCache: PredictionContextCache | null = null;
+    public readonly sharedContextCache?: PredictionContextCache;
 
-    public constructor(atn: ATN, sharedContextCache: PredictionContextCache | null) {
-
+    public constructor(atn: ATN, sharedContextCache?: PredictionContextCache) {
         this.atn = atn;
         this.sharedContextCache = sharedContextCache;
 
         return this;
+    }
+
+    public getCachedContext(context: PredictionContext): PredictionContext {
+        if (!this.sharedContextCache) {
+            return context;
+        }
+        const visited = new HashMap<PredictionContext, PredictionContext>(ObjectEqualityComparator.instance);
+
+        return getCachedPredictionContext(context, this.sharedContextCache, visited);
     }
 
     /**
@@ -59,21 +66,7 @@ export class ATNSimulator {
      * @throws UnsupportedOperationException if the current instance does not
      * support clearing the DFA.
      */
-    public clearDFA(): void {
-        throw new Error("This ATN simulator does not support clearing the DFA.");
-    }
+    public abstract clearDFA(): void;
 
-    public getCachedContext(context: PredictionContext): PredictionContext {
-        if (this.sharedContextCache === null) {
-            return context;
-        }
-        const visited = new HashMap<PredictionContext, PredictionContext>();
-
-        return getCachedPredictionContext(context, this.sharedContextCache, visited);
-    }
-
-    public getSharedContextCache(): PredictionContextCache | null {
-        return this.sharedContextCache;
-    }
-
+    public abstract reset(): void;
 }

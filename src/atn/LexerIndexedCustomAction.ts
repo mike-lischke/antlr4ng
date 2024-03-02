@@ -8,23 +8,23 @@
 
 import { LexerAction } from "./LexerAction.js";
 import { Lexer } from "../Lexer.js";
-import { HashCode } from "../misc/HashCode.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 
 /**
  * This implementation of {@link LexerAction} is used for tracking input offsets
  * for position-dependent actions within a {@link LexerActionExecutor}.
  *
- * <p>This action is not serialized as part of the ATN, and is only required for
+ * This action is not serialized as part of the ATN, and is only required for
  * position-dependent lexer actions which appear at a location other than the
  * end of a rule. For more information about DFA optimizations employed for
  * lexer actions, see {@link LexerActionExecutor//append} and
- * {@link LexerActionExecutor//fixOffsetBeforeMatch}.</p>
+ * {@link LexerActionExecutor//fixOffsetBeforeMatch}.
  *
  * Constructs a new indexed custom action by associating a character offset
  * with a {@link LexerAction}.
  *
- * <p>Note: This class is only required for lexer actions for which
- * {@link LexerAction//isPositionDependent} returns {@code true}.</p>
+ * Note: This class is only required for lexer actions for which
+ * {@link LexerAction//isPositionDependent} returns `true`.
  *
  * @param offset The offset into the input {@link CharStream}, relative to
  * the token start index, at which the specified lexer action should be
@@ -33,37 +33,50 @@ import { HashCode } from "../misc/HashCode.js";
  * input {@link CharStream}.
  */
 
-export class LexerIndexedCustomAction extends LexerAction {
+export class LexerIndexedCustomAction implements LexerAction {
     public readonly offset: number;
     public readonly action: LexerAction;
+    public readonly actionType: number;
+    public isPositionDependent: boolean = true;
+
+    #cachedHashCode: number | undefined;
 
     public constructor(offset: number, action: LexerAction) {
-        super(action.actionType);
+        this.actionType = action.actionType;
         this.offset = offset;
         this.action = action;
-        this.isPositionDependent = true;
     }
 
     /**
-     * <p>This method calls {@link execute} on the result of {@link getAction}
-     * using the provided {@code lexer}.</p>
+     * This method calls {@link execute} on the result of {@link getAction}
+     * using the provided `lexer`.
      */
     public execute(lexer: Lexer): void {
-        // assume the input stream position was properly set by the calling code
+        // Assume the input stream position was properly set by the calling code
         this.action.execute(lexer);
     }
 
-    public override updateHashCode(hash: HashCode): void {
-        hash.update(this.actionType, this.offset, this.action);
+    public hashCode(): number {
+        if (this.#cachedHashCode === undefined) {
+            let hash = MurmurHash.initialize();
+            hash = MurmurHash.update(hash, this.offset);
+            hash = MurmurHash.updateFromComparable(hash, this.action);
+
+            this.#cachedHashCode = MurmurHash.finish(hash, 2);
+        }
+
+        return this.#cachedHashCode;
     }
 
-    public override equals(other: unknown): boolean {
+    public equals(other: unknown): boolean {
         if (this === other) {
             return true;
-        } else if (!(other instanceof LexerIndexedCustomAction)) {
-            return false;
-        } else {
-            return this.offset === other.offset && this.action === other.action;
         }
+
+        if (!(other instanceof LexerIndexedCustomAction)) {
+            return false;
+        }
+
+        return this.offset === other.offset && this.action === other.action;
     }
 }

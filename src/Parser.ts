@@ -12,7 +12,6 @@ import { ErrorNode } from "./tree/ErrorNode.js";
 import { Recognizer } from "./Recognizer.js";
 import { DefaultErrorStrategy } from "./DefaultErrorStrategy.js";
 import { ATNDeserializer } from "./atn/ATNDeserializer.js";
-import { ATNDeserializationOptions } from "./atn/ATNDeserializationOptions.js";
 import { ParserATNSimulator } from "./atn/ParserATNSimulator.js";
 import { TokenStream } from "./TokenStream.js";
 import { ParseTreeListener } from "./tree/ParseTreeListener.js";
@@ -22,9 +21,12 @@ import { ATN } from "./atn/ATN.js";
 import { RecognitionException } from "./RecognitionException.js";
 import { RuleTransition } from "./atn/RuleTransition.js";
 import { IntervalSet } from "./misc/IntervalSet.js";
-import { RuleContext } from "./RuleContext.js";
 import { TraceListener } from "./TraceListener.js";
 import { ProfilingATNSimulator } from "./atn/ProfilingATNSimulator.js";
+import type { IntStream } from "./IntStream.js";
+import type { ParseTreePattern } from "./tree/pattern/ParseTreePattern.js";
+import { Lexer } from "./Lexer.js";
+import { ParseTreePatternMatcher } from "./tree/pattern/ParseTreePatternMatcher.js";
 
 export interface IDebugPrinter {
     println(s: string): void;
@@ -37,7 +39,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
 
     /**
      * Specifies whether or not the parser should construct a parse tree during
-     * the parsing process. The default value is {@code true}.
+     * the parsing process. The default value is `true`.
      *
      * @see #getBuildParseTree
      * @see #setBuildParseTree
@@ -60,15 +62,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     // TODO: make private
     public context: ParserRuleContext | null = null;
 
-    /**
-     * The input stream.
-     *
-     * @see #getInputStream
-     * @see #setInputStream
-     */
-    protected _input: TokenStream | null = null;
-
-    protected _precedenceStack: number[] = [];
+    protected precedenceStack: number[] = [];
 
     /**
      * The list of {@link ParseTreeListener} listeners registered to receive
@@ -76,25 +70,25 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      *
      * @see #addParseListener
      */
-    protected _parseListeners: ParseTreeListener[] | null = null;
+    protected parseListeners: ParseTreeListener[] | null = null;
 
     /**
      * The number of syntax errors reported during parsing. This value is
      * incremented each time {@link #notifyErrorListeners} is called.
      */
-    protected _syntaxErrors = 0;
+    protected syntaxErrors = 0;
 
     /** Indicates parser has matched EOF token. See {@link #exitRule()}. */
     protected matchedEOF = false;
 
     /**
-     * When {@link #setTrace}{@code (true)} is called, a reference to the
+     * When {@link #setTrace}`(true)` is called, a reference to the
      * {@link TraceListener} is stored here so it can be easily removed in a
-     * later call to {@link #setTrace}{@code (false)}. The listener itself is
+     * later call to {@link #setTrace}`(false)`. The listener itself is
      * implemented as a parser listener so this field is not directly used by
      * other parser methods.
      */
-    private _tracer: TraceListener | null = null;
+    #tracer: TraceListener | null = null;
 
     /**
      * This field holds the deserialized {@link ATN} with bypass alternatives, created
@@ -104,7 +98,9 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      *
      * @see ATNDeserializationOptions#isGenerateRuleBypassTransitions()
      */
-    private bypassAltsAtnCache: ATN | null = null;
+    #bypassAltsAtnCache: ATN | null = null;
+
+    #inputStream!: TokenStream;
 
     /**
      * this is all the parsing support code essentially; most of it is error
@@ -113,43 +109,43 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     public constructor(input: TokenStream) {
         super();
 
-        this._precedenceStack.push(0);
-        this._syntaxErrors = 0;
+        this.precedenceStack.push(0);
+        this.syntaxErrors = 0;
         this.tokenStream = input;
     }
 
-    // reset the parser's state
-    public reset(): void {
-        if (this._input !== null) {
-            this._input.seek(0);
+    /** reset the parser's state */
+    public reset(rewindInputStream = true): void {
+        if (rewindInputStream) {
+            this.inputStream.seek(0);
         }
         this.errorHandler.reset(this);
         this.context = null;
-        this._syntaxErrors = 0;
+        this.syntaxErrors = 0;
         this.setTrace(false);
-        this._precedenceStack = [];
-        this._precedenceStack.push(0);
+        this.precedenceStack = [];
+        this.precedenceStack.push(0);
         if (this.interpreter) {
             this.interpreter.reset();
         }
     }
 
     /**
-     * Match current input symbol against {@code ttype}. If the symbol type
+     * Match current input symbol against `ttype`. If the symbol type
      * matches, {@link ANTLRErrorStrategy//reportMatch} and {@link consume} are
      * called to complete the match process.
      *
-     * <p>If the symbol type does not match,
+     * If the symbol type does not match,
      * {@link ANTLRErrorStrategy//recoverInline} is called on the current error
      * strategy to attempt recovery. If {@link buildParseTree} is
-     * {@code true} and the token index of the symbol returned by
+     * `true` and the token index of the symbol returned by
      * {@link ANTLRErrorStrategy//recoverInline} is -1, the symbol is added to
-     * the parse tree by calling {@link ParserRuleContext//addErrorNode}.</p>
+     * the parse tree by calling {@link ParserRuleContext//addErrorNode}.
      *
      * @param ttype the token type to match
      * @returns the matched symbol
      * @throws RecognitionException if the current input symbol did not match
-     * {@code ttype} and the error strategy could not recover from the
+     * `ttype` and the error strategy could not recover from the
      * mismatched symbol
      */
     public match(ttype: number): Token {
@@ -175,12 +171,12 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * (i.e. has a value greater than 0), {@link ANTLRErrorStrategy//reportMatch}
      * and {@link consume} are called to complete the match process.
      *
-     * <p>If the symbol type does not match,
+     * If the symbol type does not match,
      * {@link ANTLRErrorStrategy//recoverInline} is called on the current error
      * strategy to attempt recovery. If {@link buildParseTree} is
-     * {@code true} and the token index of the symbol returned by
+     * `true` and the token index of the symbol returned by
      * {@link ANTLRErrorStrategy//recoverInline} is -1, the symbol is added to
-     * the parse tree by calling {@link ParserRuleContext//addErrorNode}.</p>
+     * the parse tree by calling {@link ParserRuleContext//addErrorNode}.
      *
      * @returns the matched symbol
      * @throws RecognitionException if the current input symbol did not match
@@ -206,78 +202,76 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     }
 
     public getParseListeners(): ParseTreeListener[] {
-        return this._parseListeners ?? [];
+        return this.parseListeners ?? [];
     }
 
     /**
-     * Registers {@code listener} to receive events during the parsing process.
+     * Registers `listener` to receive events during the parsing process.
      *
-     * <p>To support output-preserving grammar transformations (including but not
+     * To support output-preserving grammar transformations (including but not
      * limited to left-recursion removal, automated left-factoring, and
      * optimized code generation), calls to listener methods during the parse
      * may differ substantially from calls made by
      * {@link ParseTreeWalker//DEFAULT} used after the parse is complete. In
      * particular, rule entry and exit events may occur in a different order
      * during the parse than after the parser. In addition, calls to certain
-     * rule entry methods may be omitted.</p>
+     * rule entry methods may be omitted.
      *
-     * <p>With the following specific exceptions, calls to listener events are
-     * <em>deterministic</em>, i.e. for identical input the calls to listener
-     * methods will be the same.</p>
+     * With the following specific exceptions, calls to listener events are
+     * deterministic*, i.e. for identical input the calls to listener
+     * methods will be the same.
      *
-     * <ul>
-     * <li>Alterations to the grammar used to generate code may change the
-     * behavior of the listener calls.</li>
-     * <li>Alterations to the command line options passed to ANTLR 4 when
-     * generating the parser may change the behavior of the listener calls.</li>
-     * <li>Changing the version of the ANTLR Tool used to generate the parser
-     * may change the behavior of the listener calls.</li>
-     * </ul>
+     * - Alterations to the grammar used to generate code may change the
+     * behavior of the listener calls.
+     * - Alterations to the command line options passed to ANTLR 4 when
+     * generating the parser may change the behavior of the listener calls.
+     * - Changing the version of the ANTLR Tool used to generate the parser
+     * may change the behavior of the listener calls.
      *
      * @param listener the listener to add
      *
-     * @throws NullPointerException if {@code} listener is {@code null}
+     * @throws NullPointerException if {@code} listener is `null`
      */
     public addParseListener(listener: ParseTreeListener): void {
         if (listener === null) {
             throw new Error("listener");
         }
-        if (this._parseListeners === null) {
-            this._parseListeners = [];
+        if (this.parseListeners === null) {
+            this.parseListeners = [];
         }
-        this._parseListeners.push(listener);
+        this.parseListeners.push(listener);
     }
 
     /**
-     * Remove {@code listener} from the list of parse listeners.
+     * Remove `listener` from the list of parse listeners.
      *
-     * <p>If {@code listener} is {@code null} or has not been added as a parse
-     * listener, this method does nothing.</p>
+     * If `listener` is `null` or has not been added as a parse
+     * listener, this method does nothing.
      *
      * @param listener the listener to remove
      */
     public removeParseListener(listener: ParseTreeListener | null): void {
-        if (this._parseListeners !== null && listener !== null) {
-            const idx = this._parseListeners.indexOf(listener);
+        if (this.parseListeners !== null && listener !== null) {
+            const idx = this.parseListeners.indexOf(listener);
             if (idx >= 0) {
-                this._parseListeners.splice(idx, 1);
+                this.parseListeners.splice(idx, 1);
             }
-            if (this._parseListeners.length === 0) {
-                this._parseListeners = null;
+            if (this.parseListeners.length === 0) {
+                this.parseListeners = null;
             }
         }
     }
 
     // Remove all parse listeners.
     public removeParseListeners(): void {
-        this._parseListeners = null;
+        this.parseListeners = null;
     }
 
     // Notify any parse listeners of an enter rule event.
     public triggerEnterRuleEvent(): void {
-        if (this._parseListeners !== null) {
+        if (this.parseListeners !== null) {
             const ctx = this.context!;
-            this._parseListeners.forEach((listener) => {
+            this.parseListeners.forEach((listener) => {
                 listener.enterEveryRule(ctx);
                 ctx.enterRule(listener);
             });
@@ -290,10 +284,10 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * @see //addParseListener
      */
     public triggerExitRuleEvent(): void {
-        if (this._parseListeners !== null) {
+        if (this.parseListeners !== null) {
             // reverse order walk of listeners
             const ctx = this.context!;
-            this._parseListeners.slice(0).reverse().forEach((listener) => {
+            this.parseListeners.slice(0).reverse().forEach((listener) => {
                 ctx.exitRule(listener);
                 listener.exitEveryRule(ctx);
             });
@@ -301,12 +295,42 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     }
 
     public getTokenFactory(): TokenFactory<Token> {
-        return this._input!.getTokenSource().tokenFactory;
+        return this.inputStream.tokenSource.tokenFactory;
     }
 
     // Tell our token source and error strategy about a new way to create tokens.
     public setTokenFactory(factory: TokenFactory<Token>): void {
-        this._input!.getTokenSource().tokenFactory = factory;
+        this.inputStream.tokenSource.tokenFactory = factory;
+    }
+
+    /**
+     * The preferred method of getting a tree pattern. For example, here's a
+     * sample use:
+     *
+     * ```
+     * const t = parser.expr();
+     * const p = parser.compileParseTreePattern("<ID>+0", MyParser.RULE_expr);
+     * const m = p.match(t);
+     * const id = m.get("ID");
+     * ```
+     */
+    public compileParseTreePattern(pattern: string, patternRuleIndex: number, lexer?: Lexer): ParseTreePattern {
+        if (!lexer) {
+            if (this.tokenStream !== null) {
+                const tokenSource = this.tokenStream.tokenSource;
+                if (tokenSource instanceof Lexer) {
+                    lexer = tokenSource;
+                }
+            }
+        }
+
+        if (!lexer) {
+            throw new Error("Parser can't discover a lexer to use");
+        }
+
+        const m = new ParseTreePatternMatcher(lexer, this);
+
+        return m.compile(pattern, patternRuleIndex);
     }
 
     /**
@@ -322,34 +346,14 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
             throw new Error("The current parser does not support an ATN with bypass alternatives.");
         }
 
-        if (this.bypassAltsAtnCache !== null) {
-            return this.bypassAltsAtnCache;
+        if (this.#bypassAltsAtnCache !== null) {
+            return this.#bypassAltsAtnCache;
         }
 
-        const deserializationOptions = new ATNDeserializationOptions();
-        deserializationOptions.generateRuleBypassTransitions = true;
-        this.bypassAltsAtnCache = new ATNDeserializer(deserializationOptions).deserialize(serializedAtn);
+        const deserializationOptions = { readOnly: false, verifyATN: true, generateRuleBypassTransitions: true };
+        this.#bypassAltsAtnCache = new ATNDeserializer(deserializationOptions).deserialize(serializedAtn);
 
-        return this.bypassAltsAtnCache;
-    }
-
-    public get tokenStream(): TokenStream {
-        return this._input!;
-    }
-
-    // Set the token stream and reset the parser.
-    public set tokenStream(input: TokenStream) {
-        this._input = null;
-        this.reset();
-        this._input = input;
-    }
-
-    public get inputStream(): TokenStream {
-        return this._input!;
-    }
-
-    public set inputStream(input: TokenStream) {
-        this.tokenStream = input;
+        return this.#bypassAltsAtnCache;
     }
 
     /**
@@ -357,7 +361,25 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * incremented each time {@link notifyErrorListeners} is called.
      */
     public get numberOfSyntaxErrors(): number {
-        return this._syntaxErrors;
+        return this.syntaxErrors;
+    }
+
+    public get inputStream(): TokenStream {
+        return this.#inputStream;
+    }
+
+    public set inputStream(input: IntStream) {
+        this.tokenStream = input as TokenStream;
+    }
+
+    public get tokenStream(): TokenStream {
+        return this.#inputStream;
+    }
+
+    /** Set the token stream and reset the parser. */
+    public set tokenStream(input: TokenStream) {
+        this.reset(false);
+        this.#inputStream = input;
     }
 
     /**
@@ -365,7 +387,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * into the label for the associated token ref; e.g., x=ID.
      */
     public getCurrentToken(): Token {
-        return this._input!.LT(1)!;
+        return this.inputStream.LT(1)!;
     }
 
     public notifyErrorListeners(msg: string, offendingToken: Token | null, err: RecognitionException | null): void {
@@ -374,29 +396,28 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         if (offendingToken === null) {
             offendingToken = this.getCurrentToken();
         }
-        this._syntaxErrors += 1;
+        this.syntaxErrors += 1;
         const line = offendingToken.line;
         const column = offendingToken.column;
-        const listener = this.getErrorListenerDispatch();
-        listener.syntaxError(this, offendingToken, line, column, msg, err);
+        this.errorListenerDispatch.syntaxError(this, offendingToken, line, column, msg, err);
     }
 
     /**
      * Consume and return the {@link getCurrentToken current symbol}.
      *
-     * <p>E.g., given the following input with {@code A} being the current
-     * lookahead symbol, this function moves the cursor to {@code B} and returns
-     * {@code A}.</p>
+     * E.g., given the following input with `A` being the current
+     * lookahead symbol, this function moves the cursor to `B` and returns
+     * `A`.
      *
-     * <pre>
+     * ```
      * A B
      * ^
-     * </pre>
+     * ```
      *
      * If the parser is not in error recovery mode, the consumed symbol is added
      * to the parse tree using {@link ParserRuleContext//addChild(Token)}, and
      * {@link ParseTreeListener//visitTerminal} is called on any parse listeners.
-     * If the parser <em>is</em> in error recovery mode, the consumed symbol is
+     * If the parser *is* in error recovery mode, the consumed symbol is
      * added to the parse tree using
      * {@link ParserRuleContext//addErrorNode(Token)}, and
      * {@link ParseTreeListener//visitErrorNode} is called on any parse
@@ -407,7 +428,8 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         if (o.type !== Token.EOF) {
             this.tokenStream.consume();
         }
-        const hasListener = this._parseListeners !== null && this._parseListeners.length > 0;
+
+        const hasListener = this.parseListeners !== null && this.parseListeners.length > 0;
         if (this.buildParseTrees || hasListener) {
             let node: ErrorNode | TerminalNode;
             if (this.errorHandler.inErrorRecoveryMode(this)) {
@@ -415,9 +437,9 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
             } else {
                 node = this.context!.addTokenNode(o);
             }
-            //node.invokingState = this.state;
+
             if (hasListener) {
-                this._parseListeners!.forEach((listener) => {
+                this.parseListeners!.forEach((listener) => {
                     if (node instanceof ErrorNode) {
                         listener.visitErrorNode(node);
                     } else {
@@ -444,7 +466,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     public enterRule(localctx: ParserRuleContext, state: number, _ruleIndex: number): void {
         this.state = state;
         this.context = localctx;
-        this.context.start = this._input!.LT(1);
+        this.context.start = this.inputStream.LT(1);
         if (this.buildParseTrees) {
             this.addContextToParseTree();
         }
@@ -452,7 +474,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     }
 
     public exitRule(): void {
-        this.context!.stop = this._input!.LT(-1);
+        this.context!.stop = this.inputStream.LT(-1);
         // trigger event on _ctx, before it reverts to parent
         this.triggerExitRuleEvent();
         this.state = this.context!.invokingState;
@@ -479,27 +501,27 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * the parser context is not nested within a precedence rule.
      */
     public getPrecedence(): number {
-        if (this._precedenceStack.length === 0) {
+        if (this.precedenceStack.length === 0) {
             return -1;
         } else {
-            return this._precedenceStack[this._precedenceStack.length - 1];
+            return this.precedenceStack[this.precedenceStack.length - 1];
         }
     }
 
     public enterRecursionRule(localctx: ParserRuleContext, state: number, ruleIndex: number, precedence: number): void {
         this.state = state;
-        this._precedenceStack.push(precedence);
+        this.precedenceStack.push(precedence);
         this.context = localctx;
-        this.context.start = this._input!.LT(1);
+        this.context.start = this.inputStream.LT(1);
         this.triggerEnterRuleEvent(); // simulates rule entry for left-recursive rules
     }
 
-    // Like {@link enterRule} but for recursive rules.
+    /** Like {@link enterRule} but for recursive rules. */
     public pushNewRecursionContext(localctx: ParserRuleContext, state: number, _ruleIndex: number): void {
         const previous = this.context!;
         previous.parent = localctx;
         previous.invokingState = state;
-        previous.stop = this._input!.LT(-1);
+        previous.stop = this.inputStream.LT(-1);
 
         this.context = localctx;
         this.context.start = previous.start;
@@ -510,8 +532,8 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     }
 
     public unrollRecursionContexts(parent: ParserRuleContext | null): void {
-        this._precedenceStack.pop();
-        this.context!.stop = this._input!.LT(-1);
+        this.precedenceStack.pop();
+        this.context!.stop = this.inputStream.LT(-1);
         const retCtx = this.context!; // save current ctx (return value)
         // unroll so _ctx is as it was before call to recursive method
         const parseListeners = this.getParseListeners();
@@ -523,6 +545,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         } else {
             this.context = parent;
         }
+
         // hook into tree
         retCtx.parent = parent;
         if (this.buildParseTrees && parent !== null) {
@@ -544,7 +567,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     }
 
     public override precpred(_localctx: ParserRuleContext | null, precedence: number): boolean {
-        return precedence >= this._precedenceStack[this._precedenceStack.length - 1];
+        return precedence >= this.precedenceStack[this.precedenceStack.length - 1];
     }
 
     public inContext(_context: string): boolean {
@@ -553,18 +576,18 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     }
 
     /**
-     * Checks whether or not {@code symbol} can follow the current state in the
+     * Checks whether or not `symbol` can follow the current state in the
      * ATN. The behavior of this method is equivalent to the following, but is
      * implemented such that the complete context-sensitive follow set does not
      * need to be explicitly constructed.
      *
-     * <pre>
+     * ```
      * return getExpectedTokens().contains(symbol);
-     * </pre>
+     * ```
      *
      * @param symbol the symbol type to check
-     * @returns `true` if {@code symbol} can follow the current state in
-     * the ATN, otherwise {@code false}.
+     * @returns `true` if `symbol` can follow the current state in
+     * the ATN, otherwise `false`.
      */
     public isExpectedToken(symbol: number): boolean {
         const atn = this.interpreter.atn;
@@ -598,7 +621,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * state and context, as given by {@link getState} and {@link getContext},
      * respectively.
      *
-     * @see ATN.getExpectedTokens(int, RuleContext)
+     * {@link ATN.getExpectedTokens ATN.getExpectedTokens(int, RuleContext)}
      */
     public getExpectedTokens(): IntervalSet {
         return this.interpreter.atn.getExpectedTokens(this.state, this.context);
@@ -611,29 +634,25 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         return atn.nextTokens(s);
     }
 
-    // Get a rule's index (i.e., {@code RULE_ruleName} field) or -1 if not found.
+    /** Get a rule's index (i.e., `RULE_ruleName` field) or -1 if not found. */
     public getRuleIndex(ruleName: string): number {
-        const ruleIndex = this.getRuleIndexMap().get(ruleName);
-        if (ruleIndex != null) {
-            return ruleIndex;
-        } else {
-            return -1;
-        }
+        return this.getRuleIndexMap().get(ruleName) ?? -1; // Terribly inefficient.
     }
 
     /**
-     * Return List&lt;String&gt; of the rule names in your parser instance
+     * @returns an array of string of the rule names in your parser instance
      * leading up to a call to the current rule. You could override if
      * you want more details such as the file/line info of where
      * in the ATN a rule is invoked.
      *
      * this is very useful for error messages.
      */
-    public getRuleInvocationStack(p?: RuleContext | null): string[] {
+    public getRuleInvocationStack(p?: ParserRuleContext | null): string[] {
         p = p ?? null;
         if (p === null) {
             p = this.context;
         }
+
         const stack = [];
         while (p !== null) {
             // compute what follows who invoked us
@@ -662,7 +681,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     public dumpDFA(): void {
         let seenOne = false;
         for (const dfa of this.interpreter.decisionToDFA) {
-            if (dfa.states.length > 0) {
+            if (dfa.length > 0) {
                 if (seenOne) {
                     console.log();
                 }
@@ -679,7 +698,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     }
 
     public getSourceName(): string {
-        return this._input!.getSourceName();
+        return this.inputStream.getSourceName();
     }
 
     public setProfile(profile: boolean): void {
@@ -691,7 +710,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
                 this.interpreter = new ProfilingATNSimulator(this);
             }
         } else if (interp instanceof ProfilingATNSimulator) {
-            const sharedContextCache = interp.getSharedContextCache();
+            const sharedContextCache = interp.sharedContextCache;
             if (sharedContextCache) {
                 const sim = new ParserATNSimulator(this, this.atn, interp.decisionToDFA, sharedContextCache);
                 this.interpreter = sim;
@@ -706,14 +725,14 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      */
     public setTrace(trace: boolean): void {
         if (!trace) {
-            this.removeParseListener(this._tracer);
-            this._tracer = null;
+            this.removeParseListener(this.#tracer);
+            this.#tracer = null;
         } else {
-            if (this._tracer !== null) {
-                this.removeParseListener(this._tracer);
+            if (this.#tracer !== null) {
+                this.removeParseListener(this.#tracer);
             }
-            this._tracer = new TraceListener(this);
-            this.addParseListener(this._tracer);
+            this.#tracer = new TraceListener(this);
+            this.addParseListener(this.#tracer);
         }
     }
 

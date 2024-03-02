@@ -7,7 +7,7 @@
 /* eslint-disable jsdoc/require-param, @typescript-eslint/naming-convention */
 
 import { Token } from "./Token.js";
-import { Interval } from "./misc/Interval.js";
+import { type Interval } from "./misc/Interval.js";
 import { IntStream } from "./IntStream.js";
 
 export interface CharStream extends IntStream {
@@ -17,19 +17,27 @@ export interface CharStream extends IntStream {
      * touched.
      */
     reset(): void;
+
     /**
      * get a substring from the stream at start to stop (inclusive).
      *
      * @param start Start index
      * @param stop Stop index
      */
-    getText(start: number, stop: number): string;
+    getTextFromRange(start: number, stop: number): string;
+
     /**
      * get a substring from the stream at specified interval (inclusive).
      *
      * @param interval
      */
-    getText(interval: Interval): string;
+    getTextFromInterval(interval: Interval): string;
+}
+
+export namespace CharStream {
+    export const fromString = (str: string): CharStream => {
+        return new CharStreamImpl(str);
+    };
 }
 
 export class CharStreamImpl implements CharStream {
@@ -68,9 +76,11 @@ export class CharStreamImpl implements CharStream {
         if (offset === 0) {
             return 0; // undefined
         }
+
         if (offset < 0) {
             offset += 1; // e.g., translate LA(-1) to use offset=0
         }
+
         const pos = this.index + offset - 1;
         if (pos < 0 || pos >= this.data.length) { // invalid
             return Token.EOF;
@@ -95,35 +105,40 @@ export class CharStreamImpl implements CharStream {
         if (index <= this.index) {
             this.index = index; // just jump; don't update stream state (line,
 
-            // ...)
             return;
         }
+
         // seek forward
         this.index = Math.min(index, this.data.length);
     }
 
-    public getText(start: number, stop: number): string;
-    public getText(interval: Interval): string;
-    public getText(intervalOrStart: Interval | number, stop?: number): string {
-        let begin;
-        let end: number;
-        if (intervalOrStart instanceof Interval) {
-            begin = intervalOrStart.start;
-            end = intervalOrStart.stop;
-        } else {
-            begin = intervalOrStart;
-            end = stop ?? this.data.length - 1;
+    public getTextFromRange(start: number, stop?: number): string {
+        stop = stop ?? this.data.length - 1;
+
+        if (stop >= this.data.length) {
+            stop = this.data.length - 1;
         }
 
-        if (end >= this.data.length) {
-            end = this.data.length - 1;
-        }
-
-        if (begin >= this.data.length) {
+        if (start >= this.data.length) {
             return "";
-        } else {
-            return this.#stringFromRange(begin, end + 1);
         }
+
+        return this.#stringFromRange(start, stop + 1);
+    }
+
+    public getTextFromInterval(interval: Interval): string {
+        const start = interval.start;
+        let stop = interval.stop;
+
+        if (stop >= this.data.length) {
+            stop = this.data.length - 1;
+        }
+
+        if (start >= this.data.length) {
+            return "";
+        }
+
+        return this.#stringFromRange(start, stop + 1);
     }
 
     public toString(): string {
@@ -137,9 +152,9 @@ export class CharStreamImpl implements CharStream {
     public getSourceName(): string {
         if (this.name) {
             return this.name;
-        } else {
-            return IntStream.UNKNOWN_SOURCE_NAME;
         }
+
+        return IntStream.UNKNOWN_SOURCE_NAME;
     }
 
     #stringFromRange(start: number, stop?: number): string {

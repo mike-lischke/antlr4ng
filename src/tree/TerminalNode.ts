@@ -7,7 +7,7 @@
 import { Interval } from "../misc/Interval.js";
 import { Token } from "../Token.js";
 import { ParseTree } from "./ParseTree.js";
-import { ParseTreeVisitor } from "./ParseTreeVisitor.js";
+import { type ParseTreeVisitor } from "./ParseTreeVisitor.js";
 
 export class TerminalNode implements ParseTree {
     public parent: ParseTree | null = null;

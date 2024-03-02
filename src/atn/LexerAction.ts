@@ -5,32 +5,17 @@
  */
 
 import { Lexer } from "../Lexer.js";
-import { HashCode } from "../misc/HashCode.js";
+import type { IComparable } from "../index.js";
 
-// TODO: make LexerAction an interface
-export abstract class LexerAction {
-    public readonly actionType: number;
-    public isPositionDependent: boolean;
+/**
+ * Represents a single action which can be executed following the successful
+ * match of a lexer rule. Lexer actions are used for both embedded action syntax
+ * and ANTLR 4's new lexer command syntax.
+ */
+export interface LexerAction extends IComparable {
+    readonly actionType: number;
+    isPositionDependent: boolean;
 
-    public constructor(action: number) {
-        this.actionType = action;
-        this.isPositionDependent = false;
-    }
-
-    public hashCode(): number {
-        const hash = new HashCode();
-        this.updateHashCode(hash);
-
-        return hash.finish();
-    }
-
-    public updateHashCode(hash: HashCode): void {
-        hash.update(this.actionType);
-    }
-
-    public equals(other: unknown): boolean {
-        return this === other;
-    }
-
-    public abstract execute(lexer: Lexer): void;
+    execute(lexer: Lexer): void;
+    toString(): string;
 }

@@ -11,50 +11,39 @@ import { ParseCancellationException } from "./misc/ParseCancellationException.js
 import { DefaultErrorStrategy } from "./DefaultErrorStrategy.js";
 import { Parser } from "./Parser.js";
 import { RecognitionException } from "./RecognitionException.js";
-import { ParserRuleContext } from "./ParserRuleContext.js";
 
 /**
  * This implementation of {@link ANTLRErrorStrategy} responds to syntax errors
  * by immediately canceling the parse operation with a
  * {@link ParseCancellationException}. The implementation ensures that the
- * {@link ParserRuleContext//exception} field is set for all parse tree nodes
+ * {@link ParserRuleContext.exception} field is set for all parse tree nodes
  * that were not completed prior to encountering the error.
  *
- * <p>
- * This error strategy is useful in the following scenarios.</p>
+ * This error strategy is useful in the following scenarios.
  *
- * <ul>
- * <li><strong>Two-stage parsing:</strong> This error strategy allows the first
+ * - **Two-stage parsing:** This error strategy allows the first
  * stage of two-stage parsing to immediately terminate if an error is
  * encountered, and immediately fall back to the second stage. In addition to
  * avoiding wasted work by attempting to recover from errors here, the empty
- * implementation of {@link BailErrorStrategy//sync} improves the performance of
- * the first stage.</li>
- * <li><strong>Silent validation:</strong> When syntax errors are not being
+ * implementation of {@link BailErrorStrategy.sync} improves the performance of the first stage.
+ * - **Silent validation:** When syntax errors are not being
  * reported or logged, and the parse result is simply ignored if errors occur,
  * the {@link BailErrorStrategy} avoids wasting work on recovering from errors
- * when the result will be ignored either way.</li>
- * </ul>
+ * when the result will be ignored either way.
  *
- * <p>
- * {@code myParser.setErrorHandler(new BailErrorStrategy());}</p>
+ * `myParser.setErrorHandler(new BailErrorStrategy());`
  *
  * @see Parser#setErrorHandler(ANTLRErrorStrategy)
  */
 export class BailErrorStrategy extends DefaultErrorStrategy {
 
     /**
-     * Instead of recovering from exception {@code e}, re-throw it wrapped
+     * Instead of recovering from exception `e`, re-throw it wrapped
      * in a {@link ParseCancellationException} so it is not caught by the
      * rule function catches. Use {@link Exception//getCause()} to get the
      * original {@link RecognitionException}.
      */
     public override recover(recognizer: Parser, e: RecognitionException): void {
-        let context: ParserRuleContext | null = recognizer.context;
-        while (context !== null) {
-            context.exception = e;
-            context = context.parent as ParserRuleContext;
-        }
         throw new ParseCancellationException(e);
     }
 
@@ -64,16 +53,11 @@ export class BailErrorStrategy extends DefaultErrorStrategy {
      */
     public override recoverInline(recognizer: Parser): never {
         const exception = new InputMismatchException(recognizer);
-        let context: ParserRuleContext | null = recognizer.context;
-        while (context !== null) {
-            context.exception = exception;
-            context = context.parent as ParserRuleContext;
-        }
 
         throw new ParseCancellationException(exception);
     }
 
-    // Make sure we don't attempt to recover from problems in subrules.//
+    // Make sure we don't attempt to recover from problems in subrules.
     public override sync(_recognizer: Parser): void {
         // pass
     }

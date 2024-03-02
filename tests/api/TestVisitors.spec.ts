@@ -1,5 +1,3 @@
-/* java2ts: keep */
-
 /*
  * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
@@ -7,8 +5,8 @@
  */
 
 import {
-    BaseErrorListener, CommonTokenStream, Recognizer, ErrorNode, TerminalNode, CharStreams, Token, ATNSimulator,
-    RuleContext,
+    BaseErrorListener, CommonTokenStream, Recognizer, ErrorNode, TerminalNode, CharStream, Token, ATNSimulator,
+    ParserRuleContext,
 } from "antlr4ng";
 
 import { VisitorBasicLexer } from "../generated/VisitorBasicLexer.js";
@@ -28,7 +26,7 @@ describe("TestVisitors", () => {
      */
     it("testVisitTerminalNode", () => {
         const input = "A";
-        const lexer = new VisitorBasicLexer(CharStreams.fromString(input));
+        const lexer = new VisitorBasicLexer(CharStream.fromString(input));
         const parser = new VisitorBasicParser(new CommonTokenStream(lexer));
 
         const context = parser.s();
@@ -61,7 +59,7 @@ describe("TestVisitors", () => {
      */
     it("testVisitErrorNode", () => {
         const input = "";
-        const lexer = new VisitorBasicLexer(CharStreams.fromString(input));
+        const lexer = new VisitorBasicLexer(CharStream.fromString(input));
         const parser = new VisitorBasicParser(new CommonTokenStream(lexer));
 
         const errors: string[] = [];
@@ -101,11 +99,11 @@ describe("TestVisitors", () => {
      * This test verifies that {@link AbstractParseTreeVisitor#visitChildren} does not call
      * {@link org.antlr.v4.runtime.tree.ParseTreeVisitor#visit} after
      * {@link org.antlr.v4.runtime.tree.AbstractParseTreeVisitor#shouldVisitNextChild} returns
-     * {@code false}.
+     * `false`.
      */
     it("testShouldNotVisitEOF", () => {
         const input = "A";
-        const lexer = new VisitorBasicLexer(CharStreams.fromString(input));
+        const lexer = new VisitorBasicLexer(CharStream.fromString(input));
         const parser = new VisitorBasicParser(new CommonTokenStream(lexer));
 
         const context = parser.s();
@@ -116,7 +114,7 @@ describe("TestVisitors", () => {
                 return node.getSymbol().toString() + "\n";
             }
 
-            protected override shouldVisitNextChild(node: RuleContext, currentResult: string | null): boolean {
+            protected override shouldVisitNextChild(node: ParserRuleContext, currentResult: string | null): boolean {
                 return currentResult === null || currentResult.length === 0;
             }
         }();
@@ -133,7 +131,7 @@ describe("TestVisitors", () => {
      */
     it("testShouldNotVisitTerminal", () => {
         const input = "A";
-        const lexer = new VisitorBasicLexer(CharStreams.fromString(input));
+        const lexer = new VisitorBasicLexer(CharStream.fromString(input));
         const parser = new VisitorBasicParser(new CommonTokenStream(lexer));
 
         const context = parser.s();
@@ -163,7 +161,7 @@ describe("TestVisitors", () => {
      */
     it("testCalculatorVisitor", () => {
         const input = "2 + 8 / 2";
-        const lexer = new VisitorCalcLexer(CharStreams.fromString(input));
+        const lexer = new VisitorCalcLexer(CharStream.fromString(input));
         const parser = new VisitorCalcParser(new CommonTokenStream(lexer));
 
         const context = parser.s();

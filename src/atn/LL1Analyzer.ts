@@ -4,67 +4,56 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-/* eslint-disable no-underscore-dangle */
-
 import { Token } from "../Token.js";
-import { ATNConfig } from "./ATNConfig.js";
 import { IntervalSet } from "../misc/IntervalSet.js";
-import { RuleStopState } from "./RuleStopState.js";
 import { RuleTransition } from "./RuleTransition.js";
 import { NotSetTransition } from "./NotSetTransition.js";
-import { WildcardTransition } from "./WildcardTransition.js";
-import { AbstractPredicateTransition } from "./AbstractPredicateTransition.js";
 import { predictionContextFromRuleContext } from "./PredictionContextUtils.js";
 import { PredictionContext } from "./PredictionContext.js";
 import { SingletonPredictionContext } from "./SingletonPredictionContext.js";
 import { BitSet } from "../misc/BitSet.js";
-import { HashSet } from "../misc/HashSet.js";
 import { ATNState } from "./ATNState.js";
 import { ATN } from "./ATN.js";
-import { RuleContext } from "../RuleContext.js";
+import { ParserRuleContext } from "../ParserRuleContext.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
+import { Transition } from "./Transition.js";
 
 export class LL1Analyzer {
     /**
      * Special value added to the lookahead sets to indicate that we hit
-     *  a predicate during analysis if {@code seeThruPreds==false}.
+     * a predicate during analysis if `seeThruPreds==false`.
      */
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    public static readonly HIT_PRED = Token.INVALID_TYPE;
+    private static readonly hitPredicate = Token.INVALID_TYPE;
 
-    public readonly atn: ATN;
-
-    public constructor(atn: ATN) {
-        this.atn = atn;
-    }
+    #atn: ATN;
 
     /**
      * Calculates the SLL(1) expected lookahead set for each outgoing transition
      * of an {@link ATNState}. The returned array has one element for each
-     * outgoing transition in {@code s}. If the closure from transition
-     * <em>i</em> leads to a semantic predicate before matching a symbol, the
-     * element at index <em>i</em> of the result will be {@code null}.
+     * outgoing transition in `s`. If the closure from transition
+     * _i_ leads to a semantic predicate before matching a symbol, the
+     * element at index *i* of the result will be `null`.
      *
      * @param s the ATN state
-     * @returns the expected symbols for each outgoing transition of {@code s}.
+     * @returns the expected symbols for each outgoing transition of `s`.
      */
-    public getDecisionLookahead(s: ATNState | null): Array<IntervalSet | null> | null {
-        if (s === null) {
-            return null;
+    public getDecisionLookahead(s?: ATNState): Array<IntervalSet | null> | undefined {
+        if (!s) {
+            return undefined;
         }
 
         const count = s.transitions.length;
-        const look = new Array<IntervalSet | null>(count);
-        look.fill(null);
+        const look = new Array<IntervalSet>(count);
         for (let alt = 0; alt < count; alt++) {
-            look[alt] = new IntervalSet();
-            const lookBusy = new HashSet<ATNConfig>();
-            const seeThruPreds = false; // fail to get lookahead upon pred
-            this._LOOK(s.transitions[alt].target, null, PredictionContext.EMPTY,
-                look[alt]!, lookBusy, new BitSet(), seeThruPreds, false);
-            // Wipe out lookahead for this alternative if we found nothing
-            // or we had a predicate when we !seeThruPreds
-            if (look[alt]!.length === 0 || look[alt]!.contains(LL1Analyzer.HIT_PRED)) {
-                look[alt] = null;
+            const set = new IntervalSet();
+            const lookBusy = new Set<number>();
+            this.doLook(s.transitions[alt].target, undefined, PredictionContext.EMPTY, set, lookBusy, new BitSet(),
+                false, false);
+
+            // Add lookahead for this alternative if we found something
+            // and we had no predicate when we !seeThruPreds.
+            if (set.length > 0 && !set.contains(LL1Analyzer.hitPredicate)) {
+                look[alt] = set;
             }
         }
 
@@ -72,73 +61,89 @@ export class LL1Analyzer {
     }
 
     /**
-     * Compute set of tokens that can follow {@code s} in the ATN in the
-     * specified {@code ctx}.
+     * Compute set of tokens that can follow `s` in the ATN in the
+     * specified `ctx`.
      *
-     * <p>If {@code ctx} is {@code null} and the end of the rule containing
-     * {@code s} is reached, {@link Token//EPSILON} is added to the result set.
-     * If {@code ctx} is not {@code null} and the end of the outermost rule is
-     * reached, {@link Token//EOF} is added to the result set.</p>
+     * If `ctx` is `null` and the end of the rule containing
+     * `s` is reached, {@link Token//EPSILON} is added to the result set.
+     * If `ctx` is not `null` and the end of the outermost rule is
+     * reached, {@link Token//EOF} is added to the result set.
      *
+     * @param atn the ATN
      * @param s the ATN state
      * @param stopState the ATN state to stop at. This can be a
      * {@link BlockEndState} to detect epsilon paths through a closure.
-     * @param ctx the complete parser context, or {@code null} if the context
+     * @param ctx the complete parser context, or `null` if the context
      * should be ignored
      *
-     * @returns The set of tokens that can follow {@code s} in the ATN in the
-     * specified {@code ctx}.
+     * @returns The set of tokens that can follow `s` in the ATN in the
+     * specified `ctx`.
      */
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    public LOOK(s: ATNState, stopState: ATNState | null, ctx: RuleContext | null): IntervalSet {
+    public look(atn: ATN, s: ATNState, stopState?: ATNState, ctx?: ParserRuleContext): IntervalSet {
+        this.#atn = atn;
         const r = new IntervalSet();
-        const seeThruPreds = true; // ignore preds; get all lookahead
-        ctx = ctx || null;
-        const lookContext = ctx !== null ? predictionContextFromRuleContext(s.atn!, ctx) : null;
-        this._LOOK(s, stopState, lookContext, r, new HashSet(), new BitSet(), seeThruPreds, true);
+
+        const lookContext = ctx ? predictionContextFromRuleContext(atn, ctx) : undefined;
+        this.doLook(s, stopState, lookContext, r, new Set(), new BitSet(), true, true);
 
         return r;
     }
 
     /**
-     * Compute set of tokens that can follow {@code s} in the ATN in the
-     * specified {@code ctx}.
+     * Compute set of tokens that can follow `s` in the ATN in the
+     * specified `ctx`.
      *
-     * <p>If {@code ctx} is {@code null} and {@code stopState} or the end of the
-     * rule containing {@code s} is reached, {@link Token//EPSILON} is added to
-     * the result set. If {@code ctx} is not {@code null} and {@code addEOF} is
-     * {@code true} and {@code stopState} or the end of the outermost rule is
-     * reached, {@link Token//EOF} is added to the result set.</p>
+     * If `ctx` is `null` and `stopState` or the end of the
+     * rule containing `s` is reached, {@link Token//EPSILON} is added to
+     * the result set. If `ctx` is not `null` and `addEOF` is
+     * `true` and `stopState` or the end of the outermost rule is
+     * reached, {@link Token//EOF} is added to the result set.
      *
      * @param s the ATN state.
      * @param stopState the ATN state to stop at. This can be a
      * {@link BlockEndState} to detect epsilon paths through a closure.
-     * @param ctx The outer context, or {@code null} if the outer context should
+     * @param ctx The outer context, or `null` if the outer context should
      * not be used.
      * @param look The result lookahead set.
      * @param lookBusy A set used for preventing epsilon closures in the ATN
      * from causing a stack overflow. Outside code should pass
-     * {@code new CustomizedSet<ATNConfig>} for this argument.
+     * `new CustomizedSet<ATNConfig>` for this argument.
      * @param calledRuleStack A set used for preventing left recursion in the
      * ATN from causing a stack overflow. Outside code should pass
-     * {@code new BitSet()} for this argument.
-     * @param seeThruPreds {@code true} to true semantic predicates as
-     * implicitly {@code true} and "see through them", otherwise {@code false}
-     * to treat semantic predicates as opaque and add {@link HIT_PRED} to the
+     * `new BitSet()` for this argument.
+     * @param seeThruPreds `true` to true semantic predicates as
+     * implicitly `true` and "see through them", otherwise `false`
+     * to treat semantic predicates as opaque and add {@link hitPredicate} to the
      * result if one is encountered.
      * @param addEOF Add {@link Token//EOF} to the result if the end of the
-     * outermost context is reached. This parameter has no effect if {@code ctx}
-     * is {@code null}.
+     * outermost context is reached. This parameter has no effect if `ctx`
+     * is `null`.
      */
-    public _LOOK(s: ATNState, stopState: ATNState | null, ctx: PredictionContext | null, look: IntervalSet,
-        lookBusy: HashSet<ATNConfig>, calledRuleStack: BitSet, seeThruPreds: boolean, addEOF: boolean): void {
-        const c = new ATNConfig({ state: s, alt: 0, context: ctx }, null);
-        if (lookBusy.has(c)) {
+    private doLook(s: ATNState, stopState: ATNState | undefined, ctx: PredictionContext | undefined, look: IntervalSet,
+        lookBusy: Set<number>, calledRuleStack: BitSet, seeThruPreds: boolean, addEOF: boolean): void {
+
+        // `lookBusy` is essentially a standard recursion stopper. It's based on the given configuration details.
+        // The original code created an instance of `ATNConfig` just for that purpose. However, some of the details
+        // are always the same (e.g. `alt` is always 0 and the semantic context is alway `NONE`). With this in mind,
+        // we can just create a local hash code and use it to check if we've already visited the current state with
+        // the current context.
+        // There's a small risk here: if the hash code is the same for two different configurations, we might end up
+        // not visiting a state that we should visit. However, the probability of that happening is very low and the
+        // runtime tests all succeed, so we're good to go.
+
+        let hashCode = MurmurHash.initialize(7);
+        hashCode = MurmurHash.update(hashCode, s.stateNumber);
+        hashCode = MurmurHash.updateFromComparable(hashCode, ctx);
+        hashCode = MurmurHash.finish(hashCode, 2);
+
+        const size = lookBusy.size;
+        lookBusy.add(hashCode);
+        if (size === lookBusy.size) { // Size didn't change, so we've already visited this state with this context.
             return;
         }
-        lookBusy.add(c);
+
         if (s === stopState) {
-            if (ctx === null) {
+            if (!ctx) {
                 look.addOne(Token.EPSILON);
 
                 return;
@@ -148,8 +153,8 @@ export class LL1Analyzer {
                 return;
             }
         }
-        if (s instanceof RuleStopState) {
-            if (ctx === null) {
+        if ((s.constructor as typeof ATNState).stateType === ATNState.RULE_STOP) {
+            if (!ctx) {
                 look.addOne(Token.EPSILON);
 
                 return;
@@ -158,15 +163,17 @@ export class LL1Analyzer {
 
                 return;
             }
+
             if (ctx !== PredictionContext.EMPTY) {
                 const removed = calledRuleStack.get(s.ruleIndex);
                 try {
                     calledRuleStack.clear(s.ruleIndex);
+
                     // run thru all possible stack tops in ctx
                     for (let i = 0; i < ctx.length; i++) {
-                        const returnState = this.atn.states[ctx.getReturnState(i)]!;
-                        this._LOOK(returnState, stopState, ctx.getParent(i), look, lookBusy, calledRuleStack,
-                            seeThruPreds, addEOF);
+                        const returnState = this.#atn.states[ctx.getReturnState(i)]!;
+                        this.doLook(returnState, stopState, ctx.getParent(i) ?? undefined, look, lookBusy,
+                            calledRuleStack, seeThruPreds, addEOF);
                     }
                 } finally {
                     if (removed) {
@@ -179,34 +186,53 @@ export class LL1Analyzer {
         }
 
         for (const t of s.transitions) {
-            if (t instanceof RuleTransition) {
-                if (calledRuleStack.get(t.target.ruleIndex)) {
-                    continue;
-                }
-                const newContext = SingletonPredictionContext.create(ctx, t.followState.stateNumber);
-                try {
-                    calledRuleStack.set(t.target.ruleIndex);
-                    this._LOOK(t.target, stopState, newContext, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
-                } finally {
-                    calledRuleStack.clear(t.target.ruleIndex);
-                }
-            } else if (t instanceof AbstractPredicateTransition) {
-                if (seeThruPreds) {
-                    this._LOOK(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
-                } else {
-                    look.addOne(LL1Analyzer.HIT_PRED);
-                }
-            } else if (t.isEpsilon) {
-                this._LOOK(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
-            } else if (t.constructor === WildcardTransition) {
-                look.addRange(Token.MIN_USER_TOKEN_TYPE, this.atn.maxTokenType);
-            } else {
-                let set = t.label;
-                if (set !== null) {
-                    if (t instanceof NotSetTransition) {
-                        set = set.complement(Token.MIN_USER_TOKEN_TYPE, this.atn.maxTokenType);
+            switch (t.transitionType) {
+                case Transition.RULE: {
+                    if (calledRuleStack.get(t.target.ruleIndex)) {
+                        continue;
                     }
-                    look.addSet(set);
+
+                    const newContext = SingletonPredictionContext.create(ctx,
+                        (t as RuleTransition).followState.stateNumber);
+                    try {
+                        calledRuleStack.set(t.target.ruleIndex);
+                        this.doLook(t.target, stopState, newContext, look, lookBusy, calledRuleStack, seeThruPreds,
+                            addEOF);
+                    } finally {
+                        calledRuleStack.clear(t.target.ruleIndex);
+                    }
+                    break;
+                }
+
+                case Transition.PREDICATE:
+                case Transition.PRECEDENCE: {
+                    if (seeThruPreds) {
+                        this.doLook(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
+                    } else {
+                        look.addOne(LL1Analyzer.hitPredicate);
+                    }
+                    break;
+                }
+
+                case Transition.WILDCARD: {
+                    look.addRange(Token.MIN_USER_TOKEN_TYPE, this.#atn.maxTokenType);
+                    break;
+                }
+
+                default: {
+                    if (t.isEpsilon) {
+                        this.doLook(t.target, stopState, ctx, look, lookBusy, calledRuleStack, seeThruPreds, addEOF);
+                    } else {
+                        let set = t.label;
+                        if (set) {
+                            if (t instanceof NotSetTransition) {
+                                set = set.complement(Token.MIN_USER_TOKEN_TYPE, this.#atn.maxTokenType);
+                            }
+                            look.addSet(set);
+                        }
+                    }
+
+                    break;
                 }
             }
         }

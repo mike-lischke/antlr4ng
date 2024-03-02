@@ -14,6 +14,8 @@ export class LexerNoViableAltException extends RecognitionException {
     public startIndex: number;
     public deadEndConfigs: ATNConfigSet;
 
+    protected declare input: CharStream | null;
+
     public constructor(lexer: Lexer | null, input: CharStream | TokenStream, startIndex: number,
         deadEndConfigs: ATNConfigSet) {
         super({ message: "", recognizer: lexer, input, ctx: null });
@@ -24,7 +26,7 @@ export class LexerNoViableAltException extends RecognitionException {
     public override toString(): string {
         let symbol = "";
         if (this.input && this.startIndex >= 0 && this.startIndex < this.input.size) {
-            symbol = this.input.getText(this.startIndex, this.startIndex);
+            symbol = this.input.getTextFromRange(this.startIndex, this.startIndex);
         }
 
         return "LexerNoViableAltException" + symbol;

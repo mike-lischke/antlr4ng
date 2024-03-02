@@ -27,11 +27,11 @@ export class BaseErrorListener implements ANTLRErrorListener {
     }
 
     public reportAmbiguity(recognizer: Parser, dfa: DFA, startIndex: number, stopIndex: number, exact: boolean,
-        ambigAlts: BitSet | null, configs: ATNConfigSet): void {
+        ambigAlts: BitSet | undefined, configs: ATNConfigSet): void {
     }
 
     public reportAttemptingFullContext(recognizer: Parser, dfa: DFA, startIndex: number, stopIndex: number,
-        conflictingAlts: BitSet | null, configs: ATNConfigSet): void {
+        conflictingAlts: BitSet | undefined, configs: ATNConfigSet): void {
     }
 
     public reportContextSensitivity(recognizer: Parser, dfa: DFA, startIndex: number, stopIndex: number,

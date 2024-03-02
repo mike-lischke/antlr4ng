@@ -4,7 +4,6 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { ATNType } from "./atn/ATNType.js";
 import { Lexer } from "./Lexer.js";
 import { LexerATNSimulator } from "./atn/LexerATNSimulator.js";
 import { PredictionContextCache } from "./atn/PredictionContextCache.js";
@@ -30,7 +29,7 @@ export class LexerInterpreter extends Lexer {
         modeNames: string[], atn: ATN, input: CharStream) {
         super(input);
 
-        if (atn.grammarType !== ATNType.LEXER) {
+        if (atn.grammarType !== ATN.LEXER) {
             throw new Error("IllegalArgumentException: The ATN must be a lexer ATN.");
         }
 

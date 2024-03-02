@@ -6,14 +6,16 @@
 
 /* eslint-disable jsdoc/require-returns, jsdoc/require-param */
 
-import { RuleContext } from "./RuleContext.js";
 import { Interval } from "./misc/Interval.js";
 import { Token } from "./Token.js";
-import { RecognitionException } from "./RecognitionException.js";
 import { ParseTreeListener } from "./tree/ParseTreeListener.js";
 import { ParseTree } from "./tree/ParseTree.js";
 import { TerminalNode } from "./tree/TerminalNode.js";
 import { ErrorNode } from "./tree/ErrorNode.js";
+import { ATN } from "./atn/ATN.js";
+import { Trees } from "./tree/Trees.js";
+import type { Parser } from "./Parser.js";
+import type { ParseTreeVisitor } from "./tree/ParseTreeVisitor.js";
 
 /**
  * A rule invocation record for parsing.
@@ -39,58 +41,65 @@ import { ErrorNode } from "./tree/ErrorNode.js";
  *  group values such as this aggregate.  The getters/setters are there to
  *  satisfy the superclass interface.
  */
-export class ParserRuleContext extends RuleContext {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    public static readonly EMPTY = new ParserRuleContext();
+export class ParserRuleContext implements ParseTree {
+    public static readonly empty = new ParserRuleContext(null);
 
     public start: Token | null = null;
     public stop: Token | null = null;
 
+    public readonly children: ParseTree[] = [];
+
     /**
-     * The exception that forced this rule to return. If the rule successfully
-     * completed, this is {@code null}.
+     * What state invoked the rule associated with this context?
+     *  The "return address" is the followState of invokingState
+     *  If parent is null, this should be -1 this context object represents
+     *  the start rule.
      */
-    public exception: RecognitionException | null = null;
+    public invokingState: number;
 
-    public constructor();
-    public constructor(parent: ParserRuleContext | null, invokingStateNumber: number);
-    public constructor(parent?: ParserRuleContext | null, invokingStateNumber?: number) {
-        if (!parent) {
-            super();
-        } else {
-            super(parent, invokingStateNumber);
-        }
+    #parent: ParserRuleContext | null;
 
-        this.start = null;
-        this.stop = null;
+    /**
+     * A rule context is a record of a single rule invocation. It knows
+     * which context invoked it, if any. If there is no parent context, then
+     * naturally the invoking state is not valid.  The parent link
+     * provides a chain upwards from the current rule invocation to the root
+     * of the invocation tree, forming a stack. We actually carry no
+     * information about the rule associated with this context (except
+     * when parsing). We keep only the state number of the invoking state from
+     * the ATN submachine that invoked this. Contrast this with the s
+     * pointer inside ParserRuleContext that tracks the current state
+     * being "executed" for the current rule.
+     *
+     * The parent contexts are useful for computing lookahead sets and
+     * getting error information.
+     *
+     * These objects are used during parsing and prediction.
+     * For the special case of parsers, we use the subclass
+     * ParserRuleContext.
+     */
+    public constructor(parent: ParserRuleContext | null, invokingStateNumber: number = -1) {
+        this.#parent = parent;
+        this.invokingState = invokingStateNumber;
     }
 
-    public override get parent(): ParserRuleContext | null {
-        return super.parent as ParserRuleContext;
-    }
-
-    public override set parent(parent: ParserRuleContext | null) {
-        super.parent = parent;
-    }
-
-    // COPY a ctx (I'm deliberately not using copy constructor)
+    /** Copy a context */
     public copyFrom(ctx: ParserRuleContext): void {
-        // from RuleContext
-        this.parent = ctx.parent;
+        this.#parent = ctx.#parent;
         this.invokingState = ctx.invokingState;
-        this.children = null;
+        this.children.slice(0, this.children.length);
         this.start = ctx.start;
         this.stop = ctx.stop;
-        // copy any error nodes to alt label node
+
+        // Copy any error nodes to alt label node.s
         if (ctx.children) {
-            this.children = [];
-            // reset parent pointer for any error nodes
+            // Reset parent pointer for any error nodes.
             ctx.children.forEach((child) => {
                 if (child instanceof ErrorNode) {
-                    this.children!.push(child);
+                    this.children.push(child);
                     child.parent = this;
                 }
-            }, this);
+            });
         }
     }
 
@@ -101,98 +110,70 @@ export class ParserRuleContext extends RuleContext {
     public exitRule(_listener: ParseTreeListener): void {
     }
 
-    /**
-     * Add a parse tree node to this as a child.  Works for
-     *  internal and leaf nodes. Does not set parent link;
-     *  other add methods must do that. Other addChild methods
-     *  call this.
-     *
-     *  We cannot set the parent pointer of the incoming node
-     *  because the existing interfaces do not have a setParent()
-     *  method and I don't want to break backward compatibility for this.
-     */
-    public addAnyChild<T extends ParseTree>(t: T): T {
-        if (this.children == null) {
-            this.children = [];
-        }
-        this.children.push(t);
+    public addChild(child: ParserRuleContext): ParserRuleContext {
+        this.children.push(child);
 
-        return t;
-    }
-
-    public addChild(child: RuleContext): RuleContext {
-        return this.addAnyChild(child);
+        return child;
     }
 
     /**
      * Used by enterOuterAlt to toss out a RuleContext previously added as
-     * we entered a rule. If we have // label, we will need to remove
+     * we entered a rule. If we have label, we will need to remove
      * generic ruleContext object.
      */
     public removeLastChild(): void {
-        if (this.children !== null) {
-            this.children.pop();
-        }
+        this.children.pop();
     }
 
     public addTokenNode(token: Token): TerminalNode {
         const node = new TerminalNode(token);
-        this.addAnyChild(node);
+        this.children.push(node);
         node.parent = this;
 
         return node;
     }
 
-    /**
-     * Add a child to this node based upon badToken.  It
-     *  creates a ErrorNode rather than using
-     *  {@link Parser#createErrorNode(ParserRuleContext, Token)}. I'm leaving this
-     *  in for compatibility but the parser doesn't use this anymore.
-     *
-     * @deprecated
-     */
     public addErrorNode(errorNode: ErrorNode): ErrorNode {
         errorNode.parent = this;
+        this.children.push(errorNode);
 
-        return this.addAnyChild(errorNode);
+        return errorNode;
     }
 
-    public override getChild(i: number): RuleContext | null;
-    public override getChild<T extends ParseTree>(i: number,
-        type: new (...args: unknown[]) => T): T | null;
-    public override getChild<T extends ParseTree>(i: number,
-        type?: new (...args: unknown[]) => T): T | null {
-        if (this.children === null || i < 0 || i >= this.children.length) {
+    public getChild(i: number): ParseTree | null;
+    public getChild<T extends ParseTree>(i: number, type: new (...args: unknown[]) => T): T | null;
+    public getChild<T extends ParseTree>(i: number, type?: new (...args: unknown[]) => T): T | null {
+        if (i < 0 || i >= this.children.length) {
             return null;
         }
 
         if (!type) {
             return this.children[i] as T;
-        } else {
-            for (const child of this.children) {
-                if (child instanceof type) {
-                    if (i === 0) {
-                        return child;
-                    } else {
-                        i -= 1;
-                    }
+        }
+
+        for (const child of this.children) {
+            if (child instanceof type) {
+                if (i === 0) {
+                    return child;
+                } else {
+                    i -= 1;
                 }
             }
-
-            return null;
         }
+
+        return null;
     }
 
     public getToken(ttype: number, i: number): TerminalNode | null {
-        if (this.children === null || i < 0 || i >= this.children.length) {
+        if (i < 0 || i >= this.children.length) {
             return null;
         }
 
         for (const child of this.children) {
-            if (child instanceof TerminalNode) {
-                if (child.symbol?.type === ttype) {
+            if ("symbol" in child) {
+                if ((child as TerminalNode).symbol?.type === ttype) {
                     if (i === 0) {
-                        return child;
+                        return child as TerminalNode;
                     } else {
                         i -= 1;
                     }
@@ -204,56 +185,165 @@ export class ParserRuleContext extends RuleContext {
     }
 
     public getTokens(ttype: number): TerminalNode[] {
-        if (this.children === null) {
-            return [];
-        } else {
-            const tokens = [];
-            for (const child of this.children) {
-                if (child instanceof TerminalNode) {
-                    if (child.symbol?.type === ttype) {
-                        tokens.push(child);
-                    }
+        const tokens = [];
+        for (const child of this.children) {
+            if ("symbol" in child) {
+                if ((child as TerminalNode).symbol?.type === ttype) {
+                    tokens.push(child as TerminalNode);
                 }
             }
-
-            return tokens;
         }
+
+        return tokens;
     }
 
+    // XXX: base the child type selection on the rule index, not the class.
     public getRuleContext<T extends ParserRuleContext, Args extends unknown[]>(index: number,
         ctxType: new (...args: Args) => T): T | null {
         return this.getChild<T>(index, ctxType);
     }
 
+    // XXX: base the child type selection on the rule index, not the class.
     public getRuleContexts<T extends ParserRuleContext, Args extends unknown[]>(
         ctxType: new (...args: Args) => T): T[] {
-        if (this.children === null) {
-            return [];
-        } else {
-            const contexts = [];
-            for (const child of this.children) {
-                if (child instanceof ctxType) {
-                    contexts.push(child);
-                }
+        const contexts = [];
+        for (const child of this.children) {
+            if (child instanceof ctxType) {
+                contexts.push(child);
             }
-
-            return contexts;
         }
+
+        return contexts;
     }
 
-    public override getChildCount(): number {
-        if (this.children === null) {
-            return 0;
-        } else {
-            return this.children.length;
-        }
+    public getChildCount(): number {
+        return this.children.length;
     }
 
-    public override getSourceInterval(): Interval {
+    public getSourceInterval(): Interval {
         if (this.start === null || this.stop === null) {
             return Interval.INVALID_INTERVAL;
         } else {
             return new Interval(this.start.tokenIndex, this.stop.tokenIndex);
         }
+    }
+
+    public get parent(): this | null {
+        return this.#parent as this;
+    }
+
+    public set parent(parent: ParserRuleContext | null) {
+        this.#parent = parent;
+    }
+
+    public depth(): number {
+        let n = 0;
+
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        let p: ParserRuleContext | null = this;
+        while (p !== null) {
+            p = p.parent;
+            n += 1;
+        }
+
+        return n;
+    }
+
+    /**
+     * A context is empty if there is no invoking state; meaning nobody call
+     * current context.
+     */
+    public isEmpty(): boolean {
+        return this.invokingState === -1;
+    }
+
+    public get ruleContext(): ParserRuleContext {
+        return this;
+    }
+
+    public get ruleIndex(): number {
+        return -1;
+    }
+
+    public getPayload(): ParserRuleContext {
+        return this;
+    }
+
+    public getText(): string {
+        if (this.children.length === 0) {
+            return "";
+        }
+
+        return this.children.map((child) => {
+            return child.getText();
+        }).join("");
+    }
+
+    /**
+     * For rule associated with this parse tree internal node, return
+     * the outer alternative number used to match the input. Default
+     * implementation does not compute nor store this alt num. Create
+     * a subclass of ParserRuleContext with backing field and set
+     * option contextSuperClass.
+     * to set it.
+     */
+    public getAltNumber(): number {
+        return ATN.INVALID_ALT_NUMBER;
+    }
+
+    /**
+     * Set the outer alternative number for this context node. Default
+     * implementation does nothing to avoid backing field overhead for
+     * trees that don't need it.  Create
+     * a subclass of ParserRuleContext with backing field and set
+     * option contextSuperClass.
+     */
+    public setAltNumber(_altNumber: number): void {
+    }
+
+    public accept<T>(visitor: ParseTreeVisitor<T>): T | null {
+        return visitor.visitChildren(this);
+    }
+
+    /**
+     * Print out a whole tree, not just a node, in LISP format
+     * (root child1 .. childN). Print just a node if this is a leaf.
+     */
+    public toStringTree(recog: Parser | null): string;
+    public toStringTree(ruleNames: string[] | null, recog: Parser): string;
+    public toStringTree(...args: unknown[]): string {
+        if (args.length === 1) {
+            return Trees.toStringTree(this, null, args[0] as Parser | null);
+        }
+
+        return Trees.toStringTree(this, args[0] as string[] | null, args[1] as Parser);
+    }
+
+    public toString(ruleNames?: string[] | null, stop?: ParserRuleContext | null): string {
+        ruleNames = ruleNames ?? null;
+        stop = stop ?? null;
+
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        let p: ParserRuleContext | null = this;
+        let s = "[";
+        while (p !== null && p !== stop) {
+            if (ruleNames === null) {
+                if (!p.isEmpty()) {
+                    s += p.invokingState;
+                }
+            } else {
+                const ri = p.ruleIndex;
+                const ruleName = (ri >= 0 && ri < ruleNames.length) ? ruleNames[ri]
+                    : "" + ri;
+                s += ruleName;
+            }
+            if (p.parent !== null && (ruleNames !== null || !p.parent.isEmpty())) {
+                s += " ";
+            }
+            p = p.parent;
+        }
+        s += "]";
+
+        return s;
     }
 }

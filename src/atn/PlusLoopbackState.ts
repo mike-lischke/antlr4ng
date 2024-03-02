@@ -4,16 +4,13 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+import { ATNState } from "./ATNState.js";
 import { DecisionState } from "./DecisionState.js";
-import { ATNStateType } from "./ATNStateType.js";
 
 /**
- * Decision state for {@code A+} and {@code (A|B)+}.  It has two transitions:
+ * Decision state for `A+` and `(A|B)+`.  It has two transitions:
  * one to the loop back to start of the block and one to exit.
  */
 export class PlusLoopbackState extends DecisionState {
-    public override get stateType(): number {
-        return ATNStateType.PLUS_LOOP_BACK;
-    }
-
+    public static override readonly stateType = ATNState.PLUS_LOOP_BACK;
 }

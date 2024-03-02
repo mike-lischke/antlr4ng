@@ -2,7 +2,7 @@
 
 import { CharStream } from "../../CharStream.js";
 import { Lexer } from "../../Lexer.js";
-import { RuleContext } from "../../RuleContext.js";
+import { ParserRuleContext } from "../../ParserRuleContext.js";
 import { Vocabulary } from "../../Vocabulary.js";
 import { ATN } from "../../atn/ATN.js";
 import { ATNDeserializer } from "../../atn/ATNDeserializer.js";
@@ -60,14 +60,14 @@ export class XPathLexer extends Lexer {
 
     public get modeNames(): string[] { return XPathLexer.modeNames; }
 
-    public override action(localContext: RuleContext, ruleIndex: number, actionIndex: number): void {
+    public override action(localContext: ParserRuleContext, ruleIndex: number, actionIndex: number): void {
         switch (ruleIndex) {
             case 4:
                 this.ID_action(localContext, actionIndex);
                 break;
         }
     }
-    private ID_action(localContext: RuleContext, actionIndex: number): void {
+    private ID_action(localContext: ParserRuleContext, actionIndex: number): void {
         switch (actionIndex) {
             case 0:
 

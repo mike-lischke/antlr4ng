@@ -6,20 +6,11 @@
 
 # TypeScript Runtime for ANTLR 4
 
-This package is a fork of the official ANTLR4 JavaScript runtime and has been fully transformed to TypeScript. Other improvements are:
+This package started as a fork of the official ANTLR4 JavaScript runtime and has been fully implemented in TypeScript. It implements everything what the Java runtime does, except for the `UnbufferedCharStream` class, which requires a streaming source compatible with both Node.js and browsers. Other notable differences from the original JS source.
 
-- XPath implementation.
-- Vocabulary implementation.
-- Complete Interval implementation.
-- Parser and lexer interpreters.
-- Profiler implementation.
 - Numerous bug fixes and other changes.
-- Smaller node package (no test specs or other unnecessary files).
 - No differentiation between node and browser environments.
-- InterpreterDataReader implementation.
 - Includes the `antlr4ng-cli` tool to generate parser files compatible with this runtime. This tool uses a custom build of the ANTLR4 tool.
-
-This package is a blend of the original JS implementation and antlr4ts, which is a TypeScript implementation of the ANTLR4 runtime, but was abandoned. It tries to keep the best of both worlds, while following the Java runtime as close as possible. It's a bit slower than the JS runtime, but faster than antlr4ts.
 
 ## Installation
 
@@ -72,12 +63,12 @@ WS: [ \t\r\n]+ -> skip;
 ```
 
 ```typescript
-import { CharStreams, CommonTokenStream } from "antlr4ng";
+import { CharStream, CommonTokenStream } from "antlr4ng";
 import { ExpressionLexer } from "./generated/ExpressionLexer.js";
 import { ExpressionParser } from "./generated/ExpressionParser.js";
 
 const input = "1 + 2 * 3";
-const inputStream = CharStreams.fromString(input);
+const inputStream = CharStream.fromString(input);
 const lexer = new ExpressionLexer(inputStream);
 const tokenStream = new CommonTokenStream(lexer);
 const parser = new ExpressionParser(tokenStream);
@@ -128,7 +119,7 @@ npm run generate-runtime-tests
 and the build of the package:
 
 ```bash
-npm run build-minified
+npm run build
 ```
 
 After that you can either execute different suites separately or as a whole.
@@ -140,35 +131,33 @@ After that you can either execute different suites separately or as a whole.
 |Real world example|`npm run run-benchmarks`|
 | All together|`npm run full-test`|
 
-The unit tests consist of tests for individual classes in the runtime (API tests) and the runtime test suite ported from Java. They execute in about 10s.
+The unit tests consist of tests for individual classes in the runtime (API tests) and the runtime test suite ported from Java.
+
+This suite consists of 530 tests and runs in about 9s.
 
 ### Real World Example
 
-The following tables show the results of the benchmarks previously run on the JS runtime and on last release of this one. Warm times were taken from 5 runs with the 2 slowest stripped off and averaged.
+The following table shows the results of the benchmarks that were executed in the [antlr4wasm project](https://github.com/mike-lischke/antlr4wasm/tree/master/benchmarks/mysql). The column for antlr4ng, howevever, contains the current results of this runtime.
 
-Pure JavaScript release (with type definitions):
+|    | C++ |antlr4ng|antlr4|antlr4ts|antl4wasm|
+|---:|---:|---:|---:|---:|---:|
+|Query Collection (cold)|1340 ms| <ins>181/2167 (2348) ms</ins>| 7984 ms| 3402 ms| 3331 ms|
+|  Bitrix Queries (cold)| 195 ms|  <ins>67/271 (338) ms</ins>| 1134 ms|  444 ms|  998 ms|
+|   Large Inserts (cold)|4981 ms|<ins>6249/2282 (8531) ms</ins>|10695 ms|11483 ms|34243 ms|
+|Query Collection (warm)| 133 ms|  129/99 (228) ms|  <ins>223 ms</ins>|  259 ms| 1177 ms|
+|  Bitrix Queries (warm)|  70 ms|  63/73 (136) ms|  <ins>110 ms</ins>|  131 ms|  815 ms|
+|   Large Inserts (warm)|4971 ms|<ins>6249/2269 (8518) ms</ins>|10593 ms|11287 ms|36317 ms|
+|||||||
+|Total (cold)           |6546 ms|<ins>6497/4720 (11217) ms</ins>|19878 ms|15403 ms|38641 ms|
+|Total (warm)           |5198 ms|<ins>6441/2445 (8886) ms</ins>|10944 ms|11697 ms|38329 ms|
 
-| Test | Cold Run | Warm Run|
-| ---- | -------- | ------- |
-| Query Collection| 8464 ms | 230 ms |
-| Example File | 1043 ms | 112 ms |
-| Large Inserts | 11022 ms | 10616 ms |
-| Total | 20599 ms | 10978 ms |
+Underlined entries are the smallest (not counting C++, which beats them all). For antlr4ng, the times are split into lexing and parsing. Note the high lexer execution times, caused by the large number of predicates (126) + lexer actions (40) in the MySQL lexer.
 
-Last release (pure TypeScript):
+The benchmarks consist of a set of query files parsed by a MySQL parser. The MySQL grammar is one of the largest and most complex grammars you can find for ANTLR4, which I think makes it a perfect test case for parser testing.
 
-| Test | Cold Run | Warm Run|
-| ---- | -------- | ------- |
-| Query Collection| 6089 ms | 331 ms |
-| Example File | 1064 ms | 191 ms |
-| Large Inserts | 14742 ms | 14326 ms |
-| Total | 21954 ms | 14869 ms |
+The query collection file contains more than 900 MySQL queries of all kinds, from very simple comments-only statements to complex stored procedures, including some deeply nested select queries that can easily exhaust the available stack space (in certain situations, such as parsing in a thread with default stack size). The MySQL server version used was 8.2 (the grammar allows dynamic switching of server versions).
 
-The benchmarks consist of a set of query files, which are parsed by a MySQL parser. The MySQL grammar is one of the largest and most complex grammars you can find for ANTLR4, which, I think, makes it a perfect test case for parser tests.
-
-The query collection file contains more than 900 MySQL queries of all kinds, from very simple comments-only statements to complex stored procedures, including some deeply nested select queries that can easily exhaust the available stack space (in certain situations, such as parsing in a thread with default stack size). The minimum MySQL server version used was 8.0.0.
-
-The large binary inserts file contains only a few dozen queries, but they are really large with deep recursions, so they stress the prediction engine of the parser. In addition, one query contains binary (image) data containing input characters from the entire UTF-8 range.
+The large binary inserts file contains only a few dozen queries, but they are really large with deep recursions, so they stress the parser's prediction engine and often touch uncached DFA states because of the lexer predicates. In addition, one query contains binary (image) data with input characters from the entire UTF-8 range.
 
 The example file is a copy of the largest test file in [this repository](https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples), and is known to be very slow to parse with other MySQL grammars. The one used here, however, is fast.
 
@@ -211,6 +200,8 @@ The execute times on last release of this runtime have been measured as:
          lexNewGraphemeUTF8 average time   329µs over  400 runs of    85 symbols from emoji.txt
          lexNewGraphemeUTF8 average time   387µs over  400 runs of    85 symbols from emoji.txt DFA cleared
 ```
+
+Note: Some of the corpus sizes differ due to the restructuring of the test. However, the numbers are not directly comparable anyway, as they were taken on different machines.
 
 ## Release Notes
 

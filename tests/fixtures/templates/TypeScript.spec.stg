@@ -15,9 +15,9 @@ import { <grammarName>Visitor } from "./<grammarName>Visitor.js";
 class TreeShapeListener implements antlr.ParseTreeListener {
     public enterEveryRule(ctx: antlr.ParserRuleContext) {
         for (let i = 0; i \< ctx.getChildCount(); i++) {
-            const child = ctx.getChild(i) as antlr.RuleContext;
+            const child = ctx.getChild(i) as antlr.ParserRuleContext;
             const parent = child.parent;
-            if (parent!.ruleContext !== ctx || !(parent instanceof antlr.RuleContext)) {
+            if (parent!.ruleContext !== ctx || !(parent instanceof antlr.ParserRuleContext)) {
                 throw new Error("Invalid parse tree shape detected.");
             }
         }
@@ -41,7 +41,7 @@ class CaptureErrorListener extends antlr.BaseErrorListener {
 }
 
 const main = (text: string): void => {
-    const input = antlr.CharStreams.fromString(text);
+    const input = antlr.CharStream.fromString(text);
     const lexer = new <lexerName>(input);
     lexer.removeErrorListeners();
     lexer.addErrorListener(new CaptureErrorListener());
@@ -70,10 +70,10 @@ const main = (text: string): void => {
     stream.fill();
     const tokens = stream.getTokens();
     for (const token of tokens) {
-        global.antlrTestWriteLn(token.toString());
+        global.antlrTestWriteLn!(token.toString());
     }
 <if(showDFA)>
-    global.antlrTestWrite(lexer.interpreter.decisionToDFA[antlr.Lexer.DEFAULT_MODE].toLexerString());
+    global.antlrTestWrite!(lexer.interpreter.decisionToDFA[antlr.Lexer.DEFAULT_MODE].toLexerString());
 <endif>
 <endif>
 };

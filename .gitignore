@@ -4,3 +4,4 @@ package
 generated
 coverage
 *.tgz
+.vscode/numbered-bookmarks.json

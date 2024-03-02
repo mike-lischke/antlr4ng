@@ -4,16 +4,15 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+import { ATNState } from "./ATNState.js";
 import { DecisionState } from "./DecisionState.js";
-import { ATNStateType } from "./ATNStateType.js";
 import { StarLoopbackState } from "./StarLoopbackState.js";
 
-import type { ParserATNSimulator } from "./ParserATNSimulator.js";
-import type { ParserInterpreter } from "../ParserInterpreter.js";
-
 export class StarLoopEntryState extends DecisionState {
+    public static override readonly stateType = ATNState.STAR_LOOP_ENTRY;
+
     // This is always set during ATN deserialization
-    public loopBackState: StarLoopbackState;
+    public loopBackState!: StarLoopbackState;
 
     /**
      * Indicates whether this state can benefit from a precedence DFA during SLL
@@ -25,15 +24,5 @@ export class StarLoopEntryState extends DecisionState {
      *
      * @see `DFA.isPrecedenceDfa`
      */
-    public precedenceRuleDecision: boolean;
-
-    public constructor() {
-        super();
-        this.precedenceRuleDecision = false;
-    }
-
-    public override get stateType(): number {
-        return ATNStateType.STAR_LOOP_ENTRY;
-    }
-
+    public precedenceRuleDecision: boolean = false;
 }

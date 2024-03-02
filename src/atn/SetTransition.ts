@@ -4,39 +4,37 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-// A transition containing a set of values.
 import { IntervalSet } from "../misc/IntervalSet.js";
 import { Token } from "../Token.js";
 import { ATNState } from "./ATNState.js";
 import { Transition } from "./Transition.js";
-import { TransitionType } from "./TransitionType.js";
 
+/** A transition containing a set of values. */
 export class SetTransition extends Transition {
-    #label;
+    public set: IntervalSet;
 
     public constructor(target: ATNState, set: IntervalSet) {
         super(target);
-        if (set !== undefined && set !== null) {
-            this.#label = set;
+        if (set) {
+            this.set = set;
         } else {
-            this.#label = new IntervalSet();
-            this.#label.addOne(Token.INVALID_TYPE);
+            this.set = IntervalSet.of(Token.INVALID_TYPE, Token.INVALID_TYPE);
         }
     }
 
-    public override get label(): IntervalSet {
-        return this.#label;
+    public get transitionType(): number {
+        return Transition.SET;
     }
 
-    public get serializationType(): number {
-        return TransitionType.SET;
+    public override get label(): IntervalSet {
+        return this.set;
     }
 
     public override matches(symbol: number, _minVocabSymbol: number, _maxVocabSymbol: number): boolean {
-        return this.label.contains(symbol);
+        return this.set.contains(symbol);
     }
 
     public override toString(): string {
-        return this.#label.toString();
+        return this.set.toString();
     }
 }

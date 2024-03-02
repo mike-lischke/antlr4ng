@@ -4,9 +4,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { ParserRuleContext } from "../ParserRuleContext.js";
-import { ErrorNode } from "./ErrorNode.js";
-import { TerminalNode } from "./TerminalNode.js";
+import { type ParserRuleContext } from "../ParserRuleContext.js";
+import { type ErrorNode } from "./ErrorNode.js";
+import { type TerminalNode } from "./TerminalNode.js";
 
 export interface ParseTreeListener {
     visitTerminal(node: TerminalNode): void;

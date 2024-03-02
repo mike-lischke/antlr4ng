@@ -18,9 +18,8 @@
     },
     "include": [
         "**/*.ts",
+        "./global.d.ts",
         "../jest.config.ts",
     ],
-    "exclude": [
-        "generated/**/*.ts",
-    ]
+    "exclude": []
 }

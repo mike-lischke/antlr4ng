@@ -31,21 +31,10 @@ import { MySQLLexer } from "../generated/MySQLLexer.js";
 
 import { ErrorReportCallback } from "../support/helpers.js";
 import {
-    ATNSimulator, BaseErrorListener, FailedPredicateException, IntervalSet, Lexer, NoViableAltException,
-    Parser, RecognitionException, Recognizer, Token,
+    ATNSimulator, BaseErrorListener, FailedPredicateException, InputMismatchException, IntervalSet, Lexer,
+    LexerNoViableAltException, NoViableAltException, Parser, RecognitionException, Recognizer, Token, Vocabulary,
 } from "antlr4ng";
-
-class Vocabulary {
-    public getDisplayName(_symbol: number): string {
-        return "";
-    }
-}
-
-class LexerNoViableAltException extends RecognitionException {
-}
-
-class InputMismatchException extends RecognitionException {
-}
+import type { MySQLBaseLexer } from "./MySQLBaseLexer.js";
 
 export class MySQLErrorListener extends BaseErrorListener {
 
@@ -109,7 +98,7 @@ export class MySQLErrorListener extends BaseErrorListener {
             let token = offendingSymbol as unknown as Token;
 
             const parser = recognizer as Parser;
-            // const lexer = parser._input.getTokenSource() as MySQLBaseLexer;
+            const lexer = parser.inputStream.tokenSource as MySQLBaseLexer;
             const isEof = token.type === Token.EOF;
             if (isEof) {
                 token = parser.tokenStream.get(token.tokenIndex - 1);
@@ -229,7 +218,7 @@ export class MySQLErrorListener extends BaseErrorListener {
                     if (expected.contains(MySQLLexer.IDENTIFIER)) {
                         expectedText = "an identifier";
                     } else {
-                        expectedText = this.intervalToString(expected, 6, new Vocabulary());
+                        expectedText = this.intervalToString(expected, 6, lexer.vocabulary);
                     }
                     break;
                 }
@@ -291,7 +280,7 @@ export class MySQLErrorListener extends BaseErrorListener {
             if (e instanceof LexerNoViableAltException) {
                 const lexer = recognizer as Lexer;
                 const input = lexer.inputStream;
-                let text = lexer.getErrorDisplay(input.getText(lexer._tokenStartCharIndex, input.index));
+                let text = lexer.getErrorDisplay(input.getTextFromRange(lexer.tokenStartCharIndex, input.index));
                 if (text === "") {
                     text = " ";  // Should never happen, but we must ensure we have text.
                 }
@@ -323,8 +312,8 @@ export class MySQLErrorListener extends BaseErrorListener {
                         break;
                 }
 
-                this.callback(message, 0, lexer._tokenStartCharIndex, line, charPositionInLine,
-                    input.index - lexer._tokenStartCharIndex);
+                this.callback(message, 0, lexer.tokenStartCharIndex, line, charPositionInLine,
+                    input.index - lexer.tokenStartCharIndex);
 
             }
         }
@@ -351,7 +340,7 @@ export class MySQLErrorListener extends BaseErrorListener {
             if (symbol < 0) {
                 result += "EOF";
             } else {
-                let name = vocabulary.getDisplayName(symbol);
+                let name = vocabulary.getDisplayName(symbol)!;
                 if (name === "BACK_TICK_QUOTED_ID") {
                     name = "`text`";
                 } else if (name === "DOUBLE_QUOTED_TEXT") {

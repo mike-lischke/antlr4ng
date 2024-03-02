@@ -4,24 +4,24 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { CharStream } from "./CharStream.js";
-import { Token } from "./Token.js";
-import { TokenFactory } from "./TokenFactory.js";
+import { type CharStream } from "./CharStream.js";
+import { type Token } from "./Token.js";
+import { type TokenFactory } from "./TokenFactory.js";
 
 /**
- * A source of tokens must provide a sequence of tokens via {@link #nextToken()}
+ * A source of tokens must provide a sequence of tokens via {@link nextToken()}
  * and also must reveal it's source of characters; {@link CommonToken}'s text is
  * computed from a {@link CharStream}; it only store indices into the char
  * stream.
  *
- * <p>Errors from the lexer are never passed to the parser. Either you want to keep
+ * Errors from the lexer are never passed to the parser. Either you want to keep
  * going or you do not upon token recognition error. If you do not want to
  * continue lexing then you do not want to continue parsing. Just throw an
  * exception not under {@link RecognitionException} and Java will naturally toss
  * you all the way out of the recognizers. If you want to continue lexing then
  * you should not throw an exception to the parser--it has already requested a
  * token. Keep lexing until you get a valid one. Just report errors and keep
- * going, looking for a valid token.</p>
+ * going, looking for a valid token.
  */
 export interface TokenSource {
     /**
@@ -48,14 +48,14 @@ export interface TokenSource {
       @returns The line number for the current position in the input stream, or
      * -1 if the current token source does not track character positions.
      */
-    _tokenStartColumn: number;
+    column: number;
 
     /**
      * Get the {@link CharStream} from which this token source is currently
      * providing tokens.
      *
       @returns The {@link CharStream} associated with the current position in
-     * the input, or {@code null} if no input stream is available for the token
+     * the input, or `null` if no input stream is available for the token
      * source.
      */
     inputStream: CharStream | null;
@@ -63,7 +63,7 @@ export interface TokenSource {
     /**
      * Gets the name of the underlying input source. This method returns a
      * non-null, non-empty string. If such a name is not known, this method
-     * returns {@link IntStream#UNKNOWN_SOURCE_NAME}.
+     * returns {@link IntStream.UNKNOWN_SOURCE_NAME}.
      */
     sourceName: string;
 

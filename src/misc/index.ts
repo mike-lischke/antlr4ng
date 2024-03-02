@@ -5,10 +5,11 @@
  */
 
 export * from "./BitSet.js";
-export * from "./HashCode.js";
 export * from "./HashMap.js";
 export * from "./HashSet.js";
 export * from "./Interval.js";
 export * from "./IntervalSet.js";
 export * from "./ParseCancellationException.js";
 export * from "./InterpreterDataReader.js";
+export * from "./OrderedHashMap.js";
+export * from "./OrderedHashSet.js";

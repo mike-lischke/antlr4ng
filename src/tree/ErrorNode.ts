@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { ParseTreeVisitor } from "./ParseTreeVisitor.js";
+import { type ParseTreeVisitor } from "./ParseTreeVisitor.js";
 import { TerminalNode } from "./TerminalNode.js";
 
 /**

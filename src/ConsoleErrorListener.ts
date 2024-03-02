@@ -10,24 +10,18 @@ import { Recognizer } from "./Recognizer.js";
 import { ATNSimulator } from "./atn/ATNSimulator.js";
 
 /**
- * {@inheritDoc}
+ * This implementation prints messages to the console containing the values of `line`, `charPositionInLine`,
+ * and `msg` using the following format.
  *
- * <p>
- * This implementation prints messages to {@link System//err} containing the
- * values of {@code line}, {@code charPositionInLine}, and {@code msg} using
- * the following format.</p>
- *
- * <pre>
- * line <em>line</em>:<em>charPositionInLine</em> <em>msg</em>
- * </pre>
- *
+ * ```
+ * line *line*:*charPositionInLine* *msg*
+ * ```
  */
 export class ConsoleErrorListener extends BaseErrorListener {
     /**
      * Provides a default instance of {@link ConsoleErrorListener}.
      */
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    public static readonly INSTANCE = new ConsoleErrorListener();
+    public static readonly instance = new ConsoleErrorListener();
 
     public override syntaxError<T extends ATNSimulator>(recognizer: Recognizer<T> | null,
         offendingSymbol: unknown,

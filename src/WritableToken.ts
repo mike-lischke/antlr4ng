@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { Token } from "./Token.js";
+import { type Token } from "./Token.js";
 
 /**
  * This interface provides access to all of the information about a token by

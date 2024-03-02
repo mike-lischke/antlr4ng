@@ -7,7 +7,6 @@
 import { CharStream } from "./CharStream.js";
 import { ParserRuleContext } from "./ParserRuleContext.js";
 import { Recognizer } from "./Recognizer.js";
-import { RuleContext } from "./RuleContext.js";
 import { Token } from "./Token.js";
 import { TokenStream } from "./TokenStream.js";
 import { ATNSimulator } from "./atn/ATNSimulator.js";
@@ -22,13 +21,13 @@ export interface IExceptionParams {
 
 /**
  * The root of the ANTLR exception hierarchy. In general, ANTLR tracks just
- *  3 kinds of errors: prediction errors, failed predicate errors, and
- *  mismatched input errors. In each case, the parser knows where it is
- *  in the input, where it is in the ATN, the rule invocation stack,
- *  and what kind of problem occurred.
+ * 3 kinds of errors: prediction errors, failed predicate errors, and
+ * mismatched input errors. In each case, the parser knows where it is
+ * in the input, where it is in the ATN, the rule invocation stack,
+ * and what kind of problem occurred.
  */
 export class RecognitionException extends Error {
-    public ctx: RuleContext | null;
+    public ctx: ParserRuleContext | null;
 
     /**
      * The current {@link Token} when an error occurred. Since not all streams
@@ -69,11 +68,11 @@ export class RecognitionException extends Error {
      * Gets the set of input symbols which could potentially follow the
      * previously matched symbol at the time this exception was thrown.
      *
-     * <p>If the set of expected tokens is not known and could not be computed,
-     * this method returns {@code null}.</p>
+     * If the set of expected tokens is not known and could not be computed,
+     * this method returns `null`.
      *
      * @returns The set of token types that could potentially follow the current
-     * state in the ATN, or {@code null} if the information is not available.
+     * state in the ATN, or `null` if the information is not available.
      */
     public getExpectedTokens(): IntervalSet | null {
         if (this.recognizer !== null && this.ctx !== null) {
@@ -83,7 +82,7 @@ export class RecognitionException extends Error {
         }
     }
 
-    // <p>If the state number is not known, this method returns -1.</p>
+    // If the state number is not known, this method returns -1.
     public override toString(): string {
         return this.message;
     }

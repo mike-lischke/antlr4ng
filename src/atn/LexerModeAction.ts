@@ -9,43 +9,56 @@
 import { LexerActionType } from "./LexerActionType.js";
 import { LexerAction } from "./LexerAction.js";
 import { Lexer } from "../Lexer.js";
-import { HashCode } from "../misc/HashCode.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 
 /**
- * Implements the {@code mode} lexer action by calling {@link Lexer//mode} with
+ * Implements the `mode` lexer action by calling {@link Lexer//mode} with
  * the assigned mode
  */
-export class LexerModeAction extends LexerAction {
-    private readonly mode: number;
+export class LexerModeAction implements LexerAction {
+    public readonly mode: number;
+    public readonly actionType: number;
+    public isPositionDependent: boolean = false;
+
+    #cachedHashCode: number | undefined;
 
     public constructor(mode: number) {
-        super(LexerActionType.MODE);
+        this.actionType = LexerActionType.MODE;
         this.mode = mode;
     }
 
     /**
-     * <p>This action is implemented by calling {@link Lexer//mode} with the
-     * value provided by {@link getMode}.</p>
+     * This action is implemented by calling {@link Lexer.mode} with the
+     * value provided by {@link getMode}.
      */
-    public override execute(lexer: Lexer): void {
+    public execute(lexer: Lexer): void {
         lexer.mode(this.mode);
     }
 
-    public override updateHashCode(hash: HashCode): void {
-        hash.update(this.actionType, this.mode);
+    public hashCode(): number {
+        if (this.#cachedHashCode === undefined) {
+            let hash = MurmurHash.initialize();
+            hash = MurmurHash.update(hash, this.actionType);
+            hash = MurmurHash.update(hash, this.mode);
+            this.#cachedHashCode = MurmurHash.finish(hash, 2);
+        }
+
+        return this.#cachedHashCode;
     }
 
-    public override equals(other: unknown): boolean {
+    public equals(other: unknown): boolean {
         if (this === other) {
             return true;
-        } else if (!(other instanceof LexerModeAction)) {
-            return false;
-        } else {
-            return this.mode === other.mode;
         }
+
+        if (!(other instanceof LexerModeAction)) {
+            return false;
+        }
+
+        return this.mode === other.mode;
     }
 
-    public override toString(): string {
+    public toString(): string {
         return "mode(" + this.mode + ")";
     }
 }

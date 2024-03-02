@@ -21,7 +21,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-import { ParseTree, ParserRuleContext, RuleContext, Token, TerminalNode } from "antlr4ng";
+import { ParseTree, ParserRuleContext, Token, TerminalNode } from "antlr4ng";
 
 import { MySQLParser, TextLiteralContext } from "../generated/MySQLParser.js";
 
@@ -56,7 +56,7 @@ export const enum SqlMode {
  *
  * @returns The text for the context.
  */
-export const getText = (context: RuleContext, convertEscapes: boolean): string => {
+export const getText = (context: ParserRuleContext, convertEscapes: boolean): string => {
     if (context instanceof TextLiteralContext) {
         // TODO: take the optional repertoire prefix into account.
         let result = "";
@@ -158,7 +158,7 @@ export const sourceTextForRange = (start: Token | ParseTree, stop: Token | Parse
 
     const stream = startToken?.tokenSource?.inputStream;
     const stopIndex = stop && stopToken ? stopToken.stop : 1e100;
-    let result = stream?.getText(startToken ? startToken.start : 0, stopIndex) ?? "";
+    let result = stream?.getTextFromRange(startToken ? startToken.start : 0, stopIndex) ?? "";
     if (keepQuotes || result.length < 2) {
         return result;
     }
@@ -170,7 +170,7 @@ export const sourceTextForRange = (start: Token | ParseTree, stop: Token | Parse
             result = result.replace(quoteChar.repeat(2), quoteChar);
         }
 
-        return result.substr(1, result.length - 2);
+        return result.substring(1, result.length - 2);
     }
 
     return result;

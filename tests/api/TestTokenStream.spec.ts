@@ -1,12 +1,10 @@
-/* java2ts: keep */
-
 /*
  * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { BufferedTokenStream, CharStreams, Token } from "antlr4ng";
+import { BufferedTokenStream, CharStream, Token } from "antlr4ng";
 
 import { VisitorBasicLexer } from "../generated/VisitorBasicLexer.js";
 
@@ -19,14 +17,14 @@ describe("TestTokenStream", () => {
      * cannot be reused after EOF).
      */
     it("testBufferedTokenStreamReuseAfterFill", () => {
-        const firstInput = CharStreams.fromString("A");
+        const firstInput = CharStream.fromString("A");
         const tokenStream = new BufferedTokenStream(new VisitorBasicLexer(firstInput));
         tokenStream.fill();
         expect(tokenStream.size).toBe(2);
         expect(tokenStream.get(0).type).toBe(VisitorBasicLexer.A);
         expect(tokenStream.get(1).type).toBe(Token.EOF);
 
-        const secondInput = CharStreams.fromString("AA");
+        const secondInput = CharStream.fromString("AA");
         tokenStream.setTokenSource(new VisitorBasicLexer(secondInput));
         tokenStream.fill();
         expect(tokenStream.size).toBe(3);

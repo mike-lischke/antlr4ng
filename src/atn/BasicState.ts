@@ -5,11 +5,7 @@
  */
 
 import { ATNState } from "./ATNState.js";
-import { ATNStateType } from "./ATNStateType.js";
 
 export class BasicState extends ATNState {
-    public override get stateType(): number {
-        return ATNStateType.BASIC;
-    }
-
+    public static override readonly stateType = ATNState.BASIC;
 }

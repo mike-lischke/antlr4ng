@@ -17,11 +17,10 @@ import { Vocabulary } from "./Vocabulary.js";
 import { ANTLRErrorListener } from "./ANTLRErrorListener.js";
 import { RecognitionException } from "./RecognitionException.js";
 import { ATN } from "./atn/ATN.js";
-import { RuleContext } from "./RuleContext.js";
+import { ParserRuleContext } from "./ParserRuleContext.js";
 import { IntStream } from "./IntStream.js";
 
 export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     public static readonly EOF = -1;
 
     private static tokenTypeMapCache = new Map<Vocabulary, Map<string, number>>();
@@ -29,7 +28,7 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
 
     public interpreter: ATNInterpreter;
 
-    #listeners: ANTLRErrorListener[] = [ConsoleErrorListener.INSTANCE];
+    #listeners: ANTLRErrorListener[] = [ConsoleErrorListener.instance];
     #stateNumber = -1;
 
     public checkVersion(toolVersion: string): void {
@@ -89,7 +88,7 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
 
     /**
      * Get a map from rule names to rule indexes.
-     * <p>Used for XPath and tree pattern compilation.</p>
+     * Used for XPath and tree pattern compilation.
      */
     public getRuleIndexMap(): Map<string, number> {
         const ruleNames = this.ruleNames;
@@ -123,7 +122,7 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
         return "line " + line + ":" + column;
     }
 
-    public getErrorListenerDispatch(): ANTLRErrorListener {
+    public get errorListenerDispatch(): ANTLRErrorListener {
         return new ProxyErrorListener(this.#listeners);
     }
 
@@ -131,15 +130,16 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
      * subclass needs to override these if there are semantic predicates or actions
      * that the ATN interp needs to execute
      */
-    public sempred(_localctx: RuleContext | null, _ruleIndex: number, _actionIndex: number): boolean {
+    public sempred(_localctx: ParserRuleContext | null, _ruleIndex: number, _actionIndex: number): boolean {
         return true;
     }
 
-    public precpred(_localctx: RuleContext | null, _precedence: number): boolean {
+    // TODO: make localCtx an optional parameter, not optional null.
+    public precpred(_localctx: ParserRuleContext | null, _precedence: number): boolean {
         return true;
     }
 
-    public action(_localctx: RuleContext | null, _ruleIndex: number, _actionIndex: number): void {
+    public action(_localctx: ParserRuleContext | null, _ruleIndex: number, _actionIndex: number): void {
     }
 
     public get atn(): ATN {
@@ -168,6 +168,6 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
     public abstract get ruleNames(): string[];
     public abstract get vocabulary(): Vocabulary;
 
-    public abstract get inputStream(): IntStream;
-    public abstract set inputStream(input: IntStream);
+    public abstract get inputStream(): IntStream | null;
+    public abstract set inputStream(input: IntStream | null);
 }

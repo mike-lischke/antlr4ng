@@ -7,6 +7,7 @@
 import { ATNState } from "./ATNState.js";
 import { Transition } from "./Transition.js";
 
+/** Used as base for PredicateTransition and PrecedencePredicateTransition, without adding their individual fields. */
 export abstract class AbstractPredicateTransition extends Transition {
     public constructor(target: ATNState) {
         super(target);

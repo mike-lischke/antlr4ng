@@ -1,7 +1,5 @@
-/* java2ts: keep */
-
 /*
- * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -22,7 +20,7 @@ export class DFASerializer {
     }
 
     public toString(): string {
-        if (this.dfa.s0 === null) {
+        if (!this.dfa.s0) {
             return "";
         }
 
@@ -30,20 +28,18 @@ export class DFASerializer {
         const states = this.dfa.getStates();
         for (const s of states) {
             let n = 0;
-            if (s.edges !== null) {
-                n = s.edges.length;
+            n = s.edges.length;
 
-                for (let i = 0; i < n; i++) {
-                    const t = s.edges[i];
-                    if (t !== null && t.stateNumber !== 0x7FFFFFFF) {
-                        buf += this.getStateString(s);
-                        const label = this.getEdgeLabel(i);
-                        buf += "-";
-                        buf += label;
-                        buf += "->";
-                        buf += this.getStateString(t);
-                        buf += "\n";
-                    }
+            for (let i = 0; i < n; i++) {
+                const t = s.edges[i];
+                if (t && t.stateNumber !== 0x7FFFFFFF) {
+                    buf += this.getStateString(s);
+                    const label = this.getEdgeLabel(i);
+                    buf += "-";
+                    buf += label;
+                    buf += "->";
+                    buf += this.getStateString(t);
+                    buf += "\n";
                 }
             }
         }
@@ -63,9 +59,9 @@ export class DFASerializer {
         if (s.isAcceptState) {
             if (s.predicates !== null) {
                 return `${baseStateStr}=>${s.predicates.toString()}`;
-            } else {
-                return `${baseStateStr}=>${s.prediction}`;
             }
+
+            return `${baseStateStr}=>${s.prediction}`;
         } else {
             return `${baseStateStr}`;
         }

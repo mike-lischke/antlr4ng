@@ -6,7 +6,6 @@
 
 import { ATNState } from "./ATNState.js";
 import { Transition } from "./Transition.js";
-import { TransitionType } from "./TransitionType.js";
 
 export class RuleTransition extends Transition {
     public ruleIndex: number;
@@ -15,10 +14,12 @@ export class RuleTransition extends Transition {
 
     public constructor(ruleStart: ATNState, ruleIndex: number, precedence: number, followState: ATNState) {
         super(ruleStart);
-        // ptr to the rule definition object for this rule ref
+
+        // Ptr to the rule definition object for this rule ref.
         this.ruleIndex = ruleIndex;
         this.precedence = precedence;
-        // what node to begin computations following ref to rule
+
+        // What node to begin computations following ref to rule.
         this.followState = followState;
     }
 
@@ -26,8 +27,8 @@ export class RuleTransition extends Transition {
         return true;
     }
 
-    public override get serializationType(): number {
-        return TransitionType.RULE;
+    public override get transitionType(): number {
+        return Transition.RULE;
     }
 
     public override matches(_symbol: number, _minVocabSymbol: number, _maxVocabSymbol: number): boolean {

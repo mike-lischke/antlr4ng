@@ -12,11 +12,7 @@ import { DFAState } from "../dfa/DFAState.js";
 import { Parser, DFA, BitSet } from "../index.js";
 import { ATNConfigSet } from "./ATNConfigSet.js";
 import { ATNSimulator } from "./ATNSimulator.js";
-import { AmbiguityInfo } from "./AmbiguityInfo.js";
-import { ContextSensitivityInfo } from "./ContextSensitivityInfo.js";
 import { DecisionInfo } from "./DecisionInfo.js";
-import { ErrorInfo } from "./ErrorInfo.js";
-import { LookaheadEventInfo } from "./LookaheadEventInfo.js";
 import { ParserATNSimulator } from "./ParserATNSimulator.js";
 
 export class ProfilingATNSimulator extends ParserATNSimulator {
@@ -24,7 +20,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
     protected numDecisions: number = 0;
 
     protected currentDecision: number = 0;
-    protected currentState: DFAState | null;
+    protected currentState?: DFAState;
 
     /**
      * At the point of LL failover, we record how SLL would resolve the conflict so that
@@ -44,7 +40,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
     #llStopIndex: number = 0;
 
     public constructor(parser: Parser) {
-        const sharedContextCache = parser.interpreter.getSharedContextCache();
+        const sharedContextCache = parser.interpreter.sharedContextCache;
         super(parser, parser.interpreter.atn, parser.interpreter.decisionToDFA, sharedContextCache);
         if (sharedContextCache) {
             this.numDecisions = this.atn.decisionToState.length;
@@ -70,43 +66,44 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
             this.decisions[decision].timeInPrediction += (stop - start);
             this.decisions[decision].invocations++;
 
-            const sllLook = this.#sllStopIndex - this._startIndex + 1;
-            this.decisions[decision].SLL_TotalLook += sllLook;
-            this.decisions[decision].SLL_MinLook = this.decisions[decision].SLL_MinLook === 0
+            const sllLook = this.#sllStopIndex - this.predictionState!.startIndex + 1;
+            this.decisions[decision].sllTotalLook += sllLook;
+            this.decisions[decision].sllMinLook = this.decisions[decision].sllMinLook === 0
                 ? sllLook
-                : Math.min(this.decisions[decision].SLL_MinLook, sllLook);
+                : Math.min(this.decisions[decision].sllMinLook, sllLook);
 
-            if (sllLook > this.decisions[decision].SLL_MaxLook) {
-                this.decisions[decision].SLL_MaxLook = sllLook;
-                this.decisions[decision].SLL_MaxLookEvent = new LookaheadEventInfo(
+            if (sllLook > this.decisions[decision].sllMaxLook) {
+                this.decisions[decision].sllMaxLook = sllLook;
+                this.decisions[decision].sllMaxLookEvent = {
                     decision,
-                    null,
-                    alt,
+                    configs: null,
+                    predictedAlt: alt,
                     input,
-                    this._startIndex,
-                    this.#sllStopIndex,
-                    false,
-                );
+                    startIndex: this.predictionState!.startIndex,
+                    stopIndex: this.#sllStopIndex,
+                    fullCtx: false,
+
+                };
             }
 
             if (this.#llStopIndex >= 0) {
-                const llLook = this.#llStopIndex - this._startIndex + 1;
-                this.decisions[decision].LL_TotalLook += llLook;
-                this.decisions[decision].LL_MinLook = this.decisions[decision].LL_MinLook === 0
+                const llLook = this.#llStopIndex - this.predictionState!.startIndex + 1;
+                this.decisions[decision].llTotalLook += llLook;
+                this.decisions[decision].llMinLook = this.decisions[decision].llMinLook === 0
                     ? llLook
-                    : Math.min(this.decisions[decision].LL_MinLook, llLook);
+                    : Math.min(this.decisions[decision].llMinLook, llLook);
 
-                if (llLook > this.decisions[decision].LL_MaxLook) {
-                    this.decisions[decision].LL_MaxLook = llLook;
-                    this.decisions[decision].LL_MaxLookEvent = new LookaheadEventInfo(
+                if (llLook > this.decisions[decision].llMaxLook) {
+                    this.decisions[decision].llMaxLook = llLook;
+                    this.decisions[decision].llMaxLookEvent = {
                         decision,
-                        null,
-                        alt,
+                        configs: null,
+                        predictedAlt: alt,
                         input,
-                        this._startIndex,
-                        this.#llStopIndex,
-                        true,
-                    );
+                        startIndex: this.predictionState!.startIndex,
+                        stopIndex: this.#llStopIndex,
+                        fullCtx: true,
+                    };
                 }
             }
 
@@ -116,18 +113,23 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
         }
     }
 
-    public override getExistingTargetState(previousD: DFAState, t: number): DFAState | null {
-        if (this._input) {
-            this.#sllStopIndex = this._input.index;
+    public override getExistingTargetState(previousD: DFAState, t: number): DFAState | undefined {
+        if (this.predictionState?.input) {
+            this.#sllStopIndex = this.predictionState.input.index;
 
             const existingTargetState = super.getExistingTargetState(previousD, t);
 
             if (existingTargetState !== null) {
-                this.decisions[this.currentDecision].SLL_DFATransitions++;
+                this.decisions[this.currentDecision].sllDFATransitions++;
                 if (existingTargetState === ATNSimulator.ERROR) {
-                    this.decisions[this.currentDecision].errors.push(new ErrorInfo(this.currentDecision,
-                        previousD.configs, this._input, this._startIndex, this.#sllStopIndex, false),
-                    );
+                    this.decisions[this.currentDecision].errors.push({
+                        decision: this.currentDecision,
+                        configs: previousD.configs,
+                        input: this.predictionState.input,
+                        startIndex: this.predictionState.startIndex,
+                        stopIndex: this.#sllStopIndex,
+                        fullCtx: false,
+                    });
                 }
             }
 
@@ -136,7 +138,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
             return existingTargetState;
         }
 
-        return null;
+        return undefined;
     }
 
     public override computeTargetState(dfa: DFA, previousD: DFAState, t: number): DFAState {
@@ -147,26 +149,36 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
     }
 
     public override computeReachSet(closure: ATNConfigSet, t: number, fullCtx: boolean): ATNConfigSet | null {
-        if (fullCtx && this._input) {
-            this.#llStopIndex = this._input.index;
+        if (fullCtx && this.predictionState?.input) {
+            this.#llStopIndex = this.predictionState.input.index;
         }
 
         const reachConfigs = super.computeReachSet(closure, t, fullCtx);
-        if (this._input) {
+        if (this.predictionState?.input) {
             if (fullCtx) {
-                this.decisions[this.currentDecision].LL_ATNTransitions++;
+                this.decisions[this.currentDecision].llATNTransitions++;
 
                 if (reachConfigs === null) {
-                    this.decisions[this.currentDecision].errors.push(new ErrorInfo(this.currentDecision, closure,
-                        this._input, this._startIndex, this.#llStopIndex, true),
-                    );
+                    this.decisions[this.currentDecision].errors.push({
+                        decision: this.currentDecision,
+                        configs: closure,
+                        input: this.predictionState.input,
+                        startIndex: this.predictionState.startIndex,
+                        stopIndex: this.#sllStopIndex,
+                        fullCtx: true,
+                    });
                 }
             } else {
-                this.decisions[this.currentDecision].SLL_ATNTransitions++;
+                this.decisions[this.currentDecision].sllATNTransitions++;
                 if (reachConfigs === null) {
-                    this.decisions[this.currentDecision].errors.push(new ErrorInfo(this.currentDecision, closure,
-                        this._input, this._startIndex, this.#sllStopIndex, false),
-                    );
+                    this.decisions[this.currentDecision].errors.push({
+                        decision: this.currentDecision,
+                        configs: closure,
+                        input: this.predictionState.input,
+                        startIndex: this.predictionState.startIndex,
+                        stopIndex: this.#sllStopIndex,
+                        fullCtx: false,
+                    });
                 }
             }
         }
@@ -182,7 +194,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
             this.conflictingAltResolvedBySLL = configs.getAlts().nextSetBit(0);
         }
 
-        this.decisions[this.currentDecision].LL_Fallback++;
+        this.decisions[this.currentDecision].llFallback++;
         if (conflictingAlts) {
             super.reportAttemptingFullContext(dfa, conflictingAlts, configs, startIndex, stopIndex);
         }
@@ -190,35 +202,51 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
 
     public override reportContextSensitivity(dfa: DFA, prediction: number, configs: ATNConfigSet, startIndex: number,
         stopIndex: number): void {
-        if (prediction !== this.conflictingAltResolvedBySLL && this._input) {
-            this.decisions[this.currentDecision].contextSensitivities.push(
-                new ContextSensitivityInfo(this.currentDecision, configs, this._input, startIndex, stopIndex),
-            );
+        if (prediction !== this.conflictingAltResolvedBySLL && this.predictionState!.input) {
+            this.decisions[this.currentDecision].contextSensitivities.push({
+                decision: this.currentDecision,
+                configs,
+                input: this.predictionState!.input,
+                startIndex,
+                stopIndex,
+                fullCtx: true,
+            });
         }
 
         super.reportContextSensitivity(dfa, prediction, configs, startIndex, stopIndex);
     }
 
     public override reportAmbiguity(dfa: DFA, state: DFAState, startIndex: number, stopIndex: number, exact: boolean,
-        ambigAlts: BitSet | null, configs: ATNConfigSet): void {
+        ambigAlts: BitSet | undefined, configs: ATNConfigSet): void {
         let prediction: number | undefined;
 
-        if (ambigAlts !== null) {
+        if (ambigAlts) {
             prediction = ambigAlts.nextSetBit(0);
         } else {
             prediction = configs.getAlts().nextSetBit(0);
         }
 
-        if (this._input) {
+        if (this.predictionState?.input) {
             if (configs.fullCtx && prediction !== this.conflictingAltResolvedBySLL) {
-                this.decisions[this.currentDecision].contextSensitivities.push(
-                    new ContextSensitivityInfo(this.currentDecision, configs, this._input, startIndex, stopIndex),
-                );
+                this.decisions[this.currentDecision].contextSensitivities.push({
+                    decision: this.currentDecision,
+                    configs,
+                    input: this.predictionState.input,
+                    startIndex,
+                    stopIndex,
+                    fullCtx: true,
+                });
             }
 
-            this.decisions[this.currentDecision].ambiguities.push(new AmbiguityInfo(this.currentDecision,
-                configs, ambigAlts, this._input, startIndex, stopIndex, configs.fullCtx),
-            );
+            this.decisions[this.currentDecision].ambiguities.push({
+                ambigAlts,
+                decision: this.currentDecision,
+                configs,
+                input: this.predictionState.input,
+                startIndex,
+                stopIndex,
+                fullCtx: configs.fullCtx,
+            });
         }
         super.reportAmbiguity(dfa, state, startIndex, stopIndex, exact, ambigAlts, configs);
     }
@@ -227,7 +255,7 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
         return this.decisions;
     }
 
-    public getCurrentState(): DFAState | null {
+    public getCurrentState(): DFAState | undefined {
         return this.currentState;
     }
 }

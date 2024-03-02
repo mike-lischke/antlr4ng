@@ -4,15 +4,12 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+import { ATNState } from "./ATNState.js";
 import { DecisionState } from "./DecisionState.js";
-import { ATNStateType } from "./ATNStateType.js";
 
 /**
  * The Tokens rule start state linking to each lexer rule start state
  */
 export class TokensStartState extends DecisionState {
-    public override get stateType(): number {
-        return ATNStateType.TOKEN_START;
-    }
-
+    public static override readonly stateType = ATNState.TOKEN_START;
 }

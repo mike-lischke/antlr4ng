@@ -7,7 +7,6 @@
 import { IntervalSet } from "../misc/IntervalSet.js";
 import { ATNState } from "./ATNState.js";
 import { Transition } from "./Transition.js";
-import { TransitionType } from "./TransitionType.js";
 
 export class RangeTransition extends Transition {
     public readonly start: number;
@@ -26,8 +25,8 @@ export class RangeTransition extends Transition {
         return this.#label;
     }
 
-    public get serializationType(): number {
-        return TransitionType.RANGE;
+    public get transitionType(): number {
+        return Transition.RANGE;
     }
 
     public matches(symbol: number, _minVocabSymbol: number, _maxVocabSymbol: number): boolean {

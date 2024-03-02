@@ -4,19 +4,18 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-/* eslint-disable jsdoc/require-param */
-
 import { ParseTree } from "../ParseTree.js";
 
 export abstract class XPathElement {
     public invert: boolean;
-    protected nodeName: string;
+    protected nodeName?: string;
 
     /**
-     * Construct element like `/ID` or `ID` or `/*` etc...
-     * op is null if just node
+     * Construct element like `/ID` or `ID` or `/*` etc... `nodeName` is undefined if just node
+     *
+     * @param nodeName The name of the node; may be undefined for any node.
      */
-    public constructor(nodeName: string) {
+    public constructor(nodeName?: string) {
         this.nodeName = nodeName;
         this.invert = false;
     }

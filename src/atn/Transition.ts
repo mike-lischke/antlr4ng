@@ -11,29 +11,27 @@ import { ATNState } from "./ATNState.js";
  * An ATN transition between any two ATN states.  Subclasses define
  * atom, set, epsilon, action, predicate, rule transitions.
  *
- * <p>This is a one way link.  It emanates from a state (usually via a list of
- * transitions) and has a target state.</p>
+ * This is a one way link.  It emanates from a state (usually via a list of
+ * transitions) and has a target state.
  *
- * <p>Since we never have to change the ATN transitions once we construct it,
+ * Since we never have to change the ATN transitions once we construct it,
  * we can fix these transitions as specific classes. The DFA transitions
  * on the other hand need to update the labels as it adds transitions to
  * the states. We'll use the term Edge for the DFA to distinguish them from
- * ATN transitions.</p>
+ * ATN transitions.
  */
 export abstract class Transition {
-    public static readonly serializationNames = [
-        "INVALID",
-        "EPSILON",
-        "RANGE",
-        "RULE",
-        "PREDICATE",
-        "ATOM",
-        "ACTION",
-        "SET",
-        "NOT_SET",
-        "WILDCARD",
-        "PRECEDENCE",
-    ];
+    public static readonly INVALID = 0;
+    public static readonly EPSILON = 1;
+    public static readonly RANGE = 2;
+    public static readonly RULE = 3;
+    public static readonly PREDICATE = 4; // e.g., {isType(input.LT(1))}
+    public static readonly ATOM = 5;
+    public static readonly ACTION = 6;
+    public static readonly SET = 7; // ~(A|B) or ~atom, wildcard, which convert to next
+    public static readonly NOT_SET = 8;
+    public static readonly WILDCARD = 9;
+    public static readonly PRECEDENCE = 10;
 
     /** The target of this transition. */
     public target: ATNState;
@@ -45,10 +43,10 @@ export abstract class Transition {
     /**
      * Determines if the transition is an "epsilon" transition.
      *
-     * <p>The default implementation returns {@code false}.</p>
+     * The default implementation returns `false`.
      *
      * @returns `true` if traversing this transition in the ATN does not
-     * consume an input symbol; otherwise, {@code false} if traversing this
+     * consume an input symbol; otherwise, `false` if traversing this
      * transition consumes (matches) an input symbol.
      */
     public get isEpsilon(): boolean {
@@ -59,6 +57,6 @@ export abstract class Transition {
         return null;
     }
 
-    public abstract get serializationType(): number;
+    public abstract get transitionType(): number;
     public abstract matches(symbol: number, minVocabSymbol: number, maxVocabSymbol: number): boolean;
 }

@@ -608,11 +608,19 @@
                 "format": [
                     "PascalCase"
                 ]
+            },
+            {
+                "selector": "property",
+                "format": [
+                    "camelCase",
+                    "UPPER_CASE"
+                ]
             }
         ],
         "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/restrict-plus-operands": "off",
         "@typescript-eslint/no-base-to-string": "off",
+        "@typescript-eslint/no-namespace": "off",
         "jsdoc/check-alignment": "error",
         "jsdoc/check-indentation": "off",
         "jsdoc/require-param-type": "off",

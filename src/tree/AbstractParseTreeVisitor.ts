@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { RuleContext } from "../RuleContext.js";
+import { ParserRuleContext } from "../ParserRuleContext.js";
 import { ErrorNode } from "./ErrorNode.js";
 import { ParseTree } from "./ParseTree.js";
 import { ParseTreeVisitor } from "./ParseTreeVisitor.js";
@@ -15,7 +15,7 @@ export abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T>
         return tree.accept(this);
     }
 
-    public visitChildren(node: RuleContext): T | null {
+    public visitChildren(node: ParserRuleContext): T | null {
         let result = this.defaultResult();
         const n = node.getChildCount();
         for (let i = 0; i < n; i++) {
@@ -45,7 +45,7 @@ export abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T>
         return null;
     }
 
-    protected shouldVisitNextChild(_node: RuleContext, _currentResult: T | null): boolean {
+    protected shouldVisitNextChild(_node: ParserRuleContext, _currentResult: T | null): boolean {
         return true;
     }
 

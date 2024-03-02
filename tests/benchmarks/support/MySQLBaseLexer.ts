@@ -29,10 +29,26 @@ import { MySQLLexer } from "../generated/MySQLLexer.js";
 
 import { IMySQLRecognizerCommon, SqlMode } from "./MySQLRecognizerCommon.js";
 
+const longString = "2147483647";
+const longLength = 10;
+const signedLongString = "-2147483648";
+const longLongString = "9223372036854775807";
+const longLongLength = 19;
+const signedLongLongString = "-9223372036854775808";
+const signedLongLongLength = 19;
+const unsignedLongLongString = "18446744073709551615";
+const unsignedLongLongLength = 20;
+
 // The base lexer class provides a number of functions needed in actions in the lexer (grammar).
 export abstract class MySQLBaseLexer extends Lexer implements IMySQLRecognizerCommon {
     public serverVersion = 0;
     public sqlModes = new Set<SqlMode>();
+
+    /** Enable MRS specific language parts. */
+    public supportMrs = true;
+
+    /** Enable Multi Language Extension support. */
+    public supportMle = true;
 
     public charSets: Set<string> = new Set(); // Used to check repertoires.
     protected inVersionComment = false;
@@ -182,7 +198,6 @@ export abstract class MySQLBaseLexer extends Lexer implements IMySQLRecognizerCo
             case MySQLLexer.LIKE_SYMBOL:
             case MySQLLexer.NOT_SYMBOL:
             case MySQLLexer.OR_SYMBOL:
-            case MySQLLexer.SOME_SYMBOL:
             case MySQLLexer.EXCEPT_SYMBOL:
             case MySQLLexer.INTERSECT_SYMBOL:
             case MySQLLexer.UNION_SYMBOL:
@@ -314,8 +329,8 @@ export abstract class MySQLBaseLexer extends Lexer implements IMySQLRecognizerCo
         if (this.isSqlModeActive(SqlMode.IgnoreSpace)) {
             while (input === " " || input === "\t" || input === "\r" || input === "\n") {
                 this.interpreter.consume(this.inputStream);
-                this._channel = Lexer.HIDDEN;
-                this._type = MySQLLexer.WHITESPACE;
+                this.channel = Lexer.HIDDEN;
+                this.type = MySQLLexer.WHITESPACE;
                 input = String.fromCharCode(this.inputStream.LA(1));
             }
         }
@@ -332,16 +347,6 @@ export abstract class MySQLBaseLexer extends Lexer implements IMySQLRecognizerCo
      * @returns The token type for that text.
      */
     protected determineNumericType(text: string): number {
-        const longString = "2147483647";
-        const longLength = 10;
-        const signedLongString = "-2147483648";
-        const longLongString = "9223372036854775807";
-        const longLongLength = 19;
-        const signedLongLongString = "-9223372036854775808";
-        const signedLongLongLength = 19;
-        const unsignedLongLongString = "18446744073709551615";
-        const unsignedLongLongLength = 20;
-
         // The original code checks for leading +/- but actually that can never happen, neither in the
         // server parser (as a digit is used to trigger processing in the lexer) nor in our parser
         // as our rules are defined without signs. But we do it anyway for maximum compatibility.
@@ -431,11 +436,11 @@ export abstract class MySQLBaseLexer extends Lexer implements IMySQLRecognizerCo
      * Creates a DOT token in the token stream.
      */
     protected emitDot(): void {
-        this.pendingTokens.push(this._factory.create([this, this.inputStream], MySQLLexer.DOT_SYMBOL,
-            null, this._channel, this._tokenStartCharIndex, this._tokenStartCharIndex, this._tokenStartLine,
-            this._tokenStartColumn,
+        this.pendingTokens.push(this.tokenFactory.create([this, this.inputStream], MySQLLexer.DOT_SYMBOL,
+            undefined, this.channel, this.tokenStartCharIndex, this.tokenStartCharIndex, this.currentTokenStartLine,
+            this.currentTokenColumn,
         ));
 
-        ++this._tokenStartCharIndex;
+        ++this.tokenStartCharIndex;
     }
 }

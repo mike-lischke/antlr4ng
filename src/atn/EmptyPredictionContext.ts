@@ -9,30 +9,28 @@ import { SingletonPredictionContext } from "./SingletonPredictionContext.js";
 
 export class EmptyPredictionContext extends SingletonPredictionContext {
     /**
-     * Represents {@code $} in local context prediction, which means wildcard.
-     * {@code *+x = *}.
+     * Represents `$` in local context prediction, which means wildcard.
+     * `*+x = *`.
      */
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    public static readonly Instance = new EmptyPredictionContext();
+    public static readonly instance = new EmptyPredictionContext();
 
     public constructor() {
-        super(null, PredictionContext.EMPTY_RETURN_STATE);
+        super(undefined, PredictionContext.EMPTY_RETURN_STATE);
     }
 
     public override isEmpty(): boolean {
         return true;
     }
 
-    public override getParent(_index: number): PredictionContext | null {
+    public override getParent(): PredictionContext | null {
         return null;
     }
 
-    public override getReturnState(_index: number): number {
+    public override getReturnState(): number {
         return this.returnState;
     }
 
     public override equals(other: unknown): boolean {
-
         return this === other;
     }
 

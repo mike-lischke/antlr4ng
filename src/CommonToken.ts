@@ -22,104 +22,148 @@ export class CommonToken implements WritableToken {
     public static readonly EMPTY_SOURCE: [TokenSource | null, CharStream | null] = [null, null];
 
     /**
-     * This is the backing field for {@link #getTokenSource} and
-     * {@link #getInputStream}.
-     *
-     * <p>
      * These properties share a field to reduce the memory footprint of
      * {@link CommonToken}. Tokens created by a {@link CommonTokenFactory} from
      * the same source and input stream share a reference to the same
-     * {@link Pair} containing these values.</p>
+     * {@link Pair} containing these values.
      */
     public source: [TokenSource | null, CharStream | null];
 
-    public tokenIndex = -1;
-
-    public start = 0;
-
-    public stop = 0;
+    public tokenIndex: number;
+    public start: number;
+    public stop: number;
 
     /**
      * This is the backing field for {@link #getType} and {@link #setType}.
      */
-    public type = 0;
+    public type: number;
 
     /**
      * The (one-based) line number on which the 1st character of this token was.
      */
-    public line = 0;
+    public line: number;
 
     /**
      * The zero-based index of the first character position in its line.
      */
-    public column = -1; // set to invalid position
+    public column: number;
 
     /**
      * The token's channel.
      */
-    public channel = Token.DEFAULT_CHANNEL;
+    public channel: number;
 
     /**
-     * This is the backing field for {@link #getText} when the token text is
-     * explicitly set in the constructor or via {@link #setText}.
-     *
-     * @see #getText()
+     * This is the backing field for {@link getText} when the token text is
+     * explicitly set in the constructor or via {@link setText}.
      */
-    #text: string | null = null;
+    #text?: string;
 
-    public constructor(source: [TokenSource | null, CharStream | null], type: number, channel: number, start: number,
-        stop: number) {
-        this.source = source;
-        this.type = type;
-        this.channel = channel ?? Token.DEFAULT_CHANNEL;
-        this.start = start;
-        this.stop = stop;
-        if (this.source[0] !== null) {
-            this.line = source[0]!.line;
-            // eslint-disable-next-line no-underscore-dangle
-            this.column = source[0]!._tokenStartColumn;
-        } else {
-            this.column = -1;
+    protected constructor(details: {
+        source: [TokenSource | null, CharStream | null],
+        type: number,
+        channel?: number,
+        start?: number,
+        stop?: number;
+        text?: string,
+        line?: number,
+        tokenIndex?: number,
+        column?: number;
+    }) {
+        this.type = details.type;
+        this.source = details.source;
+        this.tokenIndex = details.tokenIndex ?? -1;
+        this.line = details.line ?? 0;
+        this.column = details.column ?? -1;
+        this.channel = details.channel ?? Token.DEFAULT_CHANNEL;
+        this.start = details.start ?? 0;
+        this.stop = details.stop ?? 0;
+        this.#text = details.text;
+
+        if (details.source[0] !== null) {
+            this.line = details.source[0].line;
+            this.column = details.source[0].column;
         }
-    };
-
-    public get tokenSource(): TokenSource | null {
-        return this.source[0] ?? null;
-    }
-
-    public get inputStream(): CharStream | null {
-        return this.source[1] ?? null;
     }
 
     /**
      * Constructs a new {@link CommonToken} as a copy of another {@link Token}.
      *
-     * <p>
-     * If {@code oldToken} is also a {@link CommonToken} instance, the newly
+     * If `token` is also a {@link CommonToken} instance, the newly
+     * constructed token will share a reference to the {@link #text} field and
+     * the {@link Pair} stored in {@link source}. Otherwise, {@link text} will
+     * be assigned the result of calling {@link getText}, and {@link source}
+     * will be constructed from the result of {@link Token.getTokenSource} and
+     * {@link Token#getInputStream}.
+     *
+     * @param token The token to copy.
+     */
+    public static fromToken(token: Token): CommonToken {
+        let source: [TokenSource | null, CharStream | null];
+        if ("source" in token) {
+            source = (token as CommonToken).source;
+        } else {
+            source = [token.tokenSource, token.inputStream];
+        }
+
+        return new CommonToken({
+            type: token.type,
+            line: token.line,
+            tokenIndex: token.tokenIndex,
+            column: token.column,
+            channel: token.channel,
+            start: token.start,
+            stop: token.stop,
+            text: token.text,
+            source,
+        });
+    }
+
+    /**
+     * Constructs a new {@link CommonToken} with the specified token type and text.
+     *
+     * @param type The token type.
+     * @param text The text of the token.
+     */
+    public static fromType(type: number, text?: string): CommonToken {
+        return new CommonToken({ type, text, source: CommonToken.EMPTY_SOURCE });
+    }
+
+    public static fromSource(source: [TokenSource | null, CharStream | null], type: number, channel: number,
+        start: number, stop: number): CommonToken {
+        return new CommonToken({ type, channel, start, stop, source });
+    }
+
+    public get tokenSource(): TokenSource | null {
+        return this.source[0];
+    }
+
+    public get inputStream(): CharStream | null {
+        return this.source[1];
+    }
+
+    /**
+     * Constructs a new {@link CommonToken} as a copy of another {@link Token}.
+     *
+     * If `oldToken` is also a {@link CommonToken} instance, the newly
      * constructed token will share a reference to the {@link text} field and
      * the {@link Pair} stored in {@link source}. Otherwise, {@link text} will
      * be assigned the result of calling {@link getText}, and {@link source}
-     * will be constructed from the result of {@link Token//getTokenSource} and
-     * {@link Token//getInputStream}.</p>
+     * will be constructed from the result of {@link Token.getTokenSource} and
+     * {@link Token.getInputStream}.
      */
     public clone(): CommonToken {
-        const t = new CommonToken(this.source, this.type, this.channel, this.start, this.stop);
-        t.tokenIndex = this.tokenIndex;
-        t.line = this.line;
-        t.column = this.column;
-        t.#text = this.#text;
-
-        return t;
-    }
-
-    public cloneWithType(type: number): CommonToken {
-        const t = new CommonToken(this.source, type, this.channel, this.start, this.stop);
-        t.tokenIndex = this.tokenIndex;
-        t.line = this.line;
-        t.column = this.column;
-        if (type === Token.EOF) {
-            t.#text = "";
-        }
+        const t = new CommonToken({
+            source: this.source,
+            type: this.type,
+            channel: this.channel,
+            start: this.start,
+            stop: this.stop,
+            tokenIndex: this.tokenIndex,
+            line: this.line,
+            column: this.column,
+            text: this.#text,
+        });
 
         return t;
     }
@@ -148,31 +192,31 @@ export class CommonToken implements WritableToken {
             channelStr + "," + this.line + ":" + this.column + "]";
     }
 
-    public get text(): string | null {
-        if (this.#text !== null) {
+    public get text(): string | undefined {
+        if (this.#text) {
             return this.#text;
         }
 
         const input = this.inputStream;
-        if (input === null) {
-            return null;
+        if (!input) {
+            return undefined;
         }
 
         const n = input.size;
         if (this.start < n && this.stop < n) {
-            return input.getText(this.start, this.stop);
-        } else {
-            return "<EOF>";
+            return input.getTextFromRange(this.start, this.stop);
         }
+
+        return "<EOF>";
     }
 
-    public set text(text: string|null) {
+    public set text(text: string) {
         this.#text = text;
     }
 
     // WritableToken implementation
 
-    public setText(text: string | null): void {
+    public setText(text: string): void {
         this.#text = text;
     }
 

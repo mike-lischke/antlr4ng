@@ -14,3 +14,4 @@ export * from "./TerminalNode.js";
 export * from "./Trees.js";
 
 export * from "./xpath/index.js";
+export * from "./pattern/index.js";

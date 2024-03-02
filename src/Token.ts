@@ -4,9 +4,9 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { CharStream } from "./CharStream.js";
+import { type CharStream } from "./CharStream.js";
 import { IntStream } from "./IntStream.js";
-import { TokenSource } from "./TokenSource.js";
+import { type TokenSource } from "./TokenSource.js";
 
 /* eslint-disable @typescript-eslint/naming-convention */
 
@@ -19,7 +19,7 @@ export interface Token {
     /**
      * Get the text of the token.
      */
-    text: string | null;
+    text?: string;
 
     /** Get the token type of the token */
     type: number;
@@ -37,9 +37,9 @@ export interface Token {
     column: number;
 
     /**
-     * Return the channel this token. Each token can arrive at the parser
-     *  on a different channel, but the parser only "tunes" to a single channel.
-     *  The parser ignores everything not on DEFAULT_CHANNEL.
+     * Return the channel of this token. Each token can arrive at the parser
+     * on a different channel, but the parser only "tunes" to a single channel.
+     * The parser ignores everything not on DEFAULT_CHANNEL.
      */
     channel: number;
 
@@ -76,7 +76,6 @@ export interface Token {
     get inputStream(): CharStream | null;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Token {
     export const INVALID_TYPE: number = 0;
 
@@ -107,12 +106,12 @@ export namespace Token {
      * This is the minimum constant value which can be assigned to a
      * user-defined token channel.
      *
-     * <p>
-     * The non-negative numbers less than {@link #MIN_USER_CHANNEL_VALUE} are
-     * assigned to the predefined channels {@link #DEFAULT_CHANNEL} and
-     * {@link #HIDDEN_CHANNEL}.</p>
      *
-     * @see Token#getChannel()
+     * The non-negative numbers less than {@link MIN_USER_CHANNEL_VALUE} are
+     * assigned to the predefined channels {@link DEFAULT_CHANNEL} and
+     * {@link HIDDEN_CHANNEL}.
+     *
+     * @see Token.getChannel()
      */
     export const MIN_USER_CHANNEL_VALUE: number = 2;
 }

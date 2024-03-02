@@ -7,7 +7,6 @@
 import { TokenStream } from "../TokenStream.js";
 import { ATNConfigSet } from "./ATNConfigSet.js";
 
-
 /**
  * This is the base class for gathering detailed information about prediction
  * events which occur during parsing.
@@ -20,59 +19,41 @@ import { ATNConfigSet } from "./ATNConfigSet.js";
  * (start...stop) of the various subtrees. Examining the stack tops of all
  * configurations provide the return states for the rule invocations.
  * From there you can get the enclosing rule.
- *
- * @since 4.3
  */
-export class DecisionEventInfo {
-  /**
-   * The invoked decision number which this event is related to.
-   *
-   * @see ATN#decisionToState
-   */
-  public decision: number;
+export interface DecisionEventInfo {
+    /**
+     * The invoked decision number which this event is related to.
+     *
+     * @see ATN#decisionToState
+     */
+    decision: number;
 
-  /**
-   * The configuration set containing additional information relevant to the
-   * prediction state when the current event occurred, or {@code null} if no
-   * additional information is relevant or available.
-   */
-  public configs: ATNConfigSet | null;
+    /**
+     * The configuration set containing additional information relevant to the
+     * prediction state when the current event occurred, or `null` if no
+     * additional information is relevant or available.
+     */
+    configs: ATNConfigSet | null;
 
-  /**
-   * The input token stream which is being parsed.
-   */
-  public input: TokenStream;
+    /**
+     * The input token stream which is being parsed.
+     */
+    input: TokenStream;
 
-  /**
-   * The token index in the input stream at which the current prediction was
-   * originally invoked.
-   */
-  public startIndex: number;
+    /**
+     * The token index in the input stream at which the current prediction was
+     * originally invoked.
+     */
+    startIndex: number;
 
-  /**
-   * The token index in the input stream at which the current event occurred.
-   */
-  public stopIndex: number;
+    /**
+     * The token index in the input stream at which the current event occurred.
+     */
+    stopIndex: number;
 
-  /**
-   * {@code true} if the current event occurred during LL prediction;
-   * otherwise, {@code false} if the input occurred during SLL prediction.
-   */
-  public fullCtx: boolean;
-
-  constructor(
-    decision: number,
-    configs: ATNConfigSet | null,
-    input: TokenStream,
-    startIndex: number,
-    stopIndex: number,
-    fullCtx: boolean
-  ) {
-    this.decision = decision;
-    this.configs = configs;
-    this.input = input;
-    this.startIndex = startIndex;
-    this.stopIndex = stopIndex;
-    this.fullCtx = fullCtx;
-  }
+    /**
+     * `true` if the current event occurred during LL prediction;
+     * otherwise, `false` if the input occurred during SLL prediction.
+     */
+    fullCtx: boolean;
 }

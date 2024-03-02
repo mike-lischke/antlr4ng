@@ -4,8 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-/* eslint-disable jsdoc/require-returns, jsdoc/require-param, @typescript-eslint/naming-convention */
-/* eslint-disable no-underscore-dangle */
+/* eslint-disable jsdoc/require-returns, jsdoc/require-param */
 
 import { Token } from "./Token.js";
 import { Recognizer } from "./Recognizer.js";
@@ -18,21 +17,83 @@ import { TokenFactory } from "./TokenFactory.js";
 import { TokenSource } from "./TokenSource.js";
 
 /**
+ * Options used during lexer execution.
+ */
+export interface LexerOptions {
+    /**
+     * A DFA edge is a DFA state set in the edge cache of another DFA state to quickly look up the next state
+     * for a given input symbol (usually a Unicode codepoint). This speeds up the performance of the lexer at the cost
+     * of memory. The edge cache is a sparse array, so the actual memory usage is proportional to the number of
+     * unique input symbols.
+     *
+     * For input symbols outside of the specified range, the lexer will always use the full computation to determine
+     * the next state. The same is true for lexer rules with predicates, since the next state is not known until the
+     * predicate is evaluated.
+     *
+     * The min DFA edge is 0 by default.
+     */
+    minDFAEdge: number;
+
+    /**
+     * This is the upper bound of the edge cache. Only input symbols smaller than this value are cached.
+     * The default value is 256, which encompasses the entire ASCII range, but leaves most of the other Unicode
+     * codepoints uncached. If you need to parse other languages instead of Latin, you can set the min and max
+     * edge values to Unicode block ranges that cover that particular language.
+     */
+    maxDFAEdge: number;
+
+    /** The minimum input symbol value that is allowed. The default value is 0. */
+    minCodePoint: number;
+
+    /**
+     * The maximum input value that is allowed. The default value is 0x10FFFF (the full Unicode range).
+     * Values outside of this range will be treated as invalid input and will cause the lexer to throw an error.
+     */
+    maxCodePoint: number;
+}
+
+/**
  * A lexer is recognizer that draws input symbols from a character stream.
  * lexer grammars result in a subclass of this object. A Lexer object
  * uses simplified match() and error recovery mechanisms in the interest of speed.
  */
 export abstract class Lexer extends Recognizer<LexerATNSimulator> implements TokenSource {
-    public static DEFAULT_MODE = 0;
-    public static MORE = -2;
-    public static SKIP = -3;
+    public static readonly DEFAULT_MODE = 0;
+    public static readonly MORE = -2;
+    public static readonly SKIP = -3;
 
-    public static DEFAULT_TOKEN_CHANNEL = Token.DEFAULT_CHANNEL;
-    public static HIDDEN = Token.HIDDEN_CHANNEL;
-    public static MIN_CHAR_VALUE = 0x0000;
-    public static MAX_CHAR_VALUE = 0x10FFFF;
+    public static readonly DEFAULT_TOKEN_CHANNEL = Token.DEFAULT_CHANNEL;
+    public static readonly HIDDEN = Token.HIDDEN_CHANNEL;
 
-    public _input: CharStream;
+    public readonly options: LexerOptions = {
+        minDFAEdge: 0,
+        maxDFAEdge: 256,
+        minCodePoint: 0,
+        maxCodePoint: 0x10FFFF,
+    };
+
+    /**
+     * What character index in the stream did the current token start at?
+     *  Needed, for example, to get the text for current token.  Set at
+     *  the start of nextToken.
+     */
+    public tokenStartCharIndex = -1;
+
+    /** The channel number for the current token */
+    public channel = 0;
+
+    /** The token type for the current token */
+    public type = 0;
+
+    /** The start column of the current token (the one that was last read by `nextToken`). */
+    protected currentTokenColumn = 0;
+
+    /**
+     * The line on which the first character of the current token (the one that was last read by `nextToken`) resides.
+     */
+    protected currentTokenStartLine = 0;
+
+    #input: CharStream;
 
     /**
      * The goal of all lexer rules/methods is to create a token object.
@@ -40,76 +101,60 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
      *  create a single token.  nextToken will return this object after
      *  matching lexer rule(s).  If you subclass to allow multiple token
      *  emissions, then set this to the last token to be matched or
-     *  something nonnull so that the auto token emit mechanism will not
+     *  something non-null so that the auto token emit mechanism will not
      *  emit another token.
      */
-    public _token: Token | null = null;
-
-    /**
-     * What character index in the stream did the current token start at?
-     *  Needed, for example, to get the text for current token.  Set at
-     *  the start of nextToken.
-     */
-    public _tokenStartCharIndex = -1;
-
-    /** The line on which the first character of the token resides */
-    public _tokenStartLine = 0;
-
-    /** The character position of first character within the line */
-    public _tokenStartColumn = 0;
+    #token: Token | null = null;
 
     /**
      * Once we see EOF on char stream, next token will be EOF.
      *  If you have DONE : EOF ; then you see DONE EOF.
      */
-    public _hitEOF = false;
+    #hitEOF = false;
 
-    /** The channel number for the current token */
-    public _channel = 0;
-
-    /** The token type for the current token */
-    public _type = 0;
-
-    public _modeStack: number[] = [];
-    public _mode: number = Lexer.DEFAULT_MODE;
+    #modeStack: number[] = [];
+    #mode: number = Lexer.DEFAULT_MODE;
 
     /**
-     * You can set the text for the current token to override what is in
-     *  the input char buffer.  Use setText() or can set this instance var.
+     * The text to be used for the next token. If this is not null, then the text
+     * for the next token is fixed and is not subject to change in the normal
+     * workflow of the lexer.
      */
-    public _text: string | null = null;
+    #text?: string;
 
-    protected _factory: TokenFactory<Token>;
+    #factory: TokenFactory<Token>;
 
-    public constructor(input: CharStream) {
+    public constructor(input: CharStream, options?: Partial<LexerOptions>) {
         super();
-        this._input = input;
-        this._factory = CommonTokenFactory.DEFAULT;
+        this.options = { ...this.options, ...options };
+        this.#input = input;
+        this.#factory = CommonTokenFactory.DEFAULT;
     }
 
     public reset(seekBack = true): void {
         // wack Lexer state variables
         if (seekBack) {
-            this._input.seek(0); // rewind the input
+            this.#input.seek(0); // rewind the input
         }
-        this._token = null;
-        this._type = Token.INVALID_TYPE;
-        this._channel = Token.DEFAULT_CHANNEL;
-        this._tokenStartCharIndex = -1;
-        this._tokenStartColumn = -1;
-        this._tokenStartLine = -1;
-        this._text = null;
 
-        this._hitEOF = false;
-        this._mode = Lexer.DEFAULT_MODE;
-        this._modeStack = [];
+        this.#token = null;
+        this.type = Token.INVALID_TYPE;
+        this.channel = Token.DEFAULT_CHANNEL;
+        this.tokenStartCharIndex = -1;
+        this.currentTokenColumn = -1;
+        this.currentTokenStartLine = -1;
+        this.#text = undefined;
+
+        this.#hitEOF = false;
+        this.#mode = Lexer.DEFAULT_MODE;
+        this.#modeStack = [];
 
         this.interpreter.reset();
     }
 
-    // Return a token from this source; i.e., match a token on the char stream.
+    /** @returns a token from this source; i.e., match a token on the char stream. */
     public nextToken(): Token {
-        if (this._input === null) {
+        if (this.#input === null) {
             throw new Error("nextToken requires a non-null input stream.");
         }
 
@@ -117,26 +162,27 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
          * Mark start location in char stream so unbuffered streams are
          * guaranteed at least have text of current token
          */
-        const tokenStartMarker = this._input.mark();
+        const tokenStartMarker = this.#input.mark();
         try {
-            for (; ;) {
-                if (this._hitEOF) {
+            while (true) {
+                if (this.#hitEOF) {
                     this.emitEOF();
 
-                    return this._token!;
+                    return this.#token!;
                 }
-                this._token = null;
-                this._channel = Token.DEFAULT_CHANNEL;
-                this._tokenStartCharIndex = this._input.index;
-                this._tokenStartColumn = this.interpreter.column;
-                this._tokenStartLine = this.interpreter.line;
-                this._text = null;
+
+                this.#token = null;
+                this.channel = Token.DEFAULT_CHANNEL;
+                this.tokenStartCharIndex = this.#input.index;
+                this.currentTokenColumn = this.interpreter.column;
+                this.currentTokenStartLine = this.interpreter.line;
+                this.#text = undefined;
                 let continueOuter = false;
-                for (; ;) {
-                    this._type = Token.INVALID_TYPE;
+                while (true) {
+                    this.type = Token.INVALID_TYPE;
                     let ttype = Lexer.SKIP;
                     try {
-                        ttype = this.interpreter.match(this._input, this._mode);
+                        ttype = this.interpreter.match(this.#input, this.#mode);
                     } catch (e) {
                         if (e instanceof LexerNoViableAltException) {
                             this.notifyListeners(e); // report error
@@ -145,33 +191,38 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
                             throw e;
                         }
                     }
-                    if (this._input.LA(1) === Token.EOF) {
-                        this._hitEOF = true;
+
+                    if (this.#input.LA(1) === Token.EOF) {
+                        this.#hitEOF = true;
                     }
-                    if (this._type === Token.INVALID_TYPE) {
-                        this._type = ttype;
+
+                    if (this.type === Token.INVALID_TYPE) {
+                        this.type = ttype;
                     }
-                    if (this._type === Lexer.SKIP) {
+
+                    if (this.type === Lexer.SKIP) {
                         continueOuter = true;
                         break;
                     }
-                    if (this._type !== Lexer.MORE) {
+                    if (this.type !== Lexer.MORE) {
                         break;
                     }
                 }
+
                 if (continueOuter) {
                     continue;
                 }
-                if (this._token === null) {
+
+                if (this.#token === null) {
                     this.emit();
                 }
 
-                return this._token!;
+                return this.#token!;
             }
         } finally {
             // make sure we release marker after match or
             // unbuffered char stream will keep buffering
-            this._input.release(tokenStartMarker);
+            this.#input.release(tokenStartMarker);
         }
     }
 
@@ -183,35 +234,29 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
      * and emits it.
      */
     public skip(): void {
-        this._type = Lexer.SKIP;
+        this.type = Lexer.SKIP;
     }
 
     public more(): void {
-        this._type = Lexer.MORE;
+        this.type = Lexer.MORE;
     }
 
     public mode(m: number): void {
-        this._mode = m;
+        this.#mode = m;
     }
 
     public pushMode(m: number): void {
-        if (LexerATNSimulator.debug) {
-            console.log("pushMode " + m);
-        }
-        this._modeStack.push(this._mode);
+        this.#modeStack.push(this.#mode);
         this.mode(m);
     }
 
     public popMode(): number {
-        if (this._modeStack.length === 0) {
+        if (this.#modeStack.length === 0) {
             throw new Error("Empty Stack");
         }
-        if (LexerATNSimulator.debug) {
-            console.log("popMode back to " + this._modeStack.slice(0, -1));
-        }
-        this.mode(this._modeStack.pop()!);
+        this.mode(this.#modeStack.pop()!);
 
-        return this._mode;
+        return this.#mode;
     }
 
     /**
@@ -221,7 +266,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
      * rather than a single variable as this implementation does).
      */
     public emitToken(token: Token): void {
-        this._token = token;
+        this.#token = token;
     }
 
     /**
@@ -232,29 +277,24 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
      * custom Token objects or provide a new factory.
      */
     public emit(): Token {
-        const t = this._factory.create([this, this._input], this._type,
-            this._text, this._channel, this._tokenStartCharIndex, this
-                .getCharIndex() - 1, this._tokenStartLine,
-            this._tokenStartColumn);
+        const t = this.#factory.create([this, this.#input], this.type, this.#text, this.channel,
+            this.tokenStartCharIndex, this.getCharIndex() - 1, this.currentTokenStartLine, this.currentTokenColumn);
         this.emitToken(t);
 
         return t;
     }
 
     public emitEOF(): Token {
-        const cpos = this.column;
-        const lpos = this.line;
-        const eof = this._factory.create([this, this._input], Token.EOF,
-            null, Token.DEFAULT_CHANNEL, this._input.index,
-            this._input.index - 1, lpos, cpos);
+        const eof = this.#factory.create([this, this.#input], Token.EOF, undefined, Token.DEFAULT_CHANNEL,
+            this.#input.index, this.#input.index - 1, this.line, this.column);
         this.emitToken(eof);
 
         return eof;
     }
 
-    // What is the index of the current character of lookahead?///
+    /** What is the index of the current character of lookahead? */
     public getCharIndex(): number {
-        return this._input.index;
+        return this.#input.index;
     }
 
     /**
@@ -273,13 +313,11 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
     }
 
     public notifyListeners(e: LexerNoViableAltException): void {
-        const start = this._tokenStartCharIndex;
-        const stop = this._input.index;
-        const text = this._input.getText(start, stop);
+        const start = this.tokenStartCharIndex;
+        const stop = this.#input.index;
+        const text = this.#input.getTextFromRange(start, stop);
         const msg = "token recognition error at: '" + this.getErrorDisplay(text) + "'";
-        const listener = this.getErrorListenerDispatch();
-        listener.syntaxError(this, null, this._tokenStartLine,
-            this._tokenStartColumn, msg, e);
+        this.errorListenerDispatch.syntaxError(this, null, this.currentTokenStartLine, this.currentTokenColumn, msg, e);
     }
 
     public getErrorDisplay(s: string): string {
@@ -289,15 +327,21 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
     public getErrorDisplayForChar(c: string): string {
         if (c.charCodeAt(0) === Token.EOF) {
             return "<EOF>";
-        } else if (c === "\n") {
-            return "\\n";
-        } else if (c === "\t") {
-            return "\\t";
-        } else if (c === "\r") {
-            return "\\r";
-        } else {
-            return c;
         }
+
+        if (c === "\n") {
+            return "\\n";
+        }
+
+        if (c === "\t") {
+            return "\\t";
+        }
+
+        if (c === "\r") {
+            return "\\r";
+        }
+
+        return c;
     }
 
     public getCharErrorDisplay(c: string): string {
@@ -311,44 +355,35 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
      * to do sophisticated error recovery if you are in a fragment rule.
      */
     public recover(re: LexerNoViableAltException | RecognitionException): void {
-        if (this._input.LA(1) !== Token.EOF) {
+        if (this.#input.LA(1) !== Token.EOF) {
             if (re instanceof LexerNoViableAltException) {
                 // skip a char and try again
-                this.interpreter.consume(this._input);
+                this.interpreter.consume(this.#input);
             } else {
-                // TODO: Do we lose character or line position information?
-                this._input.consume();
+                this.#input.consume();
             }
         }
     }
 
     public get inputStream(): CharStream {
-        return this._input;
+        return this.#input;
     }
 
     public set inputStream(input: CharStream) {
         this.reset(false);
-        this._input = input;
+        this.#input = input;
     }
 
     public set tokenFactory(factory: TokenFactory<Token>) {
-        this._factory = factory;
+        this.#factory = factory;
     };
 
     public get tokenFactory(): TokenFactory<Token> {
-        return this._factory;
+        return this.#factory;
     };
 
     public get sourceName(): string {
-        return this._input.getSourceName();
-    }
-
-    public get type(): number {
-        return this._type;
-    }
-
-    public set type(type: number) {
-        this._type = type;
+        return this.#input.getSourceName();
     }
 
     public get line(): number {
@@ -368,14 +403,14 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
     }
 
     public get text(): string {
-        if (this._text !== null) {
-            return this._text;
+        if (this.#text) {
+            return this.#text;
         } else {
-            return this.interpreter.getText(this._input);
+            return this.interpreter.getText(this.#input);
         }
     }
 
-    public set text(text: string | null) {
-        this._text = text;
+    public set text(text: string) {
+        this.#text = text;
     }
 }

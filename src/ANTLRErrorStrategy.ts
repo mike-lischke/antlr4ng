@@ -4,30 +4,27 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { RecognitionException } from "./RecognitionException.js";
-import { Parser } from "./Parser.js";
-import { Token } from "./Token.js";
+import { type RecognitionException } from "./RecognitionException.js";
+import { type Parser } from "./Parser.js";
+import { type Token } from "./Token.js";
 
 /**
  * The interface for defining strategies to deal with syntax errors encountered
  * during a parse by ANTLR-generated parsers. We distinguish between three
  * different kinds of errors:
  *
- * <ul>
- * <li>The parser could not figure out which path to take in the ATN (none of
- * the available alternatives could possibly match)</li>
- * <li>The current input does not match what we were looking for</li>
- * <li>A predicate evaluated to false</li>
- * </ul>
+ * - The parser could not figure out which path to take in the ATN (none of
+ * the available alternatives could possibly match)
+ * - The current input does not match what we were looking for
+ * - A predicate evaluated to false
  *
- * Implementations of this interface report syntax errors by calling
- * {@link Parser#notifyErrorListeners}.
+ * Implementations of this interface report syntax errors by calling {@link Parser.notifyErrorListeners}.
  *
- * <p>TODO: what to do about lexers</p>
+ * TODO: what to do about lexers
  */
 export interface ANTLRErrorStrategy {
     /**
-     * Reset the error handler state for the specified {@code recognizer}.
+     * Reset the error handler state for the specified `recognizer`.
      *
      * @param recognizer the parser instance
      */
@@ -35,17 +32,17 @@ export interface ANTLRErrorStrategy {
 
     /**
      * This method is called when an unexpected symbol is encountered during an
-     * inline match operation, such as {@link Parser#match}. If the error
+     * inline match operation, such as {@link Parser.match}. If the error
      * strategy successfully recovers from the match failure, this method
      * returns the {@link Token} instance which should be treated as the
      * successful result of the match.
      *
-     * <p>This method handles the consumption of any tokens - the caller should
-     * <em>not</em> call {@link Parser#consume} after a successful recovery.</p>
+     * This method handles the consumption of any tokens - the caller should
+     * not* call {@link Parser.consume} after a successful recovery.
      *
-     * <p>Note that the calling code will not report an error if this method
+     * Note that the calling code will not report an error if this method
      * returns successfully. The error strategy implementation is responsible
-     * for calling {@link Parser#notifyErrorListeners} as appropriate.</p>
+     * for calling {@link Parser.notifyErrorListeners} as appropriate.
      *
      * @param recognizer the parser instance
      * @throws RecognitionException if the error strategy was not able to
@@ -54,8 +51,8 @@ export interface ANTLRErrorStrategy {
     recoverInline(recognizer: Parser): Token;
 
     /**
-     * This method is called to recover from exception {@code e}. This method is
-     * called after {@link #reportError} by the default exception handler
+     * This method is called to recover from exception `e`. This method is
+     * called after {@link reportError} by the default exception handler
      * generated for a rule method.
      *
      * @see #reportError
@@ -72,12 +69,12 @@ export interface ANTLRErrorStrategy {
      * syntactic or semantic errors in the input stream before they result in a
      * {@link RecognitionException}.
      *
-     * <p>The generated code currently contains calls to {@link #sync} after
-     * entering the decision state of a closure block ({@code (...)*} or
-     * {@code (...)+}).</p>
+     * The generated code currently contains calls to {@link sync} after
+     * entering the decision state of a closure block (`(...)*` or
+     * `(...)+`).
      *
-     * <p>For an implementation based on Jim Idle's "magic sync" mechanism, see
-     * {@link DefaultErrorStrategy#sync}.</p>
+     * For an implementation based on Jim Idle's "magic sync" mechanism, see
+     * {@link DefaultErrorStrategy.sync}.
      *
      * @see DefaultErrorStrategy#sync
      *
@@ -89,8 +86,7 @@ export interface ANTLRErrorStrategy {
     sync(recognizer: Parser): void;
 
     /**
-     * This method is called by when the parser successfully matches an input
-     * symbol.
+     * This method is called by when the parser successfully matches an input symbol.
      *
      * @param recognizer the parser instance
      */

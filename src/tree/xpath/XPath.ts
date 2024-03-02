@@ -6,7 +6,7 @@
 
 /* eslint-disable @typescript-eslint/naming-convention, jsdoc/require-returns, jsdoc/require-param */
 
-import { CharStreams } from "../../CharStreams.js";
+import { CharStream } from "../../CharStream.js";
 import { CommonTokenStream } from "../../CommonTokenStream.js";
 import { LexerNoViableAltException } from "../../LexerNoViableAltException.js";
 import { Parser } from "../../Parser.js";
@@ -32,7 +32,7 @@ import { XPathWildcardElement } from "./XPathWildcardElement.js";
  * pair, find set of nodes. Next stage uses those as work list.
  *
  * The basic interface is
- * {@link XPath#findAll ParseTree.findAll}`(tree, pathString, parser)`.
+ * {@link XPath.findAll ParseTree.findAll}`(tree, pathString, parser)`.
  * But that is just shorthand for:
  *
  * ```
@@ -72,7 +72,6 @@ export class XPath {
         this.parser = parser;
         this.path = path;
         this.elements = this.split(path);
-        // console.log(this.elements.toString());
     }
 
     public static findAll(tree: ParseTree, xpath: string, parser: Parser): Set<ParseTree> {
@@ -84,7 +83,7 @@ export class XPath {
     // TODO: check for invalid token/rule names, bad syntax
 
     public split(path: string): XPathElement[] {
-        const lexer = new XPathLexer(CharStreams.fromString(path));
+        const lexer = new XPathLexer(CharStream.fromString(path));
         lexer.recover = (e: LexerNoViableAltException) => { throw e; };
 
         lexer.removeErrorListeners();
@@ -102,10 +101,10 @@ export class XPath {
         }
 
         const tokens: Token[] = tokenStream.getTokens();
-        // console.log("path=" + path + "=>" + tokens);
         const elements: XPathElement[] = [];
         const n: number = tokens.length;
         let i: number = 0;
+
         loop:
         while (i < n) {
             const el: Token = tokens[i];
@@ -125,13 +124,15 @@ export class XPath {
                     pathElement.invert = invert;
                     elements.push(pathElement);
                     i++;
+
                     break;
 
                 case XPathLexer.TOKEN_REF:
                 case XPathLexer.RULE_REF:
                 case XPathLexer.WILDCARD:
                     elements.push(this.getXPathElement(el, false));
-                    i++;
+                    ++i;
+
                     break;
 
                 case Token.EOF:
@@ -150,7 +151,7 @@ export class XPath {
      * path. The root `/` is relative to the node passed to {@link evaluate}.
      */
     public evaluate(t: ParseTree): Set<ParseTree> {
-        const dummyRoot = new ParserRuleContext();
+        const dummyRoot = new ParserRuleContext(null);
         dummyRoot.addChild(t as ParserRuleContext);
 
         let work = new Set<ParseTree>([dummyRoot]);

@@ -98,7 +98,7 @@ describe("IntervalSet", () => {
         intervalsToExclude.addInterval(new Interval(1757, 1757));
         intervalsToExclude.addInterval(new Interval(1806, 1807));
 
-        const final = intervalsToExclude.complement(fullUnicodeSet);
+        const final = intervalsToExclude.complementWithVocabulary(fullUnicodeSet);
         expect(final.toString()).toEqual("{11..13, 32..126, 160..172, 174..887, 890..895, 900..906, 908, 910..929, " +
             "931..1327, 1329..1366, 1369..1418, 1421..1423, 1425..1469, 1471, 1473..1474, 1476..1477, 1479, " +
             "1542..1563, 1566..1756, 1758..1805, 1808..1114111}");

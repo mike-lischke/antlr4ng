@@ -7,7 +7,7 @@
 /* eslint-disable jsdoc/require-returns, jsdoc/require-param */
 
 import { isToken } from "../Token.js";
-import { RuleContext } from "../RuleContext.js";
+import { ParserRuleContext } from "../ParserRuleContext.js";
 
 import { escapeWhitespace } from "../utils/helpers.js";
 import { ErrorNode } from "./ErrorNode.js";
@@ -50,14 +50,14 @@ export class Trees {
         return res;
     }
 
-    public static getNodeText(t: ParseTree, ruleNames: string[] | null, recog?: Parser | null): string | null {
+    public static getNodeText(t: ParseTree, ruleNames: string[] | null, recog?: Parser | null): string | undefined {
         ruleNames = ruleNames ?? null;
         recog = recog ?? null;
         if (recog !== null) {
             ruleNames = recog.ruleNames;
         }
         if (ruleNames !== null) {
-            if (t instanceof RuleContext) {
+            if (t instanceof ParserRuleContext) {
                 const context = t.ruleContext;
                 const altNumber = context.getAltNumber();
                 // use const value of ATN.INVALID_ALT_NUMBER to avoid circular dependency
@@ -144,11 +144,12 @@ export class Trees {
             if (t.symbol?.type === index) {
                 nodes.push(t);
             }
-        } else if (!findTokens && (t instanceof RuleContext)) {
+        } else if (!findTokens && (t instanceof ParserRuleContext)) {
             if (t.ruleIndex === index) {
                 nodes.push(t);
             }
         }
+
         // check children
         for (let i = 0; i < t.getChildCount(); i++) {
             Trees.doFindAllNodes(t.getChild(i)!, index, findTokens, nodes);

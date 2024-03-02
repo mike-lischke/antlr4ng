@@ -7,41 +7,51 @@
 import { LexerActionType } from "./LexerActionType.js";
 import { LexerAction } from "./LexerAction.js";
 import { Lexer } from "../Lexer.js";
-import { HashCode } from "../misc/HashCode.js";
+import { MurmurHash } from "../utils/MurmurHash.js";
 
 /**
- * Implements the {@code type} lexer action by calling {@link Lexer//setType}
- * with the assigned type
+ * Implements the `type` lexer action by calling {@link Lexer.setType} with the assigned type.
  */
-
-export class LexerTypeAction extends LexerAction {
+export class LexerTypeAction implements LexerAction {
     public readonly type: number;
+    public readonly actionType: number;
+    public isPositionDependent: boolean = false;
+
+    #cachedHashCode: number | undefined;
 
     public constructor(type: number) {
-        super(LexerActionType.TYPE);
+        this.actionType = LexerActionType.TYPE;
         this.type = type;
     }
 
-    public override execute(lexer: Lexer): void {
-        // eslint-disable-next-line no-underscore-dangle
-        lexer._type = this.type;
+    public execute(lexer: Lexer): void {
+        lexer.type = this.type;
     }
 
-    public override updateHashCode(hash: HashCode): void {
-        hash.update(this.actionType, this.type);
+    public hashCode(): number {
+        if (this.#cachedHashCode === undefined) {
+            let hash = MurmurHash.initialize();
+            hash = MurmurHash.update(hash, this.actionType);
+            hash = MurmurHash.update(hash, this.type);
+            this.#cachedHashCode = MurmurHash.finish(hash, 2);
+        }
+
+        return this.#cachedHashCode;
     }
 
-    public override equals(other: unknown): boolean {
+    public equals(other: unknown): boolean {
         if (this === other) {
             return true;
-        } else if (!(other instanceof LexerTypeAction)) {
-            return false;
-        } else {
-            return this.type === other.type;
         }
+
+        if (!(other instanceof LexerTypeAction)) {
+            return false;
+        }
+
+        return this.type === other.type;
     }
 
-    public override toString(): string {
+    public toString(): string {
         return "type(" + this.type + ")";
     }
 }

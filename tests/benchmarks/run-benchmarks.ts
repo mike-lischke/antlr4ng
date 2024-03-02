@@ -9,10 +9,11 @@ import * as fs from "fs";
 import path from "path";
 import assert from "assert";
 import { fileURLToPath } from "url";
+import { performance } from "perf_hooks";
 
 import { ParseService } from "./ParseService.js";
 
-import { IParserErrorInfo, MySQLParseUnit, StatementFinishState, determineStatementRanges } from "./support/helpers.js";
+import { IParserErrorInfo, StatementFinishState, determineStatementRanges } from "./support/helpers.js";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -46,6 +47,18 @@ const versionPattern = /^\[(<|<=|>|>=|=)(\d{5})\]/;
 const relationMap = new Map<string, number>([
     ["<", 0], ["<=", 1], ["=", 2], [">=", 3], [">", 4],
 ]);
+
+const testFiles: ITestFile[] = [
+    // Large set of all possible query types in different combinations and versions.
+    { name: "./data/statements.txt", initialDelimiter: "$$" },
+
+    // The largest of the example files from the grammar repository:
+    // (https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples)
+    { name: "./data/bitrix_queries_cut.sql", initialDelimiter: ";" },
+
+    // Not so many, but some very long insert statements.
+    { name: "./data/sakila-db/sakila-data.sql", initialDelimiter: ";" },
+];
 
 /**
  * Similar like checkStatementVersion, but only extracts the statement version and checks that against the given
@@ -139,22 +152,15 @@ const splitterTest = () => {
  *
  * @param logResults If true, the number of statements found in each file and the duration is logged.
  *
- * @returns The time it took to parse each file.
+ * @returns The time it took to lex and parse each file.
  */
-const parseFiles = (logResults: boolean): number[] => {
-    const testFiles: ITestFile[] = [
-        // Large set of all possible query types in different combinations and versions.
-        { name: "./data/statements.txt", initialDelimiter: "$$" },
+const parseFiles = (logResults: boolean): Array<[number, number]> => {
+    const result: Array<[number, number]> = [];
 
-        // The largest of the example files from the grammar repository:
-        // (https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples)
-        { name: "./data/bitrix_queries_cut.sql", initialDelimiter: ";" },
+    //parsingService.errorCheck("select 1", MySQLParseUnit.Generic, 80400, "ANSI_QUOTES");
 
-        // Not so many, but some very long insert statements.
-        { name: "./data/sakila-db/sakila-data.sql", initialDelimiter: ";" },
-    ];
+    //return result;
 
-    const result: number[] = [];
     testFiles.forEach((entry, index) => {
         const sql = fs.readFileSync(path.join(path.dirname(__filename), entry.name), { encoding: "utf-8" });
 
@@ -164,7 +170,8 @@ const parseFiles = (logResults: boolean): number[] => {
             console.log(`    Found ${ranges.length} statements in file ${index + 1} (${entry.name}).`);
         }
 
-        const timestamp = performance.now();
+        let tokenizationTime = 0;
+        let parseTime = 0;
         ranges.forEach((range, index) => {
             // The delimiter is considered part of the statement (e.g. for editing purposes)
             // but must be ignored for parsing.
@@ -172,11 +179,16 @@ const parseFiles = (logResults: boolean): number[] => {
             const statement = sql.substring(range.span.start, end).trim();
 
             // The parser only supports syntax from 8.0 onwards. So we expect errors for older statements.
-            const checkResult = checkMinStatementVersion(statement, 80031);
+            const checkResult = checkMinStatementVersion(statement, 80400);
             if (checkResult.matched) {
+                let localTimestamp = performance.now();
+                parsingService.tokenize(checkResult.statement, checkResult.version, "ANSI_QUOTES");
+                tokenizationTime += performance.now() - localTimestamp;
+
                 let error: IParserErrorInfo | undefined;
-                const result = parsingService.errorCheck(checkResult.statement, MySQLParseUnit.Generic,
-                    checkResult.version, "ANSI_QUOTES");
+                localTimestamp = performance.now();
+                const result = parsingService.errorCheck();
+                parseTime += performance.now() - localTimestamp;
                 if (!result) {
                     const errors = parsingService.errorsWithOffset(0);
                     error = errors[0];
@@ -192,36 +204,36 @@ const parseFiles = (logResults: boolean): number[] => {
             }
         });
 
-        const duration = Math.round(performance.now() - timestamp);
         if (logResults) {
-            console.log("    Parsing all statements took: " + duration + " ms");
+            console.log(`    lexing: ${Math.round(tokenizationTime)} ms, parsing: ${Math.round(parseTime)} ms`);
         }
 
-        result.push(duration);
+        result.push([tokenizationTime, parseTime]);
     });
 
     return result;
 };
 
-const parserRun = (showOutput: boolean): number[] => {
-    let result: number[] = [];
-    const timestamp = performance.now();
+const parserRun = (showOutput: boolean): Array<[number, number]> => {
+    let result: Array<[number, number]> = [];
     try {
         result = parseFiles(showOutput);
     } catch (e) {
         console.error(e);
     } finally {
+        const lexTime = result.reduce((sum, time) => { return sum + time[0]; }, 0);
+        const parseTime = result.reduce((sum, time) => { return sum + time[1]; }, 0);
         if (showOutput) {
-            console.log(`Overall parse run took ${Math.round((performance.now() - timestamp))} ms`);
-        }
-    }
+            console.log(`Overall lexing: ${Math.round(lexTime)} ms, parsing: ${Math.round(parseTime)} ms`);
 
-    result.push(performance.now() - timestamp);
+        }
+        result.push([lexTime, parseTime]);
+    }
 
     return result;
 };
 
-console.log("\n\nStarting MySQL JS/TS benchmarks");
+console.log("\n\nStarting MySQL TypeScript benchmarks");
 const timestamp = performance.now();
 
 // Must ensure splitting query files works as expected.
@@ -229,12 +241,13 @@ splitterTest();
 
 console.log("Splitter tests took " + Math.round(performance.now() - timestamp) + " ms");
 
-console.log("Running antlr4ng parser once (cold) ");
+console.log("Running antlr4ng parser once (cold)");
 parserRun(true);
 
-process.stdout.write("Running antlr4ng parser 5 times (warm) ");
+process.stdout.write("\nRunning antlr4ng parser 5 times (warm) ");
 
-const times: number[][] = [];
+// This list contains the time it took to lex and parse each file, plus the overall time.
+const times: Array<Array<[number, number]>> = [];
 
 // Run the parser a few times to get a better average.
 for (let i = 0; i < 5; ++i) {
@@ -244,7 +257,7 @@ for (let i = 0; i < 5; ++i) {
 console.log();
 
 // Transpose the result matrix.
-const transposed: number[][] = [];
+const transposed: Array<Array<[number, number]>> = [];
 for (let i = 0; i < times[0].length; ++i) {
     transposed.push([]);
     for (const row of times) {
@@ -252,17 +265,23 @@ for (let i = 0; i < times[0].length; ++i) {
     }
 }
 
-// Remove the 2 slowest runs in each row and compute the average of the remaining 3.
-const averageTimes: number[] = [];
+// Remove the 2 slowest parser runs in each row and compute the average of the remaining 3.
+const averageTimes: Array<[number, number]> = [];
 for (const row of transposed) {
-    const values = row.sort().slice(0, 3);
-    averageTimes.push(values.reduce((sum, time) => { return sum + time; }, 0) / values.length);
+    const values = row.sort((a, b) => {
+        return a[1] - b[1];
+    }).slice(0, 3);
+
+    const temp = values.reduce((sum, time) => { return [sum[0] + time[0], sum[1] + time[1]]; }, [0, 0]);
+    averageTimes.push([temp[0] / values.length, temp[1] / values.length]);
 }
 
 for (let i = 0; i < averageTimes.length - 1; ++i) {
-    console.log(`    File ${i + 1} took ${Math.round(averageTimes[i])} ms`);
+    console.log(`    File ${i + 1} lexing: ${Math.round(averageTimes[i][0])} ms, ` +
+        `parsing: ${Math.round(averageTimes[i][1])} ms`);
 }
 
-console.log(`Overall parse run took ${Math.round(averageTimes[averageTimes.length - 1])} ms`);
+console.log(`Overall lexing: ${Math.round(averageTimes[averageTimes.length - 1][0])} ms, ` +
+    `parsing took: ${Math.round(averageTimes[averageTimes.length - 1][1])} ms`);
 
 console.log("Done");

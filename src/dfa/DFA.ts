@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
+ * Copyright (c) The ANTLR Project. All rights reserved.
  * Use of this file is governed by the BSD 3-clause license that
  * can be found in the LICENSE.txt file in the project root.
  */
@@ -10,29 +10,32 @@ import { LexerDFASerializer } from "./LexerDFASerializer.js";
 import { Vocabulary } from "../Vocabulary.js";
 import { DecisionState } from "../atn/DecisionState.js";
 import { StarLoopEntryState } from "../atn/StarLoopEntryState.js";
-import { HashSet } from "../misc/HashSet.js";
+import type { ATNConfigSet } from "../index.js";
 
 export class DFA {
-    /**
-     * A set of all DFA states. Use {@link Map} so we can get old state back
-     *  ({@link Set} only allows you to see if it's there).
-     */
-
-    public readonly states = new HashSet<DFAState>();
-
-    public s0: DFAState | null = null;
+    public s0?: DFAState;
 
     public readonly decision: number;
 
     /** From which ATN state did we create this DFA? */
-
     public readonly atnStartState: DecisionState | null;
 
     /**
-     * {@code true} if this DFA is for a precedence decision; otherwise,
-     * {@code false}. This is the backing field for {@link #isPrecedenceDfa}.
+     * Gets whether this DFA is a precedence DFA. Precedence DFAs use a special
+     * start state {@link #s0} which is not stored in {@link #states}. The
+     * {@link DFAState#edges} array for this start state contains outgoing edges
+     * supplying individual start states corresponding to specific precedence
+     * values.
+     *
+     * @returns `true` if this is a precedence DFA; otherwise, `false`.
      */
-    public readonly precedenceDfa: boolean;
+    public readonly isPrecedenceDfa: boolean;
+
+    /**
+     * A mapping from an ATNConfigSet hash to a DFAState.
+     * Used to quick look up the DFA state for a particular configuration set.
+     */
+    #states = new Map<number, DFAState>();
 
     public constructor(atnStartState: DecisionState | null, decision?: number) {
         this.atnStartState = atnStartState;
@@ -42,30 +45,15 @@ export class DFA {
         if (atnStartState instanceof StarLoopEntryState) {
             if (atnStartState.precedenceRuleDecision) {
                 precedenceDfa = true;
-                const precedenceState = new DFAState();
-                precedenceState.edges = [];
-                precedenceState.isAcceptState = false;
-                precedenceState.requiresFullContext = false;
-                this.s0 = precedenceState;
+                this.s0 = DFAState.fromState(-1);
             }
         }
 
-        this.precedenceDfa = precedenceDfa;
+        this.isPrecedenceDfa = precedenceDfa;
     }
 
-    /**
-     * Gets whether this DFA is a precedence DFA. Precedence DFAs use a special
-     * start state {@link #s0} which is not stored in {@link #states}. The
-     * {@link DFAState#edges} array for this start state contains outgoing edges
-     * supplying individual start states corresponding to specific precedence
-     * values.
-     *
-      @returns `true` if this is a precedence DFA; otherwise,
-     * {@code false}.
-     * @see Parser#getPrecedence()
-     */
-    public readonly isPrecedenceDfa = (): boolean => {
-        return this.precedenceDfa;
+    public [Symbol.iterator] = (): Iterator<DFAState> => {
+        return this.#states.values()[Symbol.iterator]();
     };
 
     /**
@@ -73,19 +61,19 @@ export class DFA {
      *
      * @param precedence The current precedence.
       @returns The start state corresponding to the specified precedence, or
-     * {@code null} if no start state exists for the specified precedence.
+     * `null` if no start state exists for the specified precedence.
      *
      * @throws IllegalStateException if this is not a precedence DFA.
-     * @see #isPrecedenceDfa()
+     * @see #isPrecedenceDfa
      */
-    public readonly getPrecedenceStartState = (precedence: number): DFAState | null => {
-        if (!this.isPrecedenceDfa()) {
+    public readonly getPrecedenceStartState = (precedence: number): DFAState | undefined => {
+        if (!this.isPrecedenceDfa) {
             throw new Error(`Only precedence DFAs may contain a precedence start state.`);
         }
 
         // s0.edges is never null for a precedence DFA
         if (!this.s0 || !this.s0.edges || precedence < 0 || precedence >= this.s0.edges.length) {
-            return null;
+            return undefined;
         }
 
         return this.s0.edges[precedence];
@@ -95,56 +83,27 @@ export class DFA {
      * Set the start state for a specific precedence value.
      *
      * @param precedence The current precedence.
-     * @param startState The start state corresponding to the specified
-     * precedence.
-     *
-     * @throws IllegalStateException if this is not a precedence DFA.
-     * @see #isPrecedenceDfa()
+     * @param startState The start state corresponding to the specified precedence.
      */
     public readonly setPrecedenceStartState = (precedence: number, startState: DFAState): void => {
-        if (!this.isPrecedenceDfa()) {
+        if (!this.isPrecedenceDfa) {
             throw new Error(`Only precedence DFAs may contain a precedence start state.`);
         }
 
-        if (precedence < 0 || !this.s0?.edges) {
+        if (precedence < 0 || !this.s0) {
             return;
         }
 
-        // synchronization on s0 here is ok. when the DFA is turned into a
-        // precedence DFA, s0 will be initialized once and not updated again
-        // s0.edges is never null for a precedence DFA
-        if (precedence >= this.s0.edges.length) {
-            const start = this.s0.edges.length;
-            this.s0.edges.length = precedence + 1;
-            this.s0.edges.fill(null, start, precedence);
-        }
-
+        // Synchronization on s0 here is ok. when the DFA is turned into a
+        // precedence DFA, s0 will be initialized once and not updated again.
         this.s0.edges[precedence] = startState;
-    };
-
-    /**
-     * Sets whether this is a precedence DFA.
-     *
-     * @param precedenceDfa {@code true} if this is a precedence DFA; otherwise,
-     * {@code false}
-     *
-     * @throws UnsupportedOperationException if {@code precedenceDfa} does not
-     * match the value of {@link #isPrecedenceDfa} for the current DFA.
-     *
-     * @deprecated This method no longer performs any action.
-     */
-    public setPrecedenceDfa(precedenceDfa: boolean): void {
-        if (precedenceDfa !== this.isPrecedenceDfa()) {
-            throw new Error(
-                `The precedenceDfa field cannot change after a DFA is constructed.`);
-        }
     };
 
     /**
      * @returns a list of all states in this DFA, ordered by state number.
      */
     public getStates(): DFAState[] {
-        const result = this.states.values();
+        const result = [...this.#states.values()];
         result.sort((o1: DFAState, o2: DFAState): number => {
             return o1.stateNumber - o2.stateNumber;
         });
@@ -152,12 +111,30 @@ export class DFA {
         return result;
     };
 
+    public getState(state: DFAState): DFAState | null {
+        return this.#states.get(state.configs.hashCode()) ?? null;
+    }
+
+    public getStateForConfigs(configs: ATNConfigSet): DFAState | null {
+        return this.#states.get(configs.hashCode()) ?? null;
+    }
+
+    public addState(state: DFAState): void {
+        const hash = state.configs.hashCode();
+        if (this.#states.has(hash)) {
+            return;
+        }
+
+        this.#states.set(hash, state);
+        state.stateNumber = this.#states.size - 1;
+    }
+
     public toString(vocabulary?: Vocabulary): string {
         if (!vocabulary) {
             return this.toString(Vocabulary.EMPTY_VOCABULARY);
         }
 
-        if (this.s0 === null) {
+        if (!this.s0) {
             return "";
         }
 
@@ -167,7 +144,7 @@ export class DFA {
     }
 
     public toLexerString(): string {
-        if (this.s0 === null) {
+        if (!this.s0) {
             return "";
         }
 
@@ -176,4 +153,7 @@ export class DFA {
         return serializer.toString() ?? "";
     };
 
+    public get length(): number {
+        return this.#states.size;
+    }
 }
