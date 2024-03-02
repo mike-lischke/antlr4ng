@@ -81,15 +81,15 @@ You can then use the generated parser to walk the parse tree, for example with a
 import { ExpressionVisitor } from "./generated/ExpressionVisitor.js";
 
 class MyVisitor extends ExpressionVisitor<number> {
-  public visitAdd = (ctx: AddContext): number {
+  visitAdd(ctx: AddContext): number {
     return this.visit(ctx.expression(0)) + this.visit(ctx.expression(1));
   }
 
-  public visitMultiply = (ctx: MultiplyContext): number {
+  visitMultiply(ctx: MultiplyContext): number {
     return this.visit(ctx.expression(0)) * this.visit(ctx.expression(1));
   }
 
-  public visitNumber = (ctx: NumberContext): number {
+  visitNumber(ctx: NumberContext): number {
     return Number.parseInt(ctx.NUMBER().text);
   }
 }
@@ -141,15 +141,15 @@ The following table shows the results of the benchmarks that were executed in th
 
 |    | C++ |antlr4ng|antlr4|antlr4ts|antl4wasm|
 |---:|---:|---:|---:|---:|---:|
-|Query Collection (cold)|1340 ms| <ins>181/2167 (2348) ms</ins>| 7984 ms| 3402 ms| 3331 ms|
-|  Bitrix Queries (cold)| 195 ms|  <ins>67/271 (338) ms</ins>| 1134 ms|  444 ms|  998 ms|
-|   Large Inserts (cold)|4981 ms|<ins>6249/2282 (8531) ms</ins>|10695 ms|11483 ms|34243 ms|
-|Query Collection (warm)| 133 ms|  129/99 (228) ms|  <ins>223 ms</ins>|  259 ms| 1177 ms|
+|Query Collection (cold)|1340 ms| <ins>184/2160 (2344) ms</ins>| 7984 ms| 3402 ms| 3331 ms|
+|  Bitrix Queries (cold)| 195 ms|  <ins>69/272 (341) ms</ins>| 1134 ms|  444 ms|  998 ms|
+|   Large Inserts (cold)|4981 ms|<ins>6323/2279 (8602) ms</ins>|10695 ms|11483 ms|34243 ms|
+|Query Collection (warm)| 133 ms|  129/100 (229) ms|  <ins>223 ms</ins>|  259 ms| 1177 ms|
 |  Bitrix Queries (warm)|  70 ms|  63/73 (136) ms|  <ins>110 ms</ins>|  131 ms|  815 ms|
-|   Large Inserts (warm)|4971 ms|<ins>6249/2269 (8518) ms</ins>|10593 ms|11287 ms|36317 ms|
+|   Large Inserts (warm)|4971 ms|<ins>6368/2284 (8652) ms</ins>|10593 ms|11287 ms|36317 ms|
 |||||||
-|Total (cold)           |6546 ms|<ins>6497/4720 (11217) ms</ins>|19878 ms|15403 ms|38641 ms|
-|Total (warm)           |5198 ms|<ins>6441/2445 (8886) ms</ins>|10944 ms|11697 ms|38329 ms|
+|Total (cold)           |6546 ms|<ins>6576/4711 (11287) ms</ins>|19878 ms|15403 ms|38641 ms|
+|Total (warm)           |5198 ms|<ins>6561/2460 (9021) ms</ins>|10944 ms|11697 ms|38329 ms|
 
 Underlined entries are the smallest (not counting C++, which beats them all). For antlr4ng, the times are split into lexing and parsing. Note the high lexer execution times, caused by the large number of predicates (126) + lexer actions (40) in the MySQL lexer.
 
@@ -204,6 +204,39 @@ The execute times on last release of this runtime have been measured as:
 Note: Some of the corpus sizes differ due to the restructuring of the test. However, the numbers are not directly comparable anyway, as they were taken on different machines.
 
 ## Release Notes
+
+### 3.0.0
+
+This release completes the conversion of the Java (and JavaScript) ANTRL4 runtime to TypeScript. It's a significant improvement over the existing TS (and JS) runtimes, as it includes now all relevant parts from the Java runtime and has been optimized for performance. It's now twice as fast for cold runs and 20% faster with a warm parser/lexer. See also the benchmark section below.
+
+This makes it the fastest TypeScript (and JS) runtime currently available. The ANTLR4 JavaScript runtime still is slightly faster in short time tests (e.g. 228ms vs 223ms for the query collection test), where system load and other factors have however much more impact compared to tests that run around 10 seconds.
+
+So, what has changed in this new major release? In detail:
+
+- Everything that makes sense in the TypeScript environment has been converted (for example `ListTokenSource`, `RuntimeMetaData` and parse tree pattern matching, to name a few). That excludes things like the code point char streams, which directly deal with file and (Java) stream input - aspects that don't matter in TypeScript. Consequently the class `CharStreams` has been removed. Use `CharStream.fromString` to feed your lexer.
+- Neither `BailErrorStrategy` nor `ParserRuleContext` track the original exception in error cases anymore. Instead it is wrapped in the exception thrown (for bailing out) or passed to the error listeners.
+- The runtime has been profiled both with VS Code and Node.js directly, to identify bottlenecks. This showed excessive object creation and release, because of the way DFA generation is implemented. That led to big object initialization and garbage collection penalties. This has been improved and now most time is spent in generated code (which could be improved later). Several measures have been taken to improve speed:
+    - Method and constructor overloading in hot paths can be a performance killer, because of the frequent parameter checks. To counter that, class factories and individual method names have been introduced (e.g. `getTextFromContext` and `getTextFromRange` instead of a single `getText` method).
+    - Pure data holder classes have been converted to interfaces, which appear at runtime as plain objects and safe some of the initialization times.
+    - Some intermediate objects (like temporary `Interval` and `ATNState` instances) have been removed.
+    - Bitsets now use typed arrays instead of array of numbers.
+    - The hash implementation (MurmurHash) has been stripped down to the minimum required code to keep this hot path fast as well.
+    - Hash codes are now cached whereever possible.
+    - The `instanceof` operator is relatively expensive, so it was replaced with checks using a member discriminator in hot paths, where possible (e.g. transition and ATN state types).
+    - `Switch` statements in hot paths have been replaced by factory arrays that reduce determination what to create to a simple array value lookup.
+- A number of public members have been renamed, to match common TypeScript code style (e.g. `INSTANCE` to `instance` or `_parseListener` to `parseListener`).
+- Methods that can return null/undefined now explicitly say so (Java has no explicit type to mark possible null results and the ANTLR4 Java runtime is a bit lax in this regard). This requires now that users of the new runtime have to do more checks for undefined results.
+- The lexer can now be configured at runtime to control what is cached in the DFA (in the Java runtime it's always only ASCII chars) and which code points are acceptable (in the Java runtime always the entire Unicode range).
+- Separated enumeration values (e.g. ATN state types, transition types) have been moved back as public static constants to their respective classes.
+- Accessibility of class members has been adjusted (strict public, protected and private visibility).
+- Duplicated public members (as property and as getter/setter method) have been resolved in favor of the property variant.
+- Most use of `null` has been converted to `undefined` (except in places where null marks special conditions) for a more natural handling in TypeScript.
+- The JS doc in code has been reworked and all unsupported markup been removed.
+- A lot of other code cleanup happened.
+- Test improvements:
+    - Runtime tests have been ported to TypeScript, so they can be debugged and provide a much quicker turnaround.
+    - Benchmarks now take seperated measurements for lexer and parser runs, which much better shows how high the impact of predicates and actions in the lexer is (e.g. 2/3 of the time in the large inserts benchmark is used for lexing input).
+- The release build is no longer minified (and hence larger than before) to avoid trouble with other build tools like terser or webpack.
 
 ### 2.0.11
 
