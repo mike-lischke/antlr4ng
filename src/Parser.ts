@@ -103,15 +103,14 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     #inputStream!: TokenStream;
 
     /**
-     * this is all the parsing support code essentially; most of it is error
-     * recovery stuff.
+     * This is all the parsing support code essentially. Most of it is error recovery stuff.
      */
     public constructor(input: TokenStream) {
         super();
 
         this.precedenceStack.push(0);
         this.syntaxErrors = 0;
-        this.tokenStream = input;
+        this.#inputStream = input;
     }
 
     /** reset the parser's state */

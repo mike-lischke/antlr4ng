@@ -205,6 +205,10 @@ Note: Some of the corpus sizes differ due to the restructuring of the test. Howe
 
 ## Release Notes
 
+### 3.0.2 - 3.0.3
+
+Fixed a number of smaller issues that have been found after the previous release.
+
 ### 3.0.1
 
 Had to make `Lexer.modeStack` public again and allow reading and writing the current lexer mode.
