@@ -52,7 +52,7 @@
         "time-lexer-speed": "node --no-warnings --experimental-vm-modules --loader ts-node/esm tests/api/perf/TimeLexerSpeed.ts",
         "generate-test-parsers": "./build/generate-test-parsers.sh",
         "generate-runtime-tests": "antlr-tgen --config tests/fixtures/config.json",
-        "build-bundle": "esbuild ./src/index.js --main-fields=module,main --bundle --target=esnext --external:immutable --keep-names",
+        "build-bundle": "esbuild ./src/index.js --main-fields=module,main --bundle --target=esnext --keep-names",
         "build-mjs": "npm run build-bundle -- --outfile=dist/index.mjs --format=esm",
         "build-cjs": "npm run build-bundle -- --outfile=dist/index.cjs --format=cjs",
         "generate-xpath-lexer": "node cli/index.js -Dlanguage=TypeScript -o src/tree/xpath/generated -no-visitor -no-listener -Xexact-output-dir src/tree/xpath/XPathLexer.g4",
