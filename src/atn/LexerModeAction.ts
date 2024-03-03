@@ -32,7 +32,7 @@ export class LexerModeAction implements LexerAction {
      * value provided by {@link getMode}.
      */
     public execute(lexer: Lexer): void {
-        lexer.mode(this.mode);
+        lexer.mode = this.mode;
     }
 
     public hashCode(): number {

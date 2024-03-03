@@ -10,9 +10,12 @@
         "ANTLR",
         "ANTLRng",
         "Approximator",
+        "Bitsets",
         "rdbms",
         "runtimes",
         "sakila",
+        "Sonoma",
+        "Unbuffered",
         "unpredicated",
         "whitespaces"
     ],
@@ -33,6 +36,7 @@
         "Wirth",
         "Xexact",
         "bitrix",
+        "instanceof",
         "interp",
         "localctx",
         "longlong",
@@ -46,7 +50,8 @@
         "semctx",
         "sempred",
         "tgen",
-        "ttype"
+        "ttype",
+        "udhr"
     ],
     "import": []
 }

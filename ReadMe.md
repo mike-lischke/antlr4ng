@@ -137,9 +137,9 @@ This suite consists of 530 tests and runs in about 9s.
 
 ### Real World Example
 
-The following table shows the results of the benchmarks that were executed in the [antlr4wasm project](https://github.com/mike-lischke/antlr4wasm/tree/master/benchmarks/mysql). The column for antlr4ng, howevever, contains the current results of this runtime.
+The following table shows the results of the benchmarks that were executed in the [antlr4wasm project](https://github.com/mike-lischke/antlr4wasm/tree/master/benchmarks/mysql). The column for antlr4ng, however, contains the current results of this runtime.
 
-|    | C++ |antlr4ng|antlr4|antlr4ts|antl4wasm|
+|    | C++ |antlr4ng|antlr4|antlr4ts|antlr4wasm|
 |---:|---:|---:|---:|---:|---:|
 |Query Collection (cold)|1340 ms| <ins>184/2160 (2344) ms</ins>| 7984 ms| 3402 ms| 3331 ms|
 |  Bitrix Queries (cold)| 195 ms|  <ins>69/272 (341) ms</ins>| 1134 ms|  444 ms|  998 ms|
@@ -163,7 +163,7 @@ The example file is a copy of the largest test file in [this repository](https:/
 
 ### Lexer Speed Test
 
-Since the Java runtime tests have been ported to TypeScript there's another set of benchmarks, the lexer speed test. This set of tests was created when Unicode support landed in ANTLR4 and measures the speed of lexing different Unicode lexems in a lexer generated from the Java grammar.
+Since the Java runtime tests have been ported to TypeScript there's another set of benchmarks, the lexer speed test. This set of tests was created when Unicode support landed in ANTLR4 and measures the speed of lexing different Unicode lexemes in a lexer generated from the Java grammar.
 
 The original Java execution times have been taken on OS X with a 4 GHz Intel Core i7 (Java VM args: `-Xms2G -Xmx8g`):
 
@@ -205,9 +205,13 @@ Note: Some of the corpus sizes differ due to the restructuring of the test. Howe
 
 ## Release Notes
 
+### 3.0.1
+
+Had to make `Lexer.modeStack` public again and allow reading and writing the current lexer mode.
+
 ### 3.0.0
 
-This release completes the conversion of the Java (and JavaScript) ANTRL4 runtime to TypeScript. It's a significant improvement over the existing TS (and JS) runtimes, as it includes now all relevant parts from the Java runtime and has been optimized for performance. It's now twice as fast for cold runs and 20% faster with a warm parser/lexer. See also the benchmark section below.
+This release completes the conversion of the Java (and JavaScript) ANTLR4 runtime to TypeScript. It's a significant improvement over the existing TS (and JS) runtimes, as it includes now all relevant parts from the Java runtime and has been optimized for performance. It's now twice as fast for cold runs and 20% faster with a warm parser/lexer. See also the benchmark section below.
 
 This makes it the fastest TypeScript (and JS) runtime currently available. The ANTLR4 JavaScript runtime still is slightly faster in short time tests (e.g. 228ms vs 223ms for the query collection test), where system load and other factors have however much more impact compared to tests that run around 10 seconds.
 
@@ -221,7 +225,7 @@ So, what has changed in this new major release? In detail:
     - Some intermediate objects (like temporary `Interval` and `ATNState` instances) have been removed.
     - Bitsets now use typed arrays instead of array of numbers.
     - The hash implementation (MurmurHash) has been stripped down to the minimum required code to keep this hot path fast as well.
-    - Hash codes are now cached whereever possible.
+    - Hash codes are now cached wherever possible.
     - The `instanceof` operator is relatively expensive, so it was replaced with checks using a member discriminator in hot paths, where possible (e.g. transition and ATN state types).
     - `Switch` statements in hot paths have been replaced by factory arrays that reduce determination what to create to a simple array value lookup.
 - A number of public members have been renamed, to match common TypeScript code style (e.g. `INSTANCE` to `instance` or `_parseListener` to `parseListener`).
@@ -235,7 +239,7 @@ So, what has changed in this new major release? In detail:
 - A lot of other code cleanup happened.
 - Test improvements:
     - Runtime tests have been ported to TypeScript, so they can be debugged and provide a much quicker turnaround.
-    - Benchmarks now take seperated measurements for lexer and parser runs, which much better shows how high the impact of predicates and actions in the lexer is (e.g. 2/3 of the time in the large inserts benchmark is used for lexing input).
+    - Benchmarks now take separated measurements for lexer and parser runs, which much better shows how high the impact of predicates and actions in the lexer is (e.g. 2/3 of the time in the large inserts benchmark is used for lexing input).
 - The release build is no longer minified (and hence larger than before) to avoid trouble with other build tools like terser or webpack.
 
 ### 2.0.11
@@ -243,7 +247,7 @@ So, what has changed in this new major release? In detail:
 - Fixed bug #30 ReferenceError: Super constructor may only be called once
 - The entire runtime test library from the Java runtime has now been ported to TypeScript and is used from now on to check the correctness of this runtime.
 - The bit set class used bigint to store the values, which is a problem with bundlers like webpack that have no support for bigint. For this reason that type has been replaced (PR #40 feat: replace bigint and BigUint64Array).
-- The bundle is no longer minified and hence larger than before. Bundling a minfied bundle with other bundlers (like terser) in dependent projects might cause trouble. Additionally, minifying a bundle has no benefit in execution time, it's just a size difference (related bugs: #31, #34, #38).
+- The bundle is no longer minified and hence larger than before. Bundling a minified bundle with other bundlers (like terser) in dependent projects might cause trouble. Additionally, minifying a bundle has no benefit in execution time, it's just a size difference (related bugs: #31, #34, #38).
 
 ### 2.0.10
 

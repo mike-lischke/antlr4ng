@@ -85,6 +85,8 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
     /** The token type for the current token */
     public type = 0;
 
+    public mode: number = Lexer.DEFAULT_MODE;
+
     /** The start column of the current token (the one that was last read by `nextToken`). */
     protected currentTokenColumn = 0;
 
@@ -113,7 +115,6 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
     #hitEOF = false;
 
     #modeStack: number[] = [];
-    #mode: number = Lexer.DEFAULT_MODE;
 
     /**
      * The text to be used for the next token. If this is not null, then the text
@@ -146,7 +147,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
         this.#text = undefined;
 
         this.#hitEOF = false;
-        this.#mode = Lexer.DEFAULT_MODE;
+        this.mode = Lexer.DEFAULT_MODE;
         this.#modeStack = [];
 
         this.interpreter.reset();
@@ -182,7 +183,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
                     this.type = Token.INVALID_TYPE;
                     let ttype = Lexer.SKIP;
                     try {
-                        ttype = this.interpreter.match(this.#input, this.#mode);
+                        ttype = this.interpreter.match(this.#input, this.mode);
                     } catch (e) {
                         if (e instanceof LexerNoViableAltException) {
                             this.notifyListeners(e); // report error
@@ -241,22 +242,22 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
         this.type = Lexer.MORE;
     }
 
-    public mode(m: number): void {
-        this.#mode = m;
-    }
-
     public pushMode(m: number): void {
-        this.#modeStack.push(this.#mode);
-        this.mode(m);
+        this.#modeStack.push(this.mode);
+        this.mode = m;
     }
 
     public popMode(): number {
         if (this.#modeStack.length === 0) {
             throw new Error("Empty Stack");
         }
-        this.mode(this.#modeStack.pop()!);
+        this.mode = this.#modeStack.pop()!;
 
-        return this.#mode;
+        return this.mode;
+    }
+
+    public get modeStack(): number[] {
+        return this.#modeStack;
     }
 
     /**
