@@ -81,15 +81,15 @@ You can then use the generated parser to walk the parse tree, for example with a
 import { ExpressionVisitor } from "./generated/ExpressionVisitor.js";
 
 class MyVisitor extends ExpressionVisitor<number> {
-  visitAdd(ctx: AddContext): number {
+  public visitAdd = (ctx: AddContext): number {
     return this.visit(ctx.expression(0)) + this.visit(ctx.expression(1));
   }
 
-  visitMultiply(ctx: MultiplyContext): number {
+  public visitMultiply = (ctx: MultiplyContext): number {
     return this.visit(ctx.expression(0)) * this.visit(ctx.expression(1));
   }
 
-  visitNumber(ctx: NumberContext): number {
+  public visitNumber = (ctx: NumberContext): number {
     return Number.parseInt(ctx.NUMBER().text);
   }
 }
