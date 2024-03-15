@@ -100,19 +100,19 @@ const result = visitor.visit(tree);
 
 ## Installing Development Dependencies
 
-While antlr4ng has no runtime dependencies (no 3rd party libs are used at runtime), there are a number dev dependencies that are used to run the benchmarks or create custom builds. So, before you do anything else in the repo after cloning it run the depedency installation by executing
+While antlr4ng has no runtime dependencies (no 3rd party libs are used at runtime), there are a number dev dependencies that are used to run the benchmarks or create custom builds. So, before you do anything else in the repo after cloning it, install the depedencies by running
 
 ```bash
 npm i
 ```
 
-in the root folder of the repo. Once this completed successfully you should be able to use any of the NPM scripts in the project. For example, to generate a release build without source maps run:
+in the root folder of the repo. Once this has completed successfully you should be able to use any of the NPM scripts in the project. For example, to generate a release build without source maps run:
 
 ```bash
 npm run build
 ```
 
-which will create the folder `dist/` and store the bundled sources for CommonJS and ESM.
+which will create the `dist/` folder and store the bundled sources for CommonJS and ESM there.
 
 ## Tests and Benchmarks
 
