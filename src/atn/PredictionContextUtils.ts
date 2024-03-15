@@ -246,6 +246,10 @@ const mergeArrays = (a: ArrayPredictionContext, b: ArrayPredictionContext, rootI
             mergeCache.set(a, b, a);
         }
 
+        if (PredictionContext.traceATNSimulator) {
+            console.log("mergeArrays a=" + a + ",b=" + b + " -> a");
+        }
+
         return a;
     }
 
@@ -261,6 +265,10 @@ const mergeArrays = (a: ArrayPredictionContext, b: ArrayPredictionContext, rootI
 
     if (mergeCache !== null) {
         mergeCache.set(a, b, merged);
+    }
+
+    if (PredictionContext.traceATNSimulator) {
+        console.log("mergeArrays a=" + a + ",b=" + b + " -> " + merged);
     }
 
     return merged;

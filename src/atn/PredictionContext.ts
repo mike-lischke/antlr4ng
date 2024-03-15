@@ -23,7 +23,7 @@ export abstract class PredictionContext {
     // TODO: Temporarily here. Should be moved to EmptyPredictionContext. It's initialized in that context class.
     public static EMPTY: PredictionContext;
 
-    public static trace_atn_sim = false;
+    public static traceATNSimulator = false;
 
     #cachedHashCode: number;
 

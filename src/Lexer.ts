@@ -243,6 +243,10 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
     }
 
     public pushMode(m: number): void {
+        if (LexerATNSimulator.debug) {
+            console.log("pushMode " + m);
+        }
+
         this.#modeStack.push(this.mode);
         this.mode = m;
     }
@@ -251,6 +255,11 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
         if (this.#modeStack.length === 0) {
             throw new Error("Empty Stack");
         }
+
+        if (LexerATNSimulator.debug) {
+            console.log("popMode back to " + this.#modeStack.slice(0, -1));
+        }
+
         this.mode = this.#modeStack.pop()!;
 
         return this.mode;
