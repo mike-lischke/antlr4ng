@@ -157,15 +157,15 @@ The following table shows the results of the benchmarks that were executed in th
 
 |    | C++ |antlr4ng|antlr4|antlr4ts|antlr4wasm|
 |---:|---:|---:|---:|---:|---:|
-|Query Collection (cold)|1340 ms| <ins>184/2160 (2344) ms</ins>| 7984 ms| 3402 ms| 3331 ms|
-|  Bitrix Queries (cold)| 195 ms|  <ins>69/272 (341) ms</ins>| 1134 ms|  444 ms|  998 ms|
-|   Large Inserts (cold)|4981 ms|<ins>6323/2279 (8602) ms</ins>|10695 ms|11483 ms|34243 ms|
-|Query Collection (warm)| 133 ms|  129/100 (229) ms|  <ins>223 ms</ins>|  259 ms| 1177 ms|
-|  Bitrix Queries (warm)|  70 ms|  63/73 (136) ms|  <ins>110 ms</ins>|  131 ms|  815 ms|
-|   Large Inserts (warm)|4971 ms|<ins>6368/2284 (8652) ms</ins>|10593 ms|11287 ms|36317 ms|
+|Query Collection (cold)|1340 ms| <ins>187/2232 (2420) ms</ins>| 7984 ms| 3402 ms| 3331 ms|
+|  Bitrix Queries (cold)| 195 ms|  <ins>68/283 (351) ms</ins>| 1134 ms|  444 ms|  998 ms|
+|   Large Inserts (cold)|4981 ms|<ins>6295/2277 (8572) ms</ins>|10695 ms|11483 ms|34243 ms|
+|Total (cold)           |6546 ms|<ins>6551/4792 (11343) ms</ins>|19878 ms|15403 ms|38641 ms|
 |||||||
-|Total (cold)           |6546 ms|<ins>6576/4711 (11287) ms</ins>|19878 ms|15403 ms|38641 ms|
-|Total (warm)           |5198 ms|<ins>6561/2460 (9021) ms</ins>|10944 ms|11697 ms|38329 ms|
+|Query Collection (warm)| 133 ms|  130/102 (232) ms|  <ins>223 ms</ins>|  259 ms| 1177 ms|
+|  Bitrix Queries (warm)|  70 ms|  63/73 (136) ms|  <ins>110 ms</ins>|  131 ms|  815 ms|
+|   Large Inserts (warm)|4971 ms|<ins>6281/2281 (8562) ms</ins>|10593 ms|11287 ms|36317 ms|
+|Total (warm)           |5198 ms|<ins>6474/2456 (8931) ms</ins>|10944 ms|11697 ms|38329 ms|
 
 Underlined entries are the smallest (not counting C++, which beats them all). For antlr4ng, the times are split into lexing and parsing. Note the high lexer execution times, caused by the large number of predicates (126) + lexer actions (40) in the MySQL lexer.
 
@@ -202,24 +202,31 @@ The original Java execution times have been taken on OS X with a 4 GHz Intel Cor
 The execute times on last release of this runtime have been measured as:
 
 ```bash
-                loadNewUTF8 average time   354µs size  29191b over 3500 loads of 29191 symbols from Parser.java
-                loadNewUTF8 average time    74µs size   7552b over 3500 loads of  7552 symbols from RuleContext.java
-                loadNewUTF8 average time   120µs size  31784b over 3500 loads of 13379 symbols from udhr_hin.txt
+                loadNewUTF8 average time   353µs size  29191b over 3500 loads of 29191 symbols from Parser.java
+                loadNewUTF8 average time    75µs size   7552b over 3500 loads of  7552 symbols from RuleContext.java
+                loadNewUTF8 average time   121µs size  31784b over 3500 loads of 13379 symbols from udhr_hin.txt
 
-             lexNewJavaUTF8 average time   669µs over 2000 runs of 29191 symbols
-             lexNewJavaUTF8 average time  1923µs over 2000 runs of 29191 symbols DFA cleared
+             lexNewJavaUTF8 average time   706µs over 2000 runs of 29191 symbols
+             lexNewJavaUTF8 average time  1961µs over 2000 runs of 29191 symbols DFA cleared
 
-         lexNewGraphemeUTF8 average time  8098µs over  400 runs of  6614 symbols from udhr_kor.txt
-         lexNewGraphemeUTF8 average time  8223µs over  400 runs of  6614 symbols from udhr_kor.txt DFA cleared
-         lexNewGraphemeUTF8 average time 12800µs over  400 runs of 13379 symbols from udhr_hin.txt
-         lexNewGraphemeUTF8 average time 12856µs over  400 runs of 13379 symbols from udhr_hin.txt DFA cleared
-         lexNewGraphemeUTF8 average time   205µs over  400 runs of    85 symbols from emoji.txt
-         lexNewGraphemeUTF8 average time   235µs over  400 runs of    85 symbols from emoji.txt DFA cleared
+         lexNewGraphemeUTF8 average time  7836µs over  400 runs of  6614 symbols from udhr_kor.txt
+         lexNewGraphemeUTF8 average time  7946µs over  400 runs of  6614 symbols from udhr_kor.txt DFA cleared
+         lexNewGraphemeUTF8 average time 12945µs over  400 runs of 13379 symbols from udhr_hin.txt
+         lexNewGraphemeUTF8 average time 13079µs over  400 runs of 13379 symbols from udhr_hin.txt DFA cleared
+         lexNewGraphemeUTF8 average time   203µs over  400 runs of    85 symbols from emoji.txt
+         lexNewGraphemeUTF8 average time   233µs over  400 runs of    85 symbols from emoji.txt DFA cleared
 ```
 
 Note: Some of the corpus sizes differ due to the restructuring of the test. However, the numbers are not directly comparable anyway, as they were taken on different machines.
 
 ## Release Notes
+
+### 3.0.4
+
+- Fixed visitor example in this readme file and added build instructions.
+- Added back all debug output in the simulators and the prediction context. Useful for finding low level problems.
+- Fixed bug #47 Antlr4ng fails to parse codeql/examples/alias.qll
+- Fixed bug #46 ParserRulecontext.parent() incorrectly typed
 
 ### 3.0.2 - 3.0.3
 
