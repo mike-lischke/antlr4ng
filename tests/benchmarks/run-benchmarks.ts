@@ -205,7 +205,9 @@ const parseFiles = (logResults: boolean): Array<[number, number]> => {
         });
 
         if (logResults) {
-            console.log(`    lexing: ${Math.round(tokenizationTime)} ms, parsing: ${Math.round(parseTime)} ms`);
+            const total = tokenizationTime + parseTime;
+            console.log(`    lexing: ${Math.round(tokenizationTime)} ms, parsing: ${Math.round(parseTime)} ms ` +
+                `(${Math.round(total)} ms)`);
         }
 
         result.push([tokenizationTime, parseTime]);
@@ -224,7 +226,9 @@ const parserRun = (showOutput: boolean): Array<[number, number]> => {
         const lexTime = result.reduce((sum, time) => { return sum + time[0]; }, 0);
         const parseTime = result.reduce((sum, time) => { return sum + time[1]; }, 0);
         if (showOutput) {
-            console.log(`Overall lexing: ${Math.round(lexTime)} ms, parsing: ${Math.round(parseTime)} ms`);
+            const total = lexTime + parseTime;
+            console.log(`Overall lexing: ${Math.round(lexTime)} ms, parsing: ${Math.round(parseTime)} ms ` +
+                `(${Math.round(total)} ms)`);
 
         }
         result.push([lexTime, parseTime]);
@@ -277,11 +281,13 @@ for (const row of transposed) {
 }
 
 for (let i = 0; i < averageTimes.length - 1; ++i) {
+    const total = averageTimes[i][0] + averageTimes[i][1];
     console.log(`    File ${i + 1} lexing: ${Math.round(averageTimes[i][0])} ms, ` +
-        `parsing: ${Math.round(averageTimes[i][1])} ms`);
+        `parsing: ${Math.round(averageTimes[i][1])} ms (${Math.round(total)} ms)`);
 }
 
+const total = averageTimes[averageTimes.length - 1][0] + averageTimes[averageTimes.length - 1][1];
 console.log(`Overall lexing: ${Math.round(averageTimes[averageTimes.length - 1][0])} ms, ` +
-    `parsing took: ${Math.round(averageTimes[averageTimes.length - 1][1])} ms`);
+    `parsing took: ${Math.round(averageTimes[averageTimes.length - 1][1])} ms (${Math.round(total)} ms)`);
 
 console.log("Done");

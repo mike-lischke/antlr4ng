@@ -228,8 +228,8 @@ export class ParserRuleContext implements ParseTree {
         }
     }
 
-    public get parent(): this | null {
-        return this.#parent as this;
+    public get parent(): ParserRuleContext | null {
+        return this.#parent;
     }
 
     public set parent(parent: ParserRuleContext | null) {

@@ -1750,33 +1750,34 @@ export class ParserATNSimulator extends ATNSimulator {
      * If `D` is {@link ERROR}, this method returns {@link ERROR} and
      * does not change the DFA.
      *
-     * @param dfa The dfa
-     * @param D The DFA state to add
-     * @returns The state stored in the DFA. This will be either the existing
-     * state if `D` is already in the DFA, or `D` itself if the
-     * state was not already present
+     * @param dfa The dfa.
+     * @param newState The DFA state to add.
+     *
+     * @returns The state stored in the DFA. This will be either the existing state if `newState` is already in
+     *          the DFA, or `newState` itself if the state was not already present.
      */
-    protected addDFAState(dfa: DFA, D: DFAState): DFAState {
-        if (D === ATNSimulator.ERROR) {
-            return D;
+    protected addDFAState(dfa: DFA, newState: DFAState): DFAState {
+        if (newState === ATNSimulator.ERROR) {
+            return newState;
         }
-        const existing = dfa.getState(D);
+
+        const existing = dfa.getState(newState);
         if (existing !== null) {
             return existing;
         }
 
-        if (!D.configs.readOnly) {
-            D.configs.optimizeConfigs(this);
-            D.configs.setReadonly(true);
+        if (!newState.configs.readOnly) {
+            newState.configs.optimizeConfigs(this);
+            newState.configs.setReadonly(true);
         }
 
         if (ParserATNSimulator.traceATNSimulator) {
-            console.log("addDFAState new " + D);
+            console.log("addDFAState new " + newState);
         }
 
-        dfa.addState(D);
+        dfa.addState(newState);
 
-        return D;
+        return newState;
     }
 
     protected reportAttemptingFullContext(dfa: DFA, conflictingAlts: BitSet, configs: ATNConfigSet, startIndex: number,

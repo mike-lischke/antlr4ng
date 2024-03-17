@@ -15,8 +15,9 @@ import { BitSet } from "../misc/BitSet.js";
 import { ATNState } from "./ATNState.js";
 import { ATN } from "./ATN.js";
 import { ParserRuleContext } from "../ParserRuleContext.js";
-import { MurmurHash } from "../utils/MurmurHash.js";
 import { Transition } from "./Transition.js";
+import { HashSet } from "../misc/HashSet.js";
+import { ATNConfig } from "./ATNConfig.js";
 
 export class LL1Analyzer {
     /**
@@ -46,7 +47,7 @@ export class LL1Analyzer {
         const look = new Array<IntervalSet>(count);
         for (let alt = 0; alt < count; alt++) {
             const set = new IntervalSet();
-            const lookBusy = new Set<number>();
+            const lookBusy = new HashSet<ATNConfig>();
             this.doLook(s.transitions[alt].target, undefined, PredictionContext.EMPTY, set, lookBusy, new BitSet(),
                 false, false);
 
@@ -83,8 +84,8 @@ export class LL1Analyzer {
         this.#atn = atn;
         const r = new IntervalSet();
 
-        const lookContext = ctx ? predictionContextFromRuleContext(atn, ctx) : undefined;
-        this.doLook(s, stopState, lookContext, r, new Set(), new BitSet(), true, true);
+        const lookContext = ctx ? predictionContextFromRuleContext(atn, ctx) : null;
+        this.doLook(s, stopState, lookContext, r, new HashSet(), new BitSet(), true, true);
 
         return r;
     }
@@ -119,28 +120,13 @@ export class LL1Analyzer {
      * outermost context is reached. This parameter has no effect if `ctx`
      * is `null`.
      */
-    private doLook(s: ATNState, stopState: ATNState | undefined, ctx: PredictionContext | undefined, look: IntervalSet,
-        lookBusy: Set<number>, calledRuleStack: BitSet, seeThruPreds: boolean, addEOF: boolean): void {
-
-        // `lookBusy` is essentially a standard recursion stopper. It's based on the given configuration details.
-        // The original code created an instance of `ATNConfig` just for that purpose. However, some of the details
-        // are always the same (e.g. `alt` is always 0 and the semantic context is alway `NONE`). With this in mind,
-        // we can just create a local hash code and use it to check if we've already visited the current state with
-        // the current context.
-        // There's a small risk here: if the hash code is the same for two different configurations, we might end up
-        // not visiting a state that we should visit. However, the probability of that happening is very low and the
-        // runtime tests all succeed, so we're good to go.
-
-        let hashCode = MurmurHash.initialize(7);
-        hashCode = MurmurHash.update(hashCode, s.stateNumber);
-        hashCode = MurmurHash.updateFromComparable(hashCode, ctx);
-        hashCode = MurmurHash.finish(hashCode, 2);
-
-        const size = lookBusy.size;
-        lookBusy.add(hashCode);
-        if (size === lookBusy.size) { // Size didn't change, so we've already visited this state with this context.
+    private doLook(s: ATNState, stopState: ATNState | undefined, ctx: PredictionContext | null, look: IntervalSet,
+        lookBusy: HashSet<ATNConfig>, calledRuleStack: BitSet, seeThruPreds: boolean, addEOF: boolean): void {
+        const c = ATNConfig.createWithContext(s, 0, ctx);
+        if (lookBusy.get(c)) {
             return;
         }
+        lookBusy.add(c);
 
         if (s === stopState) {
             if (!ctx) {
@@ -172,7 +158,7 @@ export class LL1Analyzer {
                     // run thru all possible stack tops in ctx
                     for (let i = 0; i < ctx.length; i++) {
                         const returnState = this.#atn.states[ctx.getReturnState(i)]!;
-                        this.doLook(returnState, stopState, ctx.getParent(i) ?? undefined, look, lookBusy,
+                        this.doLook(returnState, stopState, ctx.getParent(i), look, lookBusy,
                             calledRuleStack, seeThruPreds, addEOF);
                     }
                 } finally {
@@ -192,7 +178,7 @@ export class LL1Analyzer {
                         continue;
                     }
 
-                    const newContext = SingletonPredictionContext.create(ctx,
+                    const newContext = SingletonPredictionContext.create(ctx ?? undefined,
                         (t as RuleTransition).followState.stateNumber);
                     try {
                         calledRuleStack.set(t.target.ruleIndex);

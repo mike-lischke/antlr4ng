@@ -69,7 +69,7 @@ export class ATNConfig {
         return new ATNConfig(old, old.state, old.context, semanticContext ?? old.semanticContext);
     }
 
-    public static createWithContext(state: ATNState, alt: number, context: PredictionContext,
+    public static createWithContext(state: ATNState, alt: number, context: PredictionContext | null,
         semanticContext?: SemanticContext): ATNConfig {
         return new ATNConfig({ alt }, state, context, semanticContext);
     }
