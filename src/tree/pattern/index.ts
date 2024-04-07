@@ -12,3 +12,5 @@ export * from "./RuleTagToken.js";
 export * from "./TagChunk.js";
 export * from "./TextChunk.js";
 export * from "./TokenTagToken.js";
+export * from "./CannotInvokeStartRuleError.js";
+export * from "./StartRuleDoesNotConsumeFullPatternError.js";

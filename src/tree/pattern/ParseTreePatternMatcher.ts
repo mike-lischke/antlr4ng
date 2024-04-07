@@ -20,10 +20,12 @@ import { MultiMap } from "../../misc/MultiMap.js";
 import { ParseCancellationException } from "../../misc/ParseCancellationException.js";
 import type { ParseTree } from "../ParseTree.js";
 import { TerminalNode } from "../TerminalNode.js";
+import { CannotInvokeStartRuleError } from "./CannotInvokeStartRuleError.js";
 import type { Chunk } from "./Chunk.js";
 import { ParseTreeMatch } from "./ParseTreeMatch.js";
 import { ParseTreePattern } from "./ParseTreePattern.js";
 import { RuleTagToken } from "./RuleTagToken.js";
+import { StartRuleDoesNotConsumeFullPatternError } from "./StartRuleDoesNotConsumeFullPatternError.js";
 import { TagChunk } from "./TagChunk.js";
 import { TextChunk } from "./TextChunk.js";
 import { TokenTagToken } from "./TokenTagToken.js";
@@ -86,20 +88,6 @@ import { TokenTagToken } from "./TokenTagToken.js";
  * `\<` and `\>`.
  */
 export class ParseTreePatternMatcher {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    public static CannotInvokeStartRule = class CannotInvokeStartRule extends Error {
-        public constructor(e: Error) {
-            super();
-            this.cause = e;
-        }
-    };
-
-    // Fixes https://github.com/antlr/antlr4/issues/413
-    // "Tree pattern compilation doesn't check for a complete parse"
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    public static StartRuleDoesNotConsumeFullPattern = class StartRuleDoesNotConsumeFullPattern extends Error {
-    };
-
     protected start = "<";
     protected stop = ">";
     protected escape = "\\";
@@ -243,7 +231,7 @@ export class ParseTreePatternMatcher {
             } else if (eOrRe instanceof RecognitionException) {
                 throw eOrRe;
             } else if (eOrRe instanceof Error) {
-                throw new ParseTreePatternMatcher.CannotInvokeStartRule(eOrRe);
+                throw new CannotInvokeStartRuleError(eOrRe);
             } else {
                 throw eOrRe;
             }
@@ -251,7 +239,7 @@ export class ParseTreePatternMatcher {
 
         // Make sure tree pattern compilation checks for a complete parse
         if (tokens.LA(1) !== Token.EOF) {
-            throw new ParseTreePatternMatcher.StartRuleDoesNotConsumeFullPattern();
+            throw new StartRuleDoesNotConsumeFullPatternError();
         }
 
         return new ParseTreePattern(this, pattern, patternRuleIndex, tree);
