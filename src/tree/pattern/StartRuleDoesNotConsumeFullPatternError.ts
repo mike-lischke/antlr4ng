@@ -6,6 +6,5 @@
 
 // Fixes https://github.com/antlr/antlr4/issues/413
 // "Tree pattern compilation doesn't check for a complete parse"
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export class StartRuleDoesNotConsumeFullPatternError extends Error {
 };

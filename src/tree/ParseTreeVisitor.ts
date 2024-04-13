@@ -5,9 +5,8 @@
  */
 
 import { type ErrorNode } from "./ErrorNode.js";
-import { type TerminalNode } from "./TerminalNode.js";
 import { type ParseTree } from "./ParseTree.js";
-import { type ParserRuleContext } from "../ParserRuleContext.js";
+import { type TerminalNode } from "./TerminalNode.js";
 
 /**
  * This interface defines the basic notion of a parse tree visitor. Generated
@@ -34,7 +33,7 @@ export interface ParseTreeVisitor<T> {
      * @param node The {@link RuleNode} whose children should be visited.
      * @returns The result of visiting the children of the node.
      */
-    visitChildren(node: ParserRuleContext): T | null;
+    visitChildren(node: ParseTree): T | null;
 
     /**
      * Visit a terminal node, and return a user-defined result of the operation.

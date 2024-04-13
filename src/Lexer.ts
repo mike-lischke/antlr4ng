@@ -110,7 +110,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
 
     /**
      * Once we see EOF on char stream, next token will be EOF.
-     *  If you have DONE : EOF ; then you see DONE EOF.
+     * If you have DONE : EOF ; then you see DONE EOF.
      */
     #hitEOF = false;
 
@@ -127,6 +127,8 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
 
     public constructor(input: CharStream, options?: Partial<LexerOptions>) {
         super();
+
+        // Override the default options with the provided options.
         this.options = { ...this.options, ...options };
         this.#input = input;
         this.#factory = CommonTokenFactory.DEFAULT;
@@ -313,7 +315,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
      */
     public getAllTokens(): Token[] {
         const tokens = [];
-        let t = this.nextToken()!;
+        let t = this.nextToken();
         while (t.type !== Token.EOF) {
             tokens.push(t);
             t = this.nextToken()!;
