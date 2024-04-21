@@ -12,7 +12,7 @@ This package started as a fork of the official ANTLR4 JavaScript runtime and has
 - No differentiation between node and browser environments.
 - Includes the `antlr4ng-cli` tool to generate parser files compatible with this runtime. This tool uses a custom build of the ANTLR4 tool.
 
-This package uses newer ECMA language features, like static initialization and private properites. This requires ES6 or newer. All major browsers (and Node.js) support this version since a while already.
+> This package uses newer ECMA language features, like static initialization and private properites. This requires ES6 or newer. All major browsers (and Node.js) support this version since a while already.
 
 ## Installation
 
