@@ -12,7 +12,7 @@ This package started as a fork of the official ANTLR4 JavaScript runtime and has
 - No differentiation between node and browser environments.
 - Includes the `antlr4ng-cli` tool to generate parser files compatible with this runtime. This tool uses a custom build of the ANTLR4 tool.
 
-> This package uses newer ECMA language features, like static initialization and private properites. This requires ES6 or newer. All major browsers (and Node.js) support this version since a while already.
+> The package requires ES2022 (ES6) or newer, for features like static initialization blocks in classes and private properties (`#field`). It is recommended to use the latest TypeScript version.
 
 ## Installation
 
@@ -39,8 +39,6 @@ Additionally, some members have been renamed to more TypeScript like names. The 
 | `Parser._errHandler` | `Parser.errorHandler` |
 | `Parser._input` | `Parser.inputStream` |
 | `Recognizer._interp` | `Recognizer.interpreter` |
-
-The package requires ES2022 or newer, for features like static initialization blocks in classes and private fields (`#field`). It is recommended to use the latest TypeScript version.
 
 ## Usage
 
