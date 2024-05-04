@@ -11,6 +11,8 @@ import { type Interval } from "./misc/Interval.js";
 import { IntStream } from "./IntStream.js";
 
 export interface CharStream extends IntStream {
+    name: string;
+
     /**
      * Reset the stream so that it's in the same state it was
      * when the object was created *except* the data array is not
