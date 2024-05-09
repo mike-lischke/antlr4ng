@@ -114,6 +114,23 @@ export class Trees {
         return ancestors;
     }
 
+    /**
+     * Return true if t is u's parent or a node on path to root from u.
+     */
+    public static isAncestorOf(t: ParseTree | null, u: ParseTree | null): boolean {
+        if (t === null || u === null || t.parent === null) {
+            return false;
+        }
+
+        let p: ParseTree | null = u.parent;
+        while (p !== null) {
+            if (t === p) { return true; }
+            p = p.parent;
+        }
+
+        return false;
+    };
+
     public static findAllTokenNodes(t: ParseTree, ttype: number): ParseTree[] {
         return Trees.findAllNodes(t, ttype, true);
     }
@@ -137,6 +154,33 @@ export class Trees {
 
         return nodes;
     }
+
+    /**
+     * Find smallest subtree of t enclosing range startTokenIndex..stopTokenIndex
+     * inclusively using post order traversal. Recursive depth-first-search.
+     */
+    public static getRootOfSubtreeEnclosingRegion = (t: ParseTree, startTokenIndex: number,
+        stopTokenIndex: number): ParserRuleContext | null => {
+        const n = t.getChildCount();
+        for (let i = 0; i < n; i++) {
+            const child = t.getChild(i)!;
+            const r = this.getRootOfSubtreeEnclosingRegion(child, startTokenIndex, stopTokenIndex);
+            if (r !== null) {
+                return r;
+            }
+        }
+
+        if (t instanceof ParserRuleContext) {
+            if (startTokenIndex >= t.start!.tokenIndex && // is range fully contained in t?
+                (t.stop === null || stopTokenIndex <= t.stop.tokenIndex)) {
+                // note: t.stop === null likely implies that we bailed out of parser and there's nothing
+                // to the right.
+                return t;
+            }
+        }
+
+        return null;
+    };
 
     private static doFindAllNodes(t: ParseTree, index: number, findTokens: boolean, nodes: ParseTree[]): void {
         // check this node (the root) first

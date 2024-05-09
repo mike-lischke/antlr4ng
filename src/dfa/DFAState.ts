@@ -117,6 +117,22 @@ export class DFAState {
         return a.configs!.equals(b.configs!);
     };
 
+    /**
+     * @returns the set of all alts mentioned by all ATN configurations in this DFA state.
+     */
+    public getAltSet(): Set<number> | null {
+        const alts = new Set<number>();
+        for (const config of this.configs) {
+            alts.add(config.alt);
+        }
+
+        if (alts.size === 0) {
+            return null;
+        }
+
+        return alts;
+    }
+
     public toString(): string {
         let buf = "";
         buf += this.stateNumber;
