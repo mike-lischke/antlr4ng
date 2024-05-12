@@ -453,8 +453,8 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
 
     public addContextToParseTree(): void {
         // add current context to parent if we have a parent
-        if (this.context?.parent !== null) {
-            this.context!.parent.addChild(this.context!);
+        if (this.context?.parent) {
+            this.context.parent.addChild(this.context);
         }
     }
 
@@ -485,9 +485,9 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         // if we have new localctx, make sure we replace existing ctx
         // that is previous child of parse tree
         if (this.buildParseTrees && this.context !== localctx) {
-            if (this.context!.parent !== null) {
-                this.context!.parent.removeLastChild();
-                this.context!.parent.addChild(localctx);
+            if (this.context?.parent) {
+                this.context.parent.removeLastChild();
+                this.context.parent.addChild(localctx);
             }
         }
         this.context = localctx;
@@ -502,9 +502,9 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     public getPrecedence(): number {
         if (this.precedenceStack.length === 0) {
             return -1;
-        } else {
-            return this.precedenceStack[this.precedenceStack.length - 1];
         }
+
+        return this.precedenceStack[this.precedenceStack.length - 1];
     }
 
     public enterRecursionRule(localctx: ParserRuleContext, state: number, ruleIndex: number, precedence: number): void {
@@ -567,11 +567,6 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
 
     public override precpred(_localctx: ParserRuleContext | null, precedence: number): boolean {
         return precedence >= this.precedenceStack[this.precedenceStack.length - 1];
-    }
-
-    public inContext(_context: string): boolean {
-        // TODO: useful in parser?
-        return false;
     }
 
     /**

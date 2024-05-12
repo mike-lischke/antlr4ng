@@ -158,8 +158,8 @@ export class LL1Analyzer {
                     // run thru all possible stack tops in ctx
                     for (let i = 0; i < ctx.length; i++) {
                         const returnState = this.#atn.states[ctx.getReturnState(i)]!;
-                        this.doLook(returnState, stopState, ctx.getParent(i), look, lookBusy,
-                            calledRuleStack, seeThruPreds, addEOF);
+                        this.doLook(returnState, stopState, ctx.getParent(i), look, lookBusy, calledRuleStack,
+                            seeThruPreds, addEOF);
                     }
                 } finally {
                     if (removed) {
