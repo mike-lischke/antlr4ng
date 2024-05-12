@@ -6,7 +6,7 @@
 
 /* eslint-disable jsdoc/require-returns, jsdoc/require-param */
 
-import { isToken } from "../Token.js";
+import { Token, isToken } from "../Token.js";
 import { ParserRuleContext } from "../ParserRuleContext.js";
 
 import { escapeWhitespace } from "../utils/helpers.js";
@@ -14,6 +14,7 @@ import { ErrorNode } from "./ErrorNode.js";
 import { TerminalNode } from "./TerminalNode.js";
 import { ParseTree } from "./ParseTree.js";
 import { Parser } from "../Parser.js";
+import { CommonToken } from "../CommonToken.js";
 
 /** A set of utility routines useful for all kinds of ANTLR trees. */
 export class Trees {
@@ -159,8 +160,8 @@ export class Trees {
      * Find smallest subtree of t enclosing range startTokenIndex..stopTokenIndex
      * inclusively using post order traversal. Recursive depth-first-search.
      */
-    public static getRootOfSubtreeEnclosingRegion = (t: ParseTree, startTokenIndex: number,
-        stopTokenIndex: number): ParserRuleContext | null => {
+    public static getRootOfSubtreeEnclosingRegion(t: ParseTree, startTokenIndex: number,
+        stopTokenIndex: number): ParserRuleContext | null {
         const n = t.getChildCount();
         for (let i = 0; i < n; i++) {
             const child = t.getChild(i)!;
@@ -180,6 +181,31 @@ export class Trees {
         }
 
         return null;
+    };
+
+    /**
+     * Replace any subtree siblings of root that are completely to left
+     * or right of lookahead range with a CommonToken(Token.INVALID_TYPE,"...")
+     * node. The source interval for t is not altered to suit smaller range!
+     *
+     * WARNING: destructive to t.
+     */
+    public static stripChildrenOutOfRange(t: ParserRuleContext | null, root: ParserRuleContext, startIndex: number,
+        stopIndex: number): void {
+        if (t === null) {
+            return;
+        }
+
+        for (let i = 0; i < t.getChildCount(); i++) {
+            const child = t.getChild(i)!;
+            const range = child.getSourceInterval();
+            if (t instanceof ParserRuleContext && (range.stop < startIndex || range.start > stopIndex)) {
+                if (this.isAncestorOf(child, root)) { // replace only if subtree doesn't have displayed root
+                    const abbrev = CommonToken.fromType(Token.INVALID_TYPE, "...");
+                    t.children[i] = new TerminalNode(abbrev);
+                }
+            }
+        }
     };
 
     private static doFindAllNodes(t: ParseTree, index: number, findTokens: boolean, nodes: ParseTree[]): void {

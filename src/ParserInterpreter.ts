@@ -34,6 +34,7 @@ import { Transition } from "./atn/Transition.js";
 
 export class ParserInterpreter extends Parser {
     public rootContext: InterpreterRuleContext;
+    public overrideDecisionRoot: InterpreterRuleContext | null = null;
 
     protected parentContextStack: Array<[ParserRuleContext | null, number]> = [];
 
@@ -42,8 +43,6 @@ export class ParserInterpreter extends Parser {
     #overrideDecisionInputIndex = -1;
     #overrideDecisionAlt = -1;
     #overrideDecisionReached = false;
-
-    #overrideDecisionRoot: InterpreterRuleContext | null = null;
 
     #grammarFileName: string;
     #atn: ATN;
@@ -82,7 +81,7 @@ export class ParserInterpreter extends Parser {
         super.reset();
 
         this.#overrideDecisionReached = false;
-        this.#overrideDecisionRoot = null;
+        this.overrideDecisionRoot = null;
     }
 
     public override get atn(): ATN {
@@ -163,8 +162,12 @@ export class ParserInterpreter extends Parser {
         this.#overrideDecisionAlt = forcedAlt;
     }
 
-    public get overrideDecisionRoot(): InterpreterRuleContext | null {
-        return this.#overrideDecisionRoot;
+    public get overrideDecision(): number {
+        return this.#overrideDecision;
+    }
+
+    public get overrideDecisionInputIndex(): number {
+        return this.#overrideDecisionInputIndex;
     }
 
     public override enterRecursionRule(localctx: ParserRuleContext, state: number, ruleIndex: number,

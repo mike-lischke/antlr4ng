@@ -71,9 +71,9 @@ export interface Token {
     get tokenSource(): TokenSource | null;
 
     /**
-     * Gets the {@link CharStream} from which this token was derived.
+     * Gets or sets the {@link CharStream} from which this token was derived.
      */
-    get inputStream(): CharStream | null;
+    inputStream: CharStream | null;
 }
 
 export namespace Token {

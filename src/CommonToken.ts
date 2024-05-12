@@ -99,12 +99,7 @@ export class CommonToken implements WritableToken {
      * @param token The token to copy.
      */
     public static fromToken(token: Token): CommonToken {
-        let source: [TokenSource | null, CharStream | null];
-        if ("source" in token) {
-            source = (token as CommonToken).source;
-        } else {
-            source = [token.tokenSource, token.inputStream];
-        }
+        const source: [TokenSource | null, CharStream | null] = [token.tokenSource, token.inputStream];
 
         return new CommonToken({
             type: token.type,
@@ -140,6 +135,10 @@ export class CommonToken implements WritableToken {
 
     public get inputStream(): CharStream | null {
         return this.source[1];
+    }
+
+    public set inputStream(input: CharStream | null) {
+        this.source[1] = input;
     }
 
     /**
