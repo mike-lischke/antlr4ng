@@ -121,6 +121,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         this.errorHandler.reset(this);
         this.context = null;
         this.syntaxErrors = 0;
+        this.matchedEOF = false;
         this.setTrace(false);
         this.precedenceStack = [];
         this.precedenceStack.push(0);
@@ -150,6 +151,10 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     public match(ttype: number): Token {
         let t = this.getCurrentToken();
         if (t.type === ttype) {
+            if (ttype === Token.EOF) {
+                this.matchedEOF = true;
+            }
+
             this.errorHandler.reportMatch(this);
             this.consume();
         } else {
@@ -473,8 +478,14 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     }
 
     public exitRule(): void {
-        this.context!.stop = this.inputStream.LT(-1);
-        // trigger event on _ctx, before it reverts to parent
+        if (this.matchedEOF) {
+            // If we have matched EOF, it cannot consume past EOF so we use LT(1) here.
+            this.context!.stop = this.inputStream.LT(1); // LT(1) will be end of file
+        } else {
+            this.context!.stop = this.inputStream.LT(-1); // stop node is what we just matched
+        }
+
+        // Trigger event on context, before it reverts to parent.
         this.triggerExitRuleEvent();
         this.state = this.context!.invokingState;
         this.context = this.context!.parent;

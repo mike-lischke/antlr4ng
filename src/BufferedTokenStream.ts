@@ -303,13 +303,27 @@ export class BufferedTokenStream implements TokenStream {
     }
 
     /**
-     * Given a starting index, return the index of the previous token on channel.
-     * Return i if tokens[i] is on channel. Return -1 if there are no tokens
-     * on channel between i and 0.
+     * Given a starting index, return the index of the previous token on
+     * channel. Return `i` if `tokens[i]` is on channel. Return -1
+     * if there are no tokens on channel between `i` and 0.
+     *
+     * If `i` specifies an index at or after the EOF token, the EOF token
+     * index is returned. This is due to the fact that the EOF token is treated
+     * as though it were on every channel.
      */
     public previousTokenOnChannel(i: number, channel: number): number {
-        while (i >= 0 && this.tokens[i].channel !== channel) {
-            i -= 1;
+        if (i >= this.tokens.length) {
+            // The EOF token is on every channel.
+            return this.tokens.length - 1;
+        }
+
+        while (i >= 0) {
+            const token = this.tokens[i];
+            if (token.type === Token.EOF || token.channel === channel) {
+                return i;
+            }
+
+            --i;
         }
 
         return i;
