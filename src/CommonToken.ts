@@ -192,7 +192,7 @@ export class CommonToken implements WritableToken {
     }
 
     public get text(): string | undefined {
-        if (this.#text) {
+        if (this.#text !== undefined) {
             return this.#text;
         }
 
