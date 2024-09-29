@@ -4,11 +4,12 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+import type { IComparable } from "../utils/helpers.js";
 import { type EqualityComparator } from "./EqualityComparator.js";
 import { HashSet } from "./HashSet.js";
 import { MapKeyEqualityComparator, type Bucket } from "./MapKeyEqualityOperator.js";
 
-export class HashMap<K, V> {
+export class HashMap<K extends IComparable, V> {
     private backingStore: HashSet<Bucket<K, V>>;
 
     public constructor(keyComparer: EqualityComparator<K>);

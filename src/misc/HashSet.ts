@@ -106,6 +106,37 @@ export class HashSet<T> implements Iterable<T> {
         return undefined;
     }
 
+    /**
+     * Removes the specified element from this set if it is present.
+     *
+     * @param o object to be removed from this set, if present.
+     *
+     * @returns `true` if the set contained the specified element.
+     */
+    public remove(o: T): boolean {
+        if (o == null) {
+            return false;
+        }
+
+        const b = this.getBucket(o);
+        const bucket = this.#buckets[b];
+        if (!bucket) {
+            return false;
+        }
+
+        for (let i = 0; i < bucket.length; i++) {
+            const existing = bucket[i];
+            if (this.#comparator.equals(existing, o)) {
+                bucket.splice(i, 1);
+                --this.#itemCount;
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public hashCode(): number {
         let hash = MurmurHash.initialize();
         for (const bucket of this.#buckets) {

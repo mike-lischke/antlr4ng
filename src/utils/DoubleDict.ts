@@ -8,8 +8,7 @@ import { DefaultEqualityComparator } from "../misc/DefaultEqualityComparator.js"
 import { HashMap } from "../misc/HashMap.js";
 import { IComparable } from "./helpers.js";
 
-export class DoubleDict<
-    Key1 extends IComparable | null | undefined, Key2 extends IComparable | null | undefined, Value>  {
+export class DoubleDict<Key1 extends IComparable, Key2 extends IComparable, Value> {
     private readonly cacheMap: HashMap<Key1, HashMap<Key2, Value>>;
 
     public constructor() {

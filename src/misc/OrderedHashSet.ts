@@ -4,9 +4,10 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { HashSet } from "./index.js";
+import type { IComparable } from "../utils/helpers.js";
+import { HashSet } from "./HashSet.js";
 
-export class OrderedHashSet<T> extends HashSet<T> {
+export class OrderedHashSet<T extends IComparable> extends HashSet<T> {
     #elements: T[] = [];
 
     public override getOrAdd(o: T): T {
