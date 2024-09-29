@@ -8,7 +8,7 @@ export * from "./atn/index.js";
 export * from "./dfa/index.js";
 export * from "./misc/index.js";
 export * from "./tree/index.js";
-export * from "./utils/helpers.js";
+export * from "./utils/index.js";
 
 export * from "./ANTLRErrorListener.js";
 export * from "./ANTLRErrorStrategy.js";

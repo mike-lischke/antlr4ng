@@ -68,7 +68,7 @@ export class MurmurHash {
      *
      * @returns the final hash result
      */
-    public static finish = (hash: number, entryCount: number): number => {
+    public static finish(hash: number, entryCount: number): number {
         hash ^= entryCount * 4;
         hash ^= hash >>> 16;
         hash = Math.imul(hash, 0x85EBCA6B);
@@ -87,7 +87,7 @@ export class MurmurHash {
      *
      * @returns The computed hash.
      */
-    public static hashCode = (value: number, seed?: number): number => {
+    public static hashCode(value: number, seed?: number): number {
         return MurmurHash.finish(MurmurHash.update(seed ?? MurmurHash.#defaultSeed, value), 1);
     };
 }
