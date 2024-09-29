@@ -2,6 +2,10 @@
 
 # TypeScript Runtime for ANTLR 4 Release Notes
 
+## 3.0.6
+
+- Small HashSet/HashMap improvements.
+
 ## 3.0.5
 - Refactored local error classes in ParseTreePatternMatcher
 - Fixed bug where `ParseTreeVisitor` used `ParserRuleContext` instead of `ParseTree`.

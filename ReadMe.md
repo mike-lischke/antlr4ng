@@ -157,15 +157,15 @@ The following table shows the results of the benchmarks from the [antlr4wasm pro
 
 |    | C++ |antlr4ng|antlr4|antlr4ts|antlr4wasm|
 |---:|---:|---:|---:|---:|---:|
-|Query Collection (cold)| 941 ms| <ins>177/2004 (2180) ms</ins>| 7789 ms| 3353 ms| 3217 ms|
-|  Bitrix Queries (cold)| 143 ms|  <ins>66/223 (289) ms</ins>| 1105 ms|  450 ms|  899 ms|
-|   Large Inserts (cold)|3590 ms|<ins>6152/931 (7083) ms</ins>|10607 ms|11539 ms|30466 ms|
-|Total (cold)           |4696 ms|<ins>6394/3158 (9632) ms</ins>|19532 ms|15371 ms|34612 ms|
+|Query Collection (cold)| 941 ms| <ins>169/1999 (2167) ms</ins>| 7789 ms| 3353 ms| 3217 ms|
+|  Bitrix Queries (cold)| 143 ms|  <ins>66/220 (285) ms</ins>| 1105 ms|  450 ms|  899 ms|
+|   Large Inserts (cold)|3590 ms|<ins>6058/954 (7012) ms</ins>|10607 ms|11539 ms|30466 ms|
+|Total (cold)           |4696 ms|<ins>6292/3173 (9465) ms</ins>|19532 ms|15371 ms|34612 ms|
 |||||||
-|Query Collection (warm)|  95 ms|  <ins>128/52 (179) ms</ins>|  215 ms|  266 ms| 1041 ms|
-|  Bitrix Queries (warm)|  52 ms|  <ins>62/35 (97) ms</ins>|  107 ms|  137 ms|  715 ms|
-|   Large Inserts (warm)|3564 ms|<ins>6199/927 (7126) ms</ins>|10539 ms|11461 ms|32425 ms|
-|Total (warm)           |3733 ms|<ins>6388/1015 (7403) ms</ins>|10889 ms|11889 ms|34216 ms|
+|Query Collection (warm)|  95 ms|  <ins>126/49 (175) ms</ins>|  215 ms|  266 ms| 1041 ms|
+|  Bitrix Queries (warm)|  52 ms|  <ins>60/34 (95) ms</ins>|  107 ms|  137 ms|  715 ms|
+|   Large Inserts (warm)|3564 ms|<ins>6089/909 (6999) ms</ins>|10539 ms|11461 ms|32425 ms|
+|Total (warm)           |3733 ms|<ins>6275/994 (7270) ms</ins>|10889 ms|11889 ms|34216 ms|
 
 Underlined entries are the smallest (not counting C++, which beats them all). For antlr4ng, the times are split into lexing and parsing. Note the high lexer execution times, caused by the large number of predicates (126) + lexer actions (40) in the MySQL lexer.
 
@@ -175,7 +175,7 @@ The query collection file contains more than 900 MySQL queries of all kinds, fro
 
 The large binary inserts file contains only a few dozen queries, but they are really large with deep recursions, so they stress the parser's prediction engine and often touch uncached DFA states because of the lexer predicates. In addition, one query contains binary (image) data with input characters from the entire UTF-8 range.
 
-The example file is a copy of the largest test file in [this repository](https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples), and is known to be very slow to parse with other MySQL grammars. The one used here, however, is fast.
+The Bitrix file is a copy of the largest test file in [this repository](https://github.com/antlr/grammars-v4/tree/master/sql/mysql/Positive-Technologies/examples), and is known to be very slow to parse with other MySQL grammars. The one used here, however, is fast.
 
 ### Lexer Speed Test
 
