@@ -2,9 +2,10 @@
 
 # TypeScript Runtime for ANTLR 4 Release Notes
 
-## 3.0.6
+## 3.0.6 - 3.0.7
 
 - Small HashSet/HashMap improvements.
+- Export all utils stuff.
 
 ## 3.0.5
 - Refactored local error classes in ParseTreePatternMatcher
