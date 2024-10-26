@@ -2,8 +2,7 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
     test: {
-        includeSource: ["src/**/*.{js,ts}"],
-        logHeapUsage: true,
+        logHeapUsage: false,
         isolate: false,
         environment: "node",
         pool: "threads",
