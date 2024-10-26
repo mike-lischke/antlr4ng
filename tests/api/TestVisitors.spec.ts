@@ -4,6 +4,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+import { describe, it, expect } from "vitest";
+
 import {
     BaseErrorListener, CommonTokenStream, Recognizer, ErrorNode, TerminalNode, CharStream, Token, ATNSimulator,
     ParserRuleContext,

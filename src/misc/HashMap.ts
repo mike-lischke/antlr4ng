@@ -5,6 +5,7 @@
  */
 
 import type { IComparable } from "../utils/helpers.js";
+import { DefaultEqualityComparator } from "./DefaultEqualityComparator.js";
 import { type EqualityComparator } from "./EqualityComparator.js";
 import { HashSet } from "./HashSet.js";
 import { MapKeyEqualityComparator, type Bucket } from "./MapKeyEqualityOperator.js";
@@ -12,12 +13,13 @@ import { MapKeyEqualityComparator, type Bucket } from "./MapKeyEqualityOperator.
 export class HashMap<K extends IComparable, V> {
     private backingStore: HashSet<Bucket<K, V>>;
 
-    public constructor(keyComparer: EqualityComparator<K>);
+    public constructor(keyComparer?: EqualityComparator<K>);
     public constructor(map: HashMap<K, V>);
-    public constructor(keyComparer: EqualityComparator<K> | HashMap<K, V>) {
+    public constructor(keyComparer?: EqualityComparator<K> | HashMap<K, V>) {
         if (keyComparer instanceof HashMap) {
             this.backingStore = new HashSet<Bucket<K, V>>(keyComparer.backingStore);
         } else {
+            keyComparer = keyComparer ?? DefaultEqualityComparator.instance;
             this.backingStore = new HashSet<Bucket<K, V>>(new MapKeyEqualityComparator<K, V>(keyComparer));
         }
     }

@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "ESNext",
+        "target": "ES2022",
         "module": "Node16",
         "moduleResolution": "Node16",
         "sourceMap": true,
@@ -9,10 +9,6 @@
         "declaration": true,
         "emitDeclarationOnly": true,
         "outDir": "dist",
-        "lib": [
-            "ESNext",
-            "DOM"
-        ],
         "noImplicitAny": true,
         "strictNullChecks": true,
         "preserveConstEnums": true,
@@ -20,16 +16,16 @@
         "noImplicitReturns": true,
         "noImplicitThis": true,
         "isolatedModules": true,
-        "noFallthroughCasesInSwitch": false, // Switch to true when string hash in helpers.ts is no longer needed.
+        "noFallthroughCasesInSwitch": true,
         "forceConsistentCasingInFileNames": true,
     },
     "include": [
         "src/**/*.ts",
     ],
     "exclude": [
-        "dist",
         "node_modules",
-        "tests"
+        "tests",
+        "dist",
     ],
     "compileOnSave": true,
     "ts-node": {

@@ -4,7 +4,6 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { DefaultEqualityComparator } from "../misc/DefaultEqualityComparator.js";
 import { HashMap } from "../misc/HashMap.js";
 import { IComparable } from "./helpers.js";
 
@@ -12,7 +11,7 @@ export class DoubleDict<Key1 extends IComparable, Key2 extends IComparable, Valu
     private readonly cacheMap: HashMap<Key1, HashMap<Key2, Value>>;
 
     public constructor() {
-        this.cacheMap = new HashMap<Key1, HashMap<Key2, Value>>(DefaultEqualityComparator.instance);
+        this.cacheMap = new HashMap<Key1, HashMap<Key2, Value>>();
     }
 
     public get(a: Key1, b: Key2): Value | null {
@@ -24,7 +23,7 @@ export class DoubleDict<Key1 extends IComparable, Key2 extends IComparable, Valu
     public set(a: Key1, b: Key2, o: Value): void {
         let d = this.cacheMap.get(a);
         if (!d) {
-            d = new HashMap<Key2, Value>(DefaultEqualityComparator.instance);
+            d = new HashMap<Key2, Value>();
             this.cacheMap.set(a, d);
         }
 

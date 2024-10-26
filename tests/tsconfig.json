@@ -19,7 +19,8 @@
     "include": [
         "**/*.ts",
         "./global.d.ts",
-        "../jest.config.ts",
+        "../dist/**/*.ts",
+        "../src/**/*.ts",
     ],
     "exclude": [],
 }

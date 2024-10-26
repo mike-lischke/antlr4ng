@@ -4,6 +4,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+import { describe, it, expect, beforeEach } from "vitest";
+
 import { HashSet } from "../src/misc/HashSet.js";
 import type { IComparable } from "../src/utils/helpers.js";
 
@@ -40,8 +42,8 @@ describe("HashSet", () => {
     it("Getting elements", () => {
         set.add(new Number(1));
         set.add(new Number(2));
-        expect(set.get(new Number(1)).value).toBe(1);
-        expect(set.get(new Number(2)).value).toBe(2);
+        expect(set.get(new Number(1))?.value).toBe(1);
+        expect(set.get(new Number(2))?.value).toBe(2);
         expect(set.get(new Number(3))).toBeUndefined();
     });
 

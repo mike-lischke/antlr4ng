@@ -4,6 +4,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+import { describe, expect, it } from "vitest";
+
 import { BitSet } from "../src/misc/BitSet.js";
 
 describe("BitSet", () => {

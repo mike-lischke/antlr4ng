@@ -4,6 +4,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+import { describe, it } from "vitest";
+
 describe("ProfilingATNSimulator", () => {
     it("Simple test, direct use", () => {
         // TODO: move java test case to here, it will need lots of work

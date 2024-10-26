@@ -42,6 +42,16 @@ export class IntervalSet {
         return s;
     }
 
+    /** Combine all sets in the array and return the union of them */
+    public static or(sets: IntervalSet[]): IntervalSet {
+        const result = new IntervalSet();
+        for (const set of sets) {
+            result.addSet(set);
+        }
+
+        return result;
+    }
+
     public [Symbol.iterator](): IterableIterator<Interval> {
         return this.#intervals[Symbol.iterator]();
     }
@@ -188,7 +198,6 @@ export class IntervalSet {
 
         return result;
     }
-
     public and(other: IntervalSet): IntervalSet {
         if (other.length === 0) {
             // nothing in common with null set
@@ -601,15 +610,9 @@ export class IntervalSet {
         return data;
     }
 
+    /** @returns the number of elements in this set. */
     public get length(): number {
         let result = 0;
-        const intervalCount = this.#intervals.length;
-        if (intervalCount === 1) {
-            const firstInterval = this.#intervals[0];
-
-            return firstInterval.stop - firstInterval.start + 1;
-        }
-
         for (const interval of this.#intervals) {
             result += interval.length;
         }

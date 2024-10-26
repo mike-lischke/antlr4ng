@@ -6,6 +6,8 @@
 
 // cspell: disable
 
+import { describe, it, expect } from "vitest";
+
 import { CommonTokenStream, TokenStreamRewriter, Interval, Lexer, CharStream } from "antlr4ng";
 
 import { T1 } from "../generated/T1.js";

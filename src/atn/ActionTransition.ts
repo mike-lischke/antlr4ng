@@ -12,11 +12,11 @@ export class ActionTransition extends Transition {
     public actionIndex: number;
     public isCtxDependent: boolean;
 
-    public constructor(target: ATNState, ruleIndex: number, actionIndex: number, isCtxDependent: boolean) {
+    public constructor(target: ATNState, ruleIndex: number, actionIndex?: number, isCtxDependent?: boolean) {
         super(target);
         this.ruleIndex = ruleIndex;
-        this.actionIndex = actionIndex === undefined ? -1 : actionIndex;
-        this.isCtxDependent = isCtxDependent === undefined ? false : isCtxDependent; // e.g., $i ref in pred
+        this.actionIndex = actionIndex ?? -1;
+        this.isCtxDependent = isCtxDependent ?? false; // e.g., $i ref in pred
     }
 
     public override get isEpsilon(): boolean {

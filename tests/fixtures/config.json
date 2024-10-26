@@ -4,8 +4,8 @@
     "targetExtension": "ts",
     "testFileName": "Test.spec",
     "testAnnotations": [
-        "test",
-        "xit"
+        "it",
+        "it.skip"
     ],
     "grammarTemplateFile": "./templates/TypeScript.grammar.stg",
     "specTemplateFile": "./templates/TypeScript.spec.stg",

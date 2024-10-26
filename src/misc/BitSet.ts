@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-export class BitSet implements Iterable<number>{
+export class BitSet implements Iterable<number> {
     private data: Uint32Array;
 
     /**

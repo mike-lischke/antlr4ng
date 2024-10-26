@@ -2,8 +2,7 @@
     "env": {
         "browser": true,
         "node": true,
-        "es6": true,
-        "jest": true
+        "es6": true
     },
     "extends": [
         "plugin:@typescript-eslint/recommended",
@@ -17,8 +16,7 @@
         "spec/**/*.*js",
         "dist/**/*",
         "cli/index.js",
-        "**/generated/*",
-        "jest.config.ts"
+        "**/generated/*"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {

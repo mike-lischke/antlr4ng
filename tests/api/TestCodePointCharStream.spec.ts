@@ -4,6 +4,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+import { describe, it, expect } from "vitest";
+
 import { CharStream, Interval, IntStream } from "antlr4ng";
 
 describe("TestCodePointCharStream", () => {

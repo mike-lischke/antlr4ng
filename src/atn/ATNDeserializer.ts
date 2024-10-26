@@ -221,7 +221,7 @@ export class ATNDeserializer {
         const modeCount = this.data[this.pos++];
         for (let i = 0; i < modeCount; i++) {
             const s = this.data[this.pos++];
-            atn.modeToStartState.push(atn.states[s] as RuleStartState);
+            atn.modeToStartState.push(atn.states[s] as TokensStartState);
         }
     }
 

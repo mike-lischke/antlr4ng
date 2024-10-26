@@ -1,5 +1,6 @@
 /* eslint-disable max-len, @typescript-eslint/no-unused-vars */
 
+import { describe, it, test, expect } from "vitest";
 import * as antlr from "antlr4ng";
 
 import { <lexerName> } from "./<lexerName>.js";

@@ -4,6 +4,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+import { describe, it, expect } from "vitest";
+
 import { BufferedTokenStream, CharStream, Token } from "antlr4ng";
 
 import { VisitorBasicLexer } from "../generated/VisitorBasicLexer.js";

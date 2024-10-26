@@ -5,20 +5,20 @@
 
 /* eslint-disable no-underscore-dangle */
 
-import * as fs from "fs";
-import path from "path";
-import assert from "assert";
-import { fileURLToPath } from "url";
-import { performance } from "perf_hooks";
+import * as fs from "node:fs";
+import path from "node:path";
+import assert from "node:assert";
+import { fileURLToPath } from "node:url";
+import { performance } from "node:perf_hooks";
 
 import { ParseService } from "./ParseService.js";
 
 import { IParserErrorInfo, StatementFinishState, determineStatementRanges } from "./support/helpers.js";
 
-const __filename = fileURLToPath(import.meta.url);
+const filename = fileURLToPath(import.meta.url);
 
 const charSets = new Set<string>();
-const content = fs.readFileSync(path.join(path.dirname(__filename), "./data/rdbms-info.json"), { encoding: "utf-8" });
+const content = fs.readFileSync(path.join(path.dirname(filename), "./data/rdbms-info.json"), { encoding: "utf-8" });
 const rdbmsInfo = JSON.parse(content) as { characterSets: { [name: string]: string; }; };
 Object.keys(rdbmsInfo.characterSets).forEach((set: string) => {
     charSets.add("_" + set.toLowerCase());
@@ -106,7 +106,7 @@ export const checkMinStatementVersion = (statement: string, minimumVersion: numb
 };
 
 const splitterTest = () => {
-    const data = fs.readFileSync(path.join(path.dirname(__filename), "/data/sakila-db/sakila-data.sql"),
+    const data = fs.readFileSync(path.join(path.dirname(filename), "/data/sakila-db/sakila-data.sql"),
         { encoding: "utf-8" });
     assert(data.length === 3231413);
 
@@ -125,7 +125,7 @@ const splitterTest = () => {
     const s2 = data.substring(r2.contentStart, r2.span.start + r2.span.length);
     assert(s2 === "SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;");
 
-    const statement = fs.readFileSync(path.join(path.dirname(__filename), "./data/sakila-db/single_statement.sql"),
+    const statement = fs.readFileSync(path.join(path.dirname(filename), "./data/sakila-db/single_statement.sql"),
         { encoding: "utf-8" });
     assert(statement.length === 30349);
 
@@ -133,7 +133,7 @@ const splitterTest = () => {
     const s3 = data.substring(r3.contentStart, r3.span.start + r3.span.length);
     assert(s3 === statement);
 
-    const schema = fs.readFileSync(path.join(path.dirname(__filename), "./data/sakila-db/sakila-schema.sql"),
+    const schema = fs.readFileSync(path.join(path.dirname(filename), "./data/sakila-db/sakila-schema.sql"),
         { encoding: "utf-8" });
     assert(schema.length === 23219);
 
@@ -162,7 +162,7 @@ const parseFiles = (logResults: boolean): Array<[number, number]> => {
     //return result;
 
     testFiles.forEach((entry, index) => {
-        const sql = fs.readFileSync(path.join(path.dirname(__filename), entry.name), { encoding: "utf-8" });
+        const sql = fs.readFileSync(path.join(path.dirname(filename), entry.name), { encoding: "utf-8" });
 
         const ranges = determineStatementRanges(sql, entry.initialDelimiter);
 

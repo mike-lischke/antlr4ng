@@ -6,6 +6,7 @@
 
 // cspell: disable
 
+import { describe, expect, it } from "vitest";
 import * as antlr4 from "../../src/index.js";
 
 import { ABC } from "./generatedCode/abc.js";

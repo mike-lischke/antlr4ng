@@ -65,7 +65,7 @@ export class ATN {
      */
     public lexerActions: LexerAction[] = [];
 
-    public readonly modeToStartState: Array<RuleStartState | null> = [];
+    public readonly modeToStartState: Array<TokensStartState | null> = [];
 
     static #analyzer = new LL1Analyzer();
 

@@ -51,7 +51,7 @@ export class Interval {
             Interval.#cache[a] = new Interval(a, a);
         }
 
-        return Interval.#cache[a]!;
+        return Interval.#cache[a];
     }
 
     public equals(o: Interval): boolean {

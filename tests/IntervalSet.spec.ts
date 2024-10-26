@@ -4,6 +4,8 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
+import { describe, it, expect } from "vitest";
+
 import * as antlr4 from "../src/index.js";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -117,5 +119,29 @@ describe("IntervalSet", () => {
         s3.addRange(30, 57);
         const multi = final.and(s3);
         expect(multi.toString()).toEqual("{32..57}");
+    });
+
+    it("Combine multiple interval sets into one", () => {
+        const s1 = new IntervalSet();
+        s1.addRange(1, 10);
+        s1.addRange(20, 30);
+        const s2 = new IntervalSet();
+        s2.addRange(21, 25);
+        const s3 = new IntervalSet();
+        s3.addRange(30, 57);
+        const s4 = new IntervalSet();
+        s4.addRange(55, 100);
+        const s5 = new IntervalSet();
+        s5.addRange(90, 120);
+        const s6 = new IntervalSet();
+        s6.addRange(110, 200);
+        const s7 = new IntervalSet();
+        s7.addRange(1, 200);
+
+        const combined = IntervalSet.or([s1, s2, s3, s4, s5, s6]);
+        expect(combined.toString()).toEqual("{1..10, 20..200}");
+
+        const combined2 = IntervalSet.or([s1, s2, s3, s4, s5, s6, s7]);
+        expect(combined2.toString()).toEqual("{1..200}");
     });
 });
