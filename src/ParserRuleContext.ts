@@ -309,11 +309,11 @@ export class ParserRuleContext implements ParseTree {
      * Print out a whole tree, not just a node, in LISP format
      * (root child1 .. childN). Print just a node if this is a leaf.
      */
-    public toStringTree(recog: Parser | null): string;
+    public toStringTree(recog?: Parser): string;
     public toStringTree(ruleNames: string[] | null, recog: Parser): string;
     public toStringTree(...args: unknown[]): string {
-        if (args.length === 1) {
-            return Trees.toStringTree(this, null, args[0] as Parser | null);
+        if (args.length < 2) {
+            return Trees.toStringTree(this, null, args[0] as Parser | undefined);
         }
 
         return Trees.toStringTree(this, args[0] as string[] | null, args[1] as Parser);

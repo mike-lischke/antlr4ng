@@ -23,10 +23,9 @@ export class Trees {
      * node payloads to get the text for the nodes.  Detect
      * parse trees and extract data appropriately.
      */
-    public static toStringTree(tree: ParseTree, ruleNames: string[] | null, recog?: Parser | null): string {
+    public static toStringTree(tree: ParseTree, ruleNames: string[] | null, recog?: Parser): string {
         ruleNames = ruleNames ?? null;
-        recog = recog ?? null;
-        if (recog !== null) {
+        if (recog) {
             ruleNames = recog.ruleNames;
         }
 
@@ -42,6 +41,7 @@ export class Trees {
             s = Trees.toStringTree(tree.getChild(0)!, ruleNames);
             res = res.concat(s);
         }
+
         for (let i = 1; i < c; i++) {
             s = Trees.toStringTree(tree.getChild(i)!, ruleNames);
             res = res.concat(" " + s);
@@ -51,12 +51,12 @@ export class Trees {
         return res;
     }
 
-    public static getNodeText(t: ParseTree, ruleNames: string[] | null, recog?: Parser | null): string | undefined {
+    public static getNodeText(t: ParseTree, ruleNames: string[] | null, recog?: Parser): string | undefined {
         ruleNames = ruleNames ?? null;
-        recog = recog ?? null;
-        if (recog !== null) {
+        if (recog) {
             ruleNames = recog.ruleNames;
         }
+
         if (ruleNames !== null) {
             if (t instanceof ParserRuleContext) {
                 const context = t.ruleContext;
@@ -70,11 +70,10 @@ export class Trees {
             } else if (t instanceof ErrorNode) {
                 return t.toString();
             } else if (t instanceof TerminalNode) {
-                if (t.symbol !== null) {
-                    return t.symbol.text;
-                }
+                return t.symbol.text;
             }
         }
+
         // no recog for rule names
         const payload = t.getPayload();
         if (isToken(payload)) {
