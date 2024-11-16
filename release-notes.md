@@ -2,6 +2,13 @@
 
 # TypeScript Runtime for ANTLR 4 Release Notes
 
+## 3.0.8
+
+- Switched from Jest to vitest for unit tests. This increases test speed by around 30% (from ~9s to ~6s).
+- Fixed a few issues too.
+- HashMap can now be created without a parameter for the comparator (it uses the DefaultEqualityComparator then).
+- Exported more types that were forgotten (like RuntimeMetaData).
+
 ## 3.0.6 - 3.0.7
 
 - Small HashSet/HashMap improvements.
