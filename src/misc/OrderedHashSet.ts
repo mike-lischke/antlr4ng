@@ -28,16 +28,6 @@ export class OrderedHashSet<T extends IComparable> extends HashSet<T> {
         return super.equals(o);
     }
 
-    public override add(element: T): boolean {
-        if (super.add(element)) {
-            this.#elements.push(element);
-
-            return true;
-        }
-
-        return false;
-    }
-
     public override clear(): void {
         super.clear();
         this.#elements = [];
