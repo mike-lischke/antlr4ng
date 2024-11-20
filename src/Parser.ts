@@ -27,6 +27,7 @@ import type { IntStream } from "./IntStream.js";
 import type { ParseTreePattern } from "./tree/pattern/ParseTreePattern.js";
 import { Lexer } from "./Lexer.js";
 import { ParseTreePatternMatcher } from "./tree/pattern/ParseTreePatternMatcher.js";
+import { ParseInfo } from "./atn/ParseInfo.js";
 
 export interface IDebugPrinter {
     println(s: string): void;
@@ -704,6 +705,15 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
 
     public getSourceName(): string {
         return this.inputStream.getSourceName();
+    }
+
+    public override getParseInfo(): ParseInfo | undefined {
+        const interp = this.interpreter;
+        if (interp instanceof ProfilingATNSimulator) {
+            return new ParseInfo(interp);
+        }
+
+        return undefined;
     }
 
     public setProfile(profile: boolean): void {

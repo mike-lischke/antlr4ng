@@ -182,7 +182,7 @@ export class ATNDeserializer {
         const numPrecedenceStates = this.data[this.pos++];
         for (j = 0; j < numPrecedenceStates; j++) {
             stateNumber = this.data[this.pos++];
-            (atn.states[stateNumber] as RuleStartState).isPrecedenceRule = true;
+            (atn.states[stateNumber] as RuleStartState).isLeftRecursiveRule = true;
         }
     }
 
@@ -267,7 +267,7 @@ export class ATNDeserializer {
                     continue;
                 }
                 let outermostPrecedenceReturn = -1;
-                if (atn.ruleToStartState[t.target.ruleIndex]!.isPrecedenceRule) {
+                if (atn.ruleToStartState[t.target.ruleIndex]!.isLeftRecursiveRule) {
                     if (t.precedence === 0) {
                         outermostPrecedenceReturn = t.target.ruleIndex;
                     }
@@ -363,7 +363,7 @@ export class ATNDeserializer {
         let excludeTransition = null;
         let endState = null;
 
-        if (atn.ruleToStartState[idx]!.isPrecedenceRule) {
+        if (atn.ruleToStartState[idx]!.isLeftRecursiveRule) {
             // wrap from the beginning of the rule to the StarLoopEntryState
             endState = null;
             for (i = 0; i < atn.states.length; i++) {
@@ -448,7 +448,7 @@ export class ATNDeserializer {
             // We analyze the ATN to determine if this ATN decision state is the
             // decision for the closure block that determines whether a
             // precedence rule should continue or complete.
-            if (atn.ruleToStartState[state.ruleIndex]!.isPrecedenceRule) {
+            if (atn.ruleToStartState[state.ruleIndex]!.isLeftRecursiveRule) {
                 const maybeLoopEndState = state.transitions[state.transitions.length - 1].target;
                 if (maybeLoopEndState instanceof LoopEndState) {
                     if (maybeLoopEndState.epsilonOnlyTransitions &&

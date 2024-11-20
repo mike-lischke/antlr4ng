@@ -158,8 +158,7 @@ export class BitSet implements Iterable<number> {
 
         // Iterate over all set bits.
         for (const index of this) {
-            // Use the first index > than the specified value index.
-            if (index > fromIndex) {
+            if (index >= fromIndex) {
                 return index;
             }
         }

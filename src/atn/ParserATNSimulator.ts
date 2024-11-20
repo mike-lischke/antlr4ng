@@ -778,7 +778,7 @@ export class ParserATNSimulator extends ATNSimulator {
         // the fact that we should predict alternative 1.  We just can't say for
         // sure that there is an ambiguity without looking further.
 
-        this.reportAmbiguity(dfa, D, startIndex, input.index, foundExactAmbig, undefined, reach);
+        this.reportAmbiguity(dfa, D, startIndex, input.index, foundExactAmbig, reach.getAlts(), reach);
 
         return predictedAlt;
     }

@@ -12,5 +12,4 @@ export class RuleStartState extends ATNState {
 
     public stopState?: RuleStopState;
     public isLeftRecursiveRule: boolean = false;
-    public isPrecedenceRule: boolean = false;
 }

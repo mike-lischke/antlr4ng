@@ -7,24 +7,19 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Run current Jest test",
-            "runtimeExecutable": "node",
-            "runtimeArgs": [
-                "--experimental-vm-modules",
-                "${workspaceRoot}/node_modules/.bin/jest",
-                "${relativeFile}",
-                "--no-coverage",
-                "--runInBand"
+            "name": "Debug Current Test File",
+            "program": "${workspaceFolder}/node_modules/vitest/vitest.mjs",
+            "args": [
+                "run",
+                "${relativeFile}"
+            ],
+            "autoAttachChildProcesses": true,
+            "skipFiles": [
+                "<node_internals>/**",
+                "**/node_modules/**"
             ],
             "console": "integratedTerminal",
-            "stopOnEntry": false,
-            "sourceMaps": true,
-            "resolveSourceMapLocations": [
-                "${workspaceFolder}/**",
-                "!**/node_modules/**"
-            ],
-            "smartStep": true,
-            "trace": false
+            "smartStep": true
         },
         {
             "type": "node",

@@ -158,8 +158,8 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
         throw new Error("there is no serialized ATN");
     }
 
-    public getParseInfo(): ParseInfo | null {
-        return null;
+    public getParseInfo(): ParseInfo | undefined {
+        return undefined;
     }
 
     // TODO: remove need for this: public abstract get literalNames(): Array<string | null>;

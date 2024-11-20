@@ -108,7 +108,7 @@ export class ParserInterpreter extends Parser {
         const startRuleStartState = this.#atn.ruleToStartState[startRuleIndex]!;
 
         this.rootContext = this.createInterpreterRuleContext(null, ATNState.INVALID_STATE_NUMBER, startRuleIndex);
-        if (startRuleStartState.isPrecedenceRule) {
+        if (startRuleStartState.isLeftRecursiveRule) {
             this.enterRecursionRule(this.rootContext, startRuleStartState.stateNumber, startRuleIndex, 0);
         }
         else {
@@ -120,8 +120,8 @@ export class ParserInterpreter extends Parser {
             switch ((p.constructor as typeof ATNState).stateType) {
                 case ATNState.RULE_STOP:
                     // pop; return from rule
-                    if (this.context?.isEmpty) {
-                        if (startRuleStartState.isPrecedenceRule) {
+                    if (this.context?.isEmpty()) {
+                        if (startRuleStartState.isLeftRecursiveRule) {
                             const result = this.context;
                             const parentContext = this.parentContextStack.pop()!;
                             this.unrollRecursionContexts(parentContext[0]);
@@ -218,7 +218,7 @@ export class ParserInterpreter extends Parser {
                 const ruleStartState = transition.target as RuleStartState;
                 const ruleIndex = ruleStartState.ruleIndex;
                 const newContext = this.createInterpreterRuleContext(this.context, p.stateNumber, ruleIndex);
-                if (ruleStartState.isPrecedenceRule) {
+                if (ruleStartState.isLeftRecursiveRule) {
                     this.enterRecursionRule(newContext, ruleStartState.stateNumber, ruleIndex,
                         (transition as RuleTransition).precedence);
                 }
@@ -279,7 +279,7 @@ export class ParserInterpreter extends Parser {
 
     protected visitRuleStopState(p: ATNState): void {
         const ruleStartState = this.#atn.ruleToStartState[p.ruleIndex]!;
-        if (ruleStartState.isPrecedenceRule) {
+        if (ruleStartState.isLeftRecursiveRule) {
             const [parentContext, state] = this.parentContextStack.pop()!;
             this.unrollRecursionContexts(parentContext);
             this.state = state;
