@@ -2,6 +2,10 @@
 
 # TypeScript Runtime for ANTLR 4 Release Notes
 
+## 3.0.9
+- Fixed addition bug in OrderedHashSet.
+- Bug fixes in code which is rarely used (and therefore had no tests)
+
 ## 3.0.8
 
 - Switched from Jest to vitest for unit tests. This increases test speed by around 30% (from ~9s to ~6s).
@@ -20,7 +24,7 @@
 - More obvious mentioning of ES6 in this readme.
 - Added a number of APIs that are not necessary in the runtime, but needed by the ANTLR tool.
 - Fixed bug #71 ParseRuleContext in empty input has undefined stop token
-- Fixed bug #72 Unexpected behaviour when token text has zero length
+- Fixed bug #72 Unexpected behavior when token text has zero length
 - Extracted these release notes into an own file.
 
 ## 3.0.4
@@ -28,7 +32,7 @@
 - Fixed visitor example in this readme file and added build instructions.
 - Added back all debug output in the simulators and the prediction context. Useful for finding low level problems.
 - Fixed bug #47 Antlr4ng fails to parse codeql/examples/alias.qll
-- Fixed bug #46 ParserRulecontext.parent() incorrectly typed
+- Fixed bug #46 ParserRuleContext.parent() incorrectly typed
 
 ## 3.0.2 - 3.0.3
 
