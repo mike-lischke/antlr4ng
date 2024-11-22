@@ -191,4 +191,65 @@ describe("IntervalSet", () => {
             expect(s.get(1)).toBe(intervalsBeforeRemoval[2]);
         });
     });
+
+    describe("insertAt", () => {
+        it("Inserts interval into empty set", () => {
+            const s = new IntervalSet();
+            expect(s.numberOfIntervals).toBe(0);
+
+            const newInterval = new Interval(0, 1);
+            s.insertAt(0, newInterval);
+
+            expect(s.numberOfIntervals).toBe(1);
+            expect(s.get(0)).toBe(newInterval);
+        });
+
+        it("Inserts interval at front", () => {
+            const s = new IntervalSet();
+            s.addRange(3, 4);
+            s.addRange(6, 7);
+            const intervalsBeforeInsertion = s.getAllIntervals();
+            expect(s.numberOfIntervals).toBe(2);
+
+            const newInterval = new Interval(0, 1);
+            s.insertAt(0, newInterval);
+
+            expect(s.numberOfIntervals).toBe(3);
+            expect(s.get(0)).toBe(newInterval);
+            expect(s.get(1)).toBe(intervalsBeforeInsertion[0]);
+            expect(s.get(2)).toBe(intervalsBeforeInsertion[1]);
+        });
+
+        it("Inserts interval at end", () => {
+            const s = new IntervalSet();
+            s.addRange(3, 4);
+            s.addRange(6, 7);
+            const intervalsBeforeInsertion = s.getAllIntervals();
+            expect(s.numberOfIntervals).toBe(2);
+
+            const newInterval = new Interval(9, 10);
+            s.insertAt(2, newInterval);
+
+            expect(s.numberOfIntervals).toBe(3);
+            expect(s.get(0)).toBe(intervalsBeforeInsertion[0]);
+            expect(s.get(1)).toBe(intervalsBeforeInsertion[1]);
+            expect(s.get(2)).toBe(newInterval);
+        });
+
+        it("Inserts interval in middle", () => {
+            const s = new IntervalSet();
+            s.addRange(1, 2);
+            s.addRange(6, 7);
+            const intervalsBeforeInsertion = s.getAllIntervals();
+            expect(s.numberOfIntervals).toBe(2);
+
+            const newInterval = new Interval(3, 4);
+            s.insertAt(1, newInterval);
+
+            expect(s.numberOfIntervals).toBe(3);
+            expect(s.get(0)).toBe(intervalsBeforeInsertion[0]);
+            expect(s.get(1)).toBe(newInterval);
+            expect(s.get(2)).toBe(intervalsBeforeInsertion[1]);
+        });
+    });
 });
