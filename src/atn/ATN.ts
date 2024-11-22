@@ -25,6 +25,8 @@ export class ATN {
     public static readonly LEXER = 0;
     public static readonly PARSER = 1;
 
+    public static readonly analyzer = new LL1Analyzer();
+
     /**
      * Used for runtime deserialization of ATNs from strings
      * The type of the ATN.
@@ -66,8 +68,6 @@ export class ATN {
     public lexerActions: LexerAction[] = [];
 
     public readonly modeToStartState: Array<TokensStartState | null> = [];
-
-    static readonly analyzer = new LL1Analyzer();
 
     public constructor(grammarType: number, maxTokenType: number) {
         this.grammarType = grammarType;

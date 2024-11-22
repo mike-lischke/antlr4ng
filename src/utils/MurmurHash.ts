@@ -20,7 +20,7 @@ const n = 0xE6546B64;
 
 /** A class that implements the Murmur hash algorithm. */
 export class MurmurHash {
-    static readonly defaultSeed = 701;
+    public static readonly defaultSeed = 701;
 
     private constructor() { /**/ }
 

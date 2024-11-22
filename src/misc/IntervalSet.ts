@@ -349,7 +349,7 @@ export class IntervalSet {
                     rightI++;
                 } else {
                     // remove the current interval (thus no need to increment resultI)
-                    result.removeAt(resultI)
+                    result.removeAt(resultI);
                 }
             }
         }

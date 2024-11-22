@@ -13,10 +13,10 @@ export class Interval {
 
     public static INTERVAL_POOL_MAX_VALUE = 1000;
 
+    public static readonly cache: Interval[] = [];
+
     public readonly start: number;
     public readonly stop: number;
-
-    static readonly cache: Interval[] = [];
 
     #cachedHashCode: number;
 

@@ -9,8 +9,8 @@ import { DefaultEqualityComparator } from "./DefaultEqualityComparator.js";
 import { EqualityComparator } from "./EqualityComparator.js";
 
 export class HashSet<T> implements Iterable<T> {
-    static readonly defaultLoadFactor = 0.75;
-    static readonly initialCapacity = 16; // must be power of 2
+    public static readonly defaultLoadFactor = 0.75;
+    public static readonly initialCapacity = 16; // must be power of 2
 
     #comparator: EqualityComparator<T>;
     #buckets: Array<T[] | undefined>;
