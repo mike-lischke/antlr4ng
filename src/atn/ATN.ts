@@ -67,7 +67,7 @@ export class ATN {
 
     public readonly modeToStartState: Array<TokensStartState | null> = [];
 
-    static #analyzer = new LL1Analyzer();
+    static readonly analyzer = new LL1Analyzer();
 
     public constructor(grammarType: number, maxTokenType: number) {
         this.grammarType = grammarType;
@@ -85,7 +85,7 @@ export class ATN {
             return atnState.nextTokenWithinRule;
         }
 
-        const next = ATN.#analyzer.look(this, atnState, undefined, ctx);
+        const next = ATN.analyzer.look(this, atnState, undefined, ctx);
         if (!ctx) {
             atnState.nextTokenWithinRule = next;
         }
