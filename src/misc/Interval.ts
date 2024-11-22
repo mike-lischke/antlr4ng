@@ -16,7 +16,7 @@ export class Interval {
     public readonly start: number;
     public readonly stop: number;
 
-    static #cache: Interval[] = [];
+    static readonly cache: Interval[] = [];
 
     #cachedHashCode: number;
 
@@ -47,11 +47,11 @@ export class Interval {
             return new Interval(a, b);
         }
 
-        if (!Interval.#cache[a]) {
-            Interval.#cache[a] = new Interval(a, a);
+        if (!Interval.cache[a]) {
+            Interval.cache[a] = new Interval(a, a);
         }
 
-        return Interval.#cache[a];
+        return Interval.cache[a];
     }
 
     public equals(o: Interval): boolean {
