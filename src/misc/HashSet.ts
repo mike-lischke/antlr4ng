@@ -9,8 +9,8 @@ import { DefaultEqualityComparator } from "./DefaultEqualityComparator.js";
 import { EqualityComparator } from "./EqualityComparator.js";
 
 export class HashSet<T> implements Iterable<T> {
-    static readonly #defaultLoadFactor = 0.75;
-    static readonly #initialCapacity = 16; // must be power of 2
+    static readonly defaultLoadFactor = 0.75;
+    static readonly initialCapacity = 16; // must be power of 2
 
     #comparator: EqualityComparator<T>;
     #buckets: Array<T[] | undefined>;
@@ -24,11 +24,11 @@ export class HashSet<T> implements Iterable<T> {
     public constructor(set: HashSet<T>);
     public constructor(
         comparatorOrSet?: EqualityComparator<T> | HashSet<T>,
-        initialCapacity = HashSet.#initialCapacity) {
+        initialCapacity = HashSet.initialCapacity) {
 
         if (comparatorOrSet instanceof HashSet) {
-            this.#comparator = comparatorOrSet.#comparator;
-            this.#buckets = comparatorOrSet.#buckets.slice(0);
+            this.#comparator = comparatorOrSet.comparator;
+            this.#buckets = comparatorOrSet.getCopyOfBuckets();
             for (let i = 0; i < this.#buckets.length; i++) {
                 const bucket = this.#buckets[i];
                 if (bucket) {
@@ -36,13 +36,29 @@ export class HashSet<T> implements Iterable<T> {
                 }
             }
 
-            this.#itemCount = comparatorOrSet.#itemCount;
-            this.#threshold = comparatorOrSet.#threshold;
+            this.#itemCount = comparatorOrSet.itemCount;
+            this.#threshold = comparatorOrSet.threshold;
         } else {
             this.#comparator = comparatorOrSet ?? DefaultEqualityComparator.instance;
             this.#buckets = this.createBuckets(initialCapacity);
-            this.#threshold = Math.floor(HashSet.#initialCapacity * HashSet.#defaultLoadFactor);
+            this.#threshold = Math.floor(HashSet.initialCapacity * HashSet.defaultLoadFactor);
         }
+    }
+
+    public get itemCount(): number {
+        return this.#itemCount;
+    }
+
+    public get comparator(): EqualityComparator<T> {
+        return this.#comparator;
+    }
+
+    public get threshold(): number {
+        return this.#threshold;
+    }
+
+    public getCopyOfBuckets(): Array<T[] | undefined> {
+        return this.#buckets.slice(0);
     }
 
     /**
@@ -218,7 +234,7 @@ export class HashSet<T> implements Iterable<T> {
 
     public containsAll(collection: Iterable<T>): boolean {
         if (collection instanceof HashSet) {
-            for (const bucket of collection.#buckets) {
+            for (const bucket of collection.getCopyOfBuckets()) {
                 if (bucket == null) {
                     continue;
                 }
@@ -258,9 +274,9 @@ export class HashSet<T> implements Iterable<T> {
     }
 
     public clear(): void {
-        this.#buckets = this.createBuckets(HashSet.#initialCapacity);
+        this.#buckets = this.createBuckets(HashSet.initialCapacity);
         this.#itemCount = 0;
-        this.#threshold = Math.floor(HashSet.#initialCapacity * HashSet.#defaultLoadFactor);
+        this.#threshold = Math.floor(HashSet.initialCapacity * HashSet.defaultLoadFactor);
     }
 
     public toString(): string {
@@ -331,7 +347,7 @@ export class HashSet<T> implements Iterable<T> {
         const newCapacity = this.#buckets.length * 2;
         const newTable: Array<T[] | undefined> = this.createBuckets(newCapacity);
         this.#buckets = newTable;
-        this.#threshold = Math.floor(newCapacity * HashSet.#defaultLoadFactor);
+        this.#threshold = Math.floor(newCapacity * HashSet.defaultLoadFactor);
 
         // rehash all existing entries
         for (const bucket of old) {
