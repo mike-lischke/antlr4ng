@@ -85,7 +85,7 @@ export class ParserRuleContext implements ParseTree {
 
     /** Copy a context */
     public copyFrom(ctx: ParserRuleContext): void {
-        this.#parent = ctx.#parent;
+        this.#parent = ctx.parent;
         this.invokingState = ctx.invokingState;
         this.children.slice(0, this.children.length);
         this.start = ctx.start;
