@@ -69,7 +69,7 @@ export class IntervalSet {
     }
 
     public removeAt(index: number): void {
-        this.#intervals.splice(index);
+        this.#intervals.splice(index, 1);
     }
 
     public getAllIntervals(): Interval[] {

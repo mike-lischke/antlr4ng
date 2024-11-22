@@ -144,4 +144,51 @@ describe("IntervalSet", () => {
         const combined2 = IntervalSet.or([s1, s2, s3, s4, s5, s6, s7]);
         expect(combined2.toString()).toEqual("{1..200}");
     });
+
+    describe("removeAt", () => {
+        it("Removes interval at front", () => {
+            const s = new IntervalSet();
+            s.addRange(0, 1);
+            s.addRange(3, 4);
+            s.addRange(6, 7);
+            const intervalsBeforeRemoval = s.getAllIntervals();
+            expect(s.numberOfIntervals).toBe(3);
+
+            s.removeAt(0);
+
+            expect(s.numberOfIntervals).toBe(2);
+            expect(s.get(0)).toBe(intervalsBeforeRemoval[1]);
+            expect(s.get(1)).toBe(intervalsBeforeRemoval[2]);
+        });
+
+        it("Removes interval at end", () => {
+            const s = new IntervalSet();
+            s.addRange(0, 1);
+            s.addRange(3, 4);
+            s.addRange(6, 7);
+            const intervalsBeforeRemoval = s.getAllIntervals();
+            expect(s.numberOfIntervals).toBe(3);
+
+            s.removeAt(2);
+
+            expect(s.numberOfIntervals).toBe(2);
+            expect(s.get(0)).toBe(intervalsBeforeRemoval[0]);
+            expect(s.get(1)).toBe(intervalsBeforeRemoval[1]);
+        });
+
+        it("Removes interval in middle", () => {
+            const s = new IntervalSet();
+            s.addRange(0, 1);
+            s.addRange(3, 4);
+            s.addRange(6, 7);
+            const intervalsBeforeRemoval = s.getAllIntervals();
+            expect(s.numberOfIntervals).toBe(3);
+
+            s.removeAt(1);
+
+            expect(s.numberOfIntervals).toBe(2);
+            expect(s.get(0)).toBe(intervalsBeforeRemoval[0]);
+            expect(s.get(1)).toBe(intervalsBeforeRemoval[2]);
+        });
+    });
 });
