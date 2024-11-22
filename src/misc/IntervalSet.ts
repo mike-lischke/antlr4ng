@@ -60,6 +60,22 @@ export class IntervalSet {
         return this.#intervals[index];
     }
 
+    public set(index: number, val: Interval): void {
+        this.#intervals[index] = val;
+    }
+
+    public insertAt(index: number, item: Interval): void {
+        this.#intervals.splice(index, 0, item);
+    }
+
+    public removeAt(index: number): void {
+        this.#intervals.splice(index);
+    }
+
+    public getAllIntervals(): Interval[] {
+        return [...this.#intervals];
+    }
+
     /**
      * Returns the minimum value contained in the set if not isNil().
      *
@@ -161,7 +177,7 @@ export class IntervalSet {
     }
 
     public addSet(other: IntervalSet): this {
-        other.#intervals.forEach((toAdd) => { return this.addInterval(toAdd); }, this);
+        other.getAllIntervals().forEach((toAdd) => { return this.addInterval(toAdd); }, this);
 
         return this;
     }
@@ -205,7 +221,7 @@ export class IntervalSet {
         }
 
         const myIntervals = this.#intervals;
-        const theirIntervals = other.#intervals;
+        const theirIntervals = other.getAllIntervals();
         let intersection;
         const mySize = myIntervals.length;
         const theirSize = theirIntervals.length;
@@ -288,9 +304,9 @@ export class IntervalSet {
 
         let resultI = 0;
         let rightI = 0;
-        while (resultI < result.#intervals.length && rightI < other.#intervals.length) {
-            const resultInterval = result.#intervals[resultI];
-            const rightInterval = other.#intervals[rightI];
+        while (resultI < result.numberOfIntervals && rightI < other.numberOfIntervals) {
+            const resultInterval = result.get(resultI);
+            const rightInterval = other.get(rightI);
 
             // operation: (resultInterval - rightInterval) and update indexes
 
@@ -317,23 +333,23 @@ export class IntervalSet {
             if (beforeCurrent) {
                 if (afterCurrent) {
                     // split the current interval into two
-                    result.#intervals[resultI] = beforeCurrent;
-                    result.#intervals.splice(resultI + 1, 0, afterCurrent);
+                    result.set(resultI, beforeCurrent);
+                    result.insertAt(resultI + 1, afterCurrent);
                     resultI++;
                     rightI++;
                 } else {
                     // replace the current interval
-                    result.#intervals[resultI] = beforeCurrent;
+                    result.set(resultI, beforeCurrent);
                     resultI++;
                 }
             } else {
                 if (afterCurrent) {
                     // replace the current interval
-                    result.#intervals[resultI] = afterCurrent;
+                    result.set(resultI, afterCurrent);
                     rightI++;
                 } else {
                     // remove the current interval (thus no need to increment resultI)
-                    result.#intervals.splice(resultI, 1);
+                    result.removeAt(resultI)
                 }
             }
         }
@@ -456,12 +472,12 @@ export class IntervalSet {
             return true;
         }
 
-        if (this.#intervals.length !== other.#intervals.length) {
+        if (this.numberOfIntervals !== other.numberOfIntervals) {
             return false;
         }
 
         for (let i = 0; i < this.#intervals.length; i++) {
-            if (!this.#intervals[i].equals(other.#intervals[i])) {
+            if (!this.get(i).equals(other.get(i))) {
                 return false;
             }
         }
@@ -618,6 +634,10 @@ export class IntervalSet {
         }
 
         return result;
+    }
+
+    public get numberOfIntervals(): number {
+        return this.#intervals.length;
     }
 
     private elementName(vocabulary: Vocabulary, token: number): string | null {
