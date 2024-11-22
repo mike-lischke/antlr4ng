@@ -73,7 +73,7 @@ export class IntervalSet {
     }
 
     public getAllIntervals(): Interval[] {
-        return [...this.#intervals];
+        return this.#intervals.slice();
     }
 
     /**
