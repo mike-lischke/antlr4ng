@@ -167,12 +167,16 @@ export class LexerActionExecutor implements LexerAction {
         return this.#cachedHashCode;
     }
 
+    public get cachedHashCode(): number | undefined {
+        return this.#cachedHashCode;
+    }
+
     public equals(other: LexerActionExecutor): boolean {
         if (this === other) {
             return true;
         }
 
-        if (this.#cachedHashCode !== other.#cachedHashCode) {
+        if (this.cachedHashCode !== other.cachedHashCode) {
             return false;
         }
 
@@ -182,5 +186,4 @@ export class LexerActionExecutor implements LexerAction {
 
         return this.lexerActions.every((action, index) => { return action.equals(other.lexerActions[index]); });
     }
-
 }
