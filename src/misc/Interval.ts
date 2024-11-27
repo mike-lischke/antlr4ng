@@ -10,21 +10,20 @@
 /** An immutable inclusive interval a..b */
 export class Interval {
     public static INVALID_INTERVAL = new Interval(-1, -2);
-
     public static INTERVAL_POOL_MAX_VALUE = 1000;
+
+    private static cache: Interval[] = [];
 
     public readonly start: number;
     public readonly stop: number;
 
-    static #cache: Interval[] = [];
-
-    #cachedHashCode: number;
+    private cachedHashCode: number;
 
     public constructor(start: number, stop: number) {
         this.start = start;
         this.stop = stop;
 
-        this.#cachedHashCode = Math.imul(651 + start, 31) + stop;
+        this.cachedHashCode = Math.imul(651 + start, 31) + stop;
     }
 
     /**
@@ -47,11 +46,11 @@ export class Interval {
             return new Interval(a, b);
         }
 
-        if (!Interval.#cache[a]) {
-            Interval.#cache[a] = new Interval(a, a);
+        if (!Interval.cache[a]) {
+            Interval.cache[a] = new Interval(a, a);
         }
 
-        return Interval.#cache[a];
+        return Interval.cache[a];
     }
 
     public equals(o: Interval): boolean {
@@ -59,7 +58,7 @@ export class Interval {
     }
 
     public hashCode(): number {
-        return this.#cachedHashCode;
+        return this.cachedHashCode;
     }
 
     /** Does this start completely before other? Disjoint */

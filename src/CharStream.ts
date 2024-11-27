@@ -125,7 +125,7 @@ export class CharStreamImpl implements CharStream {
             return "";
         }
 
-        return this.#stringFromRange(start, stop + 1);
+        return this.stringFromRange(start, stop + 1);
     }
 
     public getTextFromInterval(interval: Interval): string {
@@ -140,11 +140,11 @@ export class CharStreamImpl implements CharStream {
             return "";
         }
 
-        return this.#stringFromRange(start, stop + 1);
+        return this.stringFromRange(start, stop + 1);
     }
 
     public toString(): string {
-        return this.#stringFromRange(0);
+        return this.stringFromRange(0);
     }
 
     public get size(): number {
@@ -159,7 +159,7 @@ export class CharStreamImpl implements CharStream {
         return IntStream.UNKNOWN_SOURCE_NAME;
     }
 
-    #stringFromRange(start: number, stop?: number): string {
+    private stringFromRange(start: number, stop?: number): string {
         const data = this.data.slice(start, stop);
         let result = "";
         data.forEach((value) => {

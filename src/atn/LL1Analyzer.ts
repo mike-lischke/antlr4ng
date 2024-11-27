@@ -26,7 +26,7 @@ export class LL1Analyzer {
      */
     private static readonly hitPredicate = Token.INVALID_TYPE;
 
-    #atn: ATN;
+    private atn: ATN;
 
     /**
      * Calculates the SLL(1) expected lookahead set for each outgoing transition
@@ -81,7 +81,7 @@ export class LL1Analyzer {
      * specified `ctx`.
      */
     public look(atn: ATN, s: ATNState, stopState?: ATNState, ctx?: ParserRuleContext): IntervalSet {
-        this.#atn = atn;
+        this.atn = atn;
         const r = new IntervalSet();
 
         const lookContext = ctx ? predictionContextFromRuleContext(atn, ctx) : null;
@@ -157,7 +157,7 @@ export class LL1Analyzer {
 
                     // run thru all possible stack tops in ctx
                     for (let i = 0; i < ctx.length; i++) {
-                        const returnState = this.#atn.states[ctx.getReturnState(i)]!;
+                        const returnState = this.atn.states[ctx.getReturnState(i)]!;
                         this.doLook(returnState, stopState, ctx.getParent(i), look, lookBusy, calledRuleStack,
                             seeThruPreds, addEOF);
                     }
@@ -201,7 +201,7 @@ export class LL1Analyzer {
                 }
 
                 case Transition.WILDCARD: {
-                    look.addRange(Token.MIN_USER_TOKEN_TYPE, this.#atn.maxTokenType);
+                    look.addRange(Token.MIN_USER_TOKEN_TYPE, this.atn.maxTokenType);
                     break;
                 }
 
@@ -212,7 +212,7 @@ export class LL1Analyzer {
                         let set = t.label;
                         if (set) {
                             if (t instanceof NotSetTransition) {
-                                set = set.complement(Token.MIN_USER_TOKEN_TYPE, this.#atn.maxTokenType);
+                                set = set.complement(Token.MIN_USER_TOKEN_TYPE, this.atn.maxTokenType);
                             }
                             look.addSet(set);
                         }

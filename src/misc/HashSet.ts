@@ -9,6 +9,9 @@ import { DefaultEqualityComparator } from "./DefaultEqualityComparator.js";
 import { EqualityComparator } from "./EqualityComparator.js";
 
 export class HashSet<T> implements Iterable<T> {
+    private static readonly defaultLoadFactor = 0.75;
+    private static readonly initialCapacity = 16; // must be power of 2
+
     private comparator: EqualityComparator<T>;
     private buckets: Array<T[] | undefined>;
     private threshold: number;
@@ -16,15 +19,11 @@ export class HashSet<T> implements Iterable<T> {
     /** How many elements in set */
     private itemCount = 0;
 
-    static readonly #defaultLoadFactor = 0.75;
-    static readonly #initialCapacity = 16; // must be power of 2
-
-
     public constructor(comparator?: EqualityComparator<T>, initialCapacity?: number);
     public constructor(set: HashSet<T>);
     public constructor(
         comparatorOrSet?: EqualityComparator<T> | HashSet<T>,
-        initialCapacity = HashSet.#initialCapacity) {
+        initialCapacity = HashSet.initialCapacity) {
 
         if (comparatorOrSet instanceof HashSet) {
             this.comparator = comparatorOrSet.comparator;
@@ -41,7 +40,7 @@ export class HashSet<T> implements Iterable<T> {
         } else {
             this.comparator = comparatorOrSet ?? DefaultEqualityComparator.instance;
             this.buckets = this.createBuckets(initialCapacity);
-            this.threshold = Math.floor(HashSet.#initialCapacity * HashSet.#defaultLoadFactor);
+            this.threshold = Math.floor(HashSet.initialCapacity * HashSet.defaultLoadFactor);
         }
     }
 
@@ -258,9 +257,9 @@ export class HashSet<T> implements Iterable<T> {
     }
 
     public clear(): void {
-        this.buckets = this.createBuckets(HashSet.#initialCapacity);
+        this.buckets = this.createBuckets(HashSet.initialCapacity);
         this.itemCount = 0;
-        this.threshold = Math.floor(HashSet.#initialCapacity * HashSet.#defaultLoadFactor);
+        this.threshold = Math.floor(HashSet.initialCapacity * HashSet.defaultLoadFactor);
     }
 
     public toString(): string {
@@ -331,7 +330,7 @@ export class HashSet<T> implements Iterable<T> {
         const newCapacity = this.buckets.length * 2;
         const newTable: Array<T[] | undefined> = this.createBuckets(newCapacity);
         this.buckets = newTable;
-        this.threshold = Math.floor(newCapacity * HashSet.#defaultLoadFactor);
+        this.threshold = Math.floor(newCapacity * HashSet.defaultLoadFactor);
 
         // rehash all existing entries
         for (const bucket of old) {

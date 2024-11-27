@@ -27,7 +27,7 @@ export class LexerCustomAction implements LexerAction {
     public readonly actionType: number;
     public isPositionDependent: boolean = true;
 
-    #cachedHashCode: number | undefined;
+    private cachedHashCode: number | undefined;
 
     /**
      * Constructs a custom lexer action with the specified rule and action indexes.
@@ -50,15 +50,15 @@ export class LexerCustomAction implements LexerAction {
     }
 
     public hashCode(): number {
-        if (this.#cachedHashCode === undefined) {
+        if (this.cachedHashCode === undefined) {
             let hash = MurmurHash.initialize();
             hash = MurmurHash.update(hash, this.actionType);
             hash = MurmurHash.update(hash, this.ruleIndex);
             hash = MurmurHash.update(hash, this.actionIndex);
-            this.#cachedHashCode = MurmurHash.finish(hash, 3);
+            this.cachedHashCode = MurmurHash.finish(hash, 3);
         }
 
-        return this.#cachedHashCode;
+        return this.cachedHashCode;
     }
 
     public equals(other: unknown): boolean {
