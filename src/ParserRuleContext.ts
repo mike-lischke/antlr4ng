@@ -57,7 +57,7 @@ export class ParserRuleContext implements ParseTree {
      */
     public invokingState: number;
 
-    #parent: ParserRuleContext | null;
+    public parent: ParserRuleContext | null;
 
     /**
      * A rule context is a record of a single rule invocation. It knows
@@ -79,13 +79,13 @@ export class ParserRuleContext implements ParseTree {
      * ParserRuleContext.
      */
     public constructor(parent: ParserRuleContext | null, invokingStateNumber: number = -1) {
-        this.#parent = parent;
+        this.parent = parent;
         this.invokingState = invokingStateNumber;
     }
 
     /** Copy a context */
     public copyFrom(ctx: ParserRuleContext): void {
-        this.#parent = ctx.parent;
+        this.parent = ctx.parent;
         this.invokingState = ctx.invokingState;
         this.children.slice(0, this.children.length);
         this.start = ctx.start;
@@ -226,14 +226,6 @@ export class ParserRuleContext implements ParseTree {
         } else {
             return new Interval(this.start.tokenIndex, this.stop.tokenIndex);
         }
-    }
-
-    public get parent(): ParserRuleContext | null {
-        return this.#parent;
-    }
-
-    public set parent(parent: ParserRuleContext | null) {
-        this.#parent = parent;
     }
 
     public depth(): number {
