@@ -80,8 +80,11 @@ export class CommonToken implements WritableToken {
         this.stop = details.stop ?? 0;
         this.#text = details.text;
 
-        if (details.source[0] !== null) {
+        if (details.line === undefined && details.source[0] !== null) {
             this.line = details.source[0].line;
+        }
+
+        if (details.column === undefined && details.source[0] !== null) {
             this.column = details.source[0].column;
         }
     }

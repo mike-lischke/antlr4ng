@@ -136,4 +136,10 @@ export interface TokenStream extends IntStream {
      * this method for the specified tokens
      */
     getTextFromRange(start: Token | null, stop: Token | null): string;
+
+    /** Override the current line (useful for tokenizing substrings of other input). */
+    setLine(line: number): void;
+
+    /** Override the current column (useful for tokenizing substrings of other input). */
+    setColumn(column: number): void;
 }
