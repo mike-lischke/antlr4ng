@@ -244,6 +244,14 @@ export class UnbufferedTokenStream implements TokenStream {
         return this.tokenSource.sourceName;
     }
 
+    public setLine(line: number): void {
+        this.tokenSource.line = line;
+    }
+
+    public setColumn(column: number): void {
+        this.tokenSource.column = column;
+    }
+
     /**
      * Make sure we have 'need' elements from current position {@link #p p}. Last valid
      * `p` index is `tokens.length-1`.  `p+need-1` is the tokens index 'need' elements

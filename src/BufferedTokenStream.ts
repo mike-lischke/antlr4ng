@@ -19,7 +19,7 @@ import { ParserRuleContext } from "./ParserRuleContext.js";
  * {@link TokenSource} on-demand, and places the tokens in a buffer to provide
  * access to any previous token by index.
  *
- * This token stream ignores the value of {@link Token.getChannel}. If your
+ * This token stream ignores the value of {@link Token.channel}. If your
  * parser requires the token stream filter tokens to only those on a particular
  * channel, such as {@link Token.DEFAULT_CHANNEL} or
  * {@link Token.HIDDEN_CHANNEL}, use a filtering token stream such a {@link CommonTokenStream}.
@@ -446,5 +446,13 @@ export class BufferedTokenStream implements TokenStream {
     public fill(): void {
         this.lazyInit();
         while (this.fetch(1000) === 1000) { ; }
+    }
+
+    public setLine(line: number): void {
+        this.tokenSource.line = line;
+    }
+
+    public setColumn(column: number): void {
+        this.tokenSource.column = column;
     }
 }

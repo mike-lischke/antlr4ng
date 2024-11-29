@@ -105,7 +105,7 @@ export class CharStreamImpl implements CharStream {
      */
     public seek(index: number): void {
         if (index <= this.index) {
-            this.index = index; // just jump; don't update stream state (line,
+            this.index = index; // just jump; don't update stream state.
 
             return;
         }
