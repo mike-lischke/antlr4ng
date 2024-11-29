@@ -115,7 +115,7 @@ export class LexerATNSimulator extends ATNSimulator {
         if (recog) {
             this.options = recog.options;
         } else {
-            this.#options = {
+            this.options = {
                 minDFAEdge: 0,
                 maxDFAEdge: 256,
                 minCodePoint: 0,
