@@ -38,20 +38,21 @@ export class ParserInterpreter extends Parser {
 
     protected parentContextStack: Array<[ParserRuleContext | null, number]> = [];
 
+    private overrideDecisionAlt = -1;
+    private overrideDecisionReached = false;
+    private decisionToDFA: DFA[];
+    private sharedContextCache = new PredictionContextCache();
+
+    private pushRecursionContextStates: BitSet;
+
     #overrideDecision = -1;
 
     #overrideDecisionInputIndex = -1;
-    #overrideDecisionAlt = -1;
-    #overrideDecisionReached = false;
 
     #grammarFileName: string;
     #atn: ATN;
     #ruleNames: string[];
     #vocabulary: Vocabulary;
-    #decisionToDFA: DFA[];
-    #sharedContextCache = new PredictionContextCache();
-
-    #pushRecursionContextStates;
 
     public constructor(grammarFileName: string, vocabulary: Vocabulary, ruleNames: string[], atn: ATN,
         input: TokenStream) {
@@ -62,25 +63,25 @@ export class ParserInterpreter extends Parser {
         this.#vocabulary = vocabulary;
 
         // Cache the ATN states where pushNewRecursionContext() must be called in `visitState()`.
-        this.#pushRecursionContextStates = new BitSet();
+        this.pushRecursionContextStates = new BitSet();
         for (const state of atn.states) {
             if (state instanceof StarLoopEntryState && state.precedenceRuleDecision) {
-                this.#pushRecursionContextStates.set(state.stateNumber);
+                this.pushRecursionContextStates.set(state.stateNumber);
             }
         }
 
-        this.#decisionToDFA = atn.decisionToState.map((ds, i) => {
+        this.decisionToDFA = atn.decisionToState.map((ds, i) => {
             return new DFA(ds, i);
         });
 
         // get atn simulator that knows how to do predictions
-        this.interpreter = new ParserATNSimulator(this, atn, this.#decisionToDFA, this.#sharedContextCache);
+        this.interpreter = new ParserATNSimulator(this, atn, this.decisionToDFA, this.sharedContextCache);
     }
 
     public override reset(): void {
         super.reset();
 
-        this.#overrideDecisionReached = false;
+        this.overrideDecisionReached = false;
         this.overrideDecisionRoot = null;
     }
 
@@ -159,7 +160,7 @@ export class ParserInterpreter extends Parser {
     public addDecisionOverride(decision: number, tokenIndex: number, forcedAlt: number): void {
         this.#overrideDecision = decision;
         this.#overrideDecisionInputIndex = tokenIndex;
-        this.#overrideDecisionAlt = forcedAlt;
+        this.overrideDecisionAlt = forcedAlt;
     }
 
     public get overrideDecision(): number {
@@ -185,7 +186,7 @@ export class ParserInterpreter extends Parser {
         const transition = p.transitions[predictedAlt - 1];
         switch (transition.transitionType) {
             case Transition.EPSILON:
-                if (this.#pushRecursionContextStates.get(p.stateNumber) &&
+                if (this.pushRecursionContextStates.get(p.stateNumber) &&
                     !((transition.target.constructor as typeof ATNState).stateType === ATNState.LOOP_END)) {
                     // We are at the start of a left recursive rule's (...)* loop
                     // and we're not taking the exit branch of loop.
@@ -261,9 +262,9 @@ export class ParserInterpreter extends Parser {
             this.errorHandler.sync(this);
             const decision = p.decision;
             if (decision === this.#overrideDecision && this.inputStream.index === this.#overrideDecisionInputIndex &&
-                !this.#overrideDecisionReached) {
-                predictedAlt = this.#overrideDecisionAlt;
-                this.#overrideDecisionReached = true;
+                !this.overrideDecisionReached) {
+                predictedAlt = this.overrideDecisionAlt;
+                this.overrideDecisionReached = true;
             } else {
                 predictedAlt = this.interpreter.adaptivePredict(this.inputStream, decision, this.context);
             }

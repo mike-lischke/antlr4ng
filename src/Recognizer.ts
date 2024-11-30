@@ -28,8 +28,8 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
 
     public interpreter: ATNInterpreter;
 
-    #listeners: ANTLRErrorListener[] = [ConsoleErrorListener.instance];
-    #stateNumber = -1;
+    private listeners: ANTLRErrorListener[] = [ConsoleErrorListener.instance];
+    private stateNumber = -1;
 
     public checkVersion(toolVersion: string): void {
         const runtimeVersion = "4.13.1";
@@ -39,17 +39,17 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
     }
 
     public addErrorListener(listener: ANTLRErrorListener): void {
-        this.#listeners.push(listener);
+        this.listeners.push(listener);
     }
 
     public removeErrorListeners(): void {
-        this.#listeners = [];
+        this.listeners = [];
     }
 
     public removeErrorListener(listener: ANTLRErrorListener): void {
-        for (let i = 0; i < this.#listeners.length; i++) {
-            if (this.#listeners[i] === listener) {
-                this.#listeners.splice(i, 1);
+        for (let i = 0; i < this.listeners.length; i++) {
+            if (this.listeners[i] === listener) {
+                this.listeners.splice(i, 1);
 
                 return;
             }
@@ -57,7 +57,7 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
     }
 
     public getErrorListeners(): ANTLRErrorListener[] {
-        return this.#listeners;
+        return this.listeners;
     }
 
     public getTokenTypeMap(): Map<string, number> {
@@ -123,7 +123,7 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
     }
 
     public get errorListenerDispatch(): ANTLRErrorListener {
-        return new ProxyErrorListener(this.#listeners);
+        return new ProxyErrorListener(this.listeners);
     }
 
     /**
@@ -147,11 +147,11 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
     }
 
     public get state(): number {
-        return this.#stateNumber;
+        return this.stateNumber;
     }
 
     public set state(state: number) {
-        this.#stateNumber = state;
+        this.stateNumber = state;
     }
 
     public getSerializedATN(): number[] {

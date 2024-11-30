@@ -35,7 +35,7 @@ export class DFA {
      * A mapping from an ATNConfigSet hash to a DFAState.
      * Used to quick look up the DFA state for a particular configuration set.
      */
-    #states = new Map<number, DFAState>();
+    private states = new Map<number, DFAState>();
 
     public constructor(atnStartState: DecisionState | null, decision?: number) {
         this.atnStartState = atnStartState;
@@ -53,7 +53,7 @@ export class DFA {
     }
 
     public [Symbol.iterator] = (): Iterator<DFAState> => {
-        return this.#states.values()[Symbol.iterator]();
+        return this.states.values()[Symbol.iterator]();
     };
 
     /**
@@ -103,7 +103,7 @@ export class DFA {
      * @returns a list of all states in this DFA, ordered by state number.
      */
     public getStates(): DFAState[] {
-        const result = [...this.#states.values()];
+        const result = [...this.states.values()];
         result.sort((o1: DFAState, o2: DFAState): number => {
             return o1.stateNumber - o2.stateNumber;
         });
@@ -112,21 +112,21 @@ export class DFA {
     };
 
     public getState(state: DFAState): DFAState | null {
-        return this.#states.get(state.configs.hashCode()) ?? null;
+        return this.states.get(state.configs.hashCode()) ?? null;
     }
 
     public getStateForConfigs(configs: ATNConfigSet): DFAState | null {
-        return this.#states.get(configs.hashCode()) ?? null;
+        return this.states.get(configs.hashCode()) ?? null;
     }
 
     public addState(state: DFAState): void {
         const hash = state.configs.hashCode();
-        if (this.#states.has(hash)) {
+        if (this.states.has(hash)) {
             return;
         }
 
-        this.#states.set(hash, state);
-        state.stateNumber = this.#states.size - 1;
+        this.states.set(hash, state);
+        state.stateNumber = this.states.size - 1;
     }
 
     public toString(vocabulary?: Vocabulary): string {
@@ -154,6 +154,6 @@ export class DFA {
     };
 
     public get length(): number {
-        return this.#states.size;
+        return this.states.size;
     }
 }

@@ -74,13 +74,21 @@ export class LexerATNSimulator extends ATNSimulator {
     public mode: number = Lexer.DEFAULT_MODE;
 
     /** Used during DFA/ATN exec to record the most recent accept configuration info */
-    #prevAccept: SimState | undefined;
+    private prevAccept: SimState | undefined;
 
-    #options: LexerOptions;
+    private options: LexerOptions;
 
     /** Lookup table for lexer ATN config creation. */
-    #lexerATNConfigFactory: Array<(input: CharStream, config: LexerATNConfig, trans: Transition, configs: ATNConfigSet,
-        speculative: boolean, treatEofAsEpsilon: boolean) => LexerATNConfig | null>;
+  private lexerATNConfigFactory: Array<
+    (
+      input: CharStream,
+      config: LexerATNConfig,
+      trans: Transition,
+      configs: ATNConfigSet,
+      speculative: boolean,
+      treatEofAsEpsilon: boolean,
+    ) => LexerATNConfig | null
+  >;
 
     /**
      * When we hit an accept state in either the DFA or the ATN, we
@@ -105,9 +113,9 @@ export class LexerATNSimulator extends ATNSimulator {
         this.recognizer = recog;
 
         if (recog) {
-            this.#options = recog.options;
+            this.options = recog.options;
         } else {
-            this.#options = {
+            this.options = {
                 minDFAEdge: 0,
                 maxDFAEdge: 256,
                 minCodePoint: 0,
@@ -121,7 +129,7 @@ export class LexerATNSimulator extends ATNSimulator {
         const mark = input.mark();
         try {
             this.startIndex = input.index;
-            this.#prevAccept = undefined;
+            this.prevAccept = undefined;
             const dfa = this.decisionToDFA[mode];
 
             if (!dfa.s0) {
@@ -135,7 +143,7 @@ export class LexerATNSimulator extends ATNSimulator {
     }
 
     public reset(): void {
-        this.#prevAccept = undefined;
+        this.prevAccept = undefined;
         this.startIndex = -1;
         this.line = 1;
         this.column = 0;
@@ -281,8 +289,8 @@ export class LexerATNSimulator extends ATNSimulator {
      * `t`, or `null` if the target state for this edge is not already cached
      */
     private getExistingTargetState(s: DFAState, t: number): DFAState | undefined {
-        if (t >= this.#options.minDFAEdge && t <= this.#options.maxDFAEdge) {
-            const target = s.edges[t - this.#options.minDFAEdge];
+        if (t >= this.options.minDFAEdge && t <= this.options.maxDFAEdge) {
+            const target = s.edges[t - this.options.minDFAEdge];
 
             if (LexerATNSimulator.debug && target) {
                 console.log("reuse state " + s.stateNumber + " edge to " + target.stateNumber);
@@ -328,8 +336,8 @@ export class LexerATNSimulator extends ATNSimulator {
     }
 
     private failOrAccept(input: CharStream, reach: ATNConfigSet, t: number): number {
-        if (this.#prevAccept?.dfaState) {
-            const { dfaState, index, line, column } = this.#prevAccept;
+        if (this.prevAccept?.dfaState) {
+            const { dfaState, index, line, column } = this.prevAccept;
 
             this.accept(input, dfaState.lexerActionExecutor, this.startIndex, index, line, column);
 
@@ -398,7 +406,7 @@ export class LexerATNSimulator extends ATNSimulator {
     }
 
     private getReachableTarget(trans: Transition, t: number): ATNState | undefined {
-        if (trans.matches(t, this.#options.minCodePoint, this.#options.maxCodePoint)) {
+        if (trans.matches(t, this.options.minCodePoint, this.options.maxCodePoint)) {
             return trans.target;
         } else {
             return undefined;
@@ -492,10 +500,10 @@ export class LexerATNSimulator extends ATNSimulator {
     // side-effect: can alter configs.hasSemanticContext
     private getEpsilonTarget(input: CharStream, config: LexerATNConfig, trans: Transition, configs: ATNConfigSet,
         speculative: boolean, treatEofAsEpsilon: boolean): LexerATNConfig | null {
-        if (!this.#lexerATNConfigFactory) {
+        if (!this.lexerATNConfigFactory) {
             this.setupATNFactoryLookup();
         }
-        const factory = this.#lexerATNConfigFactory[trans.transitionType];
+        const factory = this.lexerATNConfigFactory[trans.transitionType];
         if (!factory) {
             return null;
         }
@@ -508,9 +516,9 @@ export class LexerATNSimulator extends ATNSimulator {
      * type, which determines the configuration of the created config.
      */
     private setupATNFactoryLookup(): void {
-        this.#lexerATNConfigFactory = [];
+        this.lexerATNConfigFactory = [];
 
-        this.#lexerATNConfigFactory[Transition.RULE] = (input: CharStream, config: LexerATNConfig,
+        this.lexerATNConfigFactory[Transition.RULE] = (input: CharStream, config: LexerATNConfig,
             trans: Transition) => {
             const newContext = SingletonPredictionContext.create(config.context ?? undefined,
                 (trans as RuleTransition).followState.stateNumber);
@@ -518,11 +526,11 @@ export class LexerATNSimulator extends ATNSimulator {
             return LexerATNConfig.createWithConfig(trans.target, config, newContext);
         };
 
-        this.#lexerATNConfigFactory[Transition.PRECEDENCE] = () => {
+        this.lexerATNConfigFactory[Transition.PRECEDENCE] = () => {
             throw new Error("Precedence predicates are not supported in lexers.");
         };
 
-        this.#lexerATNConfigFactory[Transition.PREDICATE] = (input: CharStream, config: LexerATNConfig,
+        this.lexerATNConfigFactory[Transition.PREDICATE] = (input: CharStream, config: LexerATNConfig,
             trans: Transition, configs: ATNConfigSet, speculative: boolean) => {
             // Track traversing semantic predicates. If we traverse,
             // we cannot add a DFA state for this "reach" computation
@@ -556,7 +564,7 @@ export class LexerATNSimulator extends ATNSimulator {
             return null;
         };
 
-        this.#lexerATNConfigFactory[Transition.ACTION] = (input: CharStream, config: LexerATNConfig,
+        this.lexerATNConfigFactory[Transition.ACTION] = (input: CharStream, config: LexerATNConfig,
             trans: Transition) => {
             if (config.context === null || config.context.hasEmptyPath()) {
                 // execute actions anywhere in the start rule for a token.
@@ -581,7 +589,7 @@ export class LexerATNSimulator extends ATNSimulator {
             }
         };
 
-        this.#lexerATNConfigFactory[Transition.EPSILON] = (input: CharStream, config: LexerATNConfig,
+        this.lexerATNConfigFactory[Transition.EPSILON] = (input: CharStream, config: LexerATNConfig,
             trans: Transition) => {
             return LexerATNConfig.createWithConfig(trans.target, config);
         };
@@ -590,7 +598,7 @@ export class LexerATNSimulator extends ATNSimulator {
             trans: Transition, configs: ATNConfigSet,
             speculative: boolean, treatEofAsEpsilon: boolean) => {
             if (treatEofAsEpsilon) {
-                if (trans.matches(Token.EOF, this.#options.minCodePoint, this.#options.maxCodePoint)) {
+                if (trans.matches(Token.EOF, this.options.minCodePoint, this.options.maxCodePoint)) {
                     return LexerATNConfig.createWithConfig(trans.target, config);
                 }
             }
@@ -598,9 +606,9 @@ export class LexerATNSimulator extends ATNSimulator {
             return null;
         };
 
-        this.#lexerATNConfigFactory[Transition.ATOM] = simple;
-        this.#lexerATNConfigFactory[Transition.RANGE] = simple;
-        this.#lexerATNConfigFactory[Transition.SET] = simple;
+        this.lexerATNConfigFactory[Transition.ATOM] = simple;
+        this.lexerATNConfigFactory[Transition.RANGE] = simple;
+        this.lexerATNConfigFactory[Transition.SET] = simple;
     }
 
     /**
@@ -652,7 +660,7 @@ export class LexerATNSimulator extends ATNSimulator {
     }
 
     private captureSimState(input: CharStream, dfaState: DFAState | null): void {
-        this.#prevAccept = {
+        this.prevAccept = {
             index: input.index,
             line: this.line,
             column: this.column,
@@ -683,7 +691,7 @@ export class LexerATNSimulator extends ATNSimulator {
         }
 
         // Add the edge.
-        if (tk < this.#options.minDFAEdge || tk > this.#options.maxDFAEdge) {
+        if (tk < this.options.minDFAEdge || tk > this.options.maxDFAEdge) {
             // Only track edges within the DFA bounds
             return to!;
         }
@@ -692,7 +700,7 @@ export class LexerATNSimulator extends ATNSimulator {
             console.log("EDGE " + from + " -> " + to + " upon " + tk);
         }
 
-        from.edges[tk - this.#options.minDFAEdge] = to!; // connect
+        from.edges[tk - this.options.minDFAEdge] = to!; // connect
 
         return to!;
     }

@@ -17,7 +17,7 @@ export class LexerTypeAction implements LexerAction {
     public readonly actionType: number;
     public isPositionDependent: boolean = false;
 
-    #cachedHashCode: number | undefined;
+    private cachedHashCode: number | undefined;
 
     public constructor(type: number) {
         this.actionType = LexerActionType.TYPE;
@@ -29,14 +29,14 @@ export class LexerTypeAction implements LexerAction {
     }
 
     public hashCode(): number {
-        if (this.#cachedHashCode === undefined) {
+        if (this.cachedHashCode === undefined) {
             let hash = MurmurHash.initialize();
             hash = MurmurHash.update(hash, this.actionType);
             hash = MurmurHash.update(hash, this.type);
-            this.#cachedHashCode = MurmurHash.finish(hash, 2);
+            this.cachedHashCode = MurmurHash.finish(hash, 2);
         }
 
-        return this.#cachedHashCode;
+        return this.cachedHashCode;
     }
 
     public equals(other: unknown): boolean {

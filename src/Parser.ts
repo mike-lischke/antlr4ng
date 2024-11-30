@@ -89,7 +89,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * implemented as a parser listener so this field is not directly used by
      * other parser methods.
      */
-    #tracer: TraceListener | null = null;
+    private tracer: TraceListener | null = null;
 
     /**
      * This field holds the deserialized {@link ATN} with bypass alternatives, created
@@ -99,7 +99,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      *
      * @see ATNDeserializationOptions#isGenerateRuleBypassTransitions()
      */
-    #bypassAltsAtnCache: ATN | null = null;
+    private bypassAltsAtnCache: ATN | null = null;
 
     #inputStream!: TokenStream;
 
@@ -351,14 +351,14 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
             throw new Error("The current parser does not support an ATN with bypass alternatives.");
         }
 
-        if (this.#bypassAltsAtnCache !== null) {
-            return this.#bypassAltsAtnCache;
+        if (this.bypassAltsAtnCache !== null) {
+            return this.bypassAltsAtnCache;
         }
 
         const deserializationOptions = { readOnly: false, verifyATN: true, generateRuleBypassTransitions: true };
-        this.#bypassAltsAtnCache = new ATNDeserializer(deserializationOptions).deserialize(serializedAtn);
+        this.bypassAltsAtnCache = new ATNDeserializer(deserializationOptions).deserialize(serializedAtn);
 
-        return this.#bypassAltsAtnCache;
+        return this.bypassAltsAtnCache;
     }
 
     /**
@@ -740,14 +740,14 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      */
     public setTrace(trace: boolean): void {
         if (!trace) {
-            this.removeParseListener(this.#tracer);
-            this.#tracer = null;
+            this.removeParseListener(this.tracer);
+            this.tracer = null;
         } else {
-            if (this.#tracer !== null) {
-                this.removeParseListener(this.#tracer);
+            if (this.tracer !== null) {
+                this.removeParseListener(this.tracer);
             }
-            this.#tracer = new TraceListener(this);
-            this.addParseListener(this.#tracer);
+            this.tracer = new TraceListener(this);
+            this.addParseListener(this.tracer);
         }
     }
 

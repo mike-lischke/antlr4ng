@@ -13,6 +13,9 @@ import { Vocabulary } from "./Vocabulary.js";
 import { CharStream } from "./CharStream.js";
 
 export class LexerInterpreter extends Lexer {
+    private decisionToDFA: DFA[];
+    private sharedContextCache = new PredictionContextCache();
+
     #grammarFileName: string;
     #atn: ATN;
 
@@ -21,9 +24,6 @@ export class LexerInterpreter extends Lexer {
     #modeNames: string[];
 
     #vocabulary: Vocabulary;
-    #decisionToDFA: DFA[];
-
-    #sharedContextCache = new PredictionContextCache();
 
     public constructor(grammarFileName: string, vocabulary: Vocabulary, ruleNames: string[], channelNames: string[],
         modeNames: string[], atn: ATN, input: CharStream) {
@@ -41,11 +41,11 @@ export class LexerInterpreter extends Lexer {
         this.#modeNames = modeNames.slice(0);
         this.#vocabulary = vocabulary;
 
-        this.#decisionToDFA = atn.decisionToState.map((ds, i) => {
+        this.decisionToDFA = atn.decisionToState.map((ds, i) => {
             return new DFA(ds, i);
         });
 
-        this.interpreter = new LexerATNSimulator(this, atn, this.#decisionToDFA, this.#sharedContextCache);
+        this.interpreter = new LexerATNSimulator(this, atn, this.decisionToDFA, this.sharedContextCache);
     }
 
     public override get atn(): ATN {

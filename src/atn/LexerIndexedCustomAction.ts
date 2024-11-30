@@ -39,7 +39,7 @@ export class LexerIndexedCustomAction implements LexerAction {
     public readonly actionType: number;
     public isPositionDependent: boolean = true;
 
-    #cachedHashCode: number | undefined;
+    private cachedHashCode: number | undefined;
 
     public constructor(offset: number, action: LexerAction) {
         this.actionType = action.actionType;
@@ -57,15 +57,15 @@ export class LexerIndexedCustomAction implements LexerAction {
     }
 
     public hashCode(): number {
-        if (this.#cachedHashCode === undefined) {
+        if (this.cachedHashCode === undefined) {
             let hash = MurmurHash.initialize();
             hash = MurmurHash.update(hash, this.offset);
             hash = MurmurHash.updateFromComparable(hash, this.action);
 
-            this.#cachedHashCode = MurmurHash.finish(hash, 2);
+            this.cachedHashCode = MurmurHash.finish(hash, 2);
         }
 
-        return this.#cachedHashCode;
+        return this.cachedHashCode;
     }
 
     public equals(other: unknown): boolean {

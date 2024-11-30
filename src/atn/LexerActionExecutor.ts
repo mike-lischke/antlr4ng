@@ -17,7 +17,7 @@ export class LexerActionExecutor implements LexerAction {
     public readonly actionType: number;
     public isPositionDependent: boolean = false;
 
-    #cachedHashCode: number | undefined;
+    private cachedHashCode: number | undefined;
 
     /**
      * Represents an executor for a sequence of lexer actions which traversed during
@@ -156,15 +156,15 @@ export class LexerActionExecutor implements LexerAction {
     }
 
     public hashCode(): number {
-        if (this.#cachedHashCode === undefined) {
+        if (this.cachedHashCode === undefined) {
             let hashCode = MurmurHash.initialize(7);
             for (const lexerAction of this.lexerActions) {
                 hashCode = MurmurHash.update(hashCode, lexerAction.hashCode());
             }
-            this.#cachedHashCode = MurmurHash.finish(hashCode, this.lexerActions.length);
+            this.cachedHashCode = MurmurHash.finish(hashCode, this.lexerActions.length);
         }
 
-        return this.#cachedHashCode;
+        return this.cachedHashCode;
     }
 
     public equals(other: LexerActionExecutor): boolean {
@@ -172,7 +172,7 @@ export class LexerActionExecutor implements LexerAction {
             return true;
         }
 
-        if (this.#cachedHashCode !== other.#cachedHashCode) {
+        if (this.cachedHashCode !== other.cachedHashCode) {
             return false;
         }
 
