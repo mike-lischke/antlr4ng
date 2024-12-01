@@ -20,8 +20,13 @@ export class Interval {
     private cachedHashCode: number;
 
     public constructor(start: number, stop: number) {
-        this.start = start;
-        this.stop = stop;
+        if (start <= stop) {
+            this.start = start;
+            this.stop = stop;
+        } else {
+            this.start = stop;
+            this.stop = start;
+        }
 
         this.cachedHashCode = Math.imul(651 + start, 31) + stop;
     }

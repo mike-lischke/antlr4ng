@@ -29,6 +29,6 @@ export class LexerNoViableAltException extends RecognitionException {
             symbol = this.input.getTextFromRange(this.startIndex, this.startIndex);
         }
 
-        return "LexerNoViableAltException" + symbol;
+        return `LexerNoViableAltException(${symbol})`;
     }
 }
