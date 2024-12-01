@@ -2,6 +2,13 @@
 
 # TypeScript Runtime for ANTLR 4 Release Notes
 
+## 3.0.10
+
+- Merged PR #101 prefer ts private keyword instead of # prefix (private fields can make problems with proxies and older target ECMA versions).
+- Added some helper code needed by the ANTLRng tool.
+- Reorder start and stop when creating an Interval instance with start > stop.
+- Changed toString() output of LexerNoViableAltException to be the same like in Java.
+
 ## 3.0.9
 - Fixed addition bug in OrderedHashSet.
 - Bug fixes in code which is rarely used (and therefore had no tests)
