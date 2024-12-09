@@ -2,6 +2,13 @@
 
 # TypeScript Runtime for ANTLR 4 Release Notes
 
+## 3.0.11
+
+- Each ATN instance now uses its own instance of the LL1Analyzer. This cannot be shared.
+- Removed a forgotten debug output from the ATNSerialiser.
+- The HashMap now supports enumeration of its keys.
+- The channel value for getHiddenTokensToRight/Left in BufferedTokenStream is now marked as optional (it is already handled that way).
+
 ## 3.0.10
 
 - Merged PR #101 prefer ts private keyword instead of # prefix (private fields can make problems with proxies and older target ECMA versions).

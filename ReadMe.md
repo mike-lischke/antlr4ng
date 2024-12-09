@@ -153,21 +153,21 @@ This suite consists of 530 tests and runs in about 9s.
 
 ### Real World Example
 
-The following table shows the results of the benchmarks from the [antlr4wasm project](https://github.com/mike-lischke/antlr4wasm/tree/master/benchmarks/mysql). Only the antlr4ng results came from this repository to reflect the current state. They show how the antlr4ng runtime dominates every other JS/TS runtime by a margin of 9% (for simple input) up to 35% (for complex input), measuring against the closest value for that benchmark.
+The following table shows the results of the benchmarks from the [antlr4wasm project](https://github.com/mike-lischke/antlr4wasm/tree/master/benchmarks/mysql). Only the antlr4ng results have been taken from this repository to reflect the current state. They show that the antlr4ng runtime dominates every other JS/TS runtime by a margin of 9% (for simple input) up to 35% (for complex input), measured against the closest value for that benchmark.
 
 |    | C++ |antlr4ng|antlr4|antlr4ts|antlr4wasm|
 |---:|---:|---:|---:|---:|---:|
-|Query Collection (cold)| 941 ms| <ins>173/1991 (2163) ms</ins>| 7789 ms| 3353 ms| 3217 ms|
-|  Bitrix Queries (cold)| 143 ms|  <ins>66/224 (290) ms</ins>| 1105 ms|  450 ms|  899 ms|
-|   Large Inserts (cold)|3590 ms|<ins>6095/913 (7008) ms</ins>|10607 ms|11539 ms|30466 ms|
-|Total (cold)           |4696 ms|<ins>6333/3128 (9461) ms</ins>|19532 ms|15371 ms|34612 ms|
+|Query Collection (cold)| 941 ms| <ins>169/1997 (2166) ms</ins>| 7789 ms| 3353 ms| 3217 ms|
+|  Bitrix Queries (cold)| 143 ms|  <ins>67/221 (287) ms</ins>| 1105 ms|  450 ms|  899 ms|
+|   Large Inserts (cold)|3590 ms|<ins>60656/871 (6927) ms</ins>|10607 ms|11539 ms|30466 ms|
+|Total (cold)           |4696 ms|<ins>6292/3089 (9381) ms</ins>|19532 ms|15371 ms|34612 ms|
 |||||||
-|Query Collection (warm)|  95 ms|  <ins>125/51 (176) ms</ins>|  215 ms|  266 ms| 1041 ms|
-|  Bitrix Queries (warm)|  52 ms|  <ins>61/34 (95) ms</ins>|  107 ms|  137 ms|  715 ms|
-|   Large Inserts (warm)|3564 ms|<ins>6121/914 (7035) ms</ins>|10539 ms|11461 ms|32425 ms|
-|Total (warm)           |3733 ms|<ins>6307/1001 (7308) ms</ins>|10889 ms|11889 ms|34216 ms|
+|Query Collection (warm)|  95 ms|  <ins>126/49 (175) ms</ins>|  215 ms|  266 ms| 1041 ms|
+|  Bitrix Queries (warm)|  52 ms|  <ins>61/33 (94) ms</ins>|  107 ms|  137 ms|  715 ms|
+|   Large Inserts (warm)|3564 ms|<ins>6024/855 (6879) ms</ins>|10539 ms|11461 ms|32425 ms|
+|Total (warm)           |3733 ms|<ins>6231/939 (7170) ms</ins>|10889 ms|11889 ms|34216 ms|
 
-Underlined entries are the smallest (not counting C++, which beats them all). For antlr4ng, the times are split into lexing and parsing. Note the high lexer execution times, caused by the large number of predicates (126) + lexer actions (40) in the MySQL lexer.
+Underlined entries are the shortest (not counting C++, which beats them all). For antlr4ng, the times are split between lexing and parsing. Note the high lexer execution times, caused by the large number of predicates (126) + lexer actions (40) in the MySQL lexer.
 
 The benchmarks consist of a set of query files parsed by a MySQL parser. The MySQL grammar is one of the largest and most complex grammars you can find for ANTLR4, which I think makes it a perfect test case for parser testing.
 
@@ -202,19 +202,19 @@ The original Java execution times have been taken on OS X with a 4 GHz Intel Cor
 The execute times on last release of this runtime have been measured as:
 
 ```bash
-                loadNewUTF8 average time   318µs size  29191b over 3500 loads of 29191 symbols from Parser.java
-                loadNewUTF8 average time    72µs size   7552b over 3500 loads of  7552 symbols from RuleContext.java
-                loadNewUTF8 average time   122µs size  31784b over 3500 loads of 13379 symbols from udhr_hin.txt
+                loadNewUTF8 average time   306µs size  29191b over 3500 loads of 29191 symbols from Parser.java
+                loadNewUTF8 average time    71µs size   7552b over 3500 loads of  7552 symbols from RuleContext.java
+                loadNewUTF8 average time   117µs size  31784b over 3500 loads of 13379 symbols from udhr_hin.txt
 
-             lexNewJavaUTF8 average time   699µs over 2000 runs of 29191 symbols
-             lexNewJavaUTF8 average time  1887µs over 2000 runs of 29191 symbols DFA cleared
+             lexNewJavaUTF8 average time   678µs over 2000 runs of 29191 symbols
+             lexNewJavaUTF8 average time  1869µs over 2000 runs of 29191 symbols DFA cleared
 
-         lexNewGraphemeUTF8 average time  7843µs over  400 runs of  6614 symbols from udhr_kor.txt
-         lexNewGraphemeUTF8 average time  7970µs over  400 runs of  6614 symbols from udhr_kor.txt DFA cleared
-         lexNewGraphemeUTF8 average time 12763µs over  400 runs of 13379 symbols from udhr_hin.txt
-         lexNewGraphemeUTF8 average time 12779µs over  400 runs of 13379 symbols from udhr_hin.txt DFA cleared
-         lexNewGraphemeUTF8 average time   202µs over  400 runs of    85 symbols from emoji.txt
-         lexNewGraphemeUTF8 average time   233µs over  400 runs of    85 symbols from emoji.txt DFA cleared
+         lexNewGraphemeUTF8 average time  8003µs over  400 runs of  6614 symbols from udhr_kor.txt
+         lexNewGraphemeUTF8 average time  8107µs over  400 runs of  6614 symbols from udhr_kor.txt DFA cleared
+         lexNewGraphemeUTF8 average time 13197µs over  400 runs of 13379 symbols from udhr_hin.txt
+         lexNewGraphemeUTF8 average time 13262µs over  400 runs of 13379 symbols from udhr_hin.txt DFA cleared
+         lexNewGraphemeUTF8 average time   208µs over  400 runs of    85 symbols from emoji.txt
+         lexNewGraphemeUTF8 average time   239µs over  400 runs of    85 symbols from emoji.txt DFA cleared
 ```
 
 Note: Some of the corpus sizes differ due to the restructuring of the test. However, the numbers are not directly comparable anyway, as they were taken on different machines.
