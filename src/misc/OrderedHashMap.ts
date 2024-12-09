@@ -70,7 +70,7 @@ export class OrderedHashMap<K extends IComparable, V> extends HashMap<K, V> {
     /**
      * @returns an iterable of the keys in the map, in the order they were inserted.
      */
-    public keys(): IterableIterator<K> {
+    public override keys(): IterableIterator<K> {
         return this.#keys[Symbol.iterator]();
     }
 

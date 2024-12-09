@@ -334,7 +334,7 @@ export class BufferedTokenStream implements TokenStream {
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL or
      * EOF. If channel is -1, find any non default channel token.
      */
-    public getHiddenTokensToRight(tokenIndex: number, channel: number): Token[] | undefined {
+    public getHiddenTokensToRight(tokenIndex: number, channel?: number): Token[] | undefined {
         if (channel === undefined) {
             channel = -1;
         }
@@ -356,7 +356,7 @@ export class BufferedTokenStream implements TokenStream {
      * the current token up until we see a token on DEFAULT_TOKEN_CHANNEL.
      * If channel is -1, find any non default channel token.
      */
-    public getHiddenTokensToLeft(tokenIndex: number, channel: number): Token[] | undefined {
+    public getHiddenTokensToLeft(tokenIndex: number, channel?: number): Token[] | undefined {
         if (channel === undefined) {
             channel = -1;
         }
@@ -388,6 +388,7 @@ export class BufferedTokenStream implements TokenStream {
                 hidden.push(t);
             }
         }
+
         if (hidden.length === 0) {
             return undefined;
         }

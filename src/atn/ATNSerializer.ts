@@ -219,7 +219,6 @@ export class ATNSerializer {
             case 0: {
                 let edgeCount = 0;
                 this.data.push(this.atn.states.length);
-                let i = 0;
                 for (const s of this.atn.states) {
                     if (s === null) { // might be optimized away
                         this.data.push(ATNState.INVALID_TYPE);
@@ -229,10 +228,6 @@ export class ATNSerializer {
                     const stateType = (s.constructor as typeof ATNState).stateType;
                     if (s instanceof DecisionState && s.nonGreedy) {
                         this.nonGreedyStates.push(s.stateNumber);
-                    }
-
-                    if (i === 910) {
-                        console.log("i", i);
                     }
 
                     if (s instanceof RuleStartState && s.isLeftRecursiveRule) {
@@ -262,7 +257,6 @@ export class ATNSerializer {
                             this.sets.set(st.set, true);
                         }
                     }
-                    ++i;
                 }
 
                 return edgeCount;

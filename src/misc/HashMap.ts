@@ -88,6 +88,10 @@ export class HashMap<K extends IComparable, V> {
         return result;
     }
 
+    public keys(): Iterable<K> {
+        return this.backingStore.toArray().map((bucket) => { return bucket.key; });
+    }
+
     public values(): Iterable<V> {
         return this.backingStore.toArray().map((bucket) => { return bucket.value!; });
     }
