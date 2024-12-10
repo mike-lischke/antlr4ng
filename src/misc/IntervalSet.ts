@@ -418,12 +418,12 @@ export class IntervalSet {
                 return;
             } else if (value === existing.stop) {
                 // check for upper boundary
-                this.intervals[i] = new Interval(existing.start, existing.stop);
+                this.intervals[i] = new Interval(existing.start, existing.stop - 1);
 
                 return;
             } else if (value < existing.stop) {
                 // split existing range
-                const replace = new Interval(existing.start, value);
+                const replace = new Interval(existing.start, value - 1);
                 this.intervals[i] = new Interval(value + 1, existing.stop);
                 this.intervals.splice(i, 0, replace);
 

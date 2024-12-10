@@ -20,9 +20,6 @@ export abstract class PredictionContext {
      */
     public static readonly EMPTY_RETURN_STATE = 0x7FFFFFFF;
 
-    // TODO: Temporarily here. Should be moved to EmptyPredictionContext. It's initialized in that context class.
-    public static EMPTY: PredictionContext;
-
     public static traceATNSimulator = false;
 
     private cachedHashCode: number;

@@ -9,6 +9,7 @@
 
 import { NoViableAltException } from "../NoViableAltException.js";
 import { Token } from "../Token.js";
+import { Vocabulary } from "../Vocabulary.js";
 import { DFAState } from "../dfa/DFAState.js";
 import { BitSet } from "../misc/BitSet.js";
 import { HashSet } from "../misc/HashSet.js";
@@ -27,26 +28,26 @@ import { RuleStopState } from "./RuleStopState.js";
 import { RuleTransition } from "./RuleTransition.js";
 import { SemanticContext } from "./SemanticContext.js";
 import { SetTransition } from "./SetTransition.js";
-import { SingletonPredictionContext } from "./SingletonPredictionContext.js";
-import { Vocabulary } from "../Vocabulary.js";
 
 import { Parser } from "../Parser.js";
-import { DFA } from "../dfa/DFA.js";
-import { PredictionContextCache } from "./PredictionContextCache.js";
-import { TokenStream } from "../TokenStream.js";
 import { ParserRuleContext } from "../ParserRuleContext.js";
-import { DecisionState } from "./DecisionState.js";
+import { TokenStream } from "../TokenStream.js";
+import { DFA } from "../dfa/DFA.js";
 import { ATNState } from "./ATNState.js";
+import { DecisionState } from "./DecisionState.js";
+import { PredictionContextCache } from "./PredictionContextCache.js";
 import { Transition } from "./Transition.js";
 
-import type { EpsilonTransition } from "./EpsilonTransition.js";
-import type { StarLoopEntryState } from "./StarLoopEntryState.js";
+import { PredPrediction } from "../dfa/PredPrediction.js";
+import { Interval } from "../misc/Interval.js";
+import { arrayToString } from "../utils/helpers.js";
 import type { BlockStartState } from "./BlockStartState.js";
+import { EmptyPredictionContext } from "./EmptyPredictionContext.js";
+import type { EpsilonTransition } from "./EpsilonTransition.js";
 import type { PrecedencePredicateTransition } from "./PrecedencePredicateTransition.js";
 import type { PredicateTransition } from "./PredicateTransition.js";
-import { PredPrediction } from "../dfa/PredPrediction.js";
-import { arrayToString } from "../utils/helpers.js";
-import { Interval } from "../misc/Interval.js";
+import type { StarLoopEntryState } from "./StarLoopEntryState.js";
+import { createSingletonPredictionContext } from "./helpers.js";
 
 /** Comprises the input values for the current prediction run. */
 interface PredictionState {
@@ -1317,7 +1318,7 @@ export class ParserATNSimulator extends ATNSimulator {
                     if (config.context.getReturnState(i) === PredictionContext.EMPTY_RETURN_STATE) {
                         if (fullCtx) {
                             configs.add(ATNConfig.createWithConfig(config.state, config,
-                                PredictionContext.EMPTY),
+                                EmptyPredictionContext.instance),
                                 this.mergeCache);
                             continue;
                         } else {
@@ -1637,7 +1638,7 @@ export class ParserATNSimulator extends ATNSimulator {
         }
 
         const returnState = t.followState;
-        const newContext = SingletonPredictionContext.create(config.context ?? undefined, returnState.stateNumber);
+        const newContext = createSingletonPredictionContext(config.context ?? undefined, returnState.stateNumber);
 
         return ATNConfig.createWithConfig(t.target, config, newContext);
     }

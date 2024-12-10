@@ -71,7 +71,7 @@ export class ArrayPredictionContext extends PredictionContext {
                 continue;
             }
 
-            entries.push(this.returnStates[i]!.toString());
+            entries.push(this.returnStates[i].toString());
             if (this.parents[i]) {
                 entries.push(this.parents[i]!.toString());
             } else {

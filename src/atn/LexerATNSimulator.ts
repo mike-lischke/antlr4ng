@@ -6,26 +6,27 @@
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns */
 
-import { Token } from "../Token.js";
+import { CharStream } from "../CharStream.js";
 import { Lexer, type LexerOptions } from "../Lexer.js";
-import { ATN } from "./ATN.js";
-import { ATNSimulator } from "./ATNSimulator.js";
+import { LexerNoViableAltException } from "../LexerNoViableAltException.js";
+import { Token } from "../Token.js";
+import { DFA } from "../dfa/DFA.js";
 import { DFAState } from "../dfa/DFAState.js";
-import { OrderedATNConfigSet } from "./OrderedATNConfigSet.js";
-import { PredictionContext } from "./PredictionContext.js";
-import { SingletonPredictionContext } from "./SingletonPredictionContext.js";
+import { ATN } from "./ATN.js";
+import { ATNConfigSet } from "./ATNConfigSet.js";
+import { ATNSimulator } from "./ATNSimulator.js";
+import { ATNState } from "./ATNState.js";
+import { ActionTransition } from "./ActionTransition.js";
+import { EmptyPredictionContext } from "./EmptyPredictionContext.js";
 import { LexerATNConfig } from "./LexerATNConfig.js";
 import { LexerActionExecutor } from "./LexerActionExecutor.js";
-import { LexerNoViableAltException } from "../LexerNoViableAltException.js";
-import { DFA } from "../dfa/DFA.js";
-import { PredictionContextCache } from "./PredictionContextCache.js";
-import { CharStream } from "../CharStream.js";
-import { ATNConfigSet } from "./ATNConfigSet.js";
-import { Transition } from "./Transition.js";
-import { ATNState } from "./ATNState.js";
-import { RuleTransition } from "./RuleTransition.js";
+import { OrderedATNConfigSet } from "./OrderedATNConfigSet.js";
 import { PredicateTransition } from "./PredicateTransition.js";
-import { ActionTransition } from "./ActionTransition.js";
+import { PredictionContext } from "./PredictionContext.js";
+import { PredictionContextCache } from "./PredictionContextCache.js";
+import { RuleTransition } from "./RuleTransition.js";
+import { Transition } from "./Transition.js";
+import { createSingletonPredictionContext } from "./helpers.js";
 
 /**
  * When we hit an accept state in either the DFA or the ATN, we
@@ -79,16 +80,16 @@ export class LexerATNSimulator extends ATNSimulator {
     private options: LexerOptions;
 
     /** Lookup table for lexer ATN config creation. */
-  private lexerATNConfigFactory: Array<
-    (
-      input: CharStream,
-      config: LexerATNConfig,
-      trans: Transition,
-      configs: ATNConfigSet,
-      speculative: boolean,
-      treatEofAsEpsilon: boolean,
-    ) => LexerATNConfig | null
-  >;
+    private lexerATNConfigFactory: Array<
+        (
+            input: CharStream,
+            config: LexerATNConfig,
+            trans: Transition,
+            configs: ATNConfigSet,
+            speculative: boolean,
+            treatEofAsEpsilon: boolean,
+        ) => LexerATNConfig | null
+    >;
 
     /**
      * When we hit an accept state in either the DFA or the ATN, we
@@ -414,7 +415,7 @@ export class LexerATNSimulator extends ATNSimulator {
     }
 
     private computeStartState(input: CharStream, p: ATNState): ATNConfigSet {
-        const initialContext = PredictionContext.EMPTY;
+        const initialContext = EmptyPredictionContext.instance;
         const configs = new OrderedATNConfigSet();
         for (let i = 0; i < p.transitions.length; i++) {
             const target = p.transitions[i].target;
@@ -458,7 +459,7 @@ export class LexerATNSimulator extends ATNSimulator {
 
                     return true;
                 } else {
-                    configs.add(LexerATNConfig.createWithConfig(config.state, config, PredictionContext.EMPTY));
+                    configs.add(LexerATNConfig.createWithConfig(config.state, config, EmptyPredictionContext.instance));
                     currentAltReachedAcceptState = true;
                 }
             }
@@ -520,7 +521,7 @@ export class LexerATNSimulator extends ATNSimulator {
 
         this.lexerATNConfigFactory[Transition.RULE] = (input: CharStream, config: LexerATNConfig,
             trans: Transition) => {
-            const newContext = SingletonPredictionContext.create(config.context ?? undefined,
+            const newContext = createSingletonPredictionContext(config.context ?? undefined,
                 (trans as RuleTransition).followState.stateNumber);
 
             return LexerATNConfig.createWithConfig(trans.target, config, newContext);

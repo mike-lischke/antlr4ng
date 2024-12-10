@@ -4,20 +4,21 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-import { Token } from "../Token.js";
-import { IntervalSet } from "../misc/IntervalSet.js";
-import { RuleTransition } from "./RuleTransition.js";
-import { NotSetTransition } from "./NotSetTransition.js";
-import { predictionContextFromRuleContext } from "./PredictionContextUtils.js";
-import { PredictionContext } from "./PredictionContext.js";
-import { SingletonPredictionContext } from "./SingletonPredictionContext.js";
-import { BitSet } from "../misc/BitSet.js";
-import { ATNState } from "./ATNState.js";
-import { ATN } from "./ATN.js";
 import { ParserRuleContext } from "../ParserRuleContext.js";
-import { Transition } from "./Transition.js";
+import { Token } from "../Token.js";
+import { BitSet } from "../misc/BitSet.js";
 import { HashSet } from "../misc/HashSet.js";
+import { IntervalSet } from "../misc/IntervalSet.js";
+import { ATN } from "./ATN.js";
 import { ATNConfig } from "./ATNConfig.js";
+import { ATNState } from "./ATNState.js";
+import { EmptyPredictionContext } from "./EmptyPredictionContext.js";
+import { NotSetTransition } from "./NotSetTransition.js";
+import { PredictionContext } from "./PredictionContext.js";
+import { predictionContextFromRuleContext } from "./PredictionContextUtils.js";
+import { RuleTransition } from "./RuleTransition.js";
+import { Transition } from "./Transition.js";
+import { createSingletonPredictionContext } from "./helpers.js";
 
 export class LL1Analyzer {
     /**
@@ -48,8 +49,8 @@ export class LL1Analyzer {
         for (let alt = 0; alt < count; alt++) {
             const set = new IntervalSet();
             const lookBusy = new HashSet<ATNConfig>();
-            this.doLook(s.transitions[alt].target, undefined, PredictionContext.EMPTY, set, lookBusy, new BitSet(),
-                false, false);
+            this.doLook(s.transitions[alt].target, undefined, EmptyPredictionContext.instance, set, lookBusy,
+                new BitSet(), false, false);
 
             // Add lookahead for this alternative if we found something
             // and we had no predicate when we !seeThruPreds.
@@ -148,7 +149,7 @@ export class LL1Analyzer {
                 return;
             }
 
-            if (ctx !== PredictionContext.EMPTY) {
+            if (ctx !== EmptyPredictionContext.instance) {
                 const removed = calledRuleStack.get(s.ruleIndex);
                 try {
                     calledRuleStack.clear(s.ruleIndex);
@@ -176,7 +177,7 @@ export class LL1Analyzer {
                         continue;
                     }
 
-                    const newContext = SingletonPredictionContext.create(ctx ?? undefined,
+                    const newContext = createSingletonPredictionContext(ctx ?? undefined,
                         (t as RuleTransition).followState.stateNumber);
                     try {
                         calledRuleStack.set(t.target.ruleIndex);

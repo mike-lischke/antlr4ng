@@ -37,8 +37,4 @@ export class EmptyPredictionContext extends SingletonPredictionContext {
     public override toString(): string {
         return "$";
     }
-
-    static {
-        PredictionContext.EMPTY = new EmptyPredictionContext();
-    }
 }
