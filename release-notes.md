@@ -2,6 +2,18 @@
 
 # TypeScript Runtime for ANTLR 4 Release Notes
 
+## 3.0.12
+
+- Added debug config for ANLTR4 grammars (for testing).
+- Fixed a wrong method name in DecisionInfo.
+- Removed automatic reordering of start and stop in Interval. It's by intention to accept whatever comes in. Also change Interval.toString() to conform with the Java runtime.
+- IntervalSet accepts a list of values in its constructor, to ease creation for non-continuous value ranges.
+- Fixed source interval retrieval in ParseRuleContext (now working like in Java).
+- Moved isolated test specs to the API folder, to stay close to the other specs.
+- Added a new test spec for XPath.
+- SingletonPredictionContext imported EmptyPredictionContext for just one test, which created a circular dependency situation.
+- Fixed two off-by-one bugs in IntervalSet.
+
 ## 3.0.11
 
 - Each ATN instance now uses its own instance of the LL1Analyzer. This cannot be shared.
