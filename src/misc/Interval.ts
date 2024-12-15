@@ -20,14 +20,8 @@ export class Interval {
     private cachedHashCode: number;
 
     public constructor(start: number, stop: number) {
-        if (start <= stop) {
-            this.start = start;
-            this.stop = stop;
-        } else {
-            this.start = stop;
-            this.stop = start;
-        }
-
+        this.start = start;
+        this.stop = stop;
         this.cachedHashCode = Math.imul(651 + start, 31) + stop;
     }
 
@@ -136,11 +130,7 @@ export class Interval {
     }
 
     public toString(): string {
-        if (this.start === this.stop) {
-            return this.start.toString();
-        } else {
-            return this.start.toString() + ".." + this.stop.toString();
-        }
+        return `${this.start}..${this.stop}`;
     }
 
     public get length(): number {

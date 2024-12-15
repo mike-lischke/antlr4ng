@@ -5,6 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "antlr-debug",
+            "request": "launch",
+            "name": "Debug Current Grammar",
+            "input": "tests/input.txt",
+            "grammar": "${file}",
+            "visualParseTree": true
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Debug Current Test File",

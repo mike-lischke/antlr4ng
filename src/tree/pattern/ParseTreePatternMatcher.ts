@@ -62,7 +62,7 @@ import { TokenTagToken } from "./TokenTagToken.js";
  *
  * See `TestParseTreeMatcher` for lots of examples.
  * {@link ParseTreePattern} has two static helper methods:
- * {@link ParseTreePattern#findAll} and {@link ParseTreePattern#match} that
+ * {@link ParseTreePattern.findAll} and {@link ParseTreePattern#match} that
  * are easy to use but not super efficient because they create new
  * {@link ParseTreePatternMatcher} objects each time and have to compile the
  * pattern in string form before using it.
@@ -84,7 +84,7 @@ import { TokenTagToken } from "./TokenTagToken.js";
  *
  * Delimiters are `<` and `>`, with `\` as the escape string
  * by default, but you can set them to whatever you want using
- * {@link #setDelimiters}. You must escape both start and stop strings
+ * {@link ParseTreePatternMatcher.setDelimiters}. You must escape both start and stop strings
  * `\<` and `\>`.
  */
 export class ParseTreePatternMatcher {

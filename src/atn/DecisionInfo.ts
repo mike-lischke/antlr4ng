@@ -205,7 +205,7 @@ export class DecisionInfo {
         this.predicateEvals = [];
     }
 
-    public toString1(): string {
+    public toString(): string {
         return "{" +
             "decision=" + this.decision +
             ", contextSensitivities=" + this.contextSensitivities.length +

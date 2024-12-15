@@ -6,7 +6,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { CharStreamImpl as CharStream, IntStream, Interval } from "../src/index.js";
+import { CharStreamImpl as CharStream, IntStream, Interval } from "../../src/index.js";
 
 const unicodeInput = "Hello 👋, World! 😁";
 

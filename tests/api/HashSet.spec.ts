@@ -6,8 +6,8 @@
 
 import { describe, it, expect, beforeEach } from "vitest";
 
-import { HashSet } from "../src/misc/HashSet.js";
-import type { IComparable } from "../src/utils/helpers.js";
+import { HashSet } from "../../src/misc/HashSet.js";
+import type { IComparable } from "../../src/utils/helpers.js";
 
 class Number implements IComparable {
     public constructor(public value: number) { }

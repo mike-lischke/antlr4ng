@@ -28,9 +28,15 @@ export class IntervalSet {
 
     private cachedHashCode: number | undefined;
 
-    public constructor(set?: IntervalSet) {
+    public constructor(set?: IntervalSet | number[]) {
         if (set) {
-            this.addSet(set);
+            if (Array.isArray(set)) {
+                for (const el of set) {
+                    this.addOne(el);
+                }
+            } else {
+                this.addSet(set);
+            }
         }
     }
 

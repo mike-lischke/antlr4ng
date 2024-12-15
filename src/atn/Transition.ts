@@ -57,6 +57,10 @@ export abstract class Transition {
         return null;
     }
 
+    public toString(): string {
+        return "";
+    }
+
     public abstract get transitionType(): number;
     public abstract matches(symbol: number, minVocabSymbol: number, maxVocabSymbol: number): boolean;
 }

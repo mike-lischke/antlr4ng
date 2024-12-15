@@ -6,7 +6,7 @@
 
 import { describe, expect, it } from "vitest";
 
-import { BitSet } from "../src/misc/BitSet.js";
+import { BitSet } from "../../src/misc/BitSet.js";
 
 describe("BitSet", () => {
     it("Initialize  with all bits set to false", () => {

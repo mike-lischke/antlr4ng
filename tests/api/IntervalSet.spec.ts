@@ -6,7 +6,7 @@
 
 import { describe, it, expect } from "vitest";
 
-import * as antlr4 from "../src/index.js";
+import * as antlr4 from "../../src/index.js";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const IntervalSet = antlr4.IntervalSet;

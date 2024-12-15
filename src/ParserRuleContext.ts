@@ -221,11 +221,15 @@ export class ParserRuleContext implements ParseTree {
     }
 
     public getSourceInterval(): Interval {
-        if (this.start === null || this.stop === null) {
+        if (this.start === null) {
             return Interval.INVALID_INTERVAL;
-        } else {
-            return new Interval(this.start.tokenIndex, this.stop.tokenIndex);
         }
+
+        if (this.stop === null || this.stop.tokenIndex < this.start.tokenIndex) {
+            return new Interval(this.start.tokenIndex, this.start.tokenIndex - 1);
+        }
+
+        return new Interval(this.start.tokenIndex, this.stop.tokenIndex);
     }
 
     public depth(): number {
