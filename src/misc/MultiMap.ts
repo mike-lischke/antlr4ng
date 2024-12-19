@@ -26,4 +26,13 @@ export class MultiMap<K extends string, V> extends Map<K, V[]> {
 
         return pairs;
     }
+
+    public override toString(): string {
+        const entries: string[] = [];
+        this.forEach((value, key) => {
+            entries.push(`${key}=[${value.join(", ")}]`);
+        });
+
+        return `{${entries.join(", ")}}`;
+    }
 }

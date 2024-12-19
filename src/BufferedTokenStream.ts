@@ -13,6 +13,7 @@ import { Interval } from "./misc/Interval.js";
 import { TokenStream } from "./TokenStream.js";
 import { TokenSource } from "./TokenSource.js";
 import { ParserRuleContext } from "./ParserRuleContext.js";
+import { isWritableToken } from "./WritableToken.js";
 
 /**
  * This implementation of {@link TokenStream} loads tokens from a
@@ -151,7 +152,10 @@ export class BufferedTokenStream implements TokenStream {
 
         for (let i = 0; i < n; i++) {
             const t = this.tokenSource.nextToken();
-            t.tokenIndex = this.tokens.length;
+            if (isWritableToken(t)) {
+                t.tokenIndex = this.tokens.length;
+            }
+
             this.tokens.push(t);
             if (t.type === Token.EOF) {
                 this.fetchedEOF = true;

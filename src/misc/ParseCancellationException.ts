@@ -12,8 +12,9 @@
  */
 export class ParseCancellationException extends Error {
 
-    public constructor(_e: Error) {
+    public constructor(e: Error) {
         super();
-        Error.captureStackTrace(this, ParseCancellationException);
+        this.cause = e;
+        //Error.captureStackTrace(this, ParseCancellationException);
     }
 }

@@ -73,7 +73,7 @@ export class TagChunk extends Chunk {
      * returned as just the tag name.
      */
     public override toString(): string {
-        if (this.label !== null) {
+        if (this.label !== undefined) {
             return this.label + ":" + this.tag;
         }
 

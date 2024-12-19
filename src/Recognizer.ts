@@ -154,13 +154,11 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
         this.stateNumber = state;
     }
 
-    public getSerializedATN(): number[] {
-        throw new Error("there is no serialized ATN");
-    }
-
     public getParseInfo(): ParseInfo | undefined {
         return undefined;
     }
+
+    public abstract get serializedATN(): number[];
 
     // TODO: remove need for this: public abstract get literalNames(): Array<string | null>;
     // TODO: remove need for this: public abstract get symbolicNames(): Array<string | null>;

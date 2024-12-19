@@ -398,11 +398,11 @@ export class ATNDeserializer {
         // all transitions leaving the rule start state need to leave blockStart
         // instead
         const ruleToStartState = atn.ruleToStartState[idx]!;
-        const count = ruleToStartState.transitions.length;
-        while (count > 0) {
-            bypassStart.addTransition(ruleToStartState.transitions[count - 1]);
-            ruleToStartState.transitions = ruleToStartState.transitions.slice(-1);
+        while (ruleToStartState.transitions.length > 0) {
+            const transition = ruleToStartState.removeTransition(ruleToStartState.transitions.length - 1);
+            bypassStart.addTransition(transition);
         }
+
         // link the new states
         atn.ruleToStartState[idx]!.addTransition(new EpsilonTransition(bypassStart));
         if (endState) {

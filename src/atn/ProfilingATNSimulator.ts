@@ -114,31 +114,28 @@ export class ProfilingATNSimulator extends ParserATNSimulator {
     }
 
     public override getExistingTargetState(previousD: DFAState, t: number): DFAState | undefined {
-        if (this.predictionState?.input) {
-            this.sllStopIndex = this.predictionState.input.index;
+        // This method is called after each time the input position advances during SLL prediction.
+        this.sllStopIndex = this.predictionState!.input!.index;
 
-            const existingTargetState = super.getExistingTargetState(previousD, t);
+        const existingTargetState = super.getExistingTargetState(previousD, t);
 
-            if (existingTargetState !== null) {
-                this.decisions[this.currentDecision].sllDFATransitions++;
-                if (existingTargetState === ATNSimulator.ERROR) {
-                    this.decisions[this.currentDecision].errors.push({
-                        decision: this.currentDecision,
-                        configs: previousD.configs,
-                        input: this.predictionState.input,
-                        startIndex: this.predictionState.startIndex,
-                        stopIndex: this.sllStopIndex,
-                        fullCtx: false,
-                    });
-                }
+        if (existingTargetState !== undefined) {
+            this.decisions[this.currentDecision].sllDFATransitions++; // Count only if we transition over a DFA state.
+            if (existingTargetState === ATNSimulator.ERROR) {
+                this.decisions[this.currentDecision].errors.push({
+                    decision: this.currentDecision,
+                    configs: previousD.configs,
+                    input: this.predictionState!.input!,
+                    startIndex: this.predictionState!.startIndex,
+                    stopIndex: this.sllStopIndex,
+                    fullCtx: false,
+                });
             }
-
-            this.currentState = existingTargetState;
-
-            return existingTargetState;
         }
 
-        return undefined;
+        this.currentState = existingTargetState;
+
+        return existingTargetState;
     }
 
     public override computeTargetState(dfa: DFA, previousD: DFAState, t: number): DFAState {

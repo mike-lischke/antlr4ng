@@ -32,19 +32,19 @@ export class ListTokenSource implements TokenSource {
     /**
      * The wrapped collection of {@link Token} objects to return.
      */
-    protected readonly tokens: Token[];
+    protected readonly tokens: Token[] = [];
 
     /**
      * The index into {@link tokens} of token to return by the next call to
      * {@link #nextToken}. The end of the input is indicated by this value
      * being greater than or equal to the number of items in {@link #tokens}.
      */
-    protected i: number;
+    protected i = 0;
 
     /**
      * This field caches the EOF token for the token source.
      */
-    protected eofToken: Token | null;
+    protected eofToken: Token | null = null;
 
     /**
      * Constructs a new {@link ListTokenSource} instance from the specified

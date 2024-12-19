@@ -93,7 +93,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
 
     /**
      * This field holds the deserialized {@link ATN} with bypass alternatives, created
-     * lazily upon first demand. In 4.10 I changed from map<serializedATNstring, ATN>
+     * lazily upon first demand. In 4.10 I changed from map<serializedATNString, ATN>
      * since we only need one per parser object and also it complicates other targets
      * that don't use ATN strings.
      *
@@ -346,7 +346,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * implement the {@link getSerializedATN()} method.
      */
     public getATNWithBypassAlts(): ATN {
-        const serializedAtn = this.getSerializedATN();
+        const serializedAtn = this.serializedATN;
         if (serializedAtn === null) {
             throw new Error("The current parser does not support an ATN with bypass alternatives.");
         }

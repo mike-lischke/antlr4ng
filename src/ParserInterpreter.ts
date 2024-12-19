@@ -111,15 +111,14 @@ export class ParserInterpreter extends Parser {
         this.rootContext = this.createInterpreterRuleContext(null, ATNState.INVALID_STATE_NUMBER, startRuleIndex);
         if (startRuleStartState.isLeftRecursiveRule) {
             this.enterRecursionRule(this.rootContext, startRuleStartState.stateNumber, startRuleIndex, 0);
-        }
-        else {
+        } else {
             this.enterRule(this.rootContext, startRuleStartState.stateNumber, startRuleIndex);
         }
 
         while (true) {
             const p = this.atnState;
             switch ((p.constructor as typeof ATNState).stateType) {
-                case ATNState.RULE_STOP:
+                case ATNState.RULE_STOP: {
                     // pop; return from rule
                     if (this.context?.isEmpty()) {
                         if (startRuleStartState.isLeftRecursiveRule) {
@@ -138,8 +137,9 @@ export class ParserInterpreter extends Parser {
 
                     this.visitRuleStopState(p);
                     break;
+                }
 
-                default:
+                default: {
                     try {
                         this.visitState(p);
                     } catch (e) {
@@ -153,6 +153,7 @@ export class ParserInterpreter extends Parser {
                     }
 
                     break;
+                }
             }
         }
     }
@@ -175,6 +176,10 @@ export class ParserInterpreter extends Parser {
         precedence: number): void {
         this.parentContextStack.push([this.context, localctx.invokingState]);
         super.enterRecursionRule(localctx, state, ruleIndex, precedence);
+    }
+
+    public get serializedATN(): number[] {
+        throw new Error("The ParserInterpreter does not support the serializedATN property.");
     }
 
     protected visitState(p: ATNState): void {

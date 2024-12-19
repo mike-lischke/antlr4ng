@@ -90,17 +90,17 @@ import { TokenTagToken } from "./TokenTagToken.js";
 export class ParseTreePatternMatcher {
     protected start = "<";
     protected stop = ">";
-    protected escape = "\\";
+    protected escape = "\\"; // e.g., \< and \> must escape BOTH!
 
     /**
      * This is the backing field for {@link #getLexer()}.
      */
-    private readonly lexer: Lexer;
+    private readonly lexer: Lexer | null;
 
     /**
      * This is the backing field for {@link #getParser()}.
      */
-    private readonly parser: Parser; // e.g., \< and \> must escape BOTH!
+    private readonly parser: Parser | null;
 
     /**
      * Constructs a {@link ParseTreePatternMatcher} or from a {@link Lexer} and
@@ -108,7 +108,7 @@ export class ParseTreePatternMatcher {
      * the tree patterns. The parser is used as a convenient mechanism to get
      * the grammar name, plus token, rule names.
      */
-    public constructor(lexer: Lexer, parser: Parser) {
+    public constructor(lexer: Lexer | null, parser: Parser | null) {
         this.lexer = lexer;
         this.parser = parser;
     }
@@ -217,23 +217,23 @@ export class ParseTreePatternMatcher {
         const tokenSrc = new ListTokenSource(tokenList);
         const tokens = new CommonTokenStream(tokenSrc);
 
-        const parserInterp = new ParserInterpreter(this.parser.grammarFileName, this.parser.vocabulary,
-            this.parser.ruleNames, this.parser.getATNWithBypassAlts(), tokens);
+        const parserInterp = new ParserInterpreter(this.parser!.grammarFileName, this.parser!.vocabulary,
+            this.parser!.ruleNames, this.parser!.getATNWithBypassAlts(), tokens);
+        parserInterp.removeErrorListeners();
 
         let tree = null;
         try {
             parserInterp.errorHandler = new BailErrorStrategy();
             tree = parserInterp.parse(patternRuleIndex);
-        } catch (eOrRe) {
-            if (eOrRe instanceof ParseCancellationException) {
-                const e = eOrRe;
-                throw e.cause;
-            } else if (eOrRe instanceof RecognitionException) {
-                throw eOrRe;
-            } else if (eOrRe instanceof Error) {
-                throw new CannotInvokeStartRuleError(eOrRe);
+        } catch (error) {
+            if (error instanceof ParseCancellationException) {
+                throw error.cause;
+            } else if (error instanceof RecognitionException) {
+                throw error;
+            } else if (error instanceof Error) {
+                throw new CannotInvokeStartRuleError(error);
             } else {
-                throw eOrRe;
+                throw error;
             }
         }
 
@@ -250,7 +250,7 @@ export class ParseTreePatternMatcher {
      * input stream is reset.
      */
 
-    public getLexer(): Lexer {
+    public getLexer(): Lexer | null {
         return this.lexer;
     }
 
@@ -259,7 +259,7 @@ export class ParseTreePatternMatcher {
      * used to parse the pattern into a parse tree.
      */
 
-    public getParser(): Parser {
+    public getParser(): Parser | null {
         return this.parser;
     }
 
@@ -277,7 +277,7 @@ export class ParseTreePatternMatcher {
                 // add special rule token or conjure up new token from name
                 const char = tagChunk.tag[0];
                 if (char === char.toUpperCase()) {
-                    const ttype = this.parser.getTokenType(tagChunk.tag);
+                    const ttype = this.parser!.getTokenType(tagChunk.tag);
                     if (ttype === Token.INVALID_TYPE) {
                         throw new Error("Unknown token " + tagChunk.tag + " in pattern: " + pattern);
                     }
@@ -285,11 +285,11 @@ export class ParseTreePatternMatcher {
                     tokens.push(t);
                 } else {
                     if (char === char.toLowerCase()) {
-                        const ruleIndex = this.parser.getRuleIndex(tagChunk.tag);
+                        const ruleIndex = this.parser!.getRuleIndex(tagChunk.tag);
                         if (ruleIndex === -1) {
                             throw new Error("Unknown rule " + tagChunk.tag + " in pattern: " + pattern);
                         }
-                        const ruleImaginaryTokenType = this.parser.getATNWithBypassAlts().ruleToTokenType[ruleIndex];
+                        const ruleImaginaryTokenType = this.parser!.getATNWithBypassAlts().ruleToTokenType[ruleIndex];
                         tokens.push(new RuleTagToken(tagChunk.tag, ruleImaginaryTokenType, tagChunk.label));
                     } else {
                         throw new Error("invalid tag: " + tagChunk.tag + " in pattern: " + pattern);
@@ -298,11 +298,11 @@ export class ParseTreePatternMatcher {
             } else {
                 const textChunk = chunk as TextChunk;
                 const input = CharStream.fromString(textChunk.text);
-                this.lexer.inputStream = input;
-                let t = this.lexer.nextToken();
+                this.lexer!.inputStream = input;
+                let t = this.lexer!.nextToken();
                 while (t.type !== Token.EOF) {
                     tokens.push(t);
-                    t = this.lexer.nextToken();
+                    t = this.lexer!.nextToken();
                 }
             }
         }
@@ -400,7 +400,7 @@ export class ParseTreePatternMatcher {
             const c = chunks[i];
             if (c instanceof TextChunk) {
                 const tc = c;
-                const unescaped = tc.text.replace(this.escape, ""); // TODO: do we need a copy of tc.text here?
+                const unescaped = tc.text.replaceAll(this.escape, ""); // TODO: do we need a copy of tc.text here?
                 if (unescaped.length < tc.text.length) {
                     chunks[i] = new TextChunk(unescaped);
                 }

@@ -53,7 +53,7 @@ export interface ParseTree {
      * Print out a whole tree, not just a node, in LISP format
      *  `(root child1 .. childN)`. Print just a node if this is a leaf.
      */
-    toStringTree(ruleNames: string[], recog: Parser): string;
+    toStringTree(recog?: Parser): string;
 
     /**
      * Return an {@link Interval} indicating the index in the

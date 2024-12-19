@@ -71,4 +71,8 @@ export class LexerInterpreter extends Lexer {
     public get vocabulary(): Vocabulary {
         return this.#vocabulary;
     }
+
+    public get serializedATN(): number[] {
+        throw new Error("The LexerInterpreter does not support the serializedATN property.");
+    }
 }

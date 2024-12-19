@@ -69,7 +69,7 @@ export class RuleTagToken implements Token {
      * delimiters.
      */
     public get text(): string {
-        if (this.label !== null) {
+        if (this.label !== undefined) {
             return "<" + this.label + ":" + this.ruleName + ">";
         }
 

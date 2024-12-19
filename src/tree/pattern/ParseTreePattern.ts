@@ -89,7 +89,7 @@ export class ParseTreePattern {
      */
 
     public findAll(tree: ParseTree, xpath: string): ParseTreeMatch[] {
-        const subtrees = XPath.findAll(tree, xpath, this.matcher.getParser());
+        const subtrees = XPath.findAll(tree, xpath, this.matcher.getParser()!);
         const matches = new Array<ParseTreeMatch>();
         for (const t of subtrees) {
             const match = this.match(t);
