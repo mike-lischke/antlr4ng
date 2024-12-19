@@ -2,11 +2,20 @@
 
 # TypeScript Runtime for ANTLR 4 Release Notes
 
+##3.0.13
+
+- Some member variable init was missing.
+- Fixed duplicated serialized ATN getters (one with a real getter, one with the getSerializedATN method).
+- Fixed token index access for non-writable tokens in BufferedTokenStream.
+- Fixed some toString() methods that produced incompatible output.
+- ParseCancellationException now keeps the original error for later examination.
+- Fixed target state output of the profiling ATN simulator.
+
 ## 3.0.12
 
 - Added debug config for ANLTR4 grammars (for testing).
 - Fixed a wrong method name in DecisionInfo.
-- Removed automatic reordering of start and stop in Interval. It's by intention to accept whatever comes in. Also change Interval.toString() to conform with the Java runtime.
+- Removed automatic reordering of start and stop in Interval. It's by intention to accept whatever comes in. Also changed Interval.toString() to conform with the Java runtime.
 - IntervalSet accepts a list of values in its constructor, to ease creation for non-continuous value ranges.
 - Fixed source interval retrieval in ParseRuleContext (now working like in Java).
 - Moved isolated test specs to the API folder, to stay close to the other specs.
