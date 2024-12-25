@@ -2,6 +2,10 @@
 
 # TypeScript Runtime for ANTLR 4 Release Notes
 
+##3.0.14
+
+Bug fix: wrong upper case letter check
+
 ##3.0.13
 
 - Some member variable init was missing.
