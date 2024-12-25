@@ -79,12 +79,12 @@ export class Vocabulary {
                 continue;
             }
 
-            if (tokenName?.length > 0) {
-                const firstChar = tokenName.charAt(0);
-                if (firstChar === "'") {
+            if (tokenName.length > 0) {
+                const firstChar = tokenName.codePointAt(0)!;
+                if (firstChar === 0x27) { // single-quote
                     symbolicNames[i] = null;
                     continue;
-                } else if (firstChar.toUpperCase() === firstChar) {
+                } else if (firstChar >= 0x41 && firstChar <= 0x5A) { // 'A'..'Z'
                     literalNames[i] = null;
                     continue;
                 }
