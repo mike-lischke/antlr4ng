@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/mike-lischke/mike-lischke/master/images/ANTLRng2.svg" title="ANTLR Next Generation" alt="ANTLRng" width="96" height="96"/><label style="font-size: 70%">Part of the Next Generation ANTLR Project</label>
+<img src="https://raw.githubusercontent.com/mike-lischke/mike-lischke/master/images/antlr-ng.svg" title="ANTLR Next Generation" alt="antlr-ng the parser generator" width="96" height="96"/><label style="font-size: 70%">Part of the Next Generation ANTLR Project</label>
 
 # TypeScript Runtime for ANTLR 4 Release Notes
 

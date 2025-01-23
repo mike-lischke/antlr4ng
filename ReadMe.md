@@ -2,9 +2,9 @@
 [![Weekly Downloads](https://img.shields.io/npm/dw/antlr4ng?style=for-the-badge&color=blue)](https://www.npmjs.com/package/antlr4ng)
 [![npm version](https://img.shields.io/npm/v/antlr4ng?style=for-the-badge&color=yellow)](https://www.npmjs.com/package/antlr4ng)
 
-<img src="https://raw.githubusercontent.com/mike-lischke/mike-lischke/master/images/ANTLRng2.svg" title="ANTLR Next Generation" alt="ANTLRng" width="96" height="96"/><label style="font-size: 70%">Part of the Next Generation ANTLR Project</label>
+<img src="https://raw.githubusercontent.com/mike-lischke/mike-lischke/master/images/antlr-ng.svg" title="ANTLR Next Generation" alt="antlr-ng the parser generator" width="96" height="96"/><label style="font-size: 70%">Part of the Next Generation ANTLR Project</label>
 
-# TypeScript Runtime for ANTLR 4
+# TypeScript Runtime for antlr-ng and ANTLR4
 
 This package started as a fork of the official ANTLR4 JavaScript runtime and has been fully implemented in TypeScript. It implements everything what the Java runtime does, except for the `UnbufferedCharStream` class, which requires a streaming source compatible with both Node.js and browsers. Other notable differences from the original JS source.
 
