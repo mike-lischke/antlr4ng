@@ -1,6 +1,9 @@
-<img src="https://raw.githubusercontent.com/mike-lischke/mike-lischke/master/images/antlr-ng.svg" title="ANTLR Next Generation" alt="antlr-ng the parser generator" width="96" height="96"/><label style="font-size: 70%">Part of the Next Generation ANTLR Project</label>
+<p align="center">
+<img src="https://raw.githubusercontent.com/mike-lischke/mike-lischke/master/images/antlr-ng.svg" title="ANTLR Next Generation" alt="antlr-ng the parser generator" height="200"/><br/>
+<label style="font-size: 120%">Part of the Next Generation ANTLR Project</label>
+</p>
 
-# TypeScript Runtime for ANTLR 4 Release Notes
+# TypeScript Runtime for antlr-ng and ANTLR4 - Release Notes
 
 ##3.0.14
 
