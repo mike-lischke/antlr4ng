@@ -43,7 +43,7 @@
     },
     "scripts": {
         "prepublishOnly": "npm run build && npm run test",
-        "build": "tsc && npm run build-cjs && npm run build-mjs",
+        "build": "tsc && npm run build-cjs && npm run build-mjs && npm run build-esm",
         "build-with-maps": "tsc && npm run build-mjs -- --sourcemap",
         "build-and-test": "npm run build && npm run test",
         "test": "vitest run --no-watch --no-coverage",
@@ -55,6 +55,7 @@
         "build-bundle": "esbuild ./src/index.js --main-fields=module,main --bundle --target=esnext --keep-names",
         "build-mjs": "npm run build-bundle -- --outfile=dist/index.mjs --format=esm",
         "build-cjs": "npm run build-bundle -- --outfile=dist/index.cjs --format=cjs",
+        "build-esm": "node build/build-esm.mjs ./src/index.js",
         "generate-xpath-lexer": "node cli/index.js -Dlanguage=TypeScript -o src/tree/xpath/generated -no-visitor -no-listener -Xexact-output-dir src/tree/xpath/XPathLexer.g4",
         "profile benchmarks": "node --no-warnings --experimental-vm-modules --prof --loader ts-node/esm tests/benchmarks/run-benchmarks.ts",
         "process profile tick file": " node --prof-process isolate-0x140008000-94064-v8.log > processed.txt"
