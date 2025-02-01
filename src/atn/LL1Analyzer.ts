@@ -34,16 +34,12 @@ export class LL1Analyzer {
      * of an {@link ATNState}. The returned array has one element for each
      * outgoing transition in `s`. If the closure from transition
      * _i_ leads to a semantic predicate before matching a symbol, the
-     * element at index *i* of the result will be `null`.
+     * element at index *i* of the result will be `undefined`.
      *
      * @param s the ATN state
      * @returns the expected symbols for each outgoing transition of `s`.
      */
-    public getDecisionLookahead(s?: ATNState): Array<IntervalSet | null> | undefined {
-        if (!s) {
-            return undefined;
-        }
-
+    public getDecisionLookahead(s: ATNState): Array<IntervalSet | undefined> {
         const count = s.transitions.length;
         const look = new Array<IntervalSet>(count);
         for (let alt = 0; alt < count; alt++) {
