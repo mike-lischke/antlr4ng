@@ -13,3 +13,4 @@ build/
 .project
 tsconfig.json
 cspell.json
+vitest.config.ts

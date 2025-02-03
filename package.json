@@ -23,6 +23,7 @@
     "peerDependencies": {
         "antlr4ng-cli": "^2.0.0"
     },
+    "sideEffects": false,
     "devDependencies": {
         "@mike-lischke/antlr-tgen": "1.0.8",
         "@types/node": "20.14.9",
@@ -60,8 +61,8 @@
     },
     "exports": {
         "types": "./dist/index.d.ts",
-        "require": "./dist/index.cjs",
-        "import": "./dist/index.mjs"
+        "default": "./dist/index.cjs",
+        "module": "./dist/index.mjs"
     },
     "browserslist": [
         "defaults and fully supports es6-module",
