@@ -7,11 +7,17 @@
 
 Note: the previously used peer dependency `antlr4ng-cli` is no longer used and has been deprecated. Instead the new antlr-ng tool is now used for parser generation.
 
-##3.0.14
+## 3.0.15
+
+- Switched from antlr4ng-cli to antlr-ng.
+- Changed LL1Analyzer.getDecisionLookahead to never return `undefined`.
+- Added `sideEffects: false` to package.json to help bundlers.
+
+## 3.0.14
 
 Bug fix: wrong upper case letter check
 
-##3.0.13
+## 3.0.13
 
 - Some member variable init was missing.
 - Fixed duplicated serialized ATN getters (one with a real getter, one with the getSerializedATN method).
