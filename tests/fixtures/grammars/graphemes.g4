@@ -19,7 +19,6 @@ fragment EmojiModifierSequence:
 fragment EmojiFlagSequence:
     [\p{Grapheme_Cluster_Break=Regional_Indicator}] [\p{Grapheme_Cluster_Break=Regional_Indicator}];
 fragment ExtendedPictographic: [\p{Extended_Pictographic}];
-fragment EmojiNRK: [\p{EmojiNRK}];
 fragment EmojiCombiningSequence:
   (   EmojiPresentationSequence
     | TextPresentationSequence
@@ -31,8 +30,7 @@ EmojiCoreSequence:
 fragment EmojiZWJElement:
     EmojiPresentationSequence
   | EmojiPresentationCharacter
-  | ExtendedPictographic
-  | EmojiNRK;
+  | ExtendedPictographic;
 EmojiZWJSequence:
     EmojiZWJElement (ZWJ EmojiZWJElement)+;
 emoji_sequence:

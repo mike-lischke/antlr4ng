@@ -9,11 +9,11 @@
 
 # TypeScript Runtime for antlr-ng and ANTLR4
 
-This package started as a fork of the official ANTLR4 JavaScript runtime and has been fully implemented in TypeScript. It implements everything what the Java runtime does, except for the `UnbufferedCharStream` class, which requires a streaming source compatible with both Node.js and browsers. Other notable differences from the original JS source.
+This package contains a TypeScript runtime implementation for antlr-ng (and ANTLR4). It implements everything what the Java runtime does, except for the `UnbufferedCharStream` class, which requires a streaming source compatible with both Node.js and browsers. Other notable differences from the original JS source.
 
 - Numerous bug fixes and other changes.
 - No differentiation between node and browser environments.
-- Includes the `antlr4ng-cli` tool to generate parser files compatible with this runtime. This tool uses a custom build of the ANTLR4 tool.
+- Use the [antlr-ng](https://github.com/mike-lischke/antlr-ng) tool to generate parser that are compatible with this runtime.
 
 > The package requires ES2022 (ES6) or newer, for features like static initialization blocks in classes and private properties (`#field`). It is recommended to use the latest TypeScript version.
 
@@ -24,13 +24,6 @@ To install the package, run the following command:
 ```bash
 npm install antlr4ng
 ```
-
-This package has a peer dependency to `antlr4ng-cli`, which is the tool to generate parser files compatible with this runtime, so it is strongly recommended to install this one too:
-
-```bash
-npm install --save-dev antlr4ng-cli
-```
-See [its readme](./cli/ReadMe.md) for more information.
 
 If you come from one of the other JS/TS runtimes, you may have to adjust your code a bit. The antlr4ng package more strictly exposes the Java nullability for certain members. This will require that you either use the non-null assertion operator to force the compiler to accept your code, or you have to check for null values before accessing a member. The latter is the recommended way, as it is safer.
 
@@ -45,7 +38,7 @@ Additionally, some members have been renamed to more TypeScript like names. The 
 
 ## Usage
 
-The following example shows how to use the runtime to parse a simple expression, assuming you have generated the lexer and parser files for the grammar and placed them in a subfolder folder called `generated`. The readme file of the [antlr4ng-cli](./cli/ReadMe.md) tool shows how to do that. Assume we have this expression grammar:
+The following example shows how to use the runtime to parse a simple expression, assuming you have generated the lexer and parser files for the grammar and placed them in a subfolder folder called `generated`. The "Getting Started" documentation section on the [antlr-ng](https://www.antlr-ng.org) website explains in detail how to install the tool and generate the files. Assume we have this expression grammar:
 
 ```antlr
 grammar Expression;

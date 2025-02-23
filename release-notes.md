@@ -5,6 +5,8 @@
 
 # TypeScript Runtime for antlr-ng and ANTLR4 - Release Notes
 
+Note: the previously used peer dependency `antlr4ng-cli` is no longer used and has been deprecated. Instead the new antlr-ng tool is now used for parser generation.
+
 ##3.0.14
 
 Bug fix: wrong upper case letter check

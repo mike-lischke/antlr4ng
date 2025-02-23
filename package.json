@@ -20,9 +20,6 @@
         "url": "https://github.com/mike-lischke/antlr4ng/issues"
     },
     "homepage": "https://github.com/mike-lischke/antlr4ng",
-    "peerDependencies": {
-        "antlr4ng-cli": "^2.0.0"
-    },
     "sideEffects": false,
     "devDependencies": {
         "@mike-lischke/antlr-tgen": "1.0.8",
@@ -31,6 +28,7 @@
         "@typescript-eslint/eslint-plugin": "7.18.0",
         "@typescript-eslint/parser": "7.18.0",
         "@vitest/coverage-v8": "2.1.3",
+        "antlr-ng": "1.0.1",
         "esbuild": "0.23.0",
         "eslint": "8.57.0",
         "eslint-plugin-import": "2.29.1",
@@ -55,14 +53,14 @@
         "build-bundle": "esbuild ./src/index.js --main-fields=module,main --bundle --target=esnext --keep-names",
         "build-mjs": "npm run build-bundle -- --outfile=dist/index.mjs --format=esm",
         "build-cjs": "npm run build-bundle -- --outfile=dist/index.cjs --format=cjs",
-        "generate-xpath-lexer": "node cli/index.js -Dlanguage=TypeScript -o src/tree/xpath/generated -no-visitor -no-listener -Xexact-output-dir src/tree/xpath/XPathLexer.g4",
+        "generate-xpath-lexer": "antlr-ng -Dlanguage=TypeScript --exact-output-dir -o src/tree/xpath/generated src/tree/xpath/XPathLexer.g4",
         "profile benchmarks": "node --no-warnings --experimental-vm-modules --prof --loader ts-node/esm tests/benchmarks/run-benchmarks.ts",
         "process profile tick file": " node --prof-process isolate-0x140008000-94064-v8.log > processed.txt"
     },
     "exports": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/index.cjs",
-        "module": "./dist/index.mjs"
+        "require": "./dist/index.cjs",
+        "import": "./dist/index.mjs"
     },
     "browserslist": [
         "defaults and fully supports es6-module",
