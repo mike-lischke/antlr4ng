@@ -7,6 +7,11 @@
 
 Note: the previously used peer dependency `antlr4ng-cli` is no longer used and has been deprecated. Instead the new antlr-ng tool is now used for parser generation.
 
+## 3.0.16
+
+- The tests now use the antlr-ng package instead of antlr4ng-cli.
+- Also fixed a bug in `ATNState` where when a transition was added also another transition was removed erroneously.
+
 ## 3.0.15
 
 - Switched from antlr4ng-cli to antlr-ng.
