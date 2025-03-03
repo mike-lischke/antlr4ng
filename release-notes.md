@@ -9,7 +9,7 @@ Note: the previously used peer dependency `antlr4ng-cli` is no longer used and h
 
 ## 3.0.16
 
-- The tests now use the antlr-ng package instead of antlr4ng-cli.
+- Upgraded dev dependencies.
 - Also fixed a bug in `ATNState` where when a transition was added also another transition was removed erroneously.
 
 ## 3.0.15
