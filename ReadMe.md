@@ -112,7 +112,7 @@ which will create the `dist/` folder and store the bundled sources for CommonJS 
 
 ## Tests and Benchmarks
 
-This runtime is monitored for performance regressions. The times below were taken on a Mac Studio M1 Max with 32GB RAM (Sonoma 14.2).
+This runtime is monitored for performance regressions. The times below were taken on a Mac Studio M1 Max with 32GB RAM (Sequoia 15.3.1).
 
 ### Running the Tests
 

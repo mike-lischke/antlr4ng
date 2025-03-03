@@ -55,7 +55,7 @@ export class ATNState implements IComparable {
             this.epsilonOnlyTransitions = false;
         }
 
-        this.transitions.splice(index, 1, transition);
+        this.transitions.splice(index, 0, transition);
     }
 
     public addTransition(transition: Transition): void {
