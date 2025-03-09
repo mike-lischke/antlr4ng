@@ -178,7 +178,10 @@ The following table shows the results of the benchmarks from the [antlr4wasm pro
 |   Large Inserts (warm)|3564 ms|<ins>6024/855 (6879) ms</ins>|10539 ms|11461 ms|32425 ms|
 |Total (warm)           |3733 ms|<ins>6231/939 (7170) ms</ins>|10889 ms|11889 ms|34216 ms|
 
-Underlined entries are the shortest (not counting C++, which beats them all). For antlr4ng, the times are split between lexing and parsing. Note the high lexer execution times, caused by the large number of predicates (126) + lexer actions (40) in the MySQL lexer.
+Underlined entries represent the shortest execution times among JavaScript/TypeScript runtimes (excluding C++, which outperforms all others). For antlr4ng, the results are split between lexing and parsing times. Note the high lexer execution times, which are due to the complexity of the MySQL lexer, featuring:
+
+- 126 predicates
+- 40 lexer actions
 
 The benchmarks consist of a set of query files parsed by a MySQL parser. The MySQL grammar is one of the largest and most complex grammars you can find for ANTLR4, which I think makes it a perfect test case for parser testing.
 
@@ -190,7 +193,7 @@ The Bitrix file is a copy of the largest test file in [this repository](https://
 
 ### Lexer Speed Test
 
-Since the Java runtime tests have been ported to TypeScript there's another set of benchmarks, the lexer speed test. This set of tests was created when Unicode support landed in ANTLR4 and measures the speed of lexing different Unicode lexemes in a lexer generated from the Java grammar.
+In addition to the main benchmarks, we've included the lexer speed test set in our TypeScript implementation. This set of tests, originally part of the Java runtime benchmarks, was created when Unicode support was added to ANTLR4. It measures the speed of lexing various Unicode lexemes using a lexer generated from the Java grammar.
 
 The original Java execution times have been taken on OS X with a 4 GHz Intel Core i7 (Java VM args: `-Xms2G -Xmx8g`):
 
