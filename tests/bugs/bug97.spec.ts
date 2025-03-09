@@ -8,11 +8,11 @@ import { describe, expect, it } from "vitest";
 
 import { CharStream, CommonTokenStream } from "antlr4ng";
 
-import { ExpressionVisitor } from "./generated/ExpressionVisitor.js";
-import {
-    ExpressionParser, type AddContext, type MultiplyContext, type NumberContext
-} from "./generated/ExpressionParser.js";
 import { ExpressionLexer } from "./generated/ExpressionLexer.js";
+import {
+    ExpressionParser, type AddContext, type MultiplyContext, type SimpleContext
+} from "./generated/ExpressionParser.js";
+import { ExpressionVisitor } from "./generated/ExpressionVisitor.js";
 
 class MyVisitor extends ExpressionVisitor<number> {
     public visitAdd = (ctx: AddContext): number => {
@@ -23,8 +23,8 @@ class MyVisitor extends ExpressionVisitor<number> {
         return this.visit(ctx.expression(0)!)! * this.visit(ctx.expression(1)!)!;
     };
 
-    public visitNumber = (ctx: NumberContext): number => {
-        return Number.parseInt(ctx.NUMBER().getText(), 10);
+    public visitSimple = (ctx: SimpleContext): number => {
+        return Number.parseInt(ctx.number().NUMBER().getText(), 10);
     };
 }
 
