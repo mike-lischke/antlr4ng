@@ -78,21 +78,22 @@ You can then use the generated parser to walk the parse tree, for example with a
 import { ExpressionVisitor } from "./generated/ExpressionVisitor.js";
 
 class MyVisitor extends ExpressionVisitor<number> {
-  public visitAdd = (ctx: AddContext): number {
-    return this.visit(ctx.expression(0)) + this.visit(ctx.expression(1));
-  }
+    public visitAdd = (ctx: AddContext): number => {
+        return this.visit(ctx.expression(0)!)! + this.visit(ctx.expression(1)!)!;
+    };
 
-  public visitMultiply = (ctx: MultiplyContext): number {
-    return this.visit(ctx.expression(0)) * this.visit(ctx.expression(1));
-  }
+    public visitMultiply = (ctx: MultiplyContext): number => {
+        return this.visit(ctx.expression(0)!)! * this.visit(ctx.expression(1)!)!;
+    };
 
-  public visitNumber = (ctx: NumberContext): number {
-    return Number.parseInt(ctx.NUMBER().text);
-  }
+    public visitNumber = (ctx: NumberContext): number => {
+        return Number.parseInt(ctx.NUMBER().getText(), 10);
+    };
 }
 
 const visitor = new MyVisitor();
 const result = visitor.visit(tree);
+console.log(result); // prints "7"
 ```
 
 ## Installing Development Dependencies

@@ -36,10 +36,9 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
+            "runtimeExecutable": "npx",
             "runtimeArgs": [
-                "--no-warnings=ExperimentalWarning",
-                "--loader",
-                "ts-node/esm",
+                "tsx",
                 "tests/benchmarks/run-benchmarks.ts",
             ],
             "sourceMaps": true,
@@ -55,10 +54,9 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
+            "runtimeExecutable": "npx",
             "runtimeArgs": [
-                "--no-warnings=ExperimentalWarning",
-                "--loader",
-                "ts-node/esm",
+                "tsx",
                 "tests/api/perf/TimeLexerSpeed.ts",
             ],
             "sourceMaps": true,
