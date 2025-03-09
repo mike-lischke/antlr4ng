@@ -73,7 +73,9 @@ WS:
 ```typescript
 import { CharStream, CommonTokenStream } from "antlr4ng";
 import { ExpressionLexer } from "./generated/ExpressionLexer.js";
-import { ExpressionParser } from "./generated/ExpressionParser.js";
+import {
+    ExpressionParser, type AddContext, type MultiplyContext, type SimpleContext
+} from "./generated/ExpressionParser.js";
 
 const input = "1 + 2 * 3";
 const inputStream = CharStream.fromString(input);
@@ -97,8 +99,8 @@ class MyVisitor extends ExpressionVisitor<number> {
         return this.visit(ctx.expression(0)!)! * this.visit(ctx.expression(1)!)!;
     };
 
-    public visitNumber = (ctx: NumberContext): number => {
-        return Number.parseInt(ctx.NUMBER().getText(), 10);
+    public visitSimple = (ctx: SimpleContext): number => {
+        return Number.parseInt(ctx.number().NUMBER().getText(), 10);
     };
 }
 
