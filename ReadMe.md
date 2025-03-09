@@ -44,19 +44,30 @@ The following example shows how to use the runtime to parse a simple expression,
 ```antlr
 grammar Expression;
 
-start: multiply | divide | add | subtract;
+start:
+    expression
+;
 
-expression: '(' expression ')' | number;
+expression:
+    expression '*' expression   # multiply
+    | expression '/' expression # divide
+    | expression '+' expression # add
+    | expression '-' expression # subtract
+    | number                    # simple
+;
 
-multiply: expression '*' expression;
-divide: expression '/' expression;
-add: expression '+' expression;
-subtract: expression '-' expression;
+number:
+    NUMBER
+;
 
-number: NUMBER;
+NUMBER:
+    [0-9]+
+;
 
-NUMBER: [0-9]+;
-WS: [ \t\r\n]+ -> skip;
+WS:
+    [ \t\r\n]+ -> skip
+;
+
 ```
 
 ```typescript

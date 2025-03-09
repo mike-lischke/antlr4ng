@@ -12,7 +12,7 @@ import { ExpressionVisitor } from "./generated/ExpressionVisitor.js";
 import {
     ExpressionParser, type AddContext, type MultiplyContext, type NumberContext
 } from "./generated/ExpressionParser.js";
-import { ExpressionLexer } from "./ExpressionLexer.js";
+import { ExpressionLexer } from "./generated/ExpressionLexer.js";
 
 class MyVisitor extends ExpressionVisitor<number> {
     public visitAdd = (ctx: AddContext): number => {

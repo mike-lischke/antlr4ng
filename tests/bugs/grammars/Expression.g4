@@ -1,31 +1,15 @@
 grammar Expression;
 
 start:
-    multiply
-    | divide
-    | add
-    | subtract
+    expression
 ;
 
 expression:
-    '(' expression ')'
-    | number
-;
-
-multiply:
-    expression '*' expression
-;
-
-divide:
-    expression '/' expression
-;
-
-add:
-    expression '+' expression
-;
-
-subtract:
-    expression '-' expression
+    expression '*' expression   # multiply
+    | expression '/' expression # divide
+    | expression '+' expression # add
+    | expression '-' expression # subtract
+    | number                    # simple
 ;
 
 number:
