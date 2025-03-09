@@ -111,7 +111,7 @@ console.log(result); // prints "7"
 
 ## Installing Development Dependencies
 
-While antlr4ng has no runtime dependencies (no 3rd party libs are used at runtime), there are a number dev dependencies that are used to run the benchmarks or create custom builds. So, before you do anything else in the repo after cloning it, install the depedencies by running
+While antlr4ng has no runtime dependencies (no 3rd party libs are used at runtime), there are a number of dev dependencies that are used to run the benchmarks or create custom builds. So, before you do anything else in the repo after cloning it, install the depedencies by running
 
 ```bash
 npm i
@@ -164,7 +164,7 @@ This suite consists of 530 tests and runs in about 9s.
 
 ### Real World Example
 
-The following table shows the results of the benchmarks from the [antlr4wasm project](https://github.com/mike-lischke/antlr4wasm/tree/master/benchmarks/mysql). Only the antlr4ng results have been taken from this repository to reflect the current state. They show that the antlr4ng runtime dominates every other JS/TS runtime by a margin of 9% (for simple input) up to 35% (for complex input), measured against the closest value for that benchmark.
+The following table shows the results of the benchmarks from the [antlr4wasm project](https://github.com/mike-lischke/antlr4wasm/tree/master/benchmarks/mysql). Only the antlr4ng results have been taken from this repository to reflect the current state. They show that the antlr4ng runtime demonstrates a performance advantage of 9% (for simple input) up to 35% (for complex input) over the next fastest JS/TS runtime in these benchmarks..
 
 |    | C++ |antlr4ng|antlr4|antlr4ts|antlr4wasm|
 |---:|---:|---:|---:|---:|---:|
