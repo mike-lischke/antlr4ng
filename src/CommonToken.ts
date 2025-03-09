@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-/* eslint-disable jsdoc/require-returns, no-underscore-dangle */
+/* eslint-disable jsdoc/require-returns */
 
 import { CharStream } from "./CharStream.js";
 import { Recognizer } from "./Recognizer.js";
@@ -18,7 +18,6 @@ export class CommonToken implements WritableToken {
      * An empty tuple which is used as the default value of
      * {@link source} for tokens that do not have a source.
      */
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     public static readonly EMPTY_SOURCE: [TokenSource | null, CharStream | null] = [null, null];
 
     /**
@@ -212,7 +211,7 @@ export class CommonToken implements WritableToken {
         return "<EOF>";
     }
 
-    public set text(text: string) {
+    public set text(text: string | undefined) {
         this.#text = text;
     }
 
