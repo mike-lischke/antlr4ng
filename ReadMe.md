@@ -14,7 +14,7 @@ This package contains a TypeScript runtime implementation for antlr-ng (and ANTL
 
 - Numerous bug fixes and other changes.
 - No differentiation between node and browser environments.
-- Use the [antlr-ng](https://github.com/mike-lischke/antlr-ng) tool to generate parser that are compatible with this runtime.
+- Use the [antlr-ng](https://github.com/mike-lischke/antlr-ng) tool to generate parsers and lexers that are compatible with this runtime.
 
 > The package requires ES2022 (ES6) or newer, for features like static initialization blocks in classes and private properties (`#field`). It is recommended to use the latest TypeScript version.
 
