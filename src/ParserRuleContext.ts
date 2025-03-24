@@ -78,7 +78,7 @@ export class ParserRuleContext implements ParseTree {
      * For the special case of parsers, we use the subclass
      * ParserRuleContext.
      */
-    public constructor(parent: ParserRuleContext | null, invokingStateNumber: number = -1) {
+    public constructor(parent: ParserRuleContext | null, invokingStateNumber = -1) {
         this.parent = parent;
         this.invokingState = invokingStateNumber;
     }
@@ -92,22 +92,22 @@ export class ParserRuleContext implements ParseTree {
         this.stop = ctx.stop;
 
         // Copy any error nodes to alt label node.s
-        if (ctx.children) {
-            // Reset parent pointer for any error nodes.
-            ctx.children.forEach((child) => {
-                if (child instanceof ErrorNode) {
-                    this.children.push(child);
-                    child.parent = this;
-                }
-            });
-        }
+        // Reset parent pointer for any error nodes.
+        ctx.children.forEach((child) => {
+            if (child instanceof ErrorNode) {
+                this.children.push(child);
+                child.parent = this;
+            }
+        });
     }
 
     // Double dispatch methods for listeners
     public enterRule(_listener: ParseTreeListener): void {
+        // intentionally empty
     }
 
     public exitRule(_listener: ParseTreeListener): void {
+        // intentionally empty
     }
 
     public addChild(child: ParserRuleContext): ParserRuleContext {
@@ -171,7 +171,7 @@ export class ParserRuleContext implements ParseTree {
 
         for (const child of this.children) {
             if ("symbol" in child) {
-                if ((child as TerminalNode).symbol?.type === ttype) {
+                if ((child as TerminalNode).symbol.type === ttype) {
                     if (i === 0) {
                         return child as TerminalNode;
                     } else {
@@ -188,7 +188,7 @@ export class ParserRuleContext implements ParseTree {
         const tokens = [];
         for (const child of this.children) {
             if ("symbol" in child) {
-                if ((child as TerminalNode).symbol?.type === ttype) {
+                if ((child as TerminalNode).symbol.type === ttype) {
                     tokens.push(child as TerminalNode);
                 }
             }
@@ -295,6 +295,7 @@ export class ParserRuleContext implements ParseTree {
      * option contextSuperClass.
      */
     public setAltNumber(_altNumber: number): void {
+        // intentionally empty
     }
 
     public accept<T>(visitor: ParseTreeVisitor<T>): T | null {

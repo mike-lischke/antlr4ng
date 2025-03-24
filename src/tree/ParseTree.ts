@@ -10,7 +10,7 @@ import { type ParseTreeVisitor } from "./ParseTreeVisitor.js";
 
 /**
  * The basic notion of a tree has a parent, a payload, and a list of children.
- *  It is the most abstract interface for all the trees used by ANTLR.
+ *  It is the most abstract interface for all the trees used by antlr-ng.
  *
  * Note: this interface is a combination of 3 Java interfaces: ParseTree, SyntaxTree and Tree.
  */
