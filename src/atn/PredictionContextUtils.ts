@@ -376,7 +376,7 @@ export const mergeSingletons = (a: SingletonPredictionContext, b: SingletonPredi
     } else { // a != b payloads differ
         // see if we can collapse parents due to $+x parents if local ctx
         let singleParent = null;
-        if (a === b || (a.parent !== null && a.parent.equals(b.parent))) { // ax + bx = [a,b]x
+        if (a === b || (a.parent?.equals(b.parent))) { // ax + bx = [a,b]x
             singleParent = a.parent;
         }
 
@@ -466,8 +466,7 @@ export const mergeRoot = (a: SingletonPredictionContext, b: SingletonPredictionC
         }
 
         if (a === EmptyPredictionContext.instance) { // $ + x = [$,x]
-            const payloads = [b.returnState,
-            PredictionContext.EMPTY_RETURN_STATE];
+            const payloads = [b.returnState, PredictionContext.EMPTY_RETURN_STATE];
             const parents = [b.parent, null];
 
             return new ArrayPredictionContext(parents, payloads);

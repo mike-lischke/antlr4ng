@@ -4,8 +4,6 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-/* eslint-disable @typescript-eslint/naming-convention, jsdoc/require-returns, jsdoc/require-param */
-
 import { Recognizer } from "../Recognizer.js";
 import { MurmurHash } from "../utils/MurmurHash.js";
 import { ATNSimulator } from "./ATNSimulator.js";

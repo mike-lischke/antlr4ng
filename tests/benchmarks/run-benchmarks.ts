@@ -3,8 +3,6 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  */
 
-/* eslint-disable no-underscore-dangle */
-
 import * as fs from "node:fs";
 import path from "node:path";
 import assert from "node:assert";
@@ -19,7 +17,7 @@ const filename = fileURLToPath(import.meta.url);
 
 const charSets = new Set<string>();
 const content = fs.readFileSync(path.join(path.dirname(filename), "./data/rdbms-info.json"), { encoding: "utf-8" });
-const rdbmsInfo = JSON.parse(content) as { characterSets: { [name: string]: string; }; };
+const rdbmsInfo = JSON.parse(content) as { characterSets: Record<string, string>; };
 Object.keys(rdbmsInfo.characterSets).forEach((set: string) => {
     charSets.add("_" + set.toLowerCase());
 });
@@ -223,8 +221,12 @@ const parserRun = (showOutput: boolean): Array<[number, number]> => {
     } catch (e) {
         console.error(e);
     } finally {
-        const lexTime = result.reduce((sum, time) => { return sum + time[0]; }, 0);
-        const parseTime = result.reduce((sum, time) => { return sum + time[1]; }, 0);
+        const lexTime = result.reduce((sum, time) => {
+            return sum + time[0];
+        }, 0);
+        const parseTime = result.reduce((sum, time) => {
+            return sum + time[1];
+        }, 0);
         if (showOutput) {
             const total = lexTime + parseTime;
             console.log(`Overall lexing: ${Math.round(lexTime)} ms, parsing: ${Math.round(parseTime)} ms ` +
@@ -276,7 +278,9 @@ for (const row of transposed) {
         return a[1] - b[1];
     }).slice(0, 3);
 
-    const temp = values.reduce((sum, time) => { return [sum[0] + time[0], sum[1] + time[1]]; }, [0, 0]);
+    const temp = values.reduce((sum, time) => {
+        return [sum[0] + time[0], sum[1] + time[1]];
+    }, [0, 0]);
     averageTimes.push([temp[0] / values.length, temp[1] / values.length]);
 }
 

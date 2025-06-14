@@ -4,12 +4,11 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-/* eslint-disable @typescript-eslint/naming-convention, no-underscore-dangle, jsdoc/require-returns */
+/* eslint-disable @typescript-eslint/naming-convention, jsdoc/require-returns */
 /* eslint-disable jsdoc/require-param */
 
 import { NoViableAltException } from "../NoViableAltException.js";
 import { Token } from "../Token.js";
-import { Vocabulary } from "../Vocabulary.js";
 import { DFAState } from "../dfa/DFAState.js";
 import { BitSet } from "../misc/BitSet.js";
 import { HashSet } from "../misc/HashSet.js";
@@ -305,7 +304,9 @@ export class ParserATNSimulator extends ATNSimulator {
         return alt;
     }
 
-    public reset(): void { }
+    public reset(): void {
+        // no-op, descendants can override
+    }
 
     public override clearDFA(): void {
         for (let d = 0; d < this.decisionToDFA.length; d++) {
@@ -606,7 +607,7 @@ export class ParserATNSimulator extends ATNSimulator {
     }
 
     public getRuleName(index: number): string {
-        if (this.parser !== null && index >= 0) {
+        if (index >= 0) {
             return this.parser.ruleNames[index];
         } else {
             return "<rule " + index + ">";
@@ -618,7 +619,7 @@ export class ParserATNSimulator extends ATNSimulator {
             return "EOF";
         }
 
-        const vocabulary = this.parser?.vocabulary ?? Vocabulary.EMPTY_VOCABULARY;
+        const vocabulary = this.parser.vocabulary;
         const displayName = vocabulary.getDisplayName(t)!;
         if (displayName === t.toString()) {
             return displayName;
@@ -1058,8 +1059,8 @@ export class ParserATNSimulator extends ATNSimulator {
             // filter the prediction context for alternatives predicting alt>1
             // (basically a graph subtraction algorithm).
             if (!config.precedenceFilterSuppressed) {
-                const context = statesFromAlt1[config.state.stateNumber] || null;
-                if (context !== null && context.equals(config.context)) {
+                const context = statesFromAlt1[config.state.stateNumber] ?? null;
+                if (context?.equals(config.context)) {
                     // eliminated
                     continue;
                 }
@@ -1208,10 +1209,10 @@ export class ParserATNSimulator extends ATNSimulator {
     }
 
     protected getAltThatFinishedDecisionEntryRule(configs: ATNConfigSet): number {
-        const alts = [];
+        const alts: number[] = [];
         for (const c of configs) {
             if (c.reachesIntoOuterContext || ((c.state instanceof RuleStopState) && c.context!.hasEmptyPath())) {
-                if (alts.indexOf(c.alt) < 0) {
+                if (!alts.includes(c.alt)) {
                     alts.push(c.alt);
                 }
             }
@@ -1318,8 +1319,7 @@ export class ParserATNSimulator extends ATNSimulator {
                     if (config.context.getReturnState(i) === PredictionContext.EMPTY_RETURN_STATE) {
                         if (fullCtx) {
                             configs.add(ATNConfig.createWithConfig(config.state, config,
-                                EmptyPredictionContext.instance),
-                                this.mergeCache);
+                                EmptyPredictionContext.instance), this.mergeCache);
                             continue;
                         } else {
                             // We have no context info, just chase follow links (if greedy).
@@ -1390,7 +1390,7 @@ export class ParserATNSimulator extends ATNSimulator {
                     // track how far we dip into outer context.  Might
                     // come in handy and we avoid evaluating context dependent
                     // preds if this is > 0.
-                    if (this.predictionState!.dfa && this.predictionState?.dfa.isPrecedenceDfa) {
+                    if (this.predictionState!.dfa?.isPrecedenceDfa) {
                         const outermostPrecedenceReturn = (t as EpsilonTransition).outermostPrecedenceReturn;
                         if (outermostPrecedenceReturn === this.predictionState?.dfa.atnStartState?.ruleIndex) {
                             c.precedenceFilterSuppressed = true;
@@ -1558,9 +1558,7 @@ export class ParserATNSimulator extends ATNSimulator {
         if (ParserATNSimulator.debug) {
             console.log("PRED (collectPredicates=" + collectPredicates + ") " +
                 pt.precedence + ">=_p, ctx dependent=true");
-            if (this.parser !== null) {
-                console.log("context surrounding pred is " + arrayToString(this.parser.getRuleInvocationStack()));
-            }
+            console.log("context surrounding pred is " + arrayToString(this.parser.getRuleInvocationStack()));
         }
 
         let c = null;
@@ -1598,9 +1596,7 @@ export class ParserATNSimulator extends ATNSimulator {
         if (ParserATNSimulator.debug) {
             console.log("PRED (collectPredicates=" + collectPredicates + ") " + pt.ruleIndex +
                 ":" + pt.predIndex + ", ctx dependent=" + pt.isCtxDependent);
-            if (this.parser !== null) {
-                console.log("context surrounding pred is " + arrayToString(this.parser.getRuleInvocationStack()));
-            }
+            console.log("context surrounding pred is " + arrayToString(this.parser.getRuleInvocationStack()));
         }
 
         let c = null;
@@ -1733,8 +1729,7 @@ export class ParserATNSimulator extends ATNSimulator {
         }
 
         if (ParserATNSimulator.debug) {
-            console.log("DFA=\n" +
-                dfa.toString(this.parser != null ? this.parser.vocabulary : Vocabulary.EMPTY_VOCABULARY));
+            console.log("DFA=\n" + dfa.toString(this.parser.vocabulary));
         }
 
         from.edges[t + 1] = to; // connect

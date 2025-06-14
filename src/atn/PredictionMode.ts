@@ -4,8 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-/* eslint-disable @typescript-eslint/naming-convention, jsdoc/require-returns, jsdoc/require-param,
-   max-classes-per-file */
+/* eslint-disable jsdoc/require-returns, jsdoc/require-param */
 
 import { ATN } from "./ATN.js";
 import { RuleStopState } from "./RuleStopState.js";
@@ -529,7 +528,7 @@ export class PredictionMode {
 
     public static hasStateAssociatedWithOneAlt(configs: ATNConfigSet): boolean {
         // Count how many alts per state there are in the configs.
-        const counts: { [key: number]: number; } = {};
+        const counts: Record<number, number> = {};
         for (const c of configs) {
             const stateNumber = c.state.stateNumber;
             if (!counts[stateNumber]) {
@@ -538,7 +537,9 @@ export class PredictionMode {
             counts[stateNumber]++;
         }
 
-        return Object.values(counts).some((count) => { return count === 1; });
+        return Object.values(counts).some((count) => {
+            return count === 1;
+        });
     };
 
     public static getSingleViableAlt(altSets: BitSet[]): number {

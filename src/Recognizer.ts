@@ -6,7 +6,6 @@
 
 /* eslint-disable jsdoc/require-param */
 /* eslint-disable jsdoc/require-returns */
-/* eslint-disable jsdoc/require-param-description */
 
 import { Token } from "./Token.js";
 import { ConsoleErrorListener } from "./ConsoleErrorListener.js";
@@ -140,6 +139,7 @@ export abstract class Recognizer<ATNInterpreter extends ATNSimulator> {
     }
 
     public action(_localctx: ParserRuleContext | null, _ruleIndex: number, _actionIndex: number): void {
+        // no-op, subclasses can override if needed
     }
 
     public get atn(): ATN {

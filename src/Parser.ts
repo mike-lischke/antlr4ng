@@ -4,7 +4,7 @@
  * can be found in the LICENSE.txt file in the project root.
  */
 
-/* eslint-disable jsdoc/require-returns, jsdoc/require-param, no-underscore-dangle */
+/* eslint-disable jsdoc/require-returns, jsdoc/require-param */
 
 import { Token } from "./Token.js";
 import { TerminalNode } from "./tree/TerminalNode.js";
@@ -126,9 +126,7 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
         this.setTrace(false);
         this.precedenceStack = [];
         this.precedenceStack.push(0);
-        if (this.interpreter) {
-            this.interpreter.reset();
-        }
+        this.interpreter.reset();
     }
 
     /**
@@ -238,9 +236,6 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      * @throws NullPointerException if {@code} listener is `null`
      */
     public addParseListener(listener: ParseTreeListener): void {
-        if (listener === null) {
-            throw new Error("listener");
-        }
         if (this.parseListeners === null) {
             this.parseListeners = [];
         }
@@ -321,11 +316,9 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      */
     public compileParseTreePattern(pattern: string, patternRuleIndex: number, lexer?: Lexer): ParseTreePattern {
         if (!lexer) {
-            if (this.tokenStream !== null) {
-                const tokenSource = this.tokenStream.tokenSource;
-                if (tokenSource instanceof Lexer) {
-                    lexer = tokenSource;
-                }
+            const tokenSource = this.#inputStream.tokenSource;
+            if (tokenSource instanceof Lexer) {
+                lexer = tokenSource;
             }
         }
 
@@ -347,9 +340,6 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
      */
     public getATNWithBypassAlts(): ATN {
         const serializedAtn = this.serializedATN;
-        if (serializedAtn === null) {
-            throw new Error("The current parser does not support an ATN with bypass alternatives.");
-        }
 
         if (this.bypassAltsAtnCache !== null) {
             return this.bypassAltsAtnCache;
@@ -545,10 +535,11 @@ export abstract class Parser extends Recognizer<ParserATNSimulator> {
     public unrollRecursionContexts(parent: ParserRuleContext | null): void {
         this.precedenceStack.pop();
         this.context!.stop = this.inputStream.LT(-1);
-        const retCtx = this.context!; // save current ctx (return value)
-        // unroll so _ctx is as it was before call to recursive method
+        const retCtx = this.context!; // Save current ctx (return value).
+
+        // Unroll so _ctx is as it was before call to recursive method.
         const parseListeners = this.getParseListeners();
-        if (parseListeners !== null && parseListeners.length > 0) {
+        if (parseListeners.length > 0) {
             while (this.context !== parent) {
                 this.triggerExitRuleEvent();
                 this.context = this.context!.parent;
