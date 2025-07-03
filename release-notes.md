@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/mike-lischke/website-antlr-ng/main/src/assets/images/antlr-ng-logo1.svg" title="ANTLR Next Generation" alt="antlr-ng the parser generator" height="200"/><br/>
+<img src="https://raw.githubusercontent.com/antlr-ng/antlr-ng/main/docs/antlr-ng-logo1.svg" title="ANTLR Next Generation" alt="antlr-ng the parser generator" height="200"/><br/>
 <label style="font-size: 90%">Part of the Next Generation ANTLR Project</label>
 </p>
 <hr />
