@@ -146,6 +146,73 @@ describe("Lexer Newline Column Tracking", () => {
         expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(true); // Should match BLANK
     });
 
+    it("should handle edge cases correctly", () => {
+        // Test empty input
+        let charStream = new CharStreamImpl("");
+        let lexer = new TestLexer(charStream);
+        expect(lexer.checkCurrentColumnEqualsZero()).toBe(true);
+        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(false);
+
+        // Test input starting with non-newline
+        charStream = new CharStreamImpl("abc");
+        lexer = new TestLexer(charStream);
+        expect(lexer.checkCurrentColumnEqualsZero()).toBe(true); // At start
+        lexer.interpreter.consume(charStream); // consume 'a'
+        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(true); // Now at column 1
+        
+        // Test Windows line endings (\r\n)
+        charStream = new CharStreamImpl("a\r\nb");
+        lexer = new TestLexer(charStream);
+        lexer.interpreter.consume(charStream); // consume 'a' -> column 1
+        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(true);
+        lexer.interpreter.consume(charStream); // consume '\r' -> column 2
+        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(true);
+        lexer.interpreter.consume(charStream); // consume '\n' -> column 0, line++
+        expect(lexer.checkCurrentColumnEqualsZero()).toBe(true);
+        
+        // Test mixed content
+        charStream = new CharStreamImpl(" \n\t\n  ");
+        lexer = new TestLexer(charStream);
+        expect(lexer.checkCurrentColumnEqualsZero()).toBe(true); // Start
+        lexer.interpreter.consume(charStream); // consume ' ' -> column 1
+        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(true);
+        lexer.interpreter.consume(charStream); // consume '\n' -> column 0
+        expect(lexer.checkCurrentColumnEqualsZero()).toBe(true);
+        lexer.interpreter.consume(charStream); // consume '\t' -> column 1
+        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(true);
+        lexer.interpreter.consume(charStream); // consume '\n' -> column 0
+        expect(lexer.checkCurrentColumnEqualsZero()).toBe(true);
+    });
+
+    it("should emit tokens with correct starting column", () => {
+        const testInput = "a\n  b";
+        const charStream = new CharStreamImpl(testInput);
+        const lexer = new TestLexer(charStream);
+        
+        // Set up token creation like nextToken() would do
+        lexer.tokenStartCharIndex = charStream.index;
+        lexer.testCurrentTokenStartLine = lexer.interpreter.line;
+        lexer.testTokenStartColumn = lexer.interpreter.column; // Should be 0 at start
+        lexer.type = 1; // Some token type
+        
+        // Consume some characters
+        lexer.interpreter.consume(charStream); // 'a' -> now at column 1
+        lexer.interpreter.consume(charStream); // '\n' -> now at column 0, line 2
+        lexer.interpreter.consume(charStream); // ' ' -> now at column 1
+        
+        // Emit token - should use the starting column (0), not current column (1)
+        const token = lexer.emit();
+        
+        expect(token.line).toBe(1); // Starting line
+        expect(token.column).toBe(0); // Starting column, not current column
+        expect(token.start).toBe(0); // Starting character index
+        expect(token.stop).toBe(charStream.index - 1); // Ending character index
+        
+        // But currentTokenColumn should still reflect current position
+        expect(lexer.testCurrentTokenColumn).toBe(1); // Current interpreter column
+        expect(lexer.testTokenStartColumn).toBe(0); // Starting column
+    });
+
     it("should track line and column correctly in LexerATNSimulator", () => {
         const testInput = 'a\nb\n  c';
         const charStream = new CharStreamImpl(testInput);
