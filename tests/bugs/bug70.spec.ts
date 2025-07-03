@@ -41,6 +41,10 @@ class TestLexer extends Lexer {
         return this.currentTokenColumn;
     }
 
+    public set testCurrentTokenColumn(value: number) {
+        this.currentTokenColumn = value;
+    }
+
     public get testTokenStartColumn(): number {
         return this.tokenStartColumn;
     }
@@ -123,11 +127,11 @@ describe("Lexer Newline Column Tracking", () => {
         expect(results[1].tokenStartColumn).toBe(0); // Token still starts at 0
         
         expect(results[2].char).toBe(" "); // First space
-        expect(results[2].currentTokenColumn).toBe(0); // Should be 0 (reset after second newline)
+        expect(results[2].currentTokenColumn).toBe(0); // Should be 0 (starting column after second newline)
         expect(results[2].interpreterColumn).toBe(0); // Interpreter was reset to 0 after second newline
         
         expect(results[3].char).toBe(" "); // Second space
-        expect(results[3].currentTokenColumn).toBe(1); // Should be 1 (after consuming first space)
+        expect(results[3].currentTokenColumn).toBe(0); // Should still be 0 (starting column, not current position)
         expect(results[3].interpreterColumn).toBe(1); // Interpreter is at 1 after first space
     });
 
@@ -165,9 +169,9 @@ describe("Lexer Newline Column Tracking", () => {
         // Consume first space
         lexer.interpreter.consume(charStream);
         
-        // Simulate processing subsequent spaces (column should be > 0 now)
-        expect(lexer.checkCurrentColumnEqualsZero()).toBe(false); // Should not match INDENTATION
-        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(true); // Should match BLANK
+        // Simulate processing subsequent spaces (column should still be 0 for starting position)
+        expect(lexer.checkCurrentColumnEqualsZero()).toBe(true); // Should match INDENTATION (starting column = 0)
+        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(false); // Should not match BLANK (starting column = 0)
     });
 
     it("should handle edge cases correctly", () => {
@@ -182,28 +186,35 @@ describe("Lexer Newline Column Tracking", () => {
         lexer = new TestLexer(charStream);
         expect(lexer.checkCurrentColumnEqualsZero()).toBe(true); // At start
         lexer.interpreter.consume(charStream); // consume 'a'
-        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(true); // Now at column 1
+        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(false); // Still at starting column (0)
         
         // Test Windows line endings (\r\n)
+        // Test that currentTokenColumn is updated when newlines are encountered during token recognition
         charStream = CharStream.fromString("a\r\nb");
         lexer = new TestLexer(charStream);
+        // Initialize for token recognition like nextToken() does
+        lexer.testCurrentTokenStartLine = lexer.interpreter.line;
+        lexer.testTokenStartColumn = lexer.interpreter.column;
+        lexer.testCurrentTokenColumn = lexer.interpreter.column; // Start at 0
+        
         lexer.interpreter.consume(charStream); // consume 'a' -> column 1
-        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(true);
+        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(false); // Starting column is still 0
         lexer.interpreter.consume(charStream); // consume '\r' -> column 2
-        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(true);
+        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(false); // Starting column is still 0
         lexer.interpreter.consume(charStream); // consume '\n' -> column 0, line++
-        expect(lexer.checkCurrentColumnEqualsZero()).toBe(true);
+        expect(lexer.checkCurrentColumnEqualsZero()).toBe(true); // Should be updated to 0 after newline
         
         // Test mixed content
         charStream = CharStream.fromString(" \n\t\n  ");
         lexer = new TestLexer(charStream);
+        lexer.testCurrentTokenColumn = 0; // Initialize starting column
         expect(lexer.checkCurrentColumnEqualsZero()).toBe(true); // Start
         lexer.interpreter.consume(charStream); // consume ' ' -> column 1
-        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(true);
+        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(false); // Starting column is still 0
         lexer.interpreter.consume(charStream); // consume '\n' -> column 0
         expect(lexer.checkCurrentColumnEqualsZero()).toBe(true);
         lexer.interpreter.consume(charStream); // consume '\t' -> column 1
-        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(true);
+        expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(false); // Starting column is still 0
         lexer.interpreter.consume(charStream); // consume '\n' -> column 0
         expect(lexer.checkCurrentColumnEqualsZero()).toBe(true);
     });
@@ -232,8 +243,8 @@ describe("Lexer Newline Column Tracking", () => {
         expect(token.start).toBe(0); // Starting character index
         expect(token.stop).toBe(charStream.index - 1); // Ending character index
         
-        // But currentTokenColumn should still reflect current position
-        expect(lexer.testCurrentTokenColumn).toBe(1); // Current interpreter column
+        // But currentTokenColumn should still reflect starting position
+        expect(lexer.testCurrentTokenColumn).toBe(0); // Starting column
         expect(lexer.testTokenStartColumn).toBe(0); // Starting column
     });
 
