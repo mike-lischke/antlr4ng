@@ -13,7 +13,7 @@ class TestLexer extends Lexer {
     public constructor(input: CharStreamImpl) {
         super(input);
         // Initialize with a simple ATN simulator to test column tracking
-        this.interpreter = new LexerATNSimulator(this, null as any, [] as any, null as any);
+        this.interpreter = new LexerATNSimulator(this, null, [], undefined);
     }
 
     // Expose protected properties for testing
