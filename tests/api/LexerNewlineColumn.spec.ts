@@ -6,14 +6,34 @@
 
 import { describe, expect, it } from "vitest";
 
-import { CharStreamImpl, Lexer, LexerATNSimulator } from "../../src/index.js";
+import { ATN, CharStream, DFA, Lexer, LexerATNSimulator, PredictionContextCache, Vocabulary } from "../../src/index.js";
 
 // Mock lexer class to test the currentTokenColumn behavior
 class TestLexer extends Lexer {
-    public constructor(input: CharStreamImpl) {
+    public constructor(input: CharStream) {
         super(input);
-        // Initialize with a simple ATN simulator to test column tracking
-        this.interpreter = new LexerATNSimulator(this, null, [], undefined);
+        // Initialize with a minimal ATN simulator that doesn't require complex serialization
+        // Use the same approach as in existing tests - create minimal empty structures
+        const atn = new ATN(0 /* LEXER */, 1 /* maxTokenType */);
+        const decisionsToDFA: DFA[] = [];
+        this.interpreter = new LexerATNSimulator(this, atn, decisionsToDFA, new PredictionContextCache());
+    }
+
+    // Implement required abstract methods
+    public override get grammarFileName(): string {
+        return "TestLexer.g4";
+    }
+
+    public override get ruleNames(): string[] {
+        return ["TEST"];
+    }
+
+    public override get vocabulary(): Vocabulary {
+        return Vocabulary.EMPTY_VOCABULARY;
+    }
+
+    public override get serializedATN(): number[] {
+        return [];
     }
 
     // Expose protected properties for testing
@@ -47,7 +67,7 @@ class TestLexer extends Lexer {
     }
 
     // Simulate the token recognition process to test column tracking
-    public simulateTokenRecognition(input: CharStreamImpl): Array<{char: string, currentTokenColumn: number, interpreterColumn: number, tokenStartColumn: number}> {
+    public simulateTokenRecognition(input: CharStream): Array<{char: string, currentTokenColumn: number, interpreterColumn: number, tokenStartColumn: number}> {
         const results: Array<{char: string, currentTokenColumn: number, interpreterColumn: number, tokenStartColumn: number}> = [];
         
         // Set up like nextToken() does
@@ -76,7 +96,7 @@ class TestLexer extends Lexer {
 describe("Lexer Newline Column Tracking", () => {
     it("should demonstrate the currentTokenColumn issue with newlines", () => {
         const testInput = '\n\n    ';
-        const charStream = new CharStreamImpl(testInput);
+        const charStream = CharStream.fromString(testInput);
         const lexer = new TestLexer(charStream);
 
         const results = lexer.simulateTokenRecognition(charStream);
@@ -116,7 +136,7 @@ describe("Lexer Newline Column Tracking", () => {
         // INDENTATION: { this.currentTokenColumn == 0 }? Ws+ -> channel(HIDDEN) ;
         
         const testInput = '\n\n    ';
-        const charStream = new CharStreamImpl(testInput);
+        const charStream = CharStream.fromString(testInput);
         const lexer = new TestLexer(charStream);
 
         // Simulate processing the first '\n' at position 0
@@ -148,20 +168,20 @@ describe("Lexer Newline Column Tracking", () => {
 
     it("should handle edge cases correctly", () => {
         // Test empty input
-        let charStream = new CharStreamImpl("");
+        let charStream = CharStream.fromString("");
         let lexer = new TestLexer(charStream);
         expect(lexer.checkCurrentColumnEqualsZero()).toBe(true);
         expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(false);
 
         // Test input starting with non-newline
-        charStream = new CharStreamImpl("abc");
+        charStream = CharStream.fromString("abc");
         lexer = new TestLexer(charStream);
         expect(lexer.checkCurrentColumnEqualsZero()).toBe(true); // At start
         lexer.interpreter.consume(charStream); // consume 'a'
         expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(true); // Now at column 1
         
         // Test Windows line endings (\r\n)
-        charStream = new CharStreamImpl("a\r\nb");
+        charStream = CharStream.fromString("a\r\nb");
         lexer = new TestLexer(charStream);
         lexer.interpreter.consume(charStream); // consume 'a' -> column 1
         expect(lexer.checkCurrentColumnGreaterThanZero()).toBe(true);
@@ -171,7 +191,7 @@ describe("Lexer Newline Column Tracking", () => {
         expect(lexer.checkCurrentColumnEqualsZero()).toBe(true);
         
         // Test mixed content
-        charStream = new CharStreamImpl(" \n\t\n  ");
+        charStream = CharStream.fromString(" \n\t\n  ");
         lexer = new TestLexer(charStream);
         expect(lexer.checkCurrentColumnEqualsZero()).toBe(true); // Start
         lexer.interpreter.consume(charStream); // consume ' ' -> column 1
@@ -186,7 +206,7 @@ describe("Lexer Newline Column Tracking", () => {
 
     it("should emit tokens with correct starting column", () => {
         const testInput = "a\n  b";
-        const charStream = new CharStreamImpl(testInput);
+        const charStream = CharStream.fromString(testInput);
         const lexer = new TestLexer(charStream);
         
         // Set up token creation like nextToken() would do
@@ -215,7 +235,7 @@ describe("Lexer Newline Column Tracking", () => {
 
     it("should track line and column correctly in LexerATNSimulator", () => {
         const testInput = 'a\nb\n  c';
-        const charStream = new CharStreamImpl(testInput);
+        const charStream = CharStream.fromString(testInput);
         const lexer = new TestLexer(charStream);
 
         let line = lexer.interpreter.line;
