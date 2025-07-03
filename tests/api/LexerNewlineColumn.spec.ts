@@ -14,7 +14,7 @@ class TestLexer extends Lexer {
         super(input);
         // Initialize with a minimal ATN simulator that doesn't require complex serialization
         // Use the same approach as in existing tests - create minimal empty structures
-        const atn = new ATN(0 /* LEXER */, 1 /* maxTokenType */);
+        const atn = new ATN(ATN.LEXER, 1 /* maxTokenType */);
         const decisionsToDFA: DFA[] = [];
         this.interpreter = new LexerATNSimulator(this, atn, decisionsToDFA, new PredictionContextCache());
     }
@@ -45,16 +45,16 @@ class TestLexer extends Lexer {
         return this.tokenStartColumn;
     }
 
+    public set testTokenStartColumn(value: number) {
+        this.tokenStartColumn = value;
+    }
+
     public get testCurrentTokenStartLine(): number {
         return this.currentTokenStartLine;
     }
 
     public set testCurrentTokenStartLine(value: number) {
         this.currentTokenStartLine = value;
-    }
-
-    public set testTokenStartColumn(value: number) {
-        this.tokenStartColumn = value;
     }
 
     // Simulate the semantic predicate checks from the grammar
@@ -67,8 +67,18 @@ class TestLexer extends Lexer {
     }
 
     // Simulate the token recognition process to test column tracking
-    public simulateTokenRecognition(input: CharStream): Array<{char: string, currentTokenColumn: number, interpreterColumn: number, tokenStartColumn: number}> {
-        const results: Array<{char: string, currentTokenColumn: number, interpreterColumn: number, tokenStartColumn: number}> = [];
+    public simulateTokenRecognition(input: CharStream): Array<{
+        char: string,
+        currentTokenColumn: number,
+        interpreterColumn: number,
+        tokenStartColumn: number
+    }> {
+        const results: Array<{
+            char: string,
+            currentTokenColumn: number,
+            interpreterColumn: number,
+            tokenStartColumn: number
+        }> = [];
         
         // Set up like nextToken() does
         this.testCurrentTokenStartLine = this.interpreter.line;
@@ -79,7 +89,7 @@ class TestLexer extends Lexer {
             const char = String.fromCharCode(input.LA(1));
             
             results.push({
-                char: char === '\n' ? '\\n' : char,
+                char: char === "\n" ? "\\n" : char,
                 currentTokenColumn: this.testCurrentTokenColumn,
                 interpreterColumn: this.interpreter.column,
                 tokenStartColumn: this.testTokenStartColumn
@@ -95,34 +105,28 @@ class TestLexer extends Lexer {
 
 describe("Lexer Newline Column Tracking", () => {
     it("should demonstrate the currentTokenColumn issue with newlines", () => {
-        const testInput = '\n\n    ';
+        const testInput = "\n\n    ";
         const charStream = CharStream.fromString(testInput);
         const lexer = new TestLexer(charStream);
 
         const results = lexer.simulateTokenRecognition(charStream);
-        
-        // Log the results for debugging
-        console.log("Character processing results:");
-        results.forEach((result, index) => {
-            console.log(`${index}: char='${result.char}' currentTokenColumn=${result.currentTokenColumn} interpreterColumn=${result.interpreterColumn} tokenStartColumn=${result.tokenStartColumn}`);
-        });
 
         // Now currentTokenColumn should track the current interpreter column!
-        expect(results[0].char).toBe('\\n'); // First newline
+        expect(results[0].char).toBe("\\n"); // First newline
         expect(results[0].currentTokenColumn).toBe(0); // Should be 0 since we start at column 0
         expect(results[0].interpreterColumn).toBe(0); // Interpreter starts at 0
         expect(results[0].tokenStartColumn).toBe(0); // Token starts at 0
         
-        expect(results[1].char).toBe('\\n'); // Second newline
+        expect(results[1].char).toBe("\\n"); // Second newline
         expect(results[1].currentTokenColumn).toBe(0); // Should be 0 (reset after first newline)
         expect(results[1].interpreterColumn).toBe(0); // Interpreter was reset to 0 after first newline
         expect(results[1].tokenStartColumn).toBe(0); // Token still starts at 0
         
-        expect(results[2].char).toBe(' '); // First space
+        expect(results[2].char).toBe(" "); // First space
         expect(results[2].currentTokenColumn).toBe(0); // Should be 0 (reset after second newline)
         expect(results[2].interpreterColumn).toBe(0); // Interpreter was reset to 0 after second newline
         
-        expect(results[3].char).toBe(' '); // Second space
+        expect(results[3].char).toBe(" "); // Second space
         expect(results[3].currentTokenColumn).toBe(1); // Should be 1 (after consuming first space)
         expect(results[3].interpreterColumn).toBe(1); // Interpreter is at 1 after first space
     });
@@ -135,7 +139,7 @@ describe("Lexer Newline Column Tracking", () => {
         // BLANK: { this.currentTokenColumn > 0 }? Ws+ -> channel(HIDDEN) ;
         // INDENTATION: { this.currentTokenColumn == 0 }? Ws+ -> channel(HIDDEN) ;
         
-        const testInput = '\n\n    ';
+        const testInput = "\n\n    ";
         const charStream = CharStream.fromString(testInput);
         const lexer = new TestLexer(charStream);
 
@@ -234,12 +238,12 @@ describe("Lexer Newline Column Tracking", () => {
     });
 
     it("should track line and column correctly in LexerATNSimulator", () => {
-        const testInput = 'a\nb\n  c';
+        const testInput = "a\nb\n  c";
         const charStream = CharStream.fromString(testInput);
         const lexer = new TestLexer(charStream);
 
-        let line = lexer.interpreter.line;
-        let column = lexer.interpreter.column;
+        const line = lexer.interpreter.line;
+        const column = lexer.interpreter.column;
 
         // Start: should be line 1, column 0
         expect(line).toBe(1);
