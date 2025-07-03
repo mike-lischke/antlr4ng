@@ -87,10 +87,12 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
 
     public mode: number = Lexer.DEFAULT_MODE;
 
-    /** The start column of the current token (the one that was last read by `nextToken`). */
-    protected get currentTokenColumn(): number {
-        return this.interpreter.column;
-    }
+    /** 
+     * The current column position during token recognition. This starts as the token's
+     * starting column and is updated as newlines are encountered during token recognition.
+     * Used by semantic predicates during token recognition.
+     */
+    protected currentTokenColumn = 0;
 
     /**
      * The line on which the first character of the current token (the one that was last read by `nextToken`) resides.
@@ -101,6 +103,14 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
      * The column on which the first character of the current token (the one that was last read by `nextToken`) resides.
      */
     protected tokenStartColumn = 0;
+
+    /**
+     * Get the starting column of the current token. This is the column position where
+     * the current token started, which is useful for position adjustment logic.
+     */
+    public get currentTokenStartColumn(): number {
+        return this.tokenStartColumn;
+    }
 
     private input: CharStream;
 
@@ -185,6 +195,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
                 this.tokenStartCharIndex = this.input.index;
                 this.currentTokenStartLine = this.interpreter.line;
                 this.tokenStartColumn = this.interpreter.column;
+                this.currentTokenColumn = this.interpreter.column;
                 this.#text = undefined;
                 let continueOuter = false;
                 while (true) {
@@ -417,7 +428,13 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
     }
 
     public set column(column: number) {
+        const oldColumn = this.interpreter.column;
         this.interpreter.column = column;
+        
+        // If column was reset to 0 (due to newline), update currentTokenColumn as well
+        if (oldColumn > 0 && column === 0) {
+            this.currentTokenColumn = 0;
+        }
     }
 
     public get text(): string {
