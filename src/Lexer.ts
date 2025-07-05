@@ -87,13 +87,30 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
 
     public mode: number = Lexer.DEFAULT_MODE;
 
-    /** The start column of the current token (the one that was last read by `nextToken`). */
+    /** 
+     * The current column position during token recognition. This starts as the token's
+     * starting column and is updated as newlines are encountered during token recognition.
+     * Used by semantic predicates during token recognition.
+     */
     protected currentTokenColumn = 0;
 
     /**
      * The line on which the first character of the current token (the one that was last read by `nextToken`) resides.
      */
     protected currentTokenStartLine = 0;
+
+    /**
+     * The column on which the first character of the current token (the one that was last read by `nextToken`) resides.
+     */
+    protected tokenStartColumn = 0;
+
+    /**
+     * Get the starting column of the current token. This is the column position where
+     * the current token started, which is useful for position adjustment logic.
+     */
+    public get currentTokenStartColumn(): number {
+        return this.tokenStartColumn;
+    }
 
     private input: CharStream;
 
@@ -143,7 +160,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
         this.type = Token.INVALID_TYPE;
         this.channel = Token.DEFAULT_CHANNEL;
         this.tokenStartCharIndex = -1;
-        this.currentTokenColumn = -1;
+        this.tokenStartColumn = -1;
         this.currentTokenStartLine = -1;
         this.#text = undefined;
 
@@ -176,8 +193,9 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
                 this.token = null;
                 this.channel = Token.DEFAULT_CHANNEL;
                 this.tokenStartCharIndex = this.input.index;
-                this.currentTokenColumn = this.interpreter.column;
                 this.currentTokenStartLine = this.interpreter.line;
+                this.tokenStartColumn = this.interpreter.column;
+                this.currentTokenColumn = this.interpreter.column;
                 this.#text = undefined;
                 let continueOuter = false;
                 while (true) {
@@ -289,7 +307,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
      */
     public emit(): Token {
         const t = this.factory.create([this, this.input], this.type, this.#text, this.channel,
-            this.tokenStartCharIndex, this.getCharIndex() - 1, this.currentTokenStartLine, this.currentTokenColumn);
+            this.tokenStartCharIndex, this.getCharIndex() - 1, this.currentTokenStartLine, this.tokenStartColumn);
         this.emitToken(t);
 
         return t;
@@ -328,7 +346,7 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
         const stop = this.input.index;
         const text = this.input.getTextFromRange(start, stop);
         const msg = "token recognition error at: '" + this.getErrorDisplay(text) + "'";
-        this.errorListenerDispatch.syntaxError(this, null, this.currentTokenStartLine, this.currentTokenColumn, msg, e);
+        this.errorListenerDispatch.syntaxError(this, null, this.currentTokenStartLine, this.tokenStartColumn, msg, e);
     }
 
     public getErrorDisplay(s: string): string {
@@ -410,7 +428,13 @@ export abstract class Lexer extends Recognizer<LexerATNSimulator> implements Tok
     }
 
     public set column(column: number) {
+        const oldColumn = this.interpreter.column;
         this.interpreter.column = column;
+        
+        // If column was reset to 0 (due to newline), update currentTokenColumn as well
+        if (oldColumn > 0 && column === 0) {
+            this.currentTokenColumn = 0;
+        }
     }
 
     public get text(): string {
