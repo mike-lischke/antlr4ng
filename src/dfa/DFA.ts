@@ -32,10 +32,23 @@ export class DFA {
     public readonly isPrecedenceDfa: boolean;
 
     /**
-     * A mapping from an ATNConfigSet hash to a DFAState.
-     * Used to quick look up the DFA state for a particular configuration set.
+     * A mapping from an ATNConfigSet hash to the DFA states whose configuration sets carry that
+     * hash. Used to quickly look up the DFA state for a particular configuration set.
+     *
+     * Each entry is a bucket rather than a single state because a 32-bit hash is not injective:
+     * two different configuration sets can share one. Buckets are disambiguated with
+     * {@link DFAState.equals}, so a state is only ever returned for the configuration set it was
+     * actually computed from. Resolving collisions is required for correctness, not merely for
+     * hygiene — handing back a state that describes a *different* configuration set makes the
+     * simulator follow the wrong decision, which surfaces as a spurious "no viable alternative"
+     * on input that parses fine on its own. Because the DFA is cached across parses (the
+     * generated recognizers share one `decisionToDFA` array), such a state also persists, so
+     * whichever input populates a bucket first can permanently break a later one.
      */
-    private states = new Map<number, DFAState>();
+    private states = new Map<number, DFAState[]>();
+
+    /** Counts the states in {@link states}, so insertion can number them without a scan. */
+    private stateCount = 0;
 
     public constructor(atnStartState: DecisionState | null, decision?: number) {
         this.atnStartState = atnStartState;
@@ -53,7 +66,7 @@ export class DFA {
     }
 
     public [Symbol.iterator] = (): Iterator<DFAState> => {
-        return this.states.values()[Symbol.iterator]();
+        return this.getStates()[Symbol.iterator]();
     };
 
     /**
@@ -103,7 +116,11 @@ export class DFA {
      * @returns a list of all states in this DFA, ordered by state number.
      */
     public getStates(): DFAState[] {
-        const result = [...this.states.values()];
+        const result: DFAState[] = [];
+        for (const bucket of this.states.values()) {
+            result.push(...bucket);
+        }
+
         result.sort((o1: DFAState, o2: DFAState): number => {
             return o1.stateNumber - o2.stateNumber;
         });
@@ -112,21 +129,38 @@ export class DFA {
     };
 
     public getState(state: DFAState): DFAState | null {
-        return this.states.get(state.configs.hashCode()) ?? null;
+        return this.getStateForConfigs(state.configs);
     }
 
     public getStateForConfigs(configs: ATNConfigSet): DFAState | null {
-        return this.states.get(configs.hashCode()) ?? null;
+        const bucket = this.states.get(configs.hashCode());
+        if (bucket) {
+            for (const state of bucket) {
+                if (state.configs === configs || state.configs.equals(configs)) {
+                    return state;
+                }
+            }
+        }
+
+        return null;
     }
 
     public addState(state: DFAState): void {
         const hash = state.configs.hashCode();
-        if (this.states.has(hash)) {
-            return;
+        let bucket = this.states.get(hash);
+        if (!bucket) {
+            bucket = [];
+            this.states.set(hash, bucket);
         }
 
-        this.states.set(hash, state);
-        state.stateNumber = this.states.size - 1;
+        for (const existing of bucket) {
+            if (DFAState.equals(existing, state)) {
+                return;
+            }
+        }
+
+        bucket.push(state);
+        state.stateNumber = this.stateCount++;
     }
 
     public toString(vocabulary?: Vocabulary): string {
@@ -154,6 +188,6 @@ export class DFA {
     };
 
     public get length(): number {
-        return this.states.size;
+        return this.stateCount;
     }
 }
